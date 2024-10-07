@@ -21,15 +21,15 @@ export default function Home() {
                       WiNG.it
                   </h1>
                   <p className="text-xl mb-6">
-                      so you don't need to wing it?
+                      so you don&apos;t need to wing it?
                   </p>
                   <p className="text-md mb-8">
-                      It's time to be Well-prepared for Interviews, Networking, and being Great!
+                      It&apos;s time to be Well-prepared for Interviews, Networking, and being Great!
                   </p>
               </div>
               {/* Button */}
               <button className="bg-blue-500 hover:bg-blue-600 text-white py-3 px-8 rounded-lg font-semibold">
-                  I'm Ready!
+                  I&apos;m Ready!
               </button>
           </div>
       </div>
