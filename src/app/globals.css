@@ -25,3 +25,71 @@ body {
     text-wrap: balance;
   }
 }
+
+/* ---------------------------- satoshi fonts ---------------------------- */
+
+@font-face {
+  font-family: 'Satoshi';
+  src: url('/static/fonts/Satoshi/Satoshi-Regular.otf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Satoshi';
+  src: url('/static/fonts/Satoshi/Satoshi-Bold.otf') format('truetype');
+  font-weight: bold;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Satoshi';
+  src: url('/static/fonts/Satoshi/Satoshi-Italic.otf') format('truetype');
+  font-weight: normal;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Satoshi';
+  src: url('/static/fonts/Satoshi/Satoshi-Medium.otf') format('truetype');
+  font-weight: medium;
+  font-style: normal;
+}
+
+/* ---------------------------- dm sans fonts ---------------------------- */
+
+@font-face {
+  font-family: 'DM Sans';
+  src: url('/static/fonts/DM_Sans/DMSans-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'DM Sans';
+  src: url('/static/fonts/DM_Sans/DMSans-Bold.ttf') format('truetype');
+  font-weight: bold;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'DM Sans';
+  src: url('/static/fonts/DM_Sans/DMSans-Italic.ttf') format('truetype');
+  font-weight: normal;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'DM Sans SemiBold';
+  src: url('/static/fonts/DM_Sans/DMSans-SemiBold.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'DM Sans Medium';
+  src: url('/static/fonts/DM_Sans/DMSans-Medium.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: 'DM Sans Black';
+    src: url('/static/fonts/DM_Sans/DMSans-Black.ttf') format('truetype');
+}
