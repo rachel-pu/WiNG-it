@@ -93,3 +93,11 @@ body {
     font-family: 'DM Sans Black';
     src: url('/static/fonts/DM_Sans/DMSans-Black.ttf') format('truetype');
 }
+
+/* ---------------------------- janitor font ---------------------------- */
+@font-face {
+  font-family: 'Janitor';
+  src: url('/static/fonts/Janitor/Janitor.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}

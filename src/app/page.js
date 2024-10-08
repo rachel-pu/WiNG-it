@@ -3,38 +3,68 @@ import Image from "next/image";
 export default function Home() {
   return (
       // background grid
-      <div className="relative h-screen w-full bg-colorF3F1EA bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] flex justify-center items-center">
-          {/* main content box */}
-          <div
-              className="mx-auto bg-gradient-to-r from-color8BCA67/40 via-colorBDE3E3/40 to-color5C9CF5/40 w-12.75/15 h-11/12 p-20 rounded-lg shadow-lg relative">
+      <div className="relative h-screen w-full bg-colorF3F1EA bg-[linear-gradient(to_right,#69ADFF50_1px,transparent_1px),linear-gradient(to_bottom,#69ADFF50_1px,transparent_1px)] bg-[size:24px_24px] flex justify-center items-center">
 
-              {/* sticky note section */}
-              <div className="absolute top-2 right-2 bg-yellow-300 p-2 rounded shadow-lg">
-                  <p className="text-sm font-bold text-color282523">why WING.it?<br/>who are we?</p>
+          {/* main content box */}
+          <div className="mx-auto bg-gradient-to-r from-color8BCA67/50 via-colorBDE3E3/50 to-color5C9CF5/50 w-4/5 h-11/12 p-20 rounded-3xl shadow-lg relative">
+
+              {/* ----------------- dots in corner ----------------*/}
+              <div>
+                  {/* Top-left dot */}
+                  <div className="absolute top-5 left-5 w-4 h-4 bg-color8DA877 rounded-full"></div>
+
+                  {/* Top-right dot */}
+                  <div className="absolute top-5 right-5 w-4 h-4 bg-color7489B2 rounded-full"></div>
+
+                  {/* Bottom-left dot */}
+                  <div className="absolute bottom-5 left-5 w-4 h-4 bg-color8DA877 rounded-full"></div>
+
+                  {/* Bottom-right dot */}
+                  <div className="absolute bottom-5 right-5 w-4 h-4 bg-color7489B2 rounded-full"></div>
+              </div>
+
+              {/* ----------------- sticky note section ----------------- */}
+              <div className="absolute top-30 right-20">
+                  <Image
+                      src={'/static/images/about us yellow sticky note.png'}
+                      alt={"test"}
+                      width={250}
+                      height={250}
+                      className="hover:scale-105 transition-transform duration-300 transform hover:cursor-pointer"
+                  />
               </div>
 
               {/* ----------------- title text ----------------- */}
-              <div className="text-color282523 pl-1/6.5 mb-1/20">
+              <div className="text-color282523 pl-1/20 mb-1/25">
+                  {/* sub-title */}
                   <h2 className="text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl -mb-1/15 mt-1/25 font-dm-sans-semibold tracking-tighter">
                       Are you ready to
                   </h2>
                   {/* title */}
-                  <h1 className="text-4xl sm:text-5xl md:text-10xl lg:text-10xl xl:text-12xl -mb-1/15 font-dm-sans-black tracking-tighter">
+                  <h1 className="text-13xl -mb-1/15 -ml-1/100 font-dm-sans-black tracking-tighter">
                       WiNG.it
                   </h1>
-                  <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl mb-1/15 font-dm-sans-semibold tracking-tighter">
+
+                  {/* sub-title */}
+                  <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-dm-sans-semibold tracking-tighter">
                       so you don&apos;t need to wing it?
                   </p>
               </div>
 
-              {/* subtext */}
+              {/* ----------------- subtext ----------------- */}
               <p className="text-2xl tracking-tight mb-8 text-center text-color282523 font-satoshi">
-                  It&apos;s time to be Well-prepared for Interviews, Networking, and being Great!
+                  It&apos;s time to start practicing being Well-prepared for Interviews, Networking, and being Great!
               </p>
+
               {/* ----------------- button ----------------- */}
-              <button className="bg-blue-500 hover:bg-blue-600 text-white py-3 px-8 rounded-lg font-semibold">
-                  I&apos;m Ready!
-              </button>
+              <div className="flex justify-center items-center h-full">
+                  <button className="text-4xl font-dm-sans tracking-tight mt-10 bg-colorFAF8F1 text-color282523 py-3 px-1/20 rounded-full font-semibold shadow-lg flex items-center space-x-2 transition-transform duration-300 transform hover:scale-105">
+                      <span>I&apos;m Ready!</span>
+                      <svg className="w-10 h-10" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h12M12 5l7 7-7 7" />
+                      </svg>
+                  </button>
+              </div>
           </div>
       </div>
   );
