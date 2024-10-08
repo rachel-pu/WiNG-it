@@ -30,7 +30,7 @@ export default function Home() {
                       alt={"test"}
                       width={250}
                       height={250}
-                      className="hover:scale-105 transition-transform duration-300 transform hover:cursor-pointer"
+                      className="hover:rotate-6 transition-transform duration-300 transform hover:cursor-pointer"
                   />
               </div>
 
@@ -52,8 +52,12 @@ export default function Home() {
               </div>
 
               {/* ----------------- subtext ----------------- */}
-              <p className="text-2xl tracking-tight mb-8 text-center text-color282523 font-satoshi">
-                  It&apos;s time to start practicing being Well-prepared for Interviews, Networking, and being Great!
+              <p className="text-color282523 text-2xl tracking-tight mb-8 text-center font-satoshi">
+                  It&apos;s time to start practicing being
+                  <span className="font-dm-sans-black "> W</span>ell-prepared for
+                  <span className="font-dm-sans-black "> I</span>nterviews,
+                  <span className="font-dm-sans-black "> N</span>etworking, and being
+                  <span className="font-dm-sans-black "> G</span>reat!
               </p>
 
               {/* ----------------- button ----------------- */}
