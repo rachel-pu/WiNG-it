@@ -26,10 +26,11 @@ export default function Home() {
               {/* ----------------- sticky note section ----------------- */}
               <div className="absolute top-30 right-20">
                   <Image
-                      src={'/static/images/about us yellow sticky note.png'}
+                      src={'/static/images/yellow sticky note.png'}
                       alt={"test"}
                       width={250}
                       height={250}
+                      unoptimized
                       className="hover:rotate-6 transition-transform duration-300 transform hover:cursor-pointer"
                   />
               </div>
