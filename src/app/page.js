@@ -1,4 +1,7 @@
+"use client";
 import Image from "next/image";
+import Link from "next/link";
+
 
 export default function Home() {
   return (
@@ -6,7 +9,7 @@ export default function Home() {
       <div className="relative h-screen w-full bg-colorF3F1EA bg-[linear-gradient(to_right,#69ADFF50_1px,transparent_1px),linear-gradient(to_bottom,#69ADFF50_1px,transparent_1px)] bg-[size:24px_24px] flex justify-center items-center">
 
           {/* main content box */}
-          <div className="mx-auto bg-gradient-to-r from-color8BCA67/50 via-colorBDE3E3/50 to-color5C9CF5/50 w-4/5 h-11/12 p-20 rounded-3xl shadow-lg relative">
+          <div className="mx-auto bg-gradient-to-r from-color8BCA67/50 via-colorBDE3E3/50 to-color5C9CF5/50 w-4/5 h-10/12 p-20 rounded-3xl shadow-lg relative">
 
               {/* ----------------- dots in corner ----------------*/}
               <div>
@@ -25,13 +28,15 @@ export default function Home() {
 
               {/* ----------------- sticky note section ----------------- */}
               <div className="absolute top-30 right-20">
+                  <Link href='/why-wing-it'>
                   <Image
-                      src={'/static/images/about us yellow sticky note.png'}
-                      alt={"test"}
+                      src={'/static/images/yellow sticky note.png'}
+                      alt={"Sticky note image"}
                       width={250}
                       height={250}
                       className="hover:rotate-6 transition-transform duration-300 transform hover:cursor-pointer"
                   />
+                  </Link>
               </div>
 
               {/* ----------------- title text ----------------- */}
@@ -62,12 +67,12 @@ export default function Home() {
 
               {/* ----------------- button ----------------- */}
               <div className="flex justify-center items-center h-full group">
-                  <button className="text-4xl font-dm-sans tracking-tight mt-10 bg-colorFAF8F1 text-color282523 py-3 px-1/20 rounded-full font-semibold shadow-lg flex items-center space-x-2 transition-transform duration-300 transform group-hover:scale-105 group-hover:-rotate-2">
+                  <Link href='/main-dashboard' className="text-4xl font-dm-sans tracking-tight mt-10 bg-colorFAF8F1 text-color282523 py-3 px-1/20 rounded-full font-semibold shadow-lg flex items-center space-x-2 transition-transform duration-300 transform group-hover:scale-105 group-hover:-rotate-2">
                       <span>I&apos;m Ready!</span>
                       <svg className="w-10 h-10" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                           <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h12M12 5l7 7-7 7" />
                       </svg>
-                  </button>
+                  </Link>
               </div>
           </div>
       </div>

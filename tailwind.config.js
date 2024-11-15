@@ -13,7 +13,9 @@ module.exports = {
       'base': '1rem',
       'lg': '1.125rem',
       'xl': '1.25rem',
+      '1.5xl': '1.375rem',
       '2xl': '1.5rem',
+      '2.5xl': '1.625rem',
       '3xl': '1.875rem',
       '4xl': '2.25rem',
       '5xl': '3rem',
@@ -44,6 +46,8 @@ module.exports = {
       color8DA877: "#8DA877",
       color7489B2: "#7489B2",
       color73842F: "#73842F",
+      color6998C2: "#6998C2",
+      color3163C7: "#3163C7",
     },
     extend: {
       spacing: {
