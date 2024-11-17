@@ -34,6 +34,8 @@
 
 
 import aboutUs from "@/app/(wing.it info)/about-us/page";
+import Link from "next/link";
+
 
 const whyWiNGit = () => {
     return (
@@ -106,6 +108,12 @@ const whyWiNGit = () => {
                     className="text-4xl font-dm-sans-semibold tracking-tight bg-gradient-to-r from-color8BCA67 to-color5C9CF5 text-black py-2 px-6 rounded-full shadow-lg transition-transform duration-300 transform group-hover:scale-105 group-hover:-rotate-2">
                     Who are we?
                 </button>
+
+                <Link href="/about-us"
+                    className="text-4xl font-dm-sans-semibold tracking-tight bg-gradient-to-r from-color8BCA67 to-color5C9CF5 text-black py-2 px-6 rounded-full shadow-lg transition-transform duration-300 transform group-hover:scale-105 group-hover:-rotate-2">
+                    Who are we?
+                </Link>
+
             </div>
         </div>
     );
