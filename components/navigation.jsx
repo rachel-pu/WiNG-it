@@ -13,9 +13,8 @@ const Navigation = () => {
             <ul className="flex flex-col">
                 <li className="mb-3">
                     <Link href="/dashboard">
-                        <div className="flex justify-between">
-                        <p className="text-white">Dashboard</p>
-                            <FaHome/>
+                        <div className="flex">
+                            <p className="text-white">Dashboard</p>
                         </div>
                     </Link>
                 </li>
