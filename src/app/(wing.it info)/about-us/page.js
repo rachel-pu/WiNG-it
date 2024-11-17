@@ -8,7 +8,7 @@ const AboutUs = () => {
         // grid background
         <div className="relative h-screen w-full bg-colorF3F1EA bg-[linear-gradient(to_right,#69ADFF50_1px,transparent_1px),linear-gradient(to_bottom,#69ADFF50_1px,transparent_1px)] bg-[size:24px_24px] ">
 
-            {/* -------------------- first column --------------------*/}
+            {/* -------------------- first row --------------------*/}
             <div className="flex items-center justify-between w-full pt-1/50 pr-1/25 pl-1/25">
 
                 {/* home & back button together*/}
@@ -31,7 +31,7 @@ const AboutUs = () => {
 
                 {/* ready button */}
                 <div className='group'>
-                    <Link href='./main-dashboard' className="bg-gradient-to-r from-[#C8E2AF] to-[#6CBE20] text-2xl font-dm-sans tracking-tight bg-colorFAF8F1 text-color282523 py-2 px-12 rounded-full font-semibold shadow-lg flex items-center space-x-2 transition-transform duration-300 transform group-hover:scale-105 group-hover:-rotate-2">
+                    <Link href='/dashboard' className="bg-gradient-to-r from-[#C8E2AF] to-[#6CBE20] text-2xl font-dm-sans tracking-tight bg-colorFAF8F1 text-color282523 py-2 px-12 rounded-full font-semibold shadow-lg flex items-center space-x-2 transition-transform duration-300 transform group-hover:scale-105 group-hover:-rotate-2">
                         <span className='font-dm-sans-black'>I&apos;m Ready!</span>
                         <svg className="w-8 h-8" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h12M12 5l7 7-7 7" />
