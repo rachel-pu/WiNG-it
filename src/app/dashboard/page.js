@@ -40,7 +40,7 @@ const MainDashboard = () => {
                 <div  className="grid grid-cols-2 gap-1/15 px-10">
 
                 {/* behavioral interview  */}
-                <Link href = "/behavioral-instructions "className="bg-gradient-to-br from-color3163C7 to-color7489B2 p-6 rounded-xl shadow-lg hover:shadow-2xl transition hover:scale-105  duration-300 transform hover:cursor-pointer">
+                <Link href = "/behavioral-interview-instructions "className="bg-gradient-to-br from-color3163C7 to-color7489B2 p-6 rounded-xl shadow-lg hover:shadow-2xl transition hover:scale-105  duration-300 transform hover:cursor-pointer">
                     <div className="leading-tight">
                         <h2 className="text-white text-3xl font-dm-sans-black tracking-tight font-bold mb-2">Behavioral Interview Simulator</h2>
                         <p className="text-white text-lg font-satoshi text-opacity-90">This mode allows you to practice behavioral interviews
