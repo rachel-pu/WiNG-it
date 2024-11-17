@@ -17,6 +17,11 @@ const MainDashboard = () => {
                             </Link>
                         </li>
                         <li className="mb-3">
+                            <Link href="/transcripts">
+                                <p className="text-white">Transcripts</p>
+                            </Link>
+                        </li>
+                        <li className="mb-3">
                             <Link href="/settings">
                                 <p className="text-white">Settings</p>
                             </Link>
