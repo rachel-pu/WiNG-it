@@ -19,7 +19,7 @@ const Navigation = () => {
                 <ul className="flex flex-col">
                     {[
                         { href: "/dashboard", label: "Dashboard" },
-                        { href: "/settings", label: "Settings" },
+                        { href: "/transcripts", label: "Transcripts" },
                         { href: "/profile", label: "Profile" },
                     ].map(({ href, label }) => (
                         <li key={href} className="mb-3">
