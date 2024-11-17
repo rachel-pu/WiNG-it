@@ -52,6 +52,9 @@ module.exports = {
       colorC1B1E1: "#C1B1E1",
       colorAED6EC: "#AED6EC",
       color31362F: "#31362F",
+      color7DBE73: "#7DBE73",
+      color589C9B: "#589C9B",
+      color2E89BA: "#2E89BA",
     },
     extend: {
       spacing: {
