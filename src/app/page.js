@@ -2,7 +2,6 @@
 import Image from "next/image";
 import Link from "next/link";
 
-
 export default function Home() {
   return (
       // background grid
@@ -67,7 +66,7 @@ export default function Home() {
 
               {/* ----------------- button ----------------- */}
               <div className="flex justify-center items-center h-full group">
-                  <Link href='/main-dashboard' className="text-4xl font-dm-sans tracking-tight mt-10 bg-colorFAF8F1 text-color282523 py-3 px-1/20 rounded-full font-semibold shadow-lg flex items-center space-x-2 transition-transform duration-300 transform group-hover:scale-105 group-hover:-rotate-2">
+                  <Link href='/dashboard' className="text-4xl font-dm-sans tracking-tight mt-10 bg-colorFAF8F1 text-color282523 py-3 px-1/20 rounded-full font-semibold shadow-lg flex items-center space-x-2 transition-transform duration-300 transform group-hover:scale-105 group-hover:-rotate-2">
                       <span>I&apos;m Ready!</span>
                       <svg className="w-10 h-10" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                           <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h12M12 5l7 7-7 7" />
