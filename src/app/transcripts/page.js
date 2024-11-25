@@ -34,12 +34,12 @@ const Transcripts = () => {
                         className="relative bg-gradient-to-b from-color6998C2 to-color3163C7 opacity-80 shadow bg-color5C9CF5 rounded-3xl p-6 pb-24 flex flex-col justify-between">
                         <h2 className="mb-3 leading-10 text-4xl font-semibold text-colorF3F1EA font-dm-sans-black tracking-tighter">
                             Behavioral Interview Simulator Responses</h2>
-                        <p className="text-colorF3F1EA font-satoshi leading-tight text-2.5xl">
+                        <p className="text-colorF3F1EA font-sat oshi leading-tight text-2.5xl">
                             Your average score: </p>
 
                         {/*-----------------button--------------------*/}
                         <div className="absolute bottom-6 right-6 group">
-                            <Link href='./recruiter-responses'
+                            <Link href='transcripts/behavioral-interview-transcripts'
                                   className="bg-gradient-to-r from-[#C8E2AF] to-[#6CBE20] text-2xl font-dm-sans tracking-tight text-color282523 py-2 px-8 rounded-full font-semibold shadow-lg flex items-center space-x-2 transition-transform duration-300 transform group-hover:scale-102 group-hover:-rotate-1">
                                 <span className="font-dm-sans-black">See Responses</span>
                                 <svg className="w-8 h-8" fill="none" stroke="currentColor" strokeWidth="3"
