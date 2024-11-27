@@ -55,7 +55,7 @@ const MainDashboard = () => {
 
                 </Link>
 
-                {/* recruiter-instructions practice*/}
+                {/* instructions practice*/}
                 <div className="bg-gradient-to-br from-color8DA877 to-color8BCA67 p-6 rounded-xl shadow-lg hover:shadow-2xl transition hover:scale-105  duration-300 transform hover:cursor-pointer">
                         <div className="leading-tight">
                             <h2 className="text-white text-3xl font-dm-sans-black tracking-tight font-bold mb-2">Recruiter Practice</h2>

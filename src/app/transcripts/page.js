@@ -52,7 +52,7 @@ const Transcripts = () => {
 
                     </div>
 
-                    {/* recruiter-instructions practice*/}
+                    {/* instructions practice*/}
                     <div
                         className="relative bg-gradient-to-b from-color6998C2 to-color8BCA67 opacity-80 shadow bg-color5C9CF5 rounded-3xl p-6 pb-24 flex flex-col justify-between">
                         <h2 className=" leading-10 text-4xl font-semibold text-colorF3F1EA font-dm-sans-black tracking-tighter">
