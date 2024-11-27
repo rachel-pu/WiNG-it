@@ -34,7 +34,7 @@ const Instructions = () => {
                   {/*    Are you ready to*/}
                   {/*</h2>*/}
                   {/* title */}
-                  <h1 className="text-7xl font-dm-sans-black tracking-tighter">
+                  <h1 className="text-6xl font-dm-sans-black tracking-tighter">
                       Behavioral Interview Simulator
                   </h1>
 
@@ -48,12 +48,6 @@ const Instructions = () => {
               <p className="text-color282523 text-2xl tracking-tight mb-8 text-left pl-16 font-satoshi">
                   This is a simulation specifically to help you practice for behavioral interviews.
 
-
-                  {/*It&apos;s time to start practicing being*/}
-                  {/*<span className="font-dm-sans-black "> W</span>ell-prepared for*/}
-                  {/*<span className="font-dm-sans-black "> I</span>nterviews,*/}
-                  {/*<span className="font-dm-sans-black "> N</span>etworking, and being*/}
-                  {/*<span className="font-dm-sans-black "> G</span>reat!*/}
               </p>
               <ul className="list-disc pl-24 pb-24 text-color282523 text-2xl tracking-tight text-left font-satoshi">
                   <li>This is a practice tool, not a real representation of how you will do.</li>
