@@ -36,24 +36,30 @@ body {
 }
 
 @font-face {
-  font-family: 'Satoshi';
+  font-family: 'Satoshi Bold';
   src: url('/static/fonts/Satoshi/Satoshi-Bold.otf') format('truetype');
   font-weight: bold;
   font-style: normal;
 }
 
 @font-face {
-  font-family: 'Satoshi';
+  font-family: 'Satoshi Italic';
   src: url('/static/fonts/Satoshi/Satoshi-Italic.otf') format('truetype');
   font-weight: normal;
   font-style: italic;
 }
 
 @font-face {
-  font-family: 'Satoshi';
+  font-family: 'Satoshi Medium';
   src: url('/static/fonts/Satoshi/Satoshi-Medium.otf') format('truetype');
   font-weight: medium;
   font-style: normal;
+}
+
+@font-face {
+    font-family: 'Satoshi Black';
+    src: url('/static/fonts/Satoshi/Satoshi-Black.otf') format('truetype');
+    font-style: normal;
 }
 
 /* ---------------------------- dm sans fonts ---------------------------- */
@@ -66,14 +72,14 @@ body {
 }
 
 @font-face {
-  font-family: 'DM Sans';
+  font-family: 'DM Sans Bold';
   src: url('/static/fonts/DM_Sans/DMSans-Bold.ttf') format('truetype');
   font-weight: bold;
   font-style: normal;
 }
 
 @font-face {
-  font-family: 'DM Sans';
+  font-family: 'DM Sans Italic';
   src: url('/static/fonts/DM_Sans/DMSans-Italic.ttf') format('truetype');
   font-weight: normal;
   font-style: italic;
@@ -92,6 +98,27 @@ body {
 @font-face {
     font-family: 'DM Sans Black';
     src: url('/static/fonts/DM_Sans/DMSans-Black.ttf') format('truetype');
+}
+
+/* ---------------------------- pally font ---------------------------- */
+@font-face{
+    font-family: 'Pally';
+    src: url('/static/fonts/Pally/Pally-Regular.otf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face{
+    font-family: 'Pally Bold';
+    src: url('/static/fonts/Pally/Pally-Bold.otf') format('truetype');
+    font-weight: bold;
+    font-style: normal;
+}
+
+@font-face{
+    font-family: 'Pally Medium';
+    src: url('/static/fonts/Pally/Pally-Medium.otf') format('truetype');
+    font-weight: normal;
 }
 
 /* ---------------------------- janitor font ---------------------------- */
