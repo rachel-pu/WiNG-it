@@ -40,50 +40,61 @@ export default function Test() {
     };
 
     return (
-        // background
         <Box>
+            {/* ---------- nav bar ---------- */}
+            <AppBar sx={{ boxShadow: 'none', backgroundColor: scrolled ? '#e3e1db' : '#F3F1EB', padding: 0.2, transition: 'background-color 0.3s ease-in-out' }}>
+                <Toolbar>
+                    <GiFluffyWing color={'black'} size={25}/>
+                    <Typography component='div' sx={{ fontSize: '1.75rem', flexGrow: 1, display:{xs:'none', md:'flex', fontFamily: 'Satoshi Black'}, color: 'black'}}>WiNG.it</Typography>
+
+                    <Box sx={{ display: { xs: 'none', md: 'flex' }, gap:1.5}}>
+                        <Button color='inherit'  sx={{fontSize: '1.05rem', fontFamily: 'Satoshi Bold', textTransform: 'none', color:  'black', letterSpacing: '-0.01px', borderRadius: '50px',paddingX: 2}}>
+                            <Link
+                                activeClass="active"
+                                to="why-wing-it"
+                                offset={-50}
+                                duration={500}
+                                containerId="scrollableContainer"
+                                style={{fontSize: '1.05rem', fontFamily: 'Satoshi Bold', textTransform: 'none', color: 'black', letterSpacing: '-0.01px', borderRadius: '50px', paddingX: 2 }}
+                            >
+                                Why WiNG.it
+                            </Link>
+                        </Button>
+                        <Button color='inherit' sx={{fontSize: '1.05rem', fontFamily: 'Satoshi Bold', textTransform: 'none', color: 'black', letterSpacing: '-0.01px',borderRadius: '50px',paddingX: 2}}>
+                            <Link
+                                activeClass="active"
+                                to="about-us"
+                                offset={-50}
+                                duration={500}
+                                containerId="scrollableContainer"
+                                style={{ fontSize: '1.05rem', fontFamily: 'Satoshi Bold', textTransform: 'none', color: 'black', letterSpacing: '-0.01px', borderRadius: '50px', paddingX: 2 }}
+                            >
+                                About Us
+                            </Link>
+                        </Button>
+                        <Button color='inherit' href='/dashboard' sx={{fontSize: '1.05rem', fontFamily: 'Satoshi Bold', textTransform: 'none', backgroundColor: '#2850d9', paddingX: 2.5,borderRadius: '50px', color:  'white', letterSpacing: '-0.01px', transition: 'transform 0.3s', '&:hover': { transform: 'scale(1.05) rotate(-2deg)' }}}>
+                            Get Started
+                        </Button>
+                    </Box>
+                </Toolbar>
+            </AppBar>
+
+        {/*// scrollable container*/}
+        <Box
+            id="scrollableContainer"
+            sx={{
+            height: '100vh',
+            overflowY: 'scroll',
+            scrollSnapType: 'y proximity',
+        }}>
+
             {/* ---------- home page ----------  */}
-            <Box id="home-page" className=" h-screen w-full bg-colorF3F1EA flex justify-center items-center">
-
-                {/* ---------- nav bar ---------- */}
-                <AppBar sx={{ boxShadow: 'none', backgroundColor: scrolled ? '#e3e1db' : '#F3F1EB', padding: 0.2, transition: 'background-color 0.3s ease-in-out' }}>
-                    <Toolbar>
-                        <GiFluffyWing color={'black'} size={25}/>
-                        <Typography component='div' sx={{ fontSize: '1.75rem', flexGrow: 1, display:{xs:'none', md:'flex', fontFamily: 'Satoshi Black'}, color: 'black'}}>WiNG.it</Typography>
-
-                        <Box sx={{ display: { xs: 'none', md: 'flex' }, gap:1.5}}>
-                            <Button color='inherit'  sx={{fontSize: '1.05rem', fontFamily: 'Satoshi Bold', textTransform: 'none', color:  'black', letterSpacing: '-0.01px', borderRadius: '50px',paddingX: 2}}>
-                                <Link
-                                    activeClass="active"
-                                    to="why-wing-it"
-                                    spy={true}
-                                    smooth={true}
-                                    offset={-70}
-                                    duration={500}
-                                    style={{fontSize: '1.05rem', fontFamily: 'Satoshi Bold', textTransform: 'none', color: 'black', letterSpacing: '-0.01px', borderRadius: '50px', paddingX: 2 }}
-                                >
-                                    Why WiNG.it
-                                </Link>
-                            </Button>
-                            <Button color='inherit' sx={{fontSize: '1.05rem', fontFamily: 'Satoshi Bold', textTransform: 'none', color: 'black', letterSpacing: '-0.01px',borderRadius: '50px',paddingX: 2}}>
-                                <Link
-                                    activeClass="active"
-                                    to="about-us"
-                                    spy={true}
-                                    smooth={true}
-                                    offset={-70}
-                                    duration={500}
-                                    style={{ fontSize: '1.05rem', fontFamily: 'Satoshi Bold', textTransform: 'none', color: 'black', letterSpacing: '-0.01px', borderRadius: '50px', paddingX: 2 }}
-                                >
-                                    About Us
-                                </Link>
-                            </Button>
-                            <Button color='inherit' href='/dashboard' sx={{fontSize: '1.05rem', fontFamily: 'Satoshi Bold', textTransform: 'none', backgroundColor: '#2850d9', paddingX: 2.5,borderRadius: '50px', color:  'white', letterSpacing: '-0.01px', transition: 'transform 0.3s', '&:hover': { transform: 'scale(1.05) rotate(-2deg)' }}}>
-                                Get Started
-                            </Button>
-                        </Box>
-                    </Toolbar>
-                </AppBar>
+            <Box id="home-page"
+                 sx={{
+                     scrollSnapAlign: 'start',     // or 'center'
+                     height: '100vh',
+                 }}
+                 className=" h-screen w-full bg-colorF3F1EA flex justify-center items-center">
 
                 {/*  main content box  */}
                 <Grid container
@@ -227,7 +238,12 @@ export default function Test() {
             </Box>
 
             {/* ---------- why wing it ----------*/}
-            <Box id="why-wing-it" className="h-screen w-full bg-colorF3F1EA flex justify-center items-center">
+            <Box id="why-wing-it"
+                 sx={{
+                     scrollSnapAlign: 'start',
+                     height: '100vh',
+                 }}
+                 className="h-screen w-full bg-colorF3F1EA flex justify-center items-center">
                 <Grid container columns={5} rows={1} width={'80%'}>
 
                     {/* ---------- title / description ---------- */}
@@ -240,6 +256,7 @@ export default function Test() {
                             {/* title */}
                             <motion.h2
                                 variants = {itemVariants}
+                                transition={{ delay: 0.5 }}
                                 style={{paddingLeft: '23px', fontFamily:'Satoshi Bold', color: 'black', fontSize: '3rem', letterSpacing: '-0.5px', lineHeight: '132%'}}>
                                 We created the quality, free tools we needed. 🛠️
                             </motion.h2>
@@ -249,14 +266,14 @@ export default function Test() {
                                    style={{padding: '30px'}}>
                                 <motion.p
                                     variants = {itemVariants}
-                                    transition={{ delay: 0.2 }}
+                                    transition={{ delay: 0.8 }}
                                     className="text-1.5xl" style = {{fontFamily: 'Satoshi Medium', color: 'black', lineHeight: '150%'}}>
                                     As students, we know interviewing and networking can be hard. Like, really hard. And unfortunately, there are close to zero good, free, and
                                     useful career preparation tools out there.
                                 </motion.p>
                                 <motion.p
                                     variants = {itemVariants}
-                                    transition={{ delay: 0.35 }}
+                                    transition={{ delay: 0.95 }}
                                     className="text-1.5xl" style = {{fontFamily: 'Satoshi Medium', color: 'black', lineHeight: '150%'}}>
                                     Our goal? <span
                                     style = {{fontFamily: 'DM Sans Bold', color: '#000000', letterSpacing: '-0.5px'}}>Making career preparation more accessible for everybody. </span> No paywall.
@@ -264,7 +281,7 @@ export default function Test() {
                                 </motion.p>
                                 <motion.p
                                     variants = {itemVariants}
-                                    transition={{ delay: 0.5}}
+                                    transition={{ delay: 1.1}}
                                     className="text-1.5xl" style = {{fontFamily: 'Satoshi Medium', color: 'black', lineHeight: '150%'}}>
                                     Oh, and as a bonus, making it fun. Because who said preparing for your future can&apos;t be fun?
                                 </motion.p>
@@ -279,7 +296,7 @@ export default function Test() {
                             whileInView="visible"
                             viewport={{ once: true }}
                             variants={itemVariants}
-                            transition={{ delay: 0.7 }}
+                            transition={{ delay: 1.3 }}
                             >
                             <Image
                                 src={'/static/images/behavioral.png'}
@@ -295,7 +312,12 @@ export default function Test() {
             </Box>
 
             {/*  ---------- about us ----------  */}
-            <Box id="about-us" className="h-screen w-full  flex justify-center pt-14 bg-colorF3F1EA">
+            <Box id="about-us"
+                 sx={{
+                     scrollSnapAlign: 'start',
+                     height: '100vh',
+                 }}
+                 className="h-screen w-full flex justify-center pt-1/12 bg-colorF3F1EA">
                 <Grid container
                       spacing={5}
                       direction={"column"}
@@ -308,6 +330,7 @@ export default function Test() {
                             initial="hidden"
                             whileInView="visible"
                             viewport={{ once: true }}
+                            transition={{ delay: 0.5 }}
                             variants={itemVariants}>
                         <Typography style={{fontFamily:'Satoshi Bold', color: 'black', fontSize: '3.3rem', letterSpacing: '-0.5px',userSelect: 'none', textAlign:'center', marginBottom: "-20px"}}>
                             Really quick, here&#39;s a little about us.
@@ -326,7 +349,7 @@ export default function Test() {
                             <motion.p className="text-1.5xl leading-tight text-center"
                                       variants = {itemVariants}
                                       style = {{fontFamily: 'Satoshi Medium', color: 'black', fontSize: '1.3rem', lineHeight: '150%'}}
-                                      transition={{ delay: 0.15 }}>
+                                      transition={{ delay: 0.75 }}>
                                 Our project was created for the
                                 <span className="font-dm-sans-black tracking-tight"> University of Florida’s 🐊</span> first annual
                                 <span className="font-dm-sans-black tracking-tight"> WiNGHacks Hackathon 🪽</span>, a hackathon designed to empower
@@ -337,7 +360,7 @@ export default function Test() {
                             <motion.p className="text-1.5xl leading-tight text-center"
                                       style = {{fontFamily: 'Satoshi Medium', color: 'black', fontSize: '1.3rem', lineHeight: '150%'}}
                                       variants = {itemVariants}
-                                      transition={{ delay: 0.15 }}>
+                                      transition={{ delay: 0.75 }}>
                                 WiNG.it was created to reduce the stress of interview prep.
                                 As college students, we recognize the importance of being prepared for interviews and networking, as well as having easy access to resources.
                                 We hope that with WiNG.it, we can help elevate that stress & push you to be the best version of yourself.
@@ -357,7 +380,7 @@ export default function Test() {
                                             whileInView="visible"
                                             viewport={{ once: true }}
                                             variants = {itemVariants}
-                                            transition={{ delay: 0.35 }}
+                                            transition={{ delay: 0.9 }}
                                 >
                                     <svg className="ml-[70%]" width="80" height="40" viewBox="0 0 156 56" fill="none"
                                          xmlns="http://www.w3.org/2000/svg">
@@ -388,7 +411,7 @@ export default function Test() {
                                     whileInView="visible"
                                     viewport={{ once: true }}
                                     variants = {itemVariants}
-                                    transition={{ delay: 0.5 }}
+                                    transition={{ delay: 1.1 }}
                                     whileHover={{ scale: 1.05, rotate: -2, cursor: 'pointer' }}
                                     onClick={() => window.open('https://www.linkedin.com/in/rachel-pu-ufl/', '_blank')}
                                 />
@@ -404,7 +427,7 @@ export default function Test() {
                                     whileInView="visible"
                                     viewport={{ once: true }}
                                     variants = {itemVariants}
-                                    transition={{ delay: 0.65 }}
+                                    transition={{ delay: 1.25 }}
                                     className="rounded-2xl drop-shadow-lg"
                                     whileHover={{ scale: 1.05, rotate: 2, cursor: 'pointer' }}
                                     onClick={() => window.open('https://www.linkedin.com/in/chelseaqnguyen/', '_blank')}
@@ -416,7 +439,7 @@ export default function Test() {
                                             whileInView="visible"
                                             viewport={{ once: true }}
                                             variants = {itemVariants}
-                                            transition={{ delay: 0.8 }}
+                                            transition={{ delay: 1.4 }}
                                 >
                                     <svg className="mr-[75%]" width="80" height="40" viewBox="0 0 160 81" fill="none"
                                          xmlns="http://www.w3.org/2000/svg">
@@ -447,7 +470,7 @@ export default function Test() {
                                 style = {{fontFamily: 'Satoshi Medium'}}
                                 className="text-color282523 text-1.5xl text-center leading-tight"
                                 variants = {itemVariants}
-                                transition={{ delay: 1 }}>
+                                transition={{ delay: 1.55 }}>
                                 Honorable developers from the original WiNGHacks project team:
                                 <span className="font-dm-sans-black tracking-tight"> Xiaguo Jia</span>,
                                 <span className="font-dm-sans-black tracking-tight"> Sara Smith</span>
@@ -460,13 +483,19 @@ export default function Test() {
             </Box>
 
             {/* ---------- getting started section ---------- */}
-            <Box className="h-screen w-full bg-colorF3F1EA flex justify-center items-center flex-col" >
+            <Box id="getting-started"
+                 sx={{
+                     scrollSnapAlign: 'start',
+                     height: '100vh',
+                 }}
+                 className="h-screen w-full bg-colorF3F1EA flex justify-center items-center flex-col" >
                 <Stack direction={'column'} spacing={-0.5} style={{marginBottom:'40px'}}>
                     <motion.p
                         initial="hidden"
                         whileInView='visible'
                         viewport={{ once: true }}
                         variants = {itemVariants}
+                        transition = {{delay: 0.5}}
                               style={{fontFamily:'Satoshi Bold', color: 'black', fontSize: '3.2rem', letterSpacing: '-0.5px',userSelect: 'none', textAlign:'center'}}>
                         Okay, enough about us.
                     </motion.p>
@@ -474,7 +503,7 @@ export default function Test() {
                         initial="hidden"
                         whileInView='visible'
                         viewport={{ once: true }}
-                        transition={{ delay: 0.1 }}
+                        transition={{ delay: 0.7 }}
                         variants = {itemVariants}
                               style={{fontFamily:'Satoshi Bold', color: '#81807C', fontSize: '2rem', letterSpacing: '-0.5px',userSelect: 'none',textAlign:'center'}}>
                         Ready to get started?
@@ -484,7 +513,7 @@ export default function Test() {
                     initial="hidden"
                     whileInView='visible'
                     viewport={{ once: true }}
-                    transition={{ delay: 0.3 }}
+                    transition={{ delay: 1 }}
                     variants = {itemVariants}>
                     <Button color='inherit' href='/dashboard' sx={{fontSize: '2.5rem', fontFamily: 'Satoshi Bold', textTransform: 'none', backgroundColor: '#2850d9', paddingX: 5.5,borderRadius: '50px', color:  'white', letterSpacing: '-0.01px', transition: 'transform 0.3s', '&:hover': { transform: 'scale(1.05) rotate(-2deg)' },display: 'flex', alignItems: 'center', gap: 1}}>
                         Get Started
@@ -494,6 +523,7 @@ export default function Test() {
                     </Button>
                 </motion.div>
             </Box>
+        </Box>
             {/*  end  */}
         </Box>
     );
