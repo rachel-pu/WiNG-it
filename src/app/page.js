@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import {motion} from "framer-motion";
+import {motion, inView, animate} from "framer-motion";
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid2';
 import {Typography} from "@mui/material";
@@ -9,7 +9,6 @@ import {AppBar} from "@mui/material";
 import Toolbar from '@mui/material/Toolbar';
 import {Button} from "@mui/material";
 import { GiFluffyWing } from "react-icons/gi";
-import { FaRegFaceSmileWink } from "react-icons/fa6";
 import Card from '@mui/material/Card';
 import { FaPencilRuler } from "react-icons/fa";
 import { IoDocumentText } from "react-icons/io5";
@@ -19,7 +18,6 @@ import { Link } from 'react-scroll';
 
 export default function Test() {
     const [scrolled, setScrolled] = useState(false);
-
     useEffect(() => {
         const handleScroll = () => {
             if (window.scrollY > 50) {
@@ -45,7 +43,7 @@ export default function Test() {
         // background
         <Box>
             {/* ---------- home page ----------  */}
-            <Box className=" h-screen w-full bg-colorF3F1EA flex justify-center items-center">
+            <Box id="home-page" className=" h-screen w-full bg-colorF3F1EA flex justify-center items-center">
 
                 {/* ---------- nav bar ---------- */}
                 <AppBar sx={{ boxShadow: 'none', backgroundColor: scrolled ? '#e3e1db' : '#F3F1EB', padding: 0.2, transition: 'background-color 0.3s ease-in-out' }}>
@@ -54,7 +52,7 @@ export default function Test() {
                         <Typography component='div' sx={{ fontSize: '1.75rem', flexGrow: 1, display:{xs:'none', md:'flex', fontFamily: 'Satoshi Black'}, color: 'black'}}>WiNG.it</Typography>
 
                         <Box sx={{ display: { xs: 'none', md: 'flex' }, gap:1.5}}>
-                            <Button color='inherit' href='#why-wing-it' sx={{fontSize: '1.05rem', fontFamily: 'Satoshi Bold', textTransform: 'none', color:  'black', letterSpacing: '-0.01px', borderRadius: '50px',paddingX: 2}}>
+                            <Button color='inherit'  sx={{fontSize: '1.05rem', fontFamily: 'Satoshi Bold', textTransform: 'none', color:  'black', letterSpacing: '-0.01px', borderRadius: '50px',paddingX: 2}}>
                                 <Link
                                     activeClass="active"
                                     to="why-wing-it"
@@ -67,7 +65,7 @@ export default function Test() {
                                     Why WiNG.it
                                 </Link>
                             </Button>
-                            <Button color='inherit' href='#about-us' sx={{fontSize: '1.05rem', fontFamily: 'Satoshi Bold', textTransform: 'none', color: 'black', letterSpacing: '-0.01px',borderRadius: '50px',paddingX: 2}}>
+                            <Button color='inherit' sx={{fontSize: '1.05rem', fontFamily: 'Satoshi Bold', textTransform: 'none', color: 'black', letterSpacing: '-0.01px',borderRadius: '50px',paddingX: 2}}>
                                 <Link
                                     activeClass="active"
                                     to="about-us"
@@ -99,20 +97,26 @@ export default function Test() {
                         <Stack direction={"column"} spacing={2}>
                             <motion.div className="flex items-center justify-center space-x-2 flex-col -space-y-3.5"
                                         initial="hidden"
-                                        animate="visible">
-                                <motion.p variants = {itemVariants}
-                                          style={{fontFamily:'Satoshi Bold', color: 'black', fontSize: '3.2rem', letterSpacing: '-0.5px',userSelect: 'none'}}>
+                                        whileInView="visible"
+                                        viewport={{ once: true }}
+                                        >
+                                <motion.p
+                                    variants = {itemVariants}
+                                    style={{fontFamily:'Satoshi Bold', color: 'black', fontSize: '3.2rem', letterSpacing: '-0.5px',userSelect: 'none'}}>
                                     Unlock all your career tools
                                 </motion.p>
 
-                                <motion.div className="flex flex-row items-center space-x-1" variants = {itemVariants}>
+                                <motion.div className="flex flex-row items-center space-x-1"
+                                            variants = {itemVariants}
+                                >
                                     <motion.p style={{fontFamily:'Satoshi Bold', color: 'black', fontSize: '3.2rem', letterSpacing: '-0.5px',userSelect: 'none'}}>
                                         with no strings attached.
                                     </motion.p>
 
                                     {/* smiley */}
                                     <motion.div initial="hidden"
-                                                animate="visible">
+                                                whileInView="visible"
+                                                viewport={{ once: true }}>
                                         <Typography style = {{fontSize: '55px'}}>😉</Typography>
                                     </motion.div>
 
@@ -122,16 +126,17 @@ export default function Test() {
                             {/* description */}
                             <motion.div className="items-center flex flex-col -space-y-1.2"
                                         initial="hidden"
-                                        animate="visible">
+                                        whileInView="visible"
+                                        viewport={{ once: true }}>
                                 <motion.p
                                     variants = {itemVariants}
-                                    transition={{ delay: 0.03 }}
+                                    transition={{ delay: 0.05 }}
                                     style={{fontFamily:'DM Sans Medium', color: '#81807c', fontSize: '1.3rem', letterSpacing: '-0.5px'}}>
                                     WiNG.it provides tools to enhance your skills in
                                 </motion.p>
                                 <motion.p
                                     variants = {itemVariants}
-                                    transition={{ delay: 0.03 }}
+                                    transition={{ delay: 0.05 }}
                                     style={{fontFamily:'DM Sans Medium', color: '#81807c', fontSize: '1.3rem', letterSpacing: '-0.5px'}}>
                                     interviews, networking, and beyond, helping you excel in your career—all for <span style={{fontStyle:"italic"}}>free</span>.
                                 </motion.p>
@@ -142,7 +147,8 @@ export default function Test() {
                     {/* ---------- cards ---------- */}
                     <Grid item xs>
                         <motion.div initial="hidden"
-                                    animate="visible">
+                                    whileInView="visible"
+                                    viewport={{ once: true }}>
                             <Grid container spacing={2} columns={3} rows={1}>
                                 {/* career prep tools card */}
                                 <Grid size={1}>
@@ -203,9 +209,17 @@ export default function Test() {
 
                     {/* and it's all for free */}
                     <Grid item xs>
+                        <motion.div
+                            initial="hidden"
+                            whileInView="visible"
+                            viewport={{ once: true }}
+                            variants={itemVariants}
+                            transition={{ delay: 1.3 }}
+                            >
                         <Typography style={{color: 'black', textAlign: 'center', fontSize: '1.35rem', fontFamily: 'Satoshi Medium'}}>
                             And it&#39;s all for <span style={{fontFamily: 'Satoshi Black', color: 'black'}}>free.</span>
                         </Typography>
+                        </motion.div>
                     </Grid>
 
 
@@ -218,11 +232,14 @@ export default function Test() {
 
                     {/* ---------- title / description ---------- */}
                     <Grid item size={3} >
-                        <motion.div style={{padding: '2.5%'}}>
+                        <motion.div style={{padding: '2.5%'}}
+                                    initial="hidden"
+                                    whileInView="visible"
+                                    viewport={{ once: true }}>
 
                             {/* title */}
                             <motion.h2
-                                // variants = {itemVariants}
+                                variants = {itemVariants}
                                 style={{paddingLeft: '23px', fontFamily:'Satoshi Bold', color: 'black', fontSize: '3rem', letterSpacing: '-0.5px', lineHeight: '132%'}}>
                                 We created the quality, free tools we needed. 🛠️
                             </motion.h2>
@@ -230,25 +247,40 @@ export default function Test() {
                             {/* description*/}
                             <Stack spacing={2}
                                    style={{padding: '30px'}}>
-                                <p className="text-1.5xl" style = {{fontFamily: 'Satoshi Medium', color: 'black', lineHeight: '150%'}}>
+                                <motion.p
+                                    variants = {itemVariants}
+                                    transition={{ delay: 0.2 }}
+                                    className="text-1.5xl" style = {{fontFamily: 'Satoshi Medium', color: 'black', lineHeight: '150%'}}>
                                     As students, we know interviewing and networking can be hard. Like, really hard. And unfortunately, there are close to zero good, free, and
                                     useful career preparation tools out there.
-                                </p>
-                                <p className="text-1.5xl" style = {{fontFamily: 'Satoshi Medium', color: 'black', lineHeight: '150%'}}>
+                                </motion.p>
+                                <motion.p
+                                    variants = {itemVariants}
+                                    transition={{ delay: 0.35 }}
+                                    className="text-1.5xl" style = {{fontFamily: 'Satoshi Medium', color: 'black', lineHeight: '150%'}}>
                                     Our goal? <span
                                     style = {{fontFamily: 'DM Sans Bold', color: '#000000', letterSpacing: '-0.5px'}}>Making career preparation more accessible for everybody. </span> No paywall.
                                     No fees. Just practicing for your upcoming opportunities and needs.
-                                </p>
-                                <p className="text-1.5xl" style = {{fontFamily: 'Satoshi Medium', color: 'black', lineHeight: '150%'}}>
+                                </motion.p>
+                                <motion.p
+                                    variants = {itemVariants}
+                                    transition={{ delay: 0.5}}
+                                    className="text-1.5xl" style = {{fontFamily: 'Satoshi Medium', color: 'black', lineHeight: '150%'}}>
                                     Oh, and as a bonus, making it fun. Because who said preparing for your future can&apos;t be fun?
-                                </p>
+                                </motion.p>
                             </Stack>
                         </motion.div>
                     </Grid>
 
                     {/* picture */}
                     <Grid item size={2} style={{backgroundColor: '#C1D6E6', borderRadius: '30px'}}>
-                        <motion.div>
+                        <motion.div
+                            initial="hidden"
+                            whileInView="visible"
+                            viewport={{ once: true }}
+                            variants={itemVariants}
+                            transition={{ delay: 0.7 }}
+                            >
                             <Image
                                 src={'/static/images/behavioral.png'}
                                 alt={"Why WiNG.it image"}
@@ -272,18 +304,29 @@ export default function Test() {
 
                     {/* title  */}
                     <Grid item xs>
+                        <motion.div
+                            initial="hidden"
+                            whileInView="visible"
+                            viewport={{ once: true }}
+                            variants={itemVariants}>
                         <Typography style={{fontFamily:'Satoshi Bold', color: 'black', fontSize: '3.3rem', letterSpacing: '-0.5px',userSelect: 'none', textAlign:'center', marginBottom: "-20px"}}>
                             Really quick, here&#39;s a little about us.
                         </Typography>
+                        </motion.div>
                     </Grid>
 
                     {/* description */}
                     <Grid item xs>
+                        <motion.div
+                            initial="hidden"
+                            whileInView="visible"
+                            viewport={{ once: true }}>
+
                         <Stack spacing={3} direction={"column"}>
                             <motion.p className="text-1.5xl leading-tight text-center"
                                       variants = {itemVariants}
                                       style = {{fontFamily: 'Satoshi Medium', color: 'black', fontSize: '1.3rem', lineHeight: '150%'}}
-                                      transition={{ delay: 0.06 }}>
+                                      transition={{ delay: 0.15 }}>
                                 Our project was created for the
                                 <span className="font-dm-sans-black tracking-tight"> University of Florida’s 🐊</span> first annual
                                 <span className="font-dm-sans-black tracking-tight"> WiNGHacks Hackathon 🪽</span>, a hackathon designed to empower
@@ -294,12 +337,13 @@ export default function Test() {
                             <motion.p className="text-1.5xl leading-tight text-center"
                                       style = {{fontFamily: 'Satoshi Medium', color: 'black', fontSize: '1.3rem', lineHeight: '150%'}}
                                       variants = {itemVariants}
-                                      transition={{ delay: 0.06 }}>
+                                      transition={{ delay: 0.15 }}>
                                 WiNG.it was created to reduce the stress of interview prep.
                                 As college students, we recognize the importance of being prepared for interviews and networking, as well as having easy access to resources.
                                 We hope that with WiNG.it, we can help elevate that stress & push you to be the best version of yourself.
                             </motion.p>
                         </Stack>
+                        </motion.div>
                     </Grid>
 
                     {/*  developer section  */}
@@ -309,8 +353,11 @@ export default function Test() {
                             {/* rachel */}
                             <Grid item size={1}>
                                 <motion.div className=" flex justify-end flex-col pr-3"
+                                            initial="hidden"
+                                            whileInView="visible"
+                                            viewport={{ once: true }}
                                             variants = {itemVariants}
-                                            transition={{ delay: 0.09 }}
+                                            transition={{ delay: 0.35 }}
                                 >
                                     <svg className="ml-[70%]" width="80" height="40" viewBox="0 0 156 56" fill="none"
                                          xmlns="http://www.w3.org/2000/svg">
@@ -337,8 +384,11 @@ export default function Test() {
                                     height={230}
                                     unoptimized
                                     className="rounded-2xl drop-shadow-lg"
+                                    initial="hidden"
+                                    whileInView="visible"
+                                    viewport={{ once: true }}
                                     variants = {itemVariants}
-                                    transition={{ delay: 0.12 }}
+                                    transition={{ delay: 0.5 }}
                                     whileHover={{ scale: 1.05, rotate: -2, cursor: 'pointer' }}
                                     onClick={() => window.open('https://www.linkedin.com/in/rachel-pu-ufl/', '_blank')}
                                 />
@@ -350,8 +400,11 @@ export default function Test() {
                                     width={230}
                                     height={230}
                                     unoptimized
+                                    initial="hidden"
+                                    whileInView="visible"
+                                    viewport={{ once: true }}
                                     variants = {itemVariants}
-                                    transition={{ delay: 0.12 }}
+                                    transition={{ delay: 0.65 }}
                                     className="rounded-2xl drop-shadow-lg"
                                     whileHover={{ scale: 1.05, rotate: 2, cursor: 'pointer' }}
                                     onClick={() => window.open('https://www.linkedin.com/in/chelseaqnguyen/', '_blank')}
@@ -359,8 +412,11 @@ export default function Test() {
                             </Grid>
                             <Grid item size={1}>
                                 <motion.div className=" flex justify-end flex-col"
+                                            initial="hidden"
+                                            whileInView="visible"
+                                            viewport={{ once: true }}
                                             variants = {itemVariants}
-                                            transition={{ delay: 0.09 }}
+                                            transition={{ delay: 0.8 }}
                                 >
                                     <svg className="mr-[75%]" width="80" height="40" viewBox="0 0 160 81" fill="none"
                                          xmlns="http://www.w3.org/2000/svg">
@@ -385,12 +441,13 @@ export default function Test() {
                     <Grid item xs>
                         <motion.div
                             initial = "hidden"
-                            animate = "visible">
+                            whileInView="visible"
+                            viewport={{ once: true }}>
                             <motion.p
                                 style = {{fontFamily: 'Satoshi Medium'}}
                                 className="text-color282523 text-1.5xl text-center leading-tight"
                                 variants = {itemVariants}
-                                transition={{ delay: 0.12 }}>
+                                transition={{ delay: 1 }}>
                                 Honorable developers from the original WiNGHacks project team:
                                 <span className="font-dm-sans-black tracking-tight"> Xiaguo Jia</span>,
                                 <span className="font-dm-sans-black tracking-tight"> Sara Smith</span>
@@ -405,22 +462,37 @@ export default function Test() {
             {/* ---------- getting started section ---------- */}
             <Box className="h-screen w-full bg-colorF3F1EA flex justify-center items-center flex-col" >
                 <Stack direction={'column'} spacing={-0.5} style={{marginBottom:'40px'}}>
-                    <motion.p variants = {itemVariants}
+                    <motion.p
+                        initial="hidden"
+                        whileInView='visible'
+                        viewport={{ once: true }}
+                        variants = {itemVariants}
                               style={{fontFamily:'Satoshi Bold', color: 'black', fontSize: '3.2rem', letterSpacing: '-0.5px',userSelect: 'none', textAlign:'center'}}>
                         Okay, enough about us.
                     </motion.p>
-                    <motion.p variants = {itemVariants}
+                    <motion.p
+                        initial="hidden"
+                        whileInView='visible'
+                        viewport={{ once: true }}
+                        transition={{ delay: 0.1 }}
+                        variants = {itemVariants}
                               style={{fontFamily:'Satoshi Bold', color: '#81807C', fontSize: '2rem', letterSpacing: '-0.5px',userSelect: 'none',textAlign:'center'}}>
                         Ready to get started?
                     </motion.p>
                 </Stack>
-                <Button color='inherit' href='/dashboard' sx={{fontSize: '2.5rem', fontFamily: 'Satoshi Bold', textTransform: 'none', backgroundColor: '#2850d9', paddingX: 5.5,borderRadius: '50px', color:  'white', letterSpacing: '-0.01px', transition: 'transform 0.3s', '&:hover': { transform: 'scale(1.05) rotate(-2deg)' },display: 'flex', alignItems: 'center', gap: 1}}>
-                    Get Started
-                    <svg className="w-10 h-10" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h12M12 5l7 7-7 7" />
-                    </svg>
-                </Button>
-
+                <motion.div
+                    initial="hidden"
+                    whileInView='visible'
+                    viewport={{ once: true }}
+                    transition={{ delay: 0.3 }}
+                    variants = {itemVariants}>
+                    <Button color='inherit' href='/dashboard' sx={{fontSize: '2.5rem', fontFamily: 'Satoshi Bold', textTransform: 'none', backgroundColor: '#2850d9', paddingX: 5.5,borderRadius: '50px', color:  'white', letterSpacing: '-0.01px', transition: 'transform 0.3s', '&:hover': { transform: 'scale(1.05) rotate(-2deg)' },display: 'flex', alignItems: 'center', gap: 1}}>
+                        Get Started
+                        <svg className="w-10 h-10" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h12M12 5l7 7-7 7" />
+                        </svg>
+                    </Button>
+                </motion.div>
             </Box>
             {/*  end  */}
         </Box>
