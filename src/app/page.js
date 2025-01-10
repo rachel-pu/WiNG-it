@@ -86,6 +86,7 @@ export default function Test() {
             height: '100vh',
             overflowY: 'scroll',
             scrollSnapType: 'y proximity',
+            scrollBehavior: 'smooth',
         }}>
 
             {/* ---------- home page ----------  */}
