@@ -40,7 +40,7 @@ export default function Test() {
     };
 
     return (
-        <Box>
+        <Box className="bg-colorF3F1EA">
             {/* ---------- nav bar ---------- */}
             <AppBar sx={{ boxShadow: 'none', backgroundColor: scrolled ? '#e3e1db' : '#F3F1EB', padding: 0.2, transition: 'background-color 0.3s ease-in-out' }}>
                 <Toolbar>
@@ -85,7 +85,7 @@ export default function Test() {
             sx={{
             height: '100vh',
             overflowY: 'scroll',
-            scrollSnapType: 'y proximity',
+            scrollSnapType: 'y mandatory',
             scrollBehavior: 'smooth',
         }}>
 
@@ -350,7 +350,7 @@ export default function Test() {
                             <motion.p className="text-1.5xl leading-tight text-center"
                                       variants = {itemVariants}
                                       style = {{fontFamily: 'Satoshi Medium', color: 'black', fontSize: '1.3rem', lineHeight: '150%'}}
-                                      transition={{ delay: 0.75 }}>
+                                      transition={{ delay: 0.6 }}>
                                 Our project was created for the
                                 <span className="font-dm-sans-black tracking-tight"> University of Florida’s 🐊</span> first annual
                                 <span className="font-dm-sans-black tracking-tight"> WiNGHacks Hackathon 🪽</span>, a hackathon designed to empower
