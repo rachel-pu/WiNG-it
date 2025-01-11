@@ -25,7 +25,7 @@ const LeftNavbar = () => {
             variant="permanent"
             anchor="left"
         >
-            <Toolbar sx={{padding: 1.5}}>
+            <Toolbar >
                 <GiFluffyWing color={'#324FD1'} size={25}/>
                 <Typography component='div' sx={{ fontSize: '1.75rem', flexGrow: 1, display: { xs: 'none', md: 'flex' }, fontFamily: 'Satoshi Black', color: 'black' }}>
                     WiNG.it

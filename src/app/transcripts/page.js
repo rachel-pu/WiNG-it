@@ -1,13 +1,13 @@
 import Link from "next/link";
 import Image from "next/image";
-import Navigation from "/components/navigation";
+// import Navigation from "/components/navigation";
 
 const Transcripts = () => {
     return (
         <div className="flex h-screen w-full">
 
             {/*/!* --------------------- vertical navbar --------------------- *!/*/}
-            <Navigation/>
+            {/*<Navigation/>*/}
 
             {/* --------------------- main background ---------------------*/}
             <div
