@@ -150,7 +150,7 @@ export default function Test() {
                                     variants = {itemVariants}
                                     transition={{ delay: 0.05 }}
                                     style={{fontFamily:'DM Sans Medium', color: '#81807c', fontSize: '1.3rem', letterSpacing: '-0.5px'}}>
-                                    interviews, networking, and beyond, helping you excel in your career—all for <span style={{fontStyle:"italic"}}>free</span>.
+                                    interviews, networking, and beyond, helping you excel in your career.
                                 </motion.p>
                             </motion.div>
                         </Stack>
@@ -229,7 +229,7 @@ export default function Test() {
                             transition={{ delay: 1.3 }}
                             >
                         <Typography style={{color: 'black', textAlign: 'center', fontSize: '1.35rem', fontFamily: 'Satoshi Medium'}}>
-                            And it&#39;s all for <span style={{fontFamily: 'Satoshi Black', color: 'black'}}>free.</span>
+                            And the best part? It&#39;s all for <span style={{fontFamily: 'Satoshi Black', color: 'black'}}>free.</span>
                         </Typography>
                         </motion.div>
                     </Grid>
@@ -268,14 +268,14 @@ export default function Test() {
                                 <motion.p
                                     variants = {itemVariants}
                                     transition={{ delay: 0.8 }}
-                                    className="text-1.5xl" style = {{fontFamily: 'Satoshi Medium', color: 'black', lineHeight: '150%'}}>
+                                    style = {{fontFamily: 'Satoshi Medium', color: 'black', lineHeight: '150%', fontSize: '1.25rem'}}>
                                     As students, we know interviewing and networking can be hard. Like, really hard. And unfortunately, there are close to zero good, free, and
                                     useful career preparation tools out there.
                                 </motion.p>
                                 <motion.p
                                     variants = {itemVariants}
                                     transition={{ delay: 0.95 }}
-                                    className="text-1.5xl" style = {{fontFamily: 'Satoshi Medium', color: 'black', lineHeight: '150%'}}>
+                                    className="text-1.5xl" style = {{fontFamily: 'Satoshi Medium', color: 'black', lineHeight: '150%', fontSize: '1.25rem'}}>
                                     Our goal? <span
                                     style = {{fontFamily: 'DM Sans Bold', color: '#000000', letterSpacing: '-0.5px'}}>Making career preparation more accessible for everybody. </span> No paywall.
                                     No fees. Just practicing for your upcoming opportunities and needs.
@@ -283,7 +283,7 @@ export default function Test() {
                                 <motion.p
                                     variants = {itemVariants}
                                     transition={{ delay: 1.1}}
-                                    className="text-1.5xl" style = {{fontFamily: 'Satoshi Medium', color: 'black', lineHeight: '150%'}}>
+                                    className="text-1.5xl" style = {{fontFamily: 'Satoshi Medium', color: 'black', lineHeight: '150%', fontSize: '1.25rem'}}>
                                     Oh, and as a bonus, making it fun. Because who said preparing for your future can&apos;t be fun?
                                 </motion.p>
                             </Stack>
@@ -349,7 +349,7 @@ export default function Test() {
                         <Stack spacing={3} direction={"column"}>
                             <motion.p className="text-1.5xl leading-tight text-center"
                                       variants = {itemVariants}
-                                      style = {{fontFamily: 'Satoshi Medium', color: 'black', fontSize: '1.3rem', lineHeight: '150%'}}
+                                      style = {{fontFamily: 'Satoshi Medium', color: 'black', fontSize: '1.2rem', lineHeight: '150%'}}
                                       transition={{ delay: 0.6 }}>
                                 Our project was created for the
                                 <span className="font-dm-sans-black tracking-tight"> University of Florida’s 🐊</span> first annual
@@ -359,7 +359,7 @@ export default function Test() {
                                 <span className="font-dm-sans-black tracking-tight"> UF Professor Amanpreet Kapoor  💻</span> to continue being built for improvement.
                             </motion.p>
                             <motion.p className="text-1.5xl leading-tight text-center"
-                                      style = {{fontFamily: 'Satoshi Medium', color: 'black', fontSize: '1.3rem', lineHeight: '150%'}}
+                                      style = {{fontFamily: 'Satoshi Medium', color: 'black', fontSize: '1.2rem', lineHeight: '150%'}}
                                       variants = {itemVariants}
                                       transition={{ delay: 0.75 }}>
                                 WiNG.it was created to reduce the stress of interview prep.
@@ -401,6 +401,7 @@ export default function Test() {
                             </Grid>
                             {/* rachel photo */}
                             <Grid item size={1}>
+                                <Link component="a" href="https://www.linkedin.com/in/rachel-pu-ufl/" target="_blank" rel="noopener noreferrer">
                                 <motion.img
                                     src="/static/images/rachel%20pu%20image.png"
                                     alt="rachel pu image"
@@ -412,12 +413,12 @@ export default function Test() {
                                     whileInView="visible"
                                     viewport={{ once: true }}
                                     variants = {itemVariants}
-                                    transition={{ delay: 1.1 }}
-                                    whileHover={{ scale: 1.05, rotate: -2, cursor: 'pointer' }}
-                                    onClick={() => window.open('https://www.linkedin.com/in/rachel-pu-ufl/', '_blank')}
+                                    whileHover={{ scale: 1.05, rotate: -2, cursor: 'pointer'}}
                                 />
+                                </Link>
                             </Grid>
                             <Grid item size={1}>
+                                <Link component="a" href="https://www.linkedin.com/in/chelseaqnguyen/" target="_blank" rel="noopener noreferrer">
                                 <motion.img
                                     src="/static/images/chelsea nguyen image.png"
                                     alt="chelsea nguyen's image"
@@ -428,11 +429,10 @@ export default function Test() {
                                     whileInView="visible"
                                     viewport={{ once: true }}
                                     variants = {itemVariants}
-                                    transition={{ delay: 1.25 }}
                                     className="rounded-2xl drop-shadow-lg"
                                     whileHover={{ scale: 1.05, rotate: 2, cursor: 'pointer' }}
-                                    onClick={() => window.open('https://www.linkedin.com/in/chelseaqnguyen/', '_blank')}
                                 />
+                                </Link>
                             </Grid>
                             <Grid item size={1}>
                                 <motion.div className=" flex justify-end flex-col"
@@ -468,8 +468,8 @@ export default function Test() {
                             whileInView="visible"
                             viewport={{ once: true }}>
                             <motion.p
-                                style = {{fontFamily: 'Satoshi Medium'}}
-                                className="text-color282523 text-1.5xl text-center leading-tight"
+                                style = {{fontFamily: 'Satoshi Medium', fontSize: '1.2rem'}}
+                                className="text-color282523 text-center leading-tight"
                                 variants = {itemVariants}
                                 transition={{ delay: 1.45 }}>
                                 Honorable developers from the original WiNGHacks project team:
