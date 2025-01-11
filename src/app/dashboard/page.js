@@ -16,14 +16,17 @@ import { MdSpaceDashboard } from "react-icons/md";
 import { HiDocumentText } from "react-icons/hi2";
 import { IoSettings } from "react-icons/io5";
 import {GiFluffyWing} from "react-icons/gi";
+import { IoPersonCircle } from "react-icons/io5";
 import LeftNavbar from '/components/leftNavbar';
 import Stack from "@mui/material/Stack";
 import Grid from '@mui/material/Grid2';
-import {FaPencilRuler} from "react-icons/fa";
+import {FaMicrophone, FaPencilRuler} from "react-icons/fa";
 import Card from "@mui/material/Card";
 import CardContent from '@mui/material/CardContent';
+import Link from 'next/link';
 import CardMedia from '@mui/material/CardMedia';
 import DashboardCard from '/components/DashboardCard';
+import {Button, CardActions} from "@mui/material";
 
 export default function Dashboard() {
     const drawerWidth = 240;
@@ -92,26 +95,118 @@ export default function Dashboard() {
                     <Grid container spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 8, md: 12 }}>
 
                         {/* interview simulator tool */}
-                        <Grid size={{ xs: 2, sm: 4, md: 4 }}>
-                        {/*    <Card style={{borderRadius: '10px', transition: 'box-shadow 0.3s'}}*/}
-                        {/*          sx={{ '&:hover': { boxShadow: 6 }, cursor: 'pointer'}}*/}
-                        {/*    >*/}
-                        {/*        <CardMedia*/}
-                        {/*            sx={{ height: 200 }}*/}
-                        {/*            image="/static/images/testExample.png"*/}
-                        {/*            title="green iguana"/>*/}
-                        {/*        <CardContent style={{padding: '7%'}}>*/}
-                        {/*        <Typography style={{fontFamily: 'DM Sans Bold', color: 'black', letterSpacing: '-0.5px', fontSize: '1.25rem', marginBottom: '5px'}}>*/}
-                        {/*            Behavioral Interview Simulator*/}
-                        {/*        </Typography>*/}
-                        {/*        <Typography style={{fontFamily: 'Satoshi Medium', color: '#696862', letterSpacing: '-0.5px', fontSize: '0.9rem'}}>*/}
-                        {/*            This mode lets you practice behavioral interviews, customize your questions, and receive personalized improvement advice at the end.*/}
-                        {/*        </Typography>*/}
-                        {/*        </CardContent>*/}
-                        {/*    </Card>*/}
-                            <DashboardCard title={"Behavioral Interview Simulator"} description={"This mode lets you practice behavioral interviews, customize your questions, and receive personalized improvement advice at the end."} image={"/static/images/testExample.png"}/>
+                        {/*<Grid size={{ xs: 2, sm: 4, md: 4 }}>*/}
+                            {/*<Link href={"/transcripts"}>*/}
+                            {/*<Card*/}
+                            {/*    sx={{*/}
+                            {/*        borderRadius: '10px',*/}
+                            {/*        transition: 'box-shadow 0.3s',*/}
+                            {/*        '&:hover': { boxShadow: 6 },*/}
+                            {/*        cursor: 'pointer',*/}
+                            {/*        height: '400px'*/}
+                            {/*    }}*/}
+                            {/*>*/}
+                            {/*    <CardMedia*/}
+                            {/*        sx={{ height: 200 }}*/}
+                            {/*        image = "static/images/testExample.png"*/}
+                            {/*    />*/}
+                            {/*    <CardContent sx={{ padding: '5%' }}>*/}
+                            {/*        <Typography sx={{*/}
+                            {/*            fontFamily: 'DM Sans Bold',*/}
+                            {/*            color: 'black',*/}
+                            {/*            letterSpacing: '-0.5px',*/}
+                            {/*            fontSize: '1.25rem',*/}
+                            {/*            marginBottom: '5px'*/}
+                            {/*        }}>*/}
+                            {/*            Test*/}
+                            {/*        </Typography>*/}
+                            {/*        <Typography sx={{*/}
+                            {/*            fontFamily: 'Satoshi Medium',*/}
+                            {/*            color: '#696862',*/}
+                            {/*            letterSpacing: '-0.5px',*/}
+                            {/*            fontSize: '0.9rem'*/}
+                            {/*        }}>*/}
+                            {/*            Lorem ipsum odor amet, consectetuer adipiscing elit. Ultricies blandit montes orci, a fermentum fusce ipsum placerat.*/}
+                            {/*        </Typography>*/}
+                            {/*    </CardContent>*/}
+                            {/*    <CardActions sx={{paddingX: '4%'}}>*/}
+                            {/*        <Button size="small" variant="contained"*/}
+                            {/*                startIcon = {<IoPersonCircle style={{ fontSize: '1rem' }} />}*/}
+                            {/*                disableRipple*/}
+                            {/*                disableElevation*/}
+                            {/*                sx={{*/}
+                            {/*            fontFamily: 'DM Sans Medium',*/}
+                            {/*            backgroundColor: 'rgba(207,229,199,0.6)',*/}
+                            {/*            color: '#657e58',*/}
+                            {/*            borderThickness: 2,*/}
+                            {/*            borderRadius: 1.5,*/}
+                            {/*            letterSpacing: '-0.3px',*/}
+                            {/*            fontSize: '0.8rem',*/}
+                            {/*            textTransform: 'none',*/}
+                            {/*            paddingX: 1.2}}>Simulation</Button>*/}
+                            {/*        <Button size="small" variant="contained"*/}
+                            {/*                startIcon = {<FaMicrophone style={{ fontSize: '0.9rem' }}/>}*/}
+                            {/*                disableRipple*/}
+                            {/*                disableElevation*/}
+                            {/*                sx={{*/}
+                            {/*                    fontFamily: 'DM Sans Medium',*/}
+                            {/*                    backgroundColor: 'rgba(209,220,232,0.6)',*/}
+                            {/*                    color: '#567b9f',*/}
+                            {/*                    borderThickness: 2,*/}
+                            {/*                    letterSpacing: '-0.3px',*/}
+                            {/*                    borderRadius: 1.5,*/}
+                            {/*                    textTransform: 'none',*/}
+                            {/*                    fontSize: '0.8rem',*/}
+                            {/*                    paddingX: 1.2}}>Microphone</Button>*/}
+                            {/*    </CardActions>*/}
+                            {/*</Card>*/}
+                            {/*</Link>*/}
+                        {/*</Grid>*/}
 
+                        {/* behavioral interview simulator  */}
+                        <Grid size={{ xs: 2, sm: 4, md: 4 }}>
+                            <DashboardCard
+                                title="Behavioral Interview"
+                                link={"/behavioral"}
+                                description="This mode lets you practice behavioral interviews, customize your questions, and receive personalized improvement advice at the end."
+                                image="static/images/testExample.png"
+                                buttons={[
+                                    { type: 'Simulation' },
+                                    { type: 'Microphone' },
+                                ]}
+                            />
                         </Grid>
+
+                    {/*  recruiter networking simulator  */}
+                        <Grid size={{ xs: 2, sm: 4, md: 4 }}>
+                            <DashboardCard
+                                title="Recruiter Networking"
+                                link={"/recruiter"}
+                                description={"This mode lets you practice networking with recruiters, customize your questions, and receive personalized improvement advice at the end."}
+                                image="static/images/testExample.png"
+                                buttons={[
+                                    { type: 'Simulation' },
+                                    { type: 'Microphone' },
+                                ]}
+                            />
+                        </Grid>
+
+                    {/* webscraping tool */}
+                        <Grid size={{ xs: 2, sm: 4, md: 4 }}>
+                            <DashboardCard
+                                title="Webscraping Tool"
+                                link={"/recruiter"}
+                                description={"This mode lets you practice networking with recruiters, customize your questions, and receive personalized improvement advice at the end."}
+                                image="static/images/testExample.png"
+                                buttons={[
+                                    { type: 'Tool'},
+                                ]}
+                            />
+                        </Grid>
+
+                    {/*  resume review tool  */}
+
+
 
                     </Grid>
                 </Box>

@@ -1,14 +1,18 @@
 import React from 'react';
-import { Card, CardContent, CardMedia, Typography, Grid } from '@mui/material';
+import { Card, CardContent, CardMedia, Typography, CardActions } from '@mui/material';
+import CardButtonTopic from "./CardButtonTopic";
+import Link from 'next/link';
 
-const DashboardCard = ({ title, description, image }) => {
+const DashboardCard = ({ title, link, description, image, buttons = [] }) => {
     return (
+        <Link href={link}>
         <Card
             sx={{
                 borderRadius: '10px',
                 transition: 'box-shadow 0.3s',
                 '&:hover': { boxShadow: 6 },
-                cursor: 'pointer'
+                cursor: 'pointer',
+                height: '400px'
             }}
         >
             <CardMedia
@@ -16,7 +20,7 @@ const DashboardCard = ({ title, description, image }) => {
                 image={image}
                 title={title}
             />
-            <CardContent sx={{ padding: '7%' }}>
+            <CardContent sx={{ padding: '5%' }}>
                 <Typography sx={{
                     fontFamily: 'DM Sans Bold',
                     color: 'black',
@@ -35,7 +39,13 @@ const DashboardCard = ({ title, description, image }) => {
                     {description}
                 </Typography>
             </CardContent>
+            <CardActions sx={{paddingX: '4%'}}>
+                {buttons.slice(0, 4).map((button, index) => (
+                    <CardButtonTopic key={index} type={button.type} />
+                ))}
+            </CardActions>
         </Card>
+        </Link>
     );
 };
 
