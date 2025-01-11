@@ -44,7 +44,7 @@ export default function Test() {
             {/* ---------- nav bar ---------- */}
             <AppBar sx={{ boxShadow: 'none', backgroundColor: scrolled ? '#e3e1db' : '#F3F1EB', padding: 0.2, transition: 'background-color 0.3s ease-in-out' }}>
                 <Toolbar>
-                    <GiFluffyWing color={'black'} size={25}/>
+                    <GiFluffyWing color={'#324FD1'} size={25}/>
                     <Typography component='div' sx={{ fontSize: '1.75rem', flexGrow: 1, display:{xs:'none', md:'flex', fontFamily: 'Satoshi Black'}, color: 'black'}}>WiNG.it</Typography>
 
                     <Box sx={{ display: { xs: 'none', md: 'flex' }, gap:1.5}}>
@@ -471,7 +471,7 @@ export default function Test() {
                                 style = {{fontFamily: 'Satoshi Medium'}}
                                 className="text-color282523 text-1.5xl text-center leading-tight"
                                 variants = {itemVariants}
-                                transition={{ delay: 1.55 }}>
+                                transition={{ delay: 1.45 }}>
                                 Honorable developers from the original WiNGHacks project team:
                                 <span className="font-dm-sans-black tracking-tight"> Xiaguo Jia</span>,
                                 <span className="font-dm-sans-black tracking-tight"> Sara Smith</span>

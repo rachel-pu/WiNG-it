@@ -39,8 +39,13 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import InboxIcon from '@mui/icons-material/MoveToInbox';
-import MailIcon from '@mui/icons-material/Mail';
+import { MdSpaceDashboard } from "react-icons/md";
+import { HiDocumentText } from "react-icons/hi2";
+import { IoSettings } from "react-icons/io5";
+import {GiFluffyWing} from "react-icons/gi";
+import LeftNavbar from '/components/leftNavbar';
+
+
 
 const drawerWidth = 240;
 
@@ -48,62 +53,83 @@ export default function PermanentDrawerLeft() {
     return (
         <Box sx={{ display: 'flex' }}>
             <CssBaseline />
-            <AppBar
-                position="fixed"
-                sx={{ width: `calc(100% - ${drawerWidth}px)`, ml: `${drawerWidth}px` }}
-            >
-                <Toolbar>
-                    <Typography variant="h6" noWrap component="div">
-                        Permanent drawer
-                    </Typography>
-                </Toolbar>
-            </AppBar>
-            <Drawer
-                sx={{
-                    width: drawerWidth,
-                    flexShrink: 0,
-                    '& .MuiDrawer-paper': {
-                        width: drawerWidth,
-                        boxSizing: 'border-box',
-                    },
-                }}
-                variant="permanent"
-                anchor="left"
-            >
-                <Toolbar />
-                <Divider />
-                <List>
-                    {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
-                        <ListItem key={text} disablePadding>
-                            <ListItemButton>
-                                <ListItemIcon>
-                                    {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-                                </ListItemIcon>
-                                <ListItemText primary={text} />
-                            </ListItemButton>
-                        </ListItem>
-                    ))}
-                </List>
-                <Divider />
-                <List>
-                    {['All mail', 'Trash', 'Spam'].map((text, index) => (
-                        <ListItem key={text} disablePadding>
-                            <ListItemButton>
-                                <ListItemIcon>
-                                    {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-                                </ListItemIcon>
-                                <ListItemText primary={text} />
-                            </ListItemButton>
-                        </ListItem>
-                    ))}
-                </List>
-            </Drawer>
+            {/*<AppBar*/}
+            {/*    position="fixed"*/}
+            {/*    sx={{ width: `calc(100% - ${drawerWidth}px)`, ml: `${drawerWidth}px`, bgcolor: '#324fd1', boxShadow: 'none' }}*/}
+            {/*>*/}
+            {/*    <Toolbar>*/}
+            {/*        <Typography variant="h6" noWrap component="div" style={{ fontFamily: 'Satoshi Bold' }}>*/}
+            {/*            WiNG.it*/}
+            {/*        </Typography>*/}
+            {/*    </Toolbar>*/}
+            {/*</AppBar>*/}
+
+            {/* --------- sidebar navigation --------- */}
+            <LeftNavbar />
+            {/*<Drawer*/}
+            {/*    sx={{*/}
+            {/*        width: drawerWidth,*/}
+            {/*        flexShrink: 0,*/}
+            {/*        '& .MuiDrawer-paper': {*/}
+            {/*            width: drawerWidth,*/}
+            {/*            boxSizing: 'border-box',*/}
+            {/*        },*/}
+            {/*    }}*/}
+            {/*    variant="permanent"*/}
+            {/*    anchor="left"*/}
+            {/*>*/}
+            {/*    <Toolbar>*/}
+            {/*        <GiFluffyWing color={'#324FD1'} size={25}/>*/}
+            {/*        <Typography component='div' sx={{ fontSize: '1.75rem', flexGrow: 1, display:{xs:'none', md:'flex', fontFamily: 'Satoshi Black'}, color: 'black'}}>WiNG.it</Typography>*/}
+            {/*    </Toolbar>*/}
+            {/*    <Divider />*/}
+            {/*    <List>*/}
+            {/*        /!* dashboard list item *!/*/}
+            {/*        <ListItem >*/}
+            {/*            <ListItemButton>*/}
+            {/*                <ListItemIcon>*/}
+            {/*                    <MdSpaceDashboard style={{ fontSize: '1.5rem'}} />*/}
+            {/*                </ListItemIcon>*/}
+            {/*                <ListItemText primaryTypographyProps={{ fontFamily: 'Satoshi Bold' }}>*/}
+            {/*                    Dashboard*/}
+            {/*                </ListItemText>*/}
+            {/*            </ListItemButton>*/}
+            {/*        </ListItem>*/}
+
+            {/*        /!* transcript list item  *!/*/}
+            {/*        <ListItem >*/}
+            {/*            <ListItemButton>*/}
+            {/*                <ListItemIcon>*/}
+            {/*                    <HiDocumentText style={{ fontSize: '1.5rem' }} />*/}
+            {/*                </ListItemIcon>*/}
+            {/*                <ListItemText primaryTypographyProps={{ fontFamily: 'Satoshi Bold' }}>*/}
+            {/*                    Transcripts*/}
+            {/*                </ListItemText>*/}
+            {/*            </ListItemButton>*/}
+            {/*        </ListItem>*/}
+
+            {/*        /!* settings list item  *!/*/}
+            {/*        <ListItem >*/}
+            {/*            <ListItemButton>*/}
+            {/*                <ListItemIcon>*/}
+            {/*                    <IoSettings style={{ fontSize: '1.5rem' }} />*/}
+            {/*                </ListItemIcon>*/}
+            {/*                <ListItemText primaryTypographyProps={{ fontFamily: 'Satoshi Bold' }}>*/}
+            {/*                    Settings*/}
+            {/*                </ListItemText>*/}
+            {/*            </ListItemButton>*/}
+            {/*        </ListItem>*/}
+            {/*    </List>*/}
+            {/*    <Divider />*/}
+
+            {/*</Drawer>*/}
             <Box
                 component="main"
-                sx={{ flexGrow: 1, bgcolor: 'background.default', p: 3 }}
+                sx={{ flexGrow: 1, bgcolor: '#F3F1EB', p: 3, height: '100vh', overflow: 'auto' }}
             >
                 <Toolbar />
-                <Typography sx={{ marginBottom: 2 }}>
+                <Typography sx={{ marginBottom: 2, color: "#000000", fontSize: "2rem"}}>Dashboard</Typography>
+                <Typography sx={{ marginBottom: 2, color: "#000000"}}>
                     Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
                     tempor incididunt ut labore et dolore magna aliqua. Rhoncus dolor purus non
                     enim praesent elementum facilisis leo vel. Risus at ultrices mi tempus
@@ -117,7 +143,7 @@ export default function PermanentDrawerLeft() {
                     consectetur lorem. Velit sed ullamcorper morbi tincidunt. Lorem donec massa
                     sapien faucibus et molestie ac.
                 </Typography>
-                <Typography sx={{ marginBottom: 2 }}>
+                <Typography sx={{ marginBottom: 2,color: "#000000"}}>
                     Consequat mauris nunc congue nisi vitae suscipit. Fringilla est ullamcorper
                     eget nulla facilisi etiam dignissim diam. Pulvinar elementum integer enim
                     neque volutpat ac tincidunt. Ornare suspendisse sed nisi lacus sed viverra
