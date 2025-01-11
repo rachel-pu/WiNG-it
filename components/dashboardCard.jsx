@@ -22,7 +22,7 @@ const DashboardCard = ({ title, link, description, image, buttons = [] }) => {
             />
             <CardContent sx={{ padding: '5%' }}>
                 <Typography sx={{
-                    fontFamily: 'DM Sans Bold',
+                    fontFamily: 'Satoshi Bold',
                     color: 'black',
                     letterSpacing: '-0.5px',
                     fontSize: '1.25rem',

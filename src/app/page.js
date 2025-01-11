@@ -350,7 +350,7 @@ export default function Test() {
                             <motion.p className="text-1.5xl leading-tight text-center"
                                       variants = {itemVariants}
                                       style = {{fontFamily: 'Satoshi Medium', color: 'black', fontSize: '1.2rem', lineHeight: '150%'}}
-                                      transition={{ delay: 0.6 }}>
+                                      transition={{ delay: 0.75 }}>
                                 Our project was created for the
                                 <span className="font-dm-sans-black tracking-tight"> University of Florida’s 🐊</span> first annual
                                 <span className="font-dm-sans-black tracking-tight"> WiNGHacks Hackathon 🪽</span>, a hackathon designed to empower
@@ -361,7 +361,7 @@ export default function Test() {
                             <motion.p className="text-1.5xl leading-tight text-center"
                                       style = {{fontFamily: 'Satoshi Medium', color: 'black', fontSize: '1.2rem', lineHeight: '150%'}}
                                       variants = {itemVariants}
-                                      transition={{ delay: 0.75 }}>
+                                      transition={{ delay: 1 }}>
                                 WiNG.it was created to reduce the stress of interview prep.
                                 As college students, we recognize the importance of being prepared for interviews and networking, as well as having easy access to resources.
                                 We hope that with WiNG.it, we can help elevate that stress & push you to be the best version of yourself.
@@ -372,17 +372,16 @@ export default function Test() {
 
                     {/*  developer section  */}
                     <Grid item xs>
+                        <motion.div initial="hidden"
+                                    whileInView="visible"
+                                    viewport={{ once: true }}
+                                    variants = {itemVariants}
+                                    transition={{ delay: 1.25 }}>
                         <Grid container columns={4} rows={1} spacing={4}>
 
                             {/* rachel */}
                             <Grid item size={1}>
-                                <motion.div className=" flex justify-end flex-col pr-3"
-                                            initial="hidden"
-                                            whileInView="visible"
-                                            viewport={{ once: true }}
-                                            variants = {itemVariants}
-                                            transition={{ delay: 0.9 }}
-                                >
+                                <motion.div className=" flex justify-end flex-col pr-3">
                                     <svg className="ml-[70%]" width="80" height="40" viewBox="0 0 156 56" fill="none"
                                          xmlns="http://www.w3.org/2000/svg">
                                         <path
@@ -409,14 +408,11 @@ export default function Test() {
                                     height={230}
                                     unoptimized
                                     className="rounded-2xl drop-shadow-lg"
-                                    initial="hidden"
-                                    whileInView="visible"
-                                    viewport={{ once: true }}
-                                    variants = {itemVariants}
                                     whileHover={{ scale: 1.05, rotate: -2, cursor: 'pointer'}}
                                 />
                                 </Link>
                             </Grid>
+                            {/* chelsea photo */}
                             <Grid item size={1}>
                                 <Link component="a" href="https://www.linkedin.com/in/chelseaqnguyen/" target="_blank" rel="noopener noreferrer">
                                 <motion.img
@@ -425,22 +421,14 @@ export default function Test() {
                                     width={230}
                                     height={230}
                                     unoptimized
-                                    initial="hidden"
-                                    whileInView="visible"
-                                    viewport={{ once: true }}
-                                    variants = {itemVariants}
                                     className="rounded-2xl drop-shadow-lg"
                                     whileHover={{ scale: 1.05, rotate: 2, cursor: 'pointer' }}
                                 />
                                 </Link>
                             </Grid>
+                            {/* chelsea */}
                             <Grid item size={1}>
                                 <motion.div className=" flex justify-end flex-col"
-                                            initial="hidden"
-                                            whileInView="visible"
-                                            viewport={{ once: true }}
-                                            variants = {itemVariants}
-                                            transition={{ delay: 1.4 }}
                                 >
                                     <svg className="mr-[75%]" width="80" height="40" viewBox="0 0 160 81" fill="none"
                                          xmlns="http://www.w3.org/2000/svg">
@@ -459,6 +447,7 @@ export default function Test() {
                                 </motion.div>
                             </Grid>
                         </Grid>
+                        </motion.div>
                     </Grid>
 
                     {/*  honorable mention */}
@@ -516,7 +505,7 @@ export default function Test() {
                     viewport={{ once: true }}
                     transition={{ delay: 1 }}
                     variants = {itemVariants}>
-                    <Button color='inherit' href='/dashboard' sx={{fontSize: '2.5rem', fontFamily: 'Satoshi Bold', textTransform: 'none', backgroundColor: '#2850d9', paddingX: 5.5,borderRadius: '50px', color:  'white', letterSpacing: '-0.01px', transition: 'transform 0.3s', '&:hover': { transform: 'scale(1.05) rotate(-2deg)' },display: 'flex', alignItems: 'center', gap: 1}}>
+                    <Button color='inherit' href='/dashboard' sx={{fontSize: '2.5rem', fontFamily: 'Satoshi Bold', textTransform: 'none', backgroundColor: '#2850d9', paddingX: 5.5,borderRadius: '50px', color:  'white', letterSpacing: '-0.01px', transition: 'transform 0.3s', '&:hover': { transform: 'scale(1.05) rotate(-2deg)'}, boxShadow: 4, display: 'flex', alignItems: 'center', gap: 1}}>
                         Get Started
                         <svg className="w-10 h-10" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h12M12 5l7 7-7 7" />
