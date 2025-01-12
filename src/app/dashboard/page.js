@@ -17,7 +17,7 @@ import { HiDocumentText } from "react-icons/hi2";
 import { IoSettings } from "react-icons/io5";
 import {GiFluffyWing} from "react-icons/gi";
 import { IoPersonCircle } from "react-icons/io5";
-import LeftNavbar from '/components/leftNavbar';
+import LeftNavbar from '/components/LeftNavbar';
 import Stack from "@mui/material/Stack";
 import Grid from '@mui/material/Grid2';
 import {FaMicrophone, FaPencilRuler} from "react-icons/fa";
@@ -25,7 +25,7 @@ import Card from "@mui/material/Card";
 import CardContent from '@mui/material/CardContent';
 import Link from 'next/link';
 import CardMedia from '@mui/material/CardMedia';
-import DashboardCard from '/components/DashboardCard';
+import DashboardCard from './DashboardCard';
 import {Button, CardActions} from "@mui/material";
 
 export default function Dashboard() {
@@ -113,7 +113,7 @@ export default function Dashboard() {
                             <DashboardCard
                                 title="Recruiter Networking"
                                 link={"/recruiter"}
-                                description={"This mode lets you practice networking with recruiters, customize your questions, and receive personalized improvement advice at the end."}
+                                description={"This is an example description for the recruiter networking simulator. This is an example description for the recruiter networking simulator."}
                                 image="static/images/testExample.png"
                                 buttons={[
                                     { type: 'Simulation' },
@@ -136,6 +136,17 @@ export default function Dashboard() {
                         </Grid>
 
                     {/*  resume review tool  */}
+                        <Grid size={{ xs: 2, sm: 4, md: 4 }}>
+                            <DashboardCard
+                                title="Webscraping Tool"
+                                link={"/recruiter"}
+                                description={"This mode lets you practice networking with recruiters, customize your questions, and receive personalized improvement advice at the end."}
+                                image="static/images/testExample.png"
+                                buttons={[
+                                    { type: 'Tool'},
+                                ]}
+                            />
+                        </Grid>
 
 
 

@@ -12,7 +12,7 @@ const DashboardCard = ({ title, link, description, image, buttons = [] }) => {
                 transition: 'box-shadow 0.3s',
                 '&:hover': { boxShadow: 6 },
                 cursor: 'pointer',
-                height: '400px'
+                height: '385px'
             }}
         >
             <CardMedia
@@ -20,21 +20,21 @@ const DashboardCard = ({ title, link, description, image, buttons = [] }) => {
                 image={image}
                 title={title}
             />
-            <CardContent sx={{ padding: '5%' }}>
+            <CardContent sx={{ padding: '3.5%' }}>
                 <Typography sx={{
                     fontFamily: 'Satoshi Bold',
                     color: 'black',
                     letterSpacing: '-0.5px',
-                    fontSize: '1.25rem',
+                    fontSize: '1.3rem',
                     marginBottom: '5px'
                 }}>
                     {title}
                 </Typography>
                 <Typography sx={{
-                    fontFamily: 'Satoshi Medium',
+                    fontFamily: 'DM Sans Medium',
                     color: '#696862',
                     letterSpacing: '-0.5px',
-                    fontSize: '0.9rem'
+                    fontSize: '0.92rem',
                 }}>
                     {description}
                 </Typography>

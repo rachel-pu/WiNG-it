@@ -47,7 +47,7 @@ const BehavioralInterviewTranscripts = () => {
 
                         {/*/!*-----------------button--------------------*!/*/}
                         {/*<div className="absolute bottom-6 right-6 group">*/}
-                        {/*    <Link href='./behavioral-interview-transcripts'*/}
+                        {/*    <Link href='./behavioral-interview-saves'*/}
                         {/*          className="bg-gradient-to-r from-[#C8E2AF] to-[#6CBE20] text-2xl font-dm-sans tracking-tight text-color282523 py-2 px-8 rounded-full font-semibold shadow-lg flex items-center space-x-2 transition-transform duration-300 transform group-hover:scale-102 group-hover:-rotate-1">*/}
                         {/*        <span className="font-dm-sans-black">See Responses</span>*/}
                         {/*        <svg className="w-8 h-8" fill="none" stroke="currentColor" strokeWidth="3"*/}

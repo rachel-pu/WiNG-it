@@ -37,7 +37,7 @@
 //
 //                         {/* sample response */}
 //                         <div className='group flex justify-center items-center max-w-5xl'>
-//                             <Link href='transcripts/response'
+//                             <Link href='saves/response'
 //                                   className="bg-gradient-to-t from-[#000000] to-[#FFFFFF] text-2xl font-dm-sans tracking-tight bg-colorFAF8F1 text-color282523 py-2 px-6 rounded-full font-semibold shadow-lg flex items-center space-x-2 ">
 //                                 <span className='font-satoshi text-left text-2.5xl'>October 31, 2024</span>
 //
@@ -52,7 +52,7 @@
 //
 //                         {/*/!*-----------------button--------------------*!/*/}
 //                         {/*<div className="absolute bottom-6 right-6 group">*/}
-//                         {/*    <Link href='./behavioral-interview-transcripts'*/}
+//                         {/*    <Link href='./behavioral-interview-saves'*/}
 //                         {/*          className="bg-gradient-to-r from-[#C8E2AF] to-[#6CBE20] text-2xl font-dm-sans tracking-tight text-color282523 py-2 px-8 rounded-full font-semibold shadow-lg flex items-center space-x-2 transition-transform duration-300 transform group-hover:scale-102 group-hover:-rotate-1">*/}
 //                         {/*        <span className="font-dm-sans-black">See Responses</span>*/}
 //                         {/*        <svg className="w-8 h-8" fill="none" stroke="currentColor" strokeWidth="3"*/}

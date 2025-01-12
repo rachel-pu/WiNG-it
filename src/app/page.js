@@ -180,7 +180,7 @@ export default function Test() {
                                     </motion.div>
                                 </Grid>
 
-                                {/* saving transcripts card */}
+                                {/* saving saves card */}
                                 <Grid size={1}>
                                     <motion.div variants = {itemVariants}
                                                 transition={{ delay: 0.6 }}>

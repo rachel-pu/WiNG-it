@@ -45,7 +45,7 @@ const CardButtonTopic = ({ type }) => {
                 borderThickness: 2,
                 borderRadius: 1.5,
                 letterSpacing: '-0.3px',
-                fontSize: '0.8rem',
+                fontSize: '0.85rem',
                 textTransform: 'none',
                 paddingX: 1.2
             }}

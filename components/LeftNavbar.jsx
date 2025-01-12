@@ -43,11 +43,11 @@ const LeftNavbar = () => {
                 </ListItem>
 
                 <ListItem>
-                    <ListItemButton sx={{borderRadius: 2}} component="a" href="/transcripts">
+                    <ListItemButton sx={{borderRadius: 2}} component="a" href="/saves">
                         <ListItemIcon>
                             <HiDocumentText style={{ fontSize: '1.5rem' }} />
                         </ListItemIcon>
-                        <ListItemText primary="Transcripts" primaryTypographyProps={{ fontFamily: 'Satoshi Bold' }} />
+                        <ListItemText primary="Saves" primaryTypographyProps={{ fontFamily: 'Satoshi Bold' }} />
                     </ListItemButton>
                 </ListItem>
 
