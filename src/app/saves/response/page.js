@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import Navigation from "/components/navigation";
+import Navigation from "/components/LeftNavbar.jsx";
 
 const BehavioralInterviewTranscripts = () => {
     return (

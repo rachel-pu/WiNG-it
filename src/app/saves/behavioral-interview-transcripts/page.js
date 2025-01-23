@@ -75,7 +75,7 @@
 // export default BehavioralInterviewTranscripts;
 
 import Link from "next/link";
-import Navigation from "/components/navigation";
+import Navigation from "/components/LeftNavbar.jsx";
 
 const BehavioralInterviewTranscripts = () => {
     return (

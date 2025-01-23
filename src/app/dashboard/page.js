@@ -74,7 +74,7 @@ export default function Dashboard() {
                                 <span style={{ fontFamily: 'Satoshi Bold', fontSize: "1rem"}}> {currentDateTime.time}</span>
                             </Typography>
                             <Typography>
-                                <span style={{ fontFamily: 'Satoshi Bold', fontSize: "1rem"}}> 01/11/2025</span>
+                                <span style={{ fontFamily: 'Satoshi Bold', fontSize: "1rem"}}> {currentDateTime.date}</span>
                             </Typography>
                         </Stack>
                     </Box>

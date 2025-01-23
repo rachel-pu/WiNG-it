@@ -59,6 +59,7 @@ const LeftNavbar = () => {
                         <ListItemText primary="Settings" primaryTypographyProps={{ fontFamily: 'Satoshi Bold' }} />
                     </ListItemButton>
                 </ListItem>
+
             </List>
             <Divider />
             <Box sx={{ padding: 3, textAlign: 'center' }}>
