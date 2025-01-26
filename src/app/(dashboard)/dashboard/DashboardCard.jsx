@@ -20,7 +20,7 @@ const DashboardCard = ({ title, link, description, image, buttons = [] }) => {
                 image={image}
                 title={title}
             />
-            <CardContent sx={{ padding: '3.5%' }}>
+            <CardContent sx={{ paddingRight: '5.5%', paddingLeft: '5.5%' }}>
                 <Typography sx={{
                     fontFamily: 'Satoshi Bold',
                     color: 'black',
@@ -39,7 +39,7 @@ const DashboardCard = ({ title, link, description, image, buttons = [] }) => {
                     {description}
                 </Typography>
             </CardContent>
-            <CardActions sx={{paddingX: '4%'}}>
+            <CardActions sx={{paddingLeft: '4%', paddingRight: '4%'}}>
                 {buttons.slice(0, 4).map((button, index) => (
                     <CardButtonTopic key={index} type={button.type} />
                 ))}

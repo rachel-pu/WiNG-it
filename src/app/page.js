@@ -306,13 +306,13 @@ export default function Test() {
                                 <motion.p
                                     variants = {itemVariants}
                                     transition={{ delay: 0.05 }}
-                                    style={{fontFamily:'DM Sans Medium', color: '#81807c', fontSize: '1.3rem', letterSpacing: '-0.5px'}}>
+                                    style={{fontFamily:'DM Sans', color: '#81807c', fontSize: '1.3rem', letterSpacing: '-0.5px'}}>
                                     WiNG.it provides tools to enhance your skills in
                                 </motion.p>
                                 <motion.p
                                     variants = {itemVariants}
                                     transition={{ delay: 0.05 }}
-                                    style={{fontFamily:'DM Sans Medium', color: '#81807c', fontSize: '1.3rem', letterSpacing: '-0.5px'}}>
+                                    style={{fontFamily:'DM Sans', color: '#81807c', fontSize: '1.3rem', letterSpacing: '-0.5px'}}>
                                     interviews, networking, and beyond, helping you excel in your career.
                                 </motion.p>
                             </motion.div>

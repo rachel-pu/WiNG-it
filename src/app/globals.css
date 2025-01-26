@@ -26,11 +26,56 @@ body {
   }
 }
 
+/* form */
+
+.cl-formFieldHintText{
+    font-size: 12px;
+    font-family: DM Sans;
+    color: #959ba8;
+}
+
+.cl-headerTitle {
+    font-size: 25px;
+    font-family: Satoshi Bold;
+    font-weight: 600;
+}
+
+.cl-headerSubtitle{
+    font-size: 15px;
+    font-family: DM Sans;
+    font-weight: 350;
+}
+
+.cl-socialButtonsProviderIcon{
+    width: 20px;
+    height: 20px;
+}
+
+.cl-dividerText{
+    font-size: 15px;
+    font-family: DM Sans;
+    font-weight: 350;
+}
+
 .cl-formButtonPrimary {
     font-size: 15px;
     text-transform: none;
     border: none;
 }
+
+.cl-formFieldLabel{
+    font-size: 15px;
+    font-family: Satoshi Medium;
+    font-weight: 500;
+}
+
+.cl-formFieldInput{
+    font-size: 14px;
+    font-family: DM Sans;
+    font-weight: 400;
+}
+
+/* user */
 
 .cl-userButtonBox{
     width: 45px;
@@ -40,6 +85,29 @@ body {
 .cl-userButtonAvatarBox{
     width: 45px;
     height: 45px;
+}
+
+.cl-userPreviewMainIdentifier{
+    font-size: 15px;
+    font-family: Satoshi Bold;
+    font-weight: 600;
+}
+
+.cl-userButtonPopoverActionButtonIconBox{
+    font-family: DM Sans;
+    font-weight: 400;
+}
+
+.cl-profileSectionTitleText{
+    font-family: Satoshi Bold;
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.cl-navbarButtonText{
+    font-family: DM Sans;
+    font-weight: 500;
+    font-size: 13px;
 }
 
 /* ---------------------------- satoshi fonts ---------------------------- */
