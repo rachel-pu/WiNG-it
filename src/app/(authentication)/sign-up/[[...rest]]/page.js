@@ -5,6 +5,10 @@ export default function SignUpPage() {
     return (
         <Box sx={{backgroundColor: '#F3F1EB', display: 'flex', height: '100vh', justifyContent:'center', alignItems: 'center'}}>
             <SignUp
+                signUpFallbackRedirectUrl="/"
+                signUpForceRedirectUrl="/dashboard"
+                afterSignUpUrl={"/dashboard"}
+                loginUrl="/login"
                 appearance={{
                     variables: {
                         colorPrimary: '#2850d9',
