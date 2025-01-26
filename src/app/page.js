@@ -126,7 +126,7 @@ export default function Test() {
                                             containerId="scrollableContainer"
                                             style={{
                                                 fontSize: '1.05rem',
-                                                fontFamily: 'Satoshi Bold',
+                                                fontFamily: 'Satoshi Medium',
                                                 textTransform: 'none',
                                                 color: 'black',
                                                 letterSpacing: '-0.01px',
@@ -140,7 +140,7 @@ export default function Test() {
                                         color="inherit"
                                         sx={{
                                             fontSize: '1.05rem',
-                                            fontFamily: 'Satoshi Bold',
+                                            fontFamily: 'Satoshi Medium',
                                             textTransform: 'none',
                                             color: 'black',
                                             letterSpacing: '-0.01px',
@@ -155,7 +155,7 @@ export default function Test() {
                                             containerId="scrollableContainer"
                                             style={{
                                                 fontSize: '1.05rem',
-                                                fontFamily: 'Satoshi Bold',
+                                                fontFamily: 'Satoshi Medium',
                                                 textTransform: 'none',
                                                 color: 'black',
                                                 letterSpacing: '-0.01px',
@@ -170,7 +170,7 @@ export default function Test() {
                                         href="/sign-up"
                                         sx={{
                                             fontSize: '1.05rem',
-                                            fontFamily: 'Satoshi Bold',
+                                            fontFamily: 'Satoshi Medium',
                                             textTransform: 'none',
                                             backgroundColor: '#2850d9',
                                             px: 2.5,
@@ -431,14 +431,14 @@ export default function Test() {
                                 <motion.p
                                     variants = {itemVariants}
                                     transition={{ delay: 0.8 }}
-                                    style = {{fontFamily: 'Satoshi Medium', color: 'black', lineHeight: '150%', fontSize: '1.25rem'}}>
+                                    style = {{fontFamily: 'DM Sans', color: 'black', lineHeight: '150%', fontSize: '1.25rem'}}>
                                     As students, we know interviewing and networking can be hard. Like, really hard. And unfortunately, there are close to zero good, free, and
                                     useful career preparation tools out there.
                                 </motion.p>
                                 <motion.p
                                     variants = {itemVariants}
                                     transition={{ delay: 0.95 }}
-                                    className="text-1.5xl" style = {{fontFamily: 'Satoshi Medium', color: 'black', lineHeight: '150%', fontSize: '1.25rem'}}>
+                                    className="text-1.5xl" style = {{fontFamily: 'DM Sans', color: 'black', lineHeight: '150%', fontSize: '1.25rem'}}>
                                     Our goal? <span
                                     style = {{fontFamily: 'DM Sans Bold', color: '#000000', letterSpacing: '-0.5px'}}>Making career preparation more accessible for everybody. </span> No paywall.
                                     No fees. Just practicing for your upcoming opportunities and needs.
@@ -446,7 +446,7 @@ export default function Test() {
                                 <motion.p
                                     variants = {itemVariants}
                                     transition={{ delay: 1.1}}
-                                    className="text-1.5xl" style = {{fontFamily: 'Satoshi Medium', color: 'black', lineHeight: '150%', fontSize: '1.25rem'}}>
+                                    className="text-1.5xl" style = {{fontFamily: 'DM Sans', color: 'black', lineHeight: '150%', fontSize: '1.25rem'}}>
                                     Oh, and as a bonus, making it fun. Because who said preparing for your future can&apos;t be fun?
                                 </motion.p>
                             </Stack>
@@ -513,7 +513,7 @@ export default function Test() {
                         <Stack spacing={3} direction={"column"}>
                             <motion.p className="text-1.5xl leading-tight text-center"
                                       variants = {itemVariants}
-                                      style = {{fontFamily: 'Satoshi Medium', color: 'black', fontSize: '1.2rem', lineHeight: '150%'}}
+                                      style = {{fontFamily: 'DM Sans', color: 'black', fontSize: '1.2rem', lineHeight: '150%'}}
                                       transition={{ delay: 0.75 }}>
                                 Our project was created for the
                                 <span className="font-dm-sans-black tracking-tight"> University of Florida’s 🐊</span> first annual
@@ -523,7 +523,7 @@ export default function Test() {
                                 <span className="font-dm-sans-black tracking-tight"> UF Professor Amanpreet Kapoor  💻</span> to continue being built for improvement.
                             </motion.p>
                             <motion.p className="text-1.5xl leading-tight text-center"
-                                      style = {{fontFamily: 'Satoshi Medium', color: 'black', fontSize: '1.2rem', lineHeight: '150%'}}
+                                      style = {{fontFamily: 'DM Sans', color: 'black', fontSize: '1.2rem', lineHeight: '150%'}}
                                       variants = {itemVariants}
                                       transition={{ delay: 1 }}>
                                 WiNG.it was created to reduce the stress of interview prep.
@@ -659,7 +659,7 @@ export default function Test() {
                         viewport={{ once: true }}
                         transition={{ delay: 0.7 }}
                         variants = {itemVariants}
-                              style={{fontFamily:'Satoshi Bold', color: '#81807C', fontSize: '2rem', letterSpacing: '-0.5px',userSelect: 'none',textAlign:'center'}}>
+                              style={{fontFamily:'DM Sans', color: '#81807C', fontSize: '2rem', letterSpacing: '-0.5px',userSelect: 'none',textAlign:'center'}}>
                         Ready to get started?
                     </motion.p>
                 </Stack>
