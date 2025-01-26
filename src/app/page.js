@@ -24,6 +24,7 @@ import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
 import Container from '@mui/material/Container';
 import {IconButton} from "@mui/material";
+import {SignedOut} from '@clerk/nextjs'
 
 const pages = ['Why WiNG.it', 'About Us', 'Login'];
 export default function Test() {
@@ -62,6 +63,7 @@ export default function Test() {
 
 
     return (
+        // <SignedOut>
         <Box className="bg-colorF3F1EA">
             {/* ---------- nav bar ---------- */}
             <AppBar position="static"
@@ -165,7 +167,7 @@ export default function Test() {
 
                                     <Button
                                         color="inherit"
-                                        href="/dashboard"
+                                        href="/sign-up"
                                         sx={{
                                             fontSize: '1.05rem',
                                             fontFamily: 'Satoshi Bold',
@@ -232,7 +234,7 @@ export default function Test() {
                                             About Us
                                         </Link>
                                     </Button>
-                                    <Button color='inherit' href='/dashboard' sx={{fontSize: '1.05rem', fontFamily: 'Satoshi Bold', textTransform: 'none', backgroundColor: '#2850d9', paddingX: 2.5,borderRadius: '50px', color:  'white', letterSpacing: '-0.01px', transition: 'transform 0.3s', '&:hover': { transform: 'scale(1.05) rotate(-2deg)' }}}>
+                                    <Button color='inherit' href='/sign-up' sx={{fontSize: '1.05rem', fontFamily: 'Satoshi Bold', textTransform: 'none', backgroundColor: '#2850d9', paddingX: 2.5,borderRadius: '50px', color:  'white', letterSpacing: '-0.01px', transition: 'transform 0.3s', '&:hover': { transform: 'scale(1.05) rotate(-2deg)' }}}>
                                         Login
                                     </Button>
                                 </Box>
@@ -667,7 +669,7 @@ export default function Test() {
                     viewport={{ once: true }}
                     transition={{ delay: 1 }}
                     variants = {itemVariants}>
-                    <Button color='inherit' href='/dashboard' sx={{fontSize: '2.5rem', fontFamily: 'Satoshi Bold', textTransform: 'none', backgroundColor: '#2850d9', paddingX: 5.5,borderRadius: '50px', color:  'white', letterSpacing: '-0.01px', transition: 'transform 0.3s', '&:hover': { transform: 'scale(1.05) rotate(-2deg)'}, boxShadow: 4, display: 'flex', alignItems: 'center', gap: 1}}>
+                    <Button color='inherit' href='/sign-up' sx={{fontSize: '2.5rem', fontFamily: 'Satoshi Bold', textTransform: 'none', backgroundColor: '#2850d9', paddingX: 5.5,borderRadius: '50px', color:  'white', letterSpacing: '-0.01px', transition: 'transform 0.3s', '&:hover': { transform: 'scale(1.05) rotate(-2deg)'}, boxShadow: 4, display: 'flex', alignItems: 'center', gap: 1}}>
                         Get Started
                         <svg className="w-10 h-10" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h12M12 5l7 7-7 7" />
@@ -678,5 +680,6 @@ export default function Test() {
         </Box>
             {/*  end  */}
         </Box>
+        // </SignedOut>
     );
 }

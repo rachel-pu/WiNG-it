@@ -27,33 +27,13 @@ import Link from 'next/link';
 import CardMedia from '@mui/material/CardMedia';
 import DashboardCard from './DashboardCard';
 import {Button, CardActions} from "@mui/material";
+import { ClerkProvider, SignedIn, SignedOut, SignInButton, UserButton } from '@clerk/nextjs'
 
 export default function Dashboard() {
     const drawerWidth = 240;
 
-    // initializing variables
-    const [currentDateTime, setCurrentDateTime] = useState({
-        time: '',
-        date: ''
-    });
-
-    useEffect(() => {
-        const updateDateTime = () => {
-            const now = new Date();
-            const time = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-            const date = now.toLocaleDateString();
-            setCurrentDateTime({ time, date });
-        };
-
-        // update date and time every second
-        updateDateTime();
-        const timer = setInterval(updateDateTime, 1000);
-
-        // cleanup
-        return () => clearInterval(timer);
-    }, []);
-
     return (
+        <SignedIn>
         <Box sx={{ display: 'flex' }}>
             <CssBaseline />
 
@@ -68,15 +48,12 @@ export default function Dashboard() {
                         <Typography variant="h6" noWrap component="div" style={{marginTop: '8px', fontFamily: 'Satoshi Bold', fontSize: "1.5rem"}}>
                             Dashboard
                         </Typography>
-                        {/* date/time */}
-                        <Stack direction = {"column"}>
-                            <Typography>
-                                <span style={{ fontFamily: 'Satoshi Bold', fontSize: "1rem"}}> {currentDateTime.time}</span>
-                            </Typography>
-                            <Typography>
-                                <span style={{ fontFamily: 'Satoshi Bold', fontSize: "1rem"}}> {currentDateTime.date}</span>
-                            </Typography>
-                        </Stack>
+                        <UserButton appearance={{
+                            variables : {
+                                fontFamily: 'DM Sans',
+                            }
+                        }}/>
+
                     </Box>
                 </Toolbar>
             </AppBar>
@@ -148,11 +125,10 @@ export default function Dashboard() {
                             />
                         </Grid>
 
-
-
                     </Grid>
                 </Box>
             </Box>
         </Box>
+        </SignedIn>
     );
 }

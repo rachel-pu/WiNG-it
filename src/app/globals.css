@@ -17,13 +17,29 @@
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: DM Sans, Arial, Helvetica, sans-serif;
 }
 
 @layer utilities {
   .text-balance {
     text-wrap: balance;
   }
+}
+
+.cl-formButtonPrimary {
+    font-size: 15px;
+    text-transform: none;
+    border: none;
+}
+
+.cl-userButtonBox{
+    width: 45px;
+    height: 45px;
+}
+
+.cl-userButtonAvatarBox{
+    width: 45px;
+    height: 45px;
 }
 
 /* ---------------------------- satoshi fonts ---------------------------- */

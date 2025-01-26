@@ -16,6 +16,7 @@ import {MdSpaceDashboard} from "react-icons/md";
 import {HiDocumentText} from "react-icons/hi";
 import {IoSettings} from "react-icons/io5";
 import SavesButtons from "./SavesButtons";
+import {SignedIn, UserButton} from '@clerk/nextjs'
 
 export default function Saves() {
     const drawerWidth = 240;
@@ -43,33 +44,13 @@ export default function Saves() {
         }
     ];
 
-    // initializing variables
-    const [currentDateTime, setCurrentDateTime] = useState({
-        time: '',
-        date: ''
-    });
-
-    useEffect(() => {
-        const updateDateTime = () => {
-            const now = new Date();
-            const time = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-            const date = now.toLocaleDateString();
-            setCurrentDateTime({ time, date });
-        };
-
-        // update date and time every second
-        updateDateTime();
-        const timer = setInterval(updateDateTime, 1000);
-
-        // cleanup
-        return () => clearInterval(timer);
-    }, []);
 
     return(
+        <SignedIn>
         <Box sx={{ display: 'flex' }}>
             <CssBaseline />
 
-            {/* ----------- title header div w/ time & date ----------- */}
+            {/* ----------- title header div w/ user profile ----------- */}
             <AppBar
                 position="fixed"
                 sx={{ width: `calc(100% - ${drawerWidth}px)`, ml: `${drawerWidth}px`, bgcolor: '#6a39cb', boxShadow: 'none'}}
@@ -81,14 +62,11 @@ export default function Saves() {
                             Saves
                         </Typography>
                         {/* date/time */}
-                        <Stack direction = {"column"}>
-                            <Typography>
-                                <span style={{ fontFamily: 'Satoshi Bold', fontSize: "1rem"}}> {currentDateTime.time}</span>
-                            </Typography>
-                            <Typography>
-                                <span style={{ fontFamily: 'Satoshi Bold', fontSize: "1rem"}}> {currentDateTime.date}</span>
-                            </Typography>
-                        </Stack>
+                        <UserButton appearance={{
+                            variables : {
+                                fontFamily: 'DM Sans',
+                            }
+                        }}/>
                     </Box>
                 </Toolbar>
             </AppBar>
@@ -132,5 +110,6 @@ export default function Saves() {
                 </Stack>
             </Box>
         </Box>
+        </SignedIn>
     )
 }
