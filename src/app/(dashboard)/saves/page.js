@@ -17,6 +17,7 @@ import {HiDocumentText} from "react-icons/hi";
 import {IoSettings} from "react-icons/io5";
 import SavesButtons from "./SavesButtons";
 import {SignedIn, UserButton} from '@clerk/nextjs'
+import MainAppBar from "../../../../components/MainAppBar";
 
 export default function Saves() {
     const drawerWidth = 240;
@@ -51,25 +52,7 @@ export default function Saves() {
             <CssBaseline />
 
             {/* ----------- title header div w/ user profile ----------- */}
-            <AppBar
-                position="fixed"
-                sx={{ width: `calc(100% - ${drawerWidth}px)`, ml: `${drawerWidth}px`, bgcolor: '#6a39cb', boxShadow: 'none'}}
-            >
-                <Toolbar>
-                    <Box className = "flex flex-row w-full" sx={{justifyContent: 'space-between'}}>
-                        {/* title */}
-                        <Typography variant="h6" noWrap component="div" style={{marginTop: '8px', fontFamily: 'Satoshi Bold', fontSize: "1.5rem"}}>
-                            Saves
-                        </Typography>
-                        {/* date/time */}
-                        <UserButton appearance={{
-                            variables : {
-                                fontFamily: 'DM Sans',
-                            }
-                        }}/>
-                    </Box>
-                </Toolbar>
-            </AppBar>
+            <MainAppBar title="Saves" color="#6a39cb" />
 
             {/* --------- sidebar navigation --------- */}
             <LeftNavbar />

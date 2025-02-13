@@ -27,36 +27,17 @@ import Link from 'next/link';
 import CardMedia from '@mui/material/CardMedia';
 import DashboardCard from './DashboardCard';
 import {Button, CardActions} from "@mui/material";
+import MainAppBar from "../../../../components/MainAppBar";
 import { ClerkProvider, SignedIn, SignedOut, SignInButton, UserButton } from '@clerk/nextjs'
 
 export default function Dashboard() {
-    const drawerWidth = 240;
-
     return (
         <SignedIn>
         <Box sx={{ display: 'flex' }}>
             <CssBaseline />
 
             {/* ----------- title header div w/ time & date ----------- */}
-            <AppBar
-                position="fixed"
-                sx={{ width: `calc(100% - ${drawerWidth}px)`, ml: `${drawerWidth}px`, bgcolor: '#324fd1', boxShadow: 'none'}}
-            >
-                <Toolbar>
-                    <Box className = "flex flex-row w-full" sx={{justifyContent: 'space-between'}}>
-                        {/* title */}
-                        <Typography variant="h6" noWrap component="div" style={{marginTop: '8px', fontFamily: 'Satoshi Bold', fontSize: "1.5rem"}}>
-                            Dashboard
-                        </Typography>
-                        <UserButton appearance={{
-                            variables : {
-                                fontFamily: 'DM Sans',
-                            }
-                        }}/>
-
-                    </Box>
-                </Toolbar>
-            </AppBar>
+            <MainAppBar title="Dashboard" color="#324fd1" />
 
             {/* --------- sidebar navigation --------- */}
             <LeftNavbar />
@@ -69,10 +50,10 @@ export default function Dashboard() {
                 <Toolbar />
             {/*  --------- grid ---------  */}
                 <Box sx={{ flexGrow: 1 }}>
-                    <Grid container spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 8, md: 12 }}>
+                    <Grid container spacing={{ xs: 2, md: 3 }} columns={{ xs: 1, sm: 1, md: 2, lg: 3}}>
 
                         {/* behavioral interview simulator  */}
-                        <Grid size={{ xs: 2, sm: 4, md: 4 }}>
+                        <Grid size={{ xs: 1, sm: 1, md: 1 }}>
                             <DashboardCard
                                 title="Behavioral Interview"
                                 link={"/behavioral"}
@@ -86,7 +67,7 @@ export default function Dashboard() {
                         </Grid>
 
                     {/*  recruiter networking simulator  */}
-                        <Grid size={{ xs: 2, sm: 4, md: 4 }}>
+                        <Grid size={{ xs: 1, sm: 1, md: 1 }}>
                             <DashboardCard
                                 title="Recruiter Networking"
                                 link={"/recruiter"}
@@ -100,7 +81,7 @@ export default function Dashboard() {
                         </Grid>
 
                     {/* webscraping tool */}
-                        <Grid size={{ xs: 2, sm: 4, md: 4 }}>
+                        <Grid size={{ xs: 1, sm: 1, md: 1 }}>
                             <DashboardCard
                                 title="Webscraping Tool"
                                 link={"/recruiter"}
@@ -113,7 +94,7 @@ export default function Dashboard() {
                         </Grid>
 
                     {/*  resume review tool  */}
-                        <Grid size={{ xs: 2, sm: 4, md: 4 }}>
+                        <Grid size={{ xs: 1, sm: 1, md: 1 }}>
                             <DashboardCard
                                 title="Webscraping Tool"
                                 link={"/recruiter"}
