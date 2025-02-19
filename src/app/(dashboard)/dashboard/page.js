@@ -56,7 +56,7 @@ export default function Dashboard() {
                         <Grid size={{ xs: 1, sm: 1, md: 1 }}>
                             <DashboardCard
                                 title="Behavioral Interview"
-                                link={"/behavioral"}
+                                link={"/behavioral/instructions"}
                                 description="This mode lets you practice behavioral interviews, customize your questions, and receive personalized improvement advice at the end."
                                 image="static/images/testExample.png"
                                 buttons={[

@@ -31,7 +31,7 @@ const DashboardCard = ({ title, link, description, image, buttons = [] }) => {
                     {title}
                 </Typography>
                 <Typography sx={{
-                    fontFamily: 'DM Sans Medium',
+                    fontFamily: 'DM Sans',
                     color: '#696862',
                     letterSpacing: '-0.5px',
                     fontSize: '0.92rem',
