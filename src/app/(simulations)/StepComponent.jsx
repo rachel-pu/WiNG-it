@@ -25,7 +25,7 @@ const StepComponent = ({ stepNumber, stepTitle, stepDescription }) => (
         >
             <Typography
                 color="#F3F1EC"
-                fontFamily="Satoshi-Bold"
+                fontFamily="Satoshi Bold"
                 fontSize="1.35rem"
             >
                 {stepNumber}
@@ -37,7 +37,7 @@ const StepComponent = ({ stepNumber, stepTitle, stepDescription }) => (
             {/* header */}
             <Typography
                 color="#384EC9"
-                fontFamily="Satoshi-Bold"
+                fontFamily="Satoshi Bold"
                 fontSize="1.35rem"
             >
                 {stepTitle}

@@ -99,7 +99,7 @@ const Instructions = () => {
                         variants = {itemVariants}>
 
                     <Box>
-                    <Typography color={"black"} fontFamily={"Satoshi-Bold"} fontSize={"1.7rem"} >
+                    <Typography color={"black"} fontFamily={"Satoshi Bold"} fontSize={"1.7rem"} >
                         Quick Start Guide
                     </Typography>
                     <Typography color={"black"} fontFamily={"DM Sans"} fontSize={"1rem"}>
