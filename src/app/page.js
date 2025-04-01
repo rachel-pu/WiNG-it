@@ -27,23 +27,7 @@ import {IconButton} from "@mui/material";
 import {SignedOut} from '@clerk/nextjs'
 
 const pages = ['Why WiNG.it', 'About Us', 'Login'];
-export default function Test() {
-
-    const [scrolled, setScrolled] = useState(false);
-    useEffect(() => {
-        const handleScroll = () => {
-            if (window.scrollY > 50) {
-                setScrolled(true);
-            } else {
-                setScrolled(false);
-            }
-        };
-
-        window.addEventListener('scroll', handleScroll);
-        return () => {
-            window.removeEventListener('scroll', handleScroll);
-        };
-    }, []);
+export default function HomePage() {
 
     const itemVariants = {
         hidden: { opacity: 0, y: 5 },
@@ -123,7 +107,6 @@ export default function Test() {
                                             to="why-wing-it"
                                             offset={-50}
                                             duration={500}
-                                            containerId="scrollableContainer"
                                             style={{
                                                 fontSize: '1.05rem',
                                                 fontFamily: 'Satoshi Medium',
@@ -152,7 +135,6 @@ export default function Test() {
                                             to="about-us"
                                             offset={-50}
                                             duration={500}
-                                            containerId="scrollableContainer"
                                             style={{
                                                 fontSize: '1.05rem',
                                                 fontFamily: 'Satoshi Medium',
@@ -216,7 +198,6 @@ export default function Test() {
                                             to="why-wing-it"
                                             offset={-50}
                                             duration={500}
-                                            containerId="scrollableContainer"
                                             style={{fontSize: '1.05rem', fontFamily: 'Satoshi Bold', textTransform: 'none', color: 'black', letterSpacing: '-0.01px', borderRadius: '50px', paddingX: 2 }}
                                         >
                                             Why WiNG.it
@@ -228,7 +209,6 @@ export default function Test() {
                                             to="about-us"
                                             offset={-50}
                                             duration={500}
-                                            containerId="scrollableContainer"
                                             style={{ fontSize: '1.05rem', fontFamily: 'Satoshi Bold', textTransform: 'none', color: 'black', letterSpacing: '-0.01px', borderRadius: '50px', paddingX: 2 }}
                                         >
                                             About Us
@@ -242,20 +222,15 @@ export default function Test() {
                 </Container>
             </AppBar>
 
-        {/*// scrollable container*/}
+        {/*//  container*/}
         <Box
-            id="scrollableContainer"
             sx={{
             height: '100vh',
-            overflowY: 'scroll',
-            scrollSnapType: 'y mandatory',
-            scrollBehavior: 'smooth',
         }}>
 
             {/* ---------- home page ----------  */}
             <Box id="home-page"
                  sx={{
-                     scrollSnapAlign: 'start',     // or 'center'
                      height: '100vh',
                  }}
                  className=" h-screen w-full bg-colorF3F1EA flex justify-center items-center">
@@ -404,7 +379,6 @@ export default function Test() {
             {/* ---------- why wing it ----------*/}
             <Box id="why-wing-it"
                  sx={{
-                     scrollSnapAlign: 'start',
                      height: '100vh',
                  }}
                  className="h-screen w-full bg-colorF3F1EA flex justify-center items-center">
@@ -478,7 +452,6 @@ export default function Test() {
             {/*  ---------- about us ----------  */}
             <Box id="about-us"
                  sx={{
-                     scrollSnapAlign: 'start',
                      height: '100vh',
                      paddingTop: '6%'
                  }}
@@ -639,7 +612,6 @@ export default function Test() {
             {/* ---------- getting started section ---------- */}
             <Box id="getting-started"
                  sx={{
-                     scrollSnapAlign: 'start',
                      height: '100vh',
                  }}
                  className="h-screen w-full bg-colorF3F1EA flex justify-center items-center flex-col" >

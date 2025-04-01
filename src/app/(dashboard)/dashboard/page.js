@@ -5,27 +5,10 @@ import Drawer from '@mui/material/Drawer';
 import CssBaseline from '@mui/material/CssBaseline';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
-import List from '@mui/material/List';
-import Typography from '@mui/material/Typography';
-import Divider from '@mui/material/Divider';
-import ListItem from '@mui/material/ListItem';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
-import { MdSpaceDashboard } from "react-icons/md";
-import { HiDocumentText } from "react-icons/hi2";
-import { IoSettings } from "react-icons/io5";
-import {GiFluffyWing} from "react-icons/gi";
-import { IoPersonCircle } from "react-icons/io5";
 import LeftNavbar from '/components/LeftNavbar';
 import Stack from "@mui/material/Stack";
 import Grid from '@mui/material/Grid2';
-import {FaMicrophone, FaPencilRuler} from "react-icons/fa";
-import Card from "@mui/material/Card";
-import CardContent from '@mui/material/CardContent';
-import Link from 'next/link';
-import CardMedia from '@mui/material/CardMedia';
-import DashboardCard from './DashboardCard';
+import DashboardCard from '../dashboard/(components)/DashboardCard';
 import {Button, CardActions} from "@mui/material";
 import MainAppBar from "../../../../components/MainAppBar";
 import { ClerkProvider, SignedIn, SignedOut, SignInButton, UserButton } from '@clerk/nextjs'
@@ -36,7 +19,7 @@ export default function Dashboard() {
         <Box sx={{ display: 'flex' }}>
             <CssBaseline />
 
-            {/* ----------- title header div w/ time & date ----------- */}
+            {/* ----------- title header div w/ user profile ----------- */}
             <MainAppBar title="Dashboard" color="#324fd1" />
 
             {/* --------- sidebar navigation --------- */}
@@ -56,7 +39,7 @@ export default function Dashboard() {
                         <Grid size={{ xs: 1, sm: 1, md: 1 }}>
                             <DashboardCard
                                 title="Behavioral Interview"
-                                link={"/behavioral/instructions"}
+                                link={"/behavioral"}
                                 description="This mode lets you practice behavioral interviews, customize your questions, and receive personalized improvement advice at the end."
                                 image="static/images/testExample.png"
                                 buttons={[
