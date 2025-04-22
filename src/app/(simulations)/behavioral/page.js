@@ -70,6 +70,10 @@ export default function BehavioralInterviewSimulation() {
         fetchQuestions();
     }
 
+    const handleInterviewerDifficultyChange = (event) => {
+
+    }
+
 
   return (
       <SignedIn>
@@ -92,11 +96,13 @@ export default function BehavioralInterviewSimulation() {
                           handleQuestionsChange={handleQuestionsChange}
                           handleQuestionTypesChange={handleQuestionTypesChange}
                           handleGetStarted={handleGetStarted}
+                          handleInterviewerDifficultyChange={() => {}}
+                          handleTimerChange={() => {}}
                       />
                   ) : (
                       <Box
                           component="main"
-                          sx={{ flexGrow: 1, bgcolor: "#F3F1EB", height: "100vh", overflow: "auto" }}
+                          sx={{ flexGrow: 1, bgcolor: "black", height: "100vh", overflow: "auto" }}
                       >
                           <Toolbar />
                           {/* question box component */}
@@ -105,8 +111,9 @@ export default function BehavioralInterviewSimulation() {
                           {questions.length > 0 ? (
                                   <BehavioralSimulationPage questions={questions} />
                               ) : (
-                                  <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', flexDirection: 'column', gap: 2,}}>
+                                  <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%', flexDirection: 'column', gap: 2}}>
 
+                                      {/* loading */}
                                       <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '50%', width: '40%', flexDirection: 'column', gap: 2, borderRadius: 1, backgroundImage: 'url(/static/images/Loading.png)', backgroundSize: 'contain', backgroundPosition: 'center', backgroundRepeat: 'no-repeat' }}>
                                           <CircularProgress />
                                           <Typography sx={{ fontFamily: 'DM Sans', color: '#F3F1EC'}}>Generating your simulation experience...</Typography>
