@@ -8,66 +8,52 @@ import MicIcon from "@mui/icons-material/Mic";
 import StopIcon from "@mui/icons-material/Stop";
 import Button from "@mui/material/Button";
 import TalkingInterviewer from "./TalkingInterviewer";
-import {motion} from "framer-motion";
-import VideocamIcon from "@mui/icons-material/Videocam";
+import { CircularProgress, Typography, Snackbar, Alert } from "@mui/material";
+
+// Add this import if you're using React recorder or similar
+// import { ReactMic } from 'react-mic';
 
 const InterviewQuestions = ({questions}) => {
     const router = useRouter();
-    const lastIndex = questions.length - 1;
+
+    // instead of current question index
+    const [currentRecordingQuestion, setCurrentRecordingQuestion] = useState({
+    index: 0,
+    text: ""
+});
 
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+
     const [isRecording, setIsRecording] = useState(false);
     const [audioUrl, setAudioUrl] = useState(null);
     const [transcript, setTranscript] = useState("");
     const audioRef = useRef(null);
     const [isSpeaking, setIsSpeaking] = useState(false);
     const [hasRecorded, setHasRecorded] = useState(false);
+    const [isProcessing, setIsProcessing] = useState(false);
+    const [sessionId, setSessionId] = useState("");
+    const [alertMessage, setAlertMessage] = useState("");
+    const [alertSeverity, setAlertSeverity] = useState("info");
+    const [showAlert, setShowAlert] = useState(false);
 
-    const videoRef = useRef(null);
-    const [mediaStream, setMediaStream] = useState(null);
-    const [micActive, setMicActive] = useState(false);
-    const [videoActive, setVideoActive] = useState(false);
+    // Media recorder objects
+    const mediaRecorder = useRef(null);
+    const audioChunks = useRef([]);
 
-    //  webcam stream
-    const handleToggleVideo = async () => {
-        if (videoActive) {
-            // stop and clear
-            mediaStream.getTracks().forEach((t) => t.stop());
-            setMediaStream(null);
-            setVideoActive(false);
-        } else {
-            try {
-                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-                setMediaStream(stream);
-                setVideoActive(true);
-            } catch (err) {
-                console.error("Error accessing video:", err);
-                setVideoActive(false);
-            }
-        }
-    };
-
-    // set up webcam stream
+    // Generate a session ID when the component mounts
     useEffect(() => {
-        if (videoRef.current && mediaStream) {
-            videoRef.current.srcObject = mediaStream;
-        }
-    }, [videoRef, mediaStream]);
-
-    // cleanup function
-    useEffect(() => {
-        return () => {
-            if (mediaStream) {
-                mediaStream.getTracks().forEach((track) => {
-                    track.stop();
-                });
-            }
-        };
-    }, [mediaStream]);
+        const newSessionId = `session-${Date.now()}`;
+        setSessionId(newSessionId);
+        console.log("Interview session ID:", newSessionId);
+    }, []);
 
     // Fetch the TTS audio for the current question using your Flask endpoint.
     const fetchAndPlayQuestionAudio = async (text) => {
         try {
+            setAlertMessage("Fetching question audio...");
+            setAlertSeverity("info");
+            setShowAlert(true);
+
             const response = await fetch("http://127.0.0.1:5000/text-to-speech", {
                 method: "POST",
                 headers: {
@@ -75,15 +61,30 @@ const InterviewQuestions = ({questions}) => {
                 },
                 body: JSON.stringify({text})
             });
+
             if (!response.ok) {
-                console.error("Error fetching audio");
+                console.error("Error fetching audio:", response.status);
+                setAlertMessage("Failed to load question audio");
+                setAlertSeverity("error");
+                setShowAlert(true);
                 return;
             }
+
             const blob = await response.blob();
             const url = URL.createObjectURL(blob);
             setAudioUrl(url);
+
+            setAlertMessage("Question audio loaded successfully");
+            setAlertSeverity("success");
+            setShowAlert(true);
+
+            // Auto-hide the alert after 2 seconds
+            setTimeout(() => setShowAlert(false), 2000);
         } catch (error) {
             console.error("Error in text-to-speech fetch:", error);
+            setAlertMessage("Error loading question audio");
+            setAlertSeverity("error");
+            setShowAlert(true);
         }
     };
 
@@ -109,14 +110,10 @@ const InterviewQuestions = ({questions}) => {
             audio.load();
             audio.play().catch((err) => {
                 console.error("Autoplay failed:", err);
+                setAlertMessage("Failed to play audio automatically. Please click to play.");
+                setAlertSeverity("warning");
+                setShowAlert(true);
             });
-
-            // at the last question, when the audio is done, route to the results page
-            if (currentQuestionIndex === lastIndex) {
-                audio.addEventListener("ended", () => {
-                    router.push("/behavioral/results");
-                });
-            }
 
             return () => {
                 audio.removeEventListener("play", handlePlay);
@@ -125,47 +122,136 @@ const InterviewQuestions = ({questions}) => {
         }
     }, [audioUrl]);
 
+    // Set up recording functionality
+    useEffect(() => {
+        const setupRecording = async () => {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                mediaRecorder.current = new MediaRecorder(stream);
+
+                mediaRecorder.current.ondataavailable = (event) => {
+                    if (event.data.size > 0) {
+                        audioChunks.current.push(event.data);
+                    }
+                };
+
+                mediaRecorder.current.onstop = async () => {
+                    const audioBlob = new Blob(audioChunks.current, { type: 'audio/wav' });
+                    audioChunks.current = [];
+                    await processAudioBlob(audioBlob);
+                };
+
+                console.log("Audio recording initialized successfully");
+            } catch (error) {
+                console.error("Error setting up audio recording:", error);
+                setAlertMessage("Failed to set up audio recording. Please check microphone permissions.");
+                setAlertSeverity("error");
+                setShowAlert(true);
+            }
+        };
+
+        setupRecording();
+    }, []);
 
     const startRecording = () => {
-        setIsRecording(true);
+        if (mediaRecorder.current && mediaRecorder.current.state === 'inactive') {
+            const questionIndexAtRecordingStart = currentQuestionIndex; // Capture current index
+            audioChunks.current = [];
+            mediaRecorder.current.start();
+            setIsRecording(true);
+            console.log("Recording started");
+
+             // Override the onstop handler to pass the captured index
+        mediaRecorder.current.onstop = async () => {
+            const audioBlob = new Blob(audioChunks.current, { type: 'audio/wav' });
+            audioChunks.current = [];
+            await processAudioBlob(audioBlob, questionIndexAtRecordingStart); // Pass it down
+        };
+
+            setAlertMessage("Recording started");
+            setAlertSeverity("info");
+            setShowAlert(true);
+            setTimeout(() => setShowAlert(false), 1500);
+        } else {
+            console.error("MediaRecorder not initialized or already recording");
+        }
     };
 
     const stopRecording = () => {
-        setIsRecording(false);
-        setHasRecorded(true);
+        if (mediaRecorder.current && mediaRecorder.current.state === 'recording') {
+            mediaRecorder.current.stop();
+            setIsRecording(false);
+            setIsProcessing(true);
+            console.log("Recording stopped");
+
+            setAlertMessage("Processing your answer...");
+            setAlertSeverity("info");
+            setShowAlert(true);
+        }
     };
 
-
-    // When recording stops, send the recorded audio to the speech-to-text endpoint.
-    const onStop = async (recordedBlob) => {
-        console.log("Recorded Blob:", recordedBlob);
-        const formData = new FormData();
-        formData.append("audio", recordedBlob.blob, "recording.wav");
-
+    const processAudioBlob = async (audioBlob, questionIndexAtRecordingStart) => {
         try {
-            const response = await fetch("http://127.0.0.1:5000/speech-to-text", {
+            // Create form data
+            const formData = new FormData();
+            formData.append("audio", audioBlob, "recording.wav");
+            formData.append("question_number", (currentQuestionIndex + 1).toString()); // Use captured index
+            console.log("question number:   ", currentQuestionIndex + 1);
+            formData.append("question_text", questions[currentQuestionIndex]); // Use captured index
+            console.log("question text:   ", questions[currentQuestionIndex]);
+            // formData.append("question_number", (currentQuestionIndex + 1).toString());
+            // formData.append("question_text", questions[currentQuestionIndex]);
+            formData.append("session_id", sessionId);
+
+            console.log("Sending audio for transcription...");
+
+            // Try the save-and-transcribe endpoint
+            const response = await fetch("http://127.0.0.1:5000/save-and-transcribe", {
                 method: "POST",
                 body: formData
             });
-            const data = await response.json();
-            console.log("Speech-to-text response:", data);
-            setTranscript(data.transcript);
+            console.log(response);
 
-            // Advance to the next question or go to the results page.
-            if (currentQuestionIndex < questions.length - 1) {
-                setCurrentQuestionIndex(currentQuestionIndex + 1);
-            } else {
-                router.push("/behavioral/results");
+            if (!response.ok) {
+                throw new Error(`Server responded with ${response.status}`);
             }
+
+            const data = await response.json();
+            console.log("Transcription response:", data);
+
+            if (data.success) {
+                setTranscript(data.response_data?.transcript || "");
+                setHasRecorded(true);
+                setIsProcessing(false);
+
+                setAlertMessage("Answer recorded successfully!");
+                setAlertSeverity("success");
+                setShowAlert(true);
+                setTimeout(() => setShowAlert(false), 2000);
+            } else {
+                throw new Error(data.error || "Unknown error");
+            }
+
         } catch (error) {
-            console.error("Error in speech-to-text:", error);
+            console.error("Error processing audio:", error);
+            setIsProcessing(false);
+
+            setAlertMessage(`Error: ${error.message}`);
+            setAlertSeverity("error");
+            setShowAlert(true);
         }
     };
 
     const handleNextQuestion = () => {
-        setCurrentQuestionIndex((idx) => idx + 1);
+        if (currentQuestionIndex < questions.length - 1) {
+            setCurrentQuestionIndex(currentQuestionIndex + 1);
+        } else {
+            // Pass the session ID to the results page
+            sessionStorage.setItem("interviewSessionId", sessionId);
+            router.push(`/behavioral/results?sessionId=${sessionId}`);
+        }
         setHasRecorded(false);
-
+        setTranscript("");
     };
 
 
@@ -179,101 +265,106 @@ const InterviewQuestions = ({questions}) => {
                 height: '100%',
                 textAlign: 'center',
                 flexDirection: 'column',
+                backgroundImage: "url(/static/images/zoom-background.png)",
+                backgroundSize: "cover",
+                position: 'relative'
             }}
         >
-
-            {/* toggle webcam button */}
-            <Box
-                onClick={handleToggleVideo}
-                sx={{
-                    width: { xs: "50%", sm: "25%", md: "13.5%" },
-                    mt: 1,
-                    aspectRatio: "4/3",
-                    border: "2px solid #ccc",
-                    borderRadius: 1,
-                    zIndex: 1000,
-                    overflow: "hidden",
-                    position: "relative",
-                    cursor: "pointer",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    backgroundColor: videoActive ? "transparent" : "#f0f0f0",
-                    "&:hover": {
-                        backgroundColor: videoActive ? "rgba(0, 0, 0, 0.1)" : "#e0e0e0",
-                    },
-                }}
-            >
-                {videoActive ? (
-                    <video
-                        ref={videoRef}
-                        autoPlay
-                        playsInline
-                        muted
-                        style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                    />
-                ) : (
-                    <Box sx={{
-                        fontSize: "0.75rem",
-                        color: "#7c7c7c",
-                        fontFamily: 'DM Sans, sans-serif',
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "0.2rem"
-                    }}>
-                        Toggle Webcam <VideocamIcon sx={{color:"#7c7c7c", fontSize: '1rem'}}/>
-                    </Box>
-                )}
+            {/* Current question indicator */}
+            <Box sx={{
+                position: 'absolute',
+                top: 20,
+                left: 20,
+                color: 'white',
+                backgroundColor: 'rgba(0,0,0,0.5)',
+                padding: '5px 10px',
+                borderRadius: '4px'
+            }}>
+                Question {currentQuestionIndex + 1} of {questions.length}
             </Box>
-
-
-            <Box sx={{ width: "100%", height: "100%", display: "flex", justifyContent: "center", alignItems: "center", overflow: "hidden" }}>
-                <TalkingInterviewer isTalking={isSpeaking} />
-            </Box>
-
-            {/*<Typography variant="h5" sx={{ marginBottom: 2 }}>*/}
-            {/*    {questions[currentQuestionIndex]}*/}
-            {/*</Typography>*/}
 
             {/* Hidden audio element used to play TTS audio */}
-            <audio ref={audioRef} style={{display: "none"}} src={audioUrl}/>
+            <audio ref={audioRef} style={{display: "none"}} src={audioUrl} controls />
 
-            <Box
-                sx={{
-                    width: { xs: "50%", sm: "25%", md: "13.5%" },
-                    mt: 1,}}
-            >
+            {/* Transcript display (optional) */}
+            {transcript && (
+                <Box sx={{
+                    position: 'absolute',
+                    bottom: 150,
+                    left: '50%',
+                    transform: 'translateX(-50%)',
+                    width: '80%',
+                    maxHeight: '100px',
+                    overflowY: 'auto',
+                    backgroundColor: 'rgba(255,255,255,0.8)',
+                    padding: '10px',
+                    borderRadius: '8px',
+                    textAlign: 'left'
+                }}>
+                    <Typography variant="body2" color="textSecondary">
+                        Your answer (transcript):
+                    </Typography>
+                    <Typography variant="body1">
+                        {transcript}
+                    </Typography>
+                </Box>
+            )}
+
+            {/* Recording controls */}
+            <Box sx={{position: "absolute", bottom: 40, left: '50%', transform: 'translateX(-50%)'}}>
                 <IconButton
-                    disabled={currentQuestionIndex === lastIndex || hasRecorded}
+                    disabled={isProcessing || hasRecorded}
                     onClick={isRecording ? stopRecording : startRecording}
                     color="primary"
                     sx={{
                         fontSize: 40,
-                        backgroundColor: hasRecorded ? "lightgray" : "lightgray",
+                        backgroundColor: isProcessing ? "#f0f0f0" :
+                                         hasRecorded ? "lightgray" :
+                                         isRecording ? "#ff6b6b" : "lightgray",
                         borderRadius: "50%",
                         width: 60,
                         height: 60,
                         "&:hover": {
-                            backgroundColor: hasRecorded ? "lightgray" : "#b0b0b0"
+                            backgroundColor: isProcessing ? "#f0f0f0" :
+                                             hasRecorded ? "lightgray" :
+                                             isRecording ? "#ff5252" : "#b0b0b0"
                         }
                     }}
                 >
-                    {isRecording ? <StopIcon fontSize="inherit"/> : <MicIcon fontSize="inherit"/>}
+                    {isProcessing ? <CircularProgress size={24} /> :
+                     isRecording ? <StopIcon fontSize="inherit"/> :
+                     <MicIcon fontSize="inherit"/>}
                 </IconButton>
-
             </Box>
 
+            {/* Animated interviewer */}
+            <Box sx={{position: "absolute", bottom: 96, left: '50%', transform: 'translateX(-50%)'}}>
+                <TalkingInterviewer isTalking={isSpeaking}/>
+            </Box>
 
+            {/* Next button */}
             {hasRecorded && (
                 <Box sx={{position: "absolute", bottom: 50, right: 50}}>
                     <Button
                         variant="contained"
                         onClick={handleNextQuestion}
                     >
-                        Next
+                        {currentQuestionIndex < questions.length - 1 ? "Next Question" : "Finish Interview"}
                     </Button>
                 </Box>
             )}
+
+            {/* Status alerts */}
+            <Snackbar
+                open={showAlert}
+                autoHideDuration={5000}
+                onClose={() => setShowAlert(false)}
+                anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+            >
+                <Alert severity={alertSeverity} onClose={() => setShowAlert(false)}>
+                    {alertMessage}
+                </Alert>
+            </Snackbar>
         </Box>
     );
 };
