@@ -8,9 +8,13 @@ import MicIcon from "@mui/icons-material/Mic";
 import StopIcon from "@mui/icons-material/Stop";
 import Button from "@mui/material/Button";
 import TalkingInterviewer from "./TalkingInterviewer";
+import {motion} from "framer-motion";
+import VideocamIcon from "@mui/icons-material/Videocam";
 
 const InterviewQuestions = ({questions}) => {
     const router = useRouter();
+    const lastIndex = questions.length - 1;
+
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
     const [isRecording, setIsRecording] = useState(false);
     const [audioUrl, setAudioUrl] = useState(null);
@@ -19,6 +23,47 @@ const InterviewQuestions = ({questions}) => {
     const [isSpeaking, setIsSpeaking] = useState(false);
     const [hasRecorded, setHasRecorded] = useState(false);
 
+    const videoRef = useRef(null);
+    const [mediaStream, setMediaStream] = useState(null);
+    const [micActive, setMicActive] = useState(false);
+    const [videoActive, setVideoActive] = useState(false);
+
+    //  webcam stream
+    const handleToggleVideo = async () => {
+        if (videoActive) {
+            // stop and clear
+            mediaStream.getTracks().forEach((t) => t.stop());
+            setMediaStream(null);
+            setVideoActive(false);
+        } else {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                setMediaStream(stream);
+                setVideoActive(true);
+            } catch (err) {
+                console.error("Error accessing video:", err);
+                setVideoActive(false);
+            }
+        }
+    };
+
+    // set up webcam stream
+    useEffect(() => {
+        if (videoRef.current && mediaStream) {
+            videoRef.current.srcObject = mediaStream;
+        }
+    }, [videoRef, mediaStream]);
+
+    // cleanup function
+    useEffect(() => {
+        return () => {
+            if (mediaStream) {
+                mediaStream.getTracks().forEach((track) => {
+                    track.stop();
+                });
+            }
+        };
+    }, [mediaStream]);
 
     // Fetch the TTS audio for the current question using your Flask endpoint.
     const fetchAndPlayQuestionAudio = async (text) => {
@@ -66,6 +111,13 @@ const InterviewQuestions = ({questions}) => {
                 console.error("Autoplay failed:", err);
             });
 
+            // at the last question, when the audio is done, route to the results page
+            if (currentQuestionIndex === lastIndex) {
+                audio.addEventListener("ended", () => {
+                    router.push("/behavioral/results");
+                });
+            }
+
             return () => {
                 audio.removeEventListener("play", handlePlay);
                 audio.removeEventListener("ended", handleEnded);
@@ -111,12 +163,9 @@ const InterviewQuestions = ({questions}) => {
     };
 
     const handleNextQuestion = () => {
-        if (currentQuestionIndex < questions.length - 1) {
-            setCurrentQuestionIndex(currentQuestionIndex + 1);
-        } else {
-            router.push("/behavioral/results");
-        }
+        setCurrentQuestionIndex((idx) => idx + 1);
         setHasRecorded(false);
+
     };
 
 
@@ -130,10 +179,57 @@ const InterviewQuestions = ({questions}) => {
                 height: '100%',
                 textAlign: 'center',
                 flexDirection: 'column',
-                backgroundImage: "url(/static/images/zoom-background.png)",
-                backgroundSize: "cover"
             }}
         >
+
+            {/* toggle webcam button */}
+            <Box
+                onClick={handleToggleVideo}
+                sx={{
+                    width: { xs: "50%", sm: "25%", md: "13.5%" },
+                    mt: 1,
+                    aspectRatio: "4/3",
+                    border: "2px solid #ccc",
+                    borderRadius: 1,
+                    zIndex: 1000,
+                    overflow: "hidden",
+                    position: "relative",
+                    cursor: "pointer",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    backgroundColor: videoActive ? "transparent" : "#f0f0f0",
+                    "&:hover": {
+                        backgroundColor: videoActive ? "rgba(0, 0, 0, 0.1)" : "#e0e0e0",
+                    },
+                }}
+            >
+                {videoActive ? (
+                    <video
+                        ref={videoRef}
+                        autoPlay
+                        playsInline
+                        muted
+                        style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                    />
+                ) : (
+                    <Box sx={{
+                        fontSize: "0.75rem",
+                        color: "#7c7c7c",
+                        fontFamily: 'DM Sans, sans-serif',
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "0.2rem"
+                    }}>
+                        Toggle Webcam <VideocamIcon sx={{color:"#7c7c7c", fontSize: '1rem'}}/>
+                    </Box>
+                )}
+            </Box>
+
+
+            <Box sx={{ width: "100%", height: "100%", display: "flex", justifyContent: "center", alignItems: "center", overflow: "hidden" }}>
+                <TalkingInterviewer isTalking={isSpeaking} />
+            </Box>
 
             {/*<Typography variant="h5" sx={{ marginBottom: 2 }}>*/}
             {/*    {questions[currentQuestionIndex]}*/}
@@ -142,9 +238,13 @@ const InterviewQuestions = ({questions}) => {
             {/* Hidden audio element used to play TTS audio */}
             <audio ref={audioRef} style={{display: "none"}} src={audioUrl}/>
 
-            <Box sx={{position: "absolute", bottom: 40, left: 830}}>
+            <Box
+                sx={{
+                    width: { xs: "50%", sm: "25%", md: "13.5%" },
+                    mt: 1,}}
+            >
                 <IconButton
-                    disabled={hasRecorded}
+                    disabled={currentQuestionIndex === lastIndex || hasRecorded}
                     onClick={isRecording ? stopRecording : startRecording}
                     color="primary"
                     sx={{
@@ -163,9 +263,6 @@ const InterviewQuestions = ({questions}) => {
 
             </Box>
 
-            <Box sx={{position: "absolute", bottom: 96, left: 600}}>
-                <TalkingInterviewer isTalking={isSpeaking}/>
-            </Box>
 
             {hasRecorded && (
                 <Box sx={{position: "absolute", bottom: 50, right: 50}}>

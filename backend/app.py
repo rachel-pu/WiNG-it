@@ -47,19 +47,23 @@ def generate_questions():
         job_role = data.get("job_role", "").strip()
         numQuestions = data.get("numQuestions")
         questionTypes = data.get("questionTypes")
+        interviewerDifficulty = data.get("interviewerDifficulty", "general").replace("-", " ")
 
         print(numQuestions)
         print(questionTypes)
+        print(interviewerDifficulty)
 
         prompt = f"""
 
         Generate {numQuestions} behavioral interview questions related to {questionTypes} for a {job_role if job_role else "general"} role in the technology industry.
+        Simulate an interviewer with a {interviewerDifficulty} style.
         - Format strictly as: "1. [Question]", "2. [Question]", etc.
         - Do NOT include any introductory text, titles, or explanations.
         - Each question should only have one question mark max. There should be no multiple questions in one question. Make sure each question will not require the user to talk for over 5 minutes.
         - Combine this introduction into the first question you write. Introduce yourself before going into the question. Please introduce yourself as "Winnie" and say that you are the
            interviewer. Then afterwards, say "It's nice to meet you. Let's get started with the interview." before going into the first question.
            For instance, you should be saying "1. Hi, I'm Winnie. It's nice to meet you. Let's get started with the interview. [Question]".
+        - After the last question, say "Thank you for your time. I will get back to you soon.". For example, if the user asks to do 5 questions, after the 5th question, do "6. Thank you for your time. I will get back to you soon.".
 
         """
 

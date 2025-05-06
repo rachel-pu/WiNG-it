@@ -21,6 +21,7 @@ export default function BehavioralInterviewSimulation() {
     const [jobRole, setJobRole] = useState("");
     const [numQuestions, setNumQuestions] = useState(5);
     const [questionTypes, setQuestionTypes] = useState([]);
+    const [interviewerDifficulty, setInterviewerDifficulty] = useState("easy-going");
     const [showQuickstart, setShowQuickstart] = useState(true);
 
 
@@ -34,7 +35,8 @@ export default function BehavioralInterviewSimulation() {
                 body: JSON.stringify({
                     job_role: jobRole,
                     numQuestions: numQuestions,
-                    questionTypes: questionTypes
+                    questionTypes: questionTypes,
+                    interviewerDifficulty: interviewerDifficulty,
                 })
             });
 
@@ -60,11 +62,6 @@ export default function BehavioralInterviewSimulation() {
     };
 
     const handleGetStarted = () => {
-        // if (!micActive){
-        //     setError("Please enable the microphone to continue.");
-        //     return;
-        // }
-        // setError("");
         setShowQuickstart(false);
         // getting backend questions
         fetchQuestions();
