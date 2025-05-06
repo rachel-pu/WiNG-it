@@ -23,6 +23,9 @@ from deepgram import (
 import httpx
 import aiofiles
 from deepgram.utils import verboselogs
+from pprint import pprint  # At the top of your file
+from flask_session import Session
+
 
 # Load environment variables
 dotenv_path = "/Users/chelsn/WebstormProjects/WiNG-it/.env.local"
@@ -46,10 +49,15 @@ dg_client = DeepgramClient(
     config=ClientOptionsFromEnv(verbose=verboselogs.SPAM)
 )
 
+RESPONSES_STORE = {}  # Global storage (fallback)
+
 # For frontend req
 app = Flask(__name__)
 app.secret_key = os.getenv('FLASK_SECRET_KEY', 'dev_secret_key_change_in_production')  # Add a secret key for session
 CORS(app, supports_credentials=True)  # Enable CORS with credentials
+
+app.config['SESSION_TYPE'] = 'filesystem'  # Stores sessions on disk
+Session(app)
 
 # Global dictionary to store responses if session is not working
 RESPONSES_STORE = {}
@@ -143,11 +151,9 @@ def text_to_speech():
         print(f"❌ Error in text_to_speech: {str(e)}")
         return jsonify({"error": str(e)}), 500
 
-
 @app.route("/save-and-transcribe", methods=["POST"])
 def save_and_transcribe():
     try:
-
         # Check if audio file is in the request
         if 'audio' not in request.files:
             return jsonify({"error": "No audio file provided"}), 400
@@ -159,9 +165,6 @@ def save_and_transcribe():
         question_number = request.form.get('question_number', '0')
         question_text = request.form.get('question_text', 'Unknown question')
         session_id = request.form.get('session_id', str(uuid.uuid4()))
-
-#         print(f"📝 Question #{question_number}: {question_text}")
-#         print(f"🆔 Session ID: {session_id}")
 
         # Create question key in format "1. First question"
         question_key = f"{question_number}. {question_text}"
@@ -206,39 +209,60 @@ def save_and_transcribe():
                 print(f"📝 Transcript: {transcript[:100]}...")
                 print(f"🗣️ Filler words detected: {len(filler_words)}")
 
-                # Create response dictionary
+                # Create response dictionary with more structured data
                 response_data = {
                     "transcript": transcript,
                     "filler_words": filler_words,
                     "file_path": file_path,
-                    "question_text": question_text
+                    "question_text": question_text,
+                    "question_number": question_number,
+                    "timestamp": timestamp
                 }
 
-                # Try to store in session
+                # We'll use both session and a global dictionary for redundancy
+                # Initialize global dictionary if it doesn't exist
+                if not hasattr(app, 'all_responses'):
+                    app.all_responses = {}
+
+                # Store response by session_id and question_number for easy lookup
+                if session_id not in app.all_responses:
+                    app.all_responses[session_id] = {}
+
+                app.all_responses[session_id][question_number] = response_data
+
+                # Also try to store in session as a backup
                 try:
                     if 'responses' not in session:
                         session['responses'] = {}
 
                     # Store response in session
-                    session['responses'][question_key] = response_data
+                    session['responses'][question_number] = response_data
                     session.modified = True
-                    print("✅ Response stored in session")
-                    print(f"Backend session_id received: {session_id}")  # In save_and_transcribe()
+                    print(f"✅ Response #{question_number} stored in session")
                 except Exception as session_error:
                     print(f"⚠️ Session storage failed: {str(session_error)}")
-                    print("Using fallback storage instead")
+                    # We already have the app.all_responses as backup
 
-                    # Use fallback storage
-                    if session_id not in RESPONSES_STORE:
-                        RESPONSES_STORE[session_id] = {}
-                    RESPONSES_STORE[session_id][question_key] = response_data
-                    print("✅ Response stored in fallback storage")
+                # Also keep the RESPONSES_STORE for backward compatibility
+                if session_id not in RESPONSES_STORE:
+                    RESPONSES_STORE[session_id] = {}
+                RESPONSES_STORE[session_id][question_key] = response_data
 
+                # Count how many questions have been answered for this session
+                questions_completed = len(app.all_responses.get(session_id, {}))
+
+                # Check if all 5 questions have been completed
+                all_completed = questions_completed >= 5
+
+                # Return the data to the client
                 return jsonify({
                     "success": True,
+                    "question_number": question_number,
                     "question_key": question_key,
                     "response_data": response_data,
-                    "session_id": session_id
+                    "session_id": session_id,
+                    "questions_completed": questions_completed,
+                    "all_completed": all_completed
                 })
 
         except Exception as transcription_error:
@@ -252,52 +276,75 @@ def save_and_transcribe():
         print(f"❌ Error in save_and_transcribe: {str(e)}")
         return jsonify({"error": str(e)}), 500
 
-
-# # Use this as an alias for the save-and-transcribe endpoint to match frontend
-# @app.route("/speech-to-text", methods=["POST"])
-# def speech_to_text():
-#     return save_and_transcribe()
-
-
-@app.route("/get-interview-results", methods=["GET"])
-def get_interview_results():
+# Add a new endpoint to retrieve all responses for a session
+@app.route("/get-all-responses/<session_id>", methods=["GET"])
+def get_all_responses(session_id):
     try:
-        session_id = request.args.get('session_id')
-        print(f"🔄 Getting results for session: {session_id}")
-#         print(f"session data: {session.get('responses', {})}")
-#         print(f"fallback data: {RESPONSES_STORE.get(session_id, {})}")
-
-        # Try to get responses from session
-        session_responses = {}
-        try:
-            if 'responses' in session:
-                session_responses = session['responses']
-                print("✅ Found responses in session")
-        except Exception as session_error:
-            print(f"⚠️ Session access failed: {str(session_error)}")
-
-        # Try to get responses from fallback storage
-        fallback_responses = {}
-        if session_id in RESPONSES_STORE:
-            fallback_responses = RESPONSES_STORE[session_id]
-            print("✅ Found responses in fallback storage")
-
-        # Combine responses (fallback takes precedence if there's a conflict)
-        responses = {**session_responses, **fallback_responses}
-
-        if not responses:
-            print("⚠️ No responses found for this session")
+        # Try to get responses from app.all_responses first
+        if hasattr(app, 'all_responses') and session_id in app.all_responses:
+            responses = app.all_responses[session_id]
+        # Fall back to RESPONSES_STORE if needed
+        elif session_id in RESPONSES_STORE:
+            responses = RESPONSES_STORE[session_id]
         else:
-            print(f"✅ Returning {len(responses)} responses")
+            responses = {}
+
+        # Check if we have all 5 responses
+        has_all_responses = len(responses) >= 5
 
         return jsonify({
             "success": True,
-            "responses": responses
+            "session_id": session_id,
+            "responses": responses,
+            "complete": has_all_responses,
+            "count": len(responses)
         })
 
     except Exception as e:
-        print(f"❌ Error in get_interview_results: {str(e)}")
+        print(f"❌ Error retrieving responses: {str(e)}")
         return jsonify({"error": str(e)}), 500
+
+
+       # Add this to your Flask routes
+
+@app.route("/results/<session_id>")
+def display_results(session_id):
+    # Get all responses for the session
+    try:
+        # Try to get responses from app.all_responses first
+        if hasattr(app, 'all_responses') and session_id in app.all_responses:
+            responses = app.all_responses[session_id]
+        # Fall back to RESPONSES_STORE if needed
+        elif session_id in RESPONSES_STORE:
+            responses = RESPONSES_STORE[session_id]
+        else:
+            responses = {}
+
+        # Check if we have all 5 responses
+        has_all_responses = len(responses) >= 5
+
+        if not has_all_responses:
+            # Redirect to the questions page if not all questions are answered
+            flash("Please complete all questions before viewing results.")
+            return redirect(url_for('questions_page'))
+
+        # Sort responses by question number
+        sorted_responses = []
+        for i in range(1, 6):  # Assuming 5 questions numbered 1-5
+            if str(i) in responses:
+                sorted_responses.append(responses[str(i)])
+
+        # Render the results template with the responses
+        return render_template(
+            'results.html',
+            responses=sorted_responses,
+            session_id=session_id
+        )
+
+    except Exception as e:
+        print(f"❌ Error displaying results: {str(e)}")
+        flash("An error occurred while retrieving your responses.")
+        return redirect(url_for('index'))
 
 
 if __name__ == "__main__":

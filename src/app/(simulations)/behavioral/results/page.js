@@ -10,7 +10,7 @@ import Toolbar from "@mui/material/Toolbar";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import { useSearchParams } from "next/navigation";
-import { getTranscriptContentForQuestion } from "./FeedbackTabs"; // Import the utility function
+import { getTranscriptContentForQuestion } from "./FeedbackTabs";
 
 export default function InterviewResults() {
     const [selectedTab, setSelectedTab] = useState(null);
@@ -48,7 +48,7 @@ export default function InterviewResults() {
             console.log("Fetching results for session:", sessionId);
 
             const response = await fetch(
-                `http://127.0.0.1:5000/get-interview-results?session_id=${sessionId}`
+                `http://127.0.0.1:5000/get-all-responses/${sessionId}`
             );
             const data = await response.json();
             console.log("fetched data:", data); // Debugging
@@ -101,8 +101,7 @@ export default function InterviewResults() {
         let totalWords = 0;
         let totalResponseLength = 0;
 
-        Object.entries(responses).forEach(([questionKey, response]) => {
-            const questionNumber = questionKey.split('.')[0];
+        Object.entries(responses).forEach(([questionNum, response]) => {
             const fillerWords = response.filler_words || [];
             allFillerWords = [...allFillerWords, ...fillerWords];
 
@@ -111,7 +110,7 @@ export default function InterviewResults() {
             totalWords += wordCount;
             totalResponseLength += response.transcript ? response.transcript.length : 0;
 
-            fillerWordsPerQuestion[questionNumber] = fillerWords.length;
+            fillerWordsPerQuestion[questionNum] = fillerWords.length;
         });
 
         // Calculate statistics
@@ -239,10 +238,10 @@ export default function InterviewResults() {
             if (result && result.success && result.responses) {
                 setInterviewData(result);
 
-                // Extract questions
-                const questionsList = Object.keys(result.responses).map(key => ({
-                    number: key.split('.')[0],
-                    text: key.substring(key.indexOf('.') + 2)
+                // Extract questions from the response data
+                const questionsList = Object.entries(result.responses).map(([num, response]) => ({
+                    number: num,
+                    text: response.question_text || `Question ${num}`
                 }));
 
                 // Sort questions by number
@@ -258,6 +257,7 @@ export default function InterviewResults() {
 
                 // Select transcript tab by default
                 setSelectedTab(tabs.find(tab => tab.label === "Transcript"));
+                setIsLoading(false);
             } else {
                 setError("No interview data found or error retrieving data");
                 setIsLoading(false);
@@ -449,280 +449,3 @@ export default function InterviewResults() {
         </SignedIn>
     );
 }
-
-// "use client";
-//
-// import CssBaseline from "@mui/material/CssBaseline";
-// import MainAppBar from "../../../../../components/MainAppBar";
-// import LeftNavbar from "../../../../../components/LeftNavbar";
-// import React, { useEffect, useState } from "react";
-// import { SignedIn } from "@clerk/nextjs";
-// import { Box, Typography, CircularProgress } from "@mui/material";
-// import Toolbar from "@mui/material/Toolbar";
-// import Link from "next/link";
-// import { AnimatePresence, motion } from "framer-motion";
-// import { useSearchParams } from "next/navigation";
-//
-// // Define tabs configuration directly in the component
-// const tabs = [
-//   {
-//     icon: "📊",
-//     label: "Statistics",
-//     content: "<div class='text-left'><p>Interview analytics will appear here</p></div>"
-//   },
-//   {
-//     icon: "💡",
-//     label: "Advice",
-//     content: "<div class='text-left'><p>Personalized feedback will appear here</p></div>"
-//   },
-//   {
-//     icon: "📜",
-//     label: "Transcript",
-//     content: "<div class='text-left'><p>Loading your interview transcript...</p></div>"
-//   }
-// ];
-//
-// export default function InterviewResults() {
-//     const [selectedTab, setSelectedTab] = useState(tabs.find(tab => tab.label === "Transcript") || tabs[0]);
-//     const [questionNumber, setQuestionNumber] = useState(null);
-//     const [questions, setQuestions] = useState([]);
-//     const [isLoading, setIsLoading] = useState(true);
-//     const [error, setError] = useState(null);
-//
-//     const searchParams = useSearchParams();
-//     const sessionId = searchParams.get('sessionId');
-//
-//     // Format a single question's transcript
-//     const formatTranscript = (questionKey, response) => {
-//         return `
-//             <p class="text-xl font-bold mt-6">${questionKey}</p>
-//             <p class="mt-2"><strong>Your response:</strong> ${response.transcript || "No response recorded"}</p>
-//             <p class="mt-1"><strong>Filler words used:</strong> ${
-//                 response.filler_words?.length > 0
-//                 ? response.filler_words.join(", ")
-//                 : "None detected"
-//             }</p>
-//         `;
-//     };
-//
-//     // Generate full transcript content
-//     const generateTranscriptContent = (responses, specificQuestion = null) => {
-//         if (!responses || Object.keys(responses).length === 0) {
-//             return "<div class='text-left'><p>No interview data available. Please complete an interview first.</p></div>";
-//         }
-//
-//         if (specificQuestion) {
-//             const questionKey = Object.keys(responses).find(key => key.startsWith(`${specificQuestion}.`));
-//             if (!questionKey) return "<div class='text-left'><p>No transcript available for this question.</p></div>";
-//             return `<div class='text-left'>${formatTranscript(questionKey, responses[questionKey])}</div>`;
-//         }
-//
-//         let content = "<div class='text-left'>";
-//         Object.entries(responses).forEach(([questionKey, response]) => {
-//             content += formatTranscript(questionKey, response);
-//             content += `<hr class="my-4" />`;
-//         });
-//         content += "</div>";
-//         return content;
-//     };
-//
-//     // Fetch interview results from backend
-//     const fetchInterviewResults = async () => {
-//         try {
-//             if (!sessionId) throw new Error('No session ID provided');
-//
-//             const response = await fetch(
-//                 `http://127.0.0.1:5000/get-interview-results?session_id=${sessionId}`
-//             );
-//             if (!response.ok) throw new Error('Failed to fetch results');
-//             return await response.json();
-//         } catch (err) {
-//             console.error("Fetch error:", err);
-//             setError(err.message);
-//             return null;
-//         }
-//     };
-//
-//     // Load data on mount
-//     useEffect(() => {
-//         const loadResults = async () => {
-//             setIsLoading(true);
-//             const result = await fetchInterviewResults();
-//
-//             if (result) {
-//                 // Extract questions
-//                 const questionsList = Object.keys(result.responses || {}).map(key => ({
-//                     number: key.split('.')[0],
-//                     text: key.substring(key.indexOf('.') + 2)
-//                 }));
-//                 setQuestions(questionsList);
-//
-//                 // Update transcript content
-//                 const transcriptContent = generateTranscriptContent(result.responses);
-//                 setSelectedTab(prev => ({
-//                     ...prev,
-//                     content: transcriptContent
-//                 }));
-//             }
-//
-//             setIsLoading(false);
-//         };
-//
-//         loadResults();
-//     }, [sessionId]);
-//
-//     // Handle question selection
-//     const handleQuestionSelect = async (number) => {
-//         setIsLoading(true);
-//         setQuestionNumber(number);
-//
-//         const result = await fetchInterviewResults();
-//         if (result) {
-//             const transcriptContent = generateTranscriptContent(result.responses, number);
-//             setSelectedTab(prev => ({
-//                 ...prev,
-//                 content: transcriptContent
-//             }));
-//         }
-//
-//         setIsLoading(false);
-//     };
-//
-//     // Question button component
-//     const QuestionButton = ({ number, text }) => (
-//         <button
-//             className="
-//                 rounded-2xl bg-gradient-to-r from-color6BAEDB to-colorACD9DB
-//                 w-full text-color282523 font-satoshi font-bold shadow-[0_9px_#1d3557]
-//                 text-black text-xl px-6 py-4 hover:from-color307999
-//                 hover:to-color6EAFCC active:bg-color7DBE73
-//                 active:shadow-[0_5px_#1d3557] active:translate-y-1 focus:outline-none
-//             "
-//             onClick={() => handleQuestionSelect(number)}
-//         >
-//             {`Question ${number}`}
-//         </button>
-//     );
-//
-//     return (
-//         <SignedIn>
-//             <Box sx={{ display: "flex" }}>
-//                 <CssBaseline />
-//                 <MainAppBar title="Behavioral Interview Simulation" color="#2850d9" />
-//                 <LeftNavbar />
-//
-//                 <Box component="main" sx={{ flexGrow: 1, bgcolor: '#F3F1EB', p: 4.5, height: '100vh', overflow: 'auto' }}>
-//                     <Toolbar />
-//                     <Box>
-//                         <Typography color={"black"} fontFamily={"Satoshi Bold"} fontSize={"1.7rem"}>
-//                             Interview Results Summary
-//                         </Typography>
-//                         <Typography color={"black"} fontFamily={"DM Sans"} fontSize={"1rem"}>
-//                             Review your interview performance and transcripts below.
-//                         </Typography>
-//                     </Box>
-//
-//                     <div className="flex flex-row justify-between w-full">
-//                         {/* Questions Panel */}
-//                         <Box className="w-[34%] pt-5 flex flex-col justify-between">
-//                             <div className="flex flex-col space-y-5">
-//                                 {isLoading ? (
-//                                     <div className="flex justify-center py-10">
-//                                         <CircularProgress />
-//                                     </div>
-//                                 ) : error ? (
-//                                     <div className="text-red-500 p-4">
-//                                         Error loading questions: {error}
-//                                     </div>
-//                                 ) : questions.length > 0 ? (
-//                                     questions.map(q => (
-//                                         <QuestionButton key={q.number} number={q.number} text={q.text} />
-//                                     ))
-//                                 ) : (
-//                                     [1, 2, 3, 4, 5].map(num => (
-//                                         <QuestionButton key={num} number={num} text={`Question ${num}`} />
-//                                     ))
-//                                 )}
-//                             </div>
-//
-//                             <div className='group flex justify-center items-center mt-8'>
-//                                 <Link href='/dashboard' className="bg-gradient-to-r from-[#98D781] to-[#7A9BE2] text-2xl font-dm-sans tracking-tight bg-colorFAF8F1 text-color282523 py-2 px-6 rounded-full font-semibold shadow-lg flex items-center space-x-2 transition-transform duration-300 transform group-hover:scale-105 group-hover:-rotate-2">
-//                                     <span className='font-satoshi text-center text-2xl'>Dashboard</span>
-//                                     <svg className="w-7 h-7" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-//                                         <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h12M12 5l7 7-7 7" />
-//                                     </svg>
-//                                 </Link>
-//                             </div>
-//                         </Box>
-//
-//                         {/* Content Panel */}
-//                         <div className="w-[65%] flex flex-col space-y-3 pt-5">
-//                             <div className="p-5 pt-5 rounded-3xl" style={{backgroundColor: "#D9D7D1"}}>
-//                                 <h2 className="text-color282523 font-satoshi text-2xl">
-//                                     {questionNumber ? `Question ${questionNumber}` : "All Questions"}
-//                                 </h2>
-//
-//                                 <div className="w-120 h-200 rounded-2xl overflow-hidden shadow">
-//                                     <nav className="font-dm-sans text-color282523 tracking-tight rounded-t-xl" style={{textAlign: "center"}}>
-//                                         <ul className="flex w-full space-x-1.5">
-//                                             {tabs.map((item) => (
-//                                                 <li
-//                                                     key={item.label}
-//                                                     className={`flex-1 min-w-0 p-3 relative cursor-pointer rounded-t-xl justify-between items-center font-bold text-xl ${
-//                                                         selectedTab.label === item.label
-//                                                             ? "bg-colorF3F1EA text-color6998C2"
-//                                                             : "bg-colorB0B0B0"
-//                                                     }`}
-//                                                     onClick={() => setSelectedTab(item)}
-//                                                 >
-//                                                     {`${item.icon} ${item.label}`}
-//                                                     {selectedTab.label === item.label && (
-//                                                         <motion.div
-//                                                             className="absolute bottom-0 left-0 right-0 h-0.5 bg-colorB7B7B7"
-//                                                             layoutId="underline"
-//                                                         />
-//                                                     )}
-//                                                 </li>
-//                                             ))}
-//                                         </ul>
-//                                     </nav>
-//
-//                                     <main className="flex justify-center h-[600px] flex-grow text-base" style={{backgroundColor: "#F3F1EA"}}>
-//                                         <AnimatePresence mode="wait">
-//                                             <motion.div
-//                                                 key={selectedTab.label}
-//                                                 initial={{ y: 10, opacity: 0 }}
-//                                                 animate={{ y: 0, opacity: 1 }}
-//                                                 exit={{ y: -10, opacity: 0 }}
-//                                                 transition={{ duration: 0.12 }}
-//                                                 className="overflow-y-auto w-full"
-//                                             >
-//                                                 {isLoading ? (
-//                                                     <div className="flex justify-center items-center h-full">
-//                                                         <CircularProgress />
-//                                                     </div>
-//                                                 ) : error ? (
-//                                                     <div className="text-red-500 p-8">
-//                                                         Error: {error}
-//                                                     </div>
-//                                                 ) : (
-//                                                     <div
-//                                                         className="text-color282523 p-8 w-full"
-//                                                         style={{fontSize: "18px", fontFamily: "DM Sans"}}
-//                                                         dangerouslySetInnerHTML={{
-//                                                             __html: selectedTab.content
-//                                                         }}
-//                                                     />
-//                                                 )}
-//                                             </motion.div>
-//                                         </AnimatePresence>
-//                                     </main>
-//                                 </div>
-//                             </div>
-//                         </div>
-//                     </div>
-//                 </Box>
-//             </Box>
-//         </SignedIn>
-//     );
-// }

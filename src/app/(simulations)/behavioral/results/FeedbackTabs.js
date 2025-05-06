@@ -17,7 +17,7 @@ export const getTranscriptContentForQuestion = async (questionNumber, sessionId)
     console.log(`Fetching transcript for session ${sessionId}${questionNumber ? `, question ${questionNumber}` : ''}`);
 
     // Fetch responses from backend using sessionId
-    const response = await fetch(`http://127.0.0.1:5000/get-interview-results?session_id=${sessionId}`);
+    const response = await fetch(`http://127.0.0.1:5000/get-all-responses/${sessionId}`);
 
     if (!response.ok) {
       throw new Error(`Failed to fetch interview results: ${response.status}`);
@@ -34,9 +34,8 @@ export const getTranscriptContentForQuestion = async (questionNumber, sessionId)
 
     // Filter for the specific question if questionNumber is provided
     if (questionNumber) {
-      const questionKey = Object.keys(storedResponses).find(key => key.split('.')[0] === questionNumber);
-
-      if (!questionKey) {
+      // Since the new API format uses question numbers as keys directly
+      if (!storedResponses[questionNumber]) {
         return {
           html: `<div class="text-left p-4 bg-yellow-50 border-l-4 border-yellow-500">
             <p class="text-yellow-700">No transcript available for Question ${questionNumber}.</p>
@@ -45,9 +44,9 @@ export const getTranscriptContentForQuestion = async (questionNumber, sessionId)
         };
       }
 
-      const response = storedResponses[questionKey];
+      const response = storedResponses[questionNumber];
       let content = `<div class="text-left">
-        <p class="text-xl font-bold mb-4">${questionKey}</p>
+        <p class="text-xl font-bold mb-4">Question ${questionNumber}: ${response.question_text}</p>
         <p class="mt-4 mb-3"><strong>Your response:</strong></p>
         <div class="bg-white p-4 rounded-lg shadow-sm mb-4">${response.transcript || "No response recorded"}</div>`;
 
@@ -63,7 +62,7 @@ export const getTranscriptContentForQuestion = async (questionNumber, sessionId)
       }
 
       content += `</div>`;
-      return { html: content, data: { [questionKey]: response } };
+      return { html: content, data: { [questionNumber]: response } };
     }
 
     // Return all transcripts if no question number is specified
@@ -86,15 +85,13 @@ export const getTranscriptContentForQuestion = async (questionNumber, sessionId)
 
     // Sort questions by number
     const sortedKeys = Object.keys(storedResponses).sort((a, b) => {
-      const numA = parseInt(a.split('.')[0]);
-      const numB = parseInt(b.split('.')[0]);
-      return numA - numB;
+      return parseInt(a) - parseInt(b);
     });
 
-    sortedKeys.forEach(questionKey => {
-      const response = storedResponses[questionKey];
+    sortedKeys.forEach(questionNumber => {
+      const response = storedResponses[questionNumber];
       formattedTranscript += `<div class="mb-8 pb-6 border-b border-gray-200">`;
-      formattedTranscript += `<p class="text-xl font-bold mb-3">${questionKey}</p>`;
+      formattedTranscript += `<p class="text-xl font-bold mb-3">Question ${questionNumber}: ${response.question_text}</p>`;
       formattedTranscript += `<p class="mb-2"><strong>Your response:</strong></p>`;
       formattedTranscript += `<div class="bg-white p-4 rounded-lg shadow-sm mb-4">${response.transcript || "No response recorded"}</div>`;
 
@@ -125,67 +122,3 @@ export const getTranscriptContentForQuestion = async (questionNumber, sessionId)
     };
   }
 };
-// export const getTranscriptContentForQuestion = async (questionNumber, sessionId) => {
-//   try {
-//     // Fetch responses from backend using sessionId
-//     const response = await fetch(`http://127.0.0.1:5000/get-interview-results?session_id=${sessionId}`);
-//
-//     if (!response.ok) {
-//       throw new Error('Failed to fetch interview results');
-//     }
-//
-//     const data = await response.json();
-//     const storedResponses = data.responses || {};
-//
-//     // Filter for the specific question if questionNumber is provided
-//     if (questionNumber) {
-//       const questionKey = Object.keys(storedResponses).find(key => key.startsWith(`${questionNumber}.`));
-//
-//       if (!questionKey) {
-//         return "No transcript available for this question.";
-//       }
-//
-//       const response = storedResponses[questionKey];
-//       let content = `<div class="text-left">
-//         <p class="text-xl font-bold">${questionKey}</p>
-//         <p class="mt-4"><strong>Your response:</strong> ${response.transcript}</p>`;
-//
-//       if (response.filler_words && response.filler_words.length > 0) {
-//         content += `<p class="mt-2"><strong>Filler words used:</strong> ${response.filler_words.join(", ")}</p>`;
-//       } else {
-//         content += `<p class="mt-2"><strong>Filler words used:</strong> None detected</p>`;
-//       }
-//
-//       content += `</div>`;
-//       return content;
-//     }
-//
-//     // Return all transcripts if no question number is specified
-//     if (Object.keys(storedResponses).length === 0) {
-//       return "<p>No transcript data available. Please complete an interview first.</p>";
-//     }
-//
-//     // Format all transcripts
-//     let formattedTranscript = "<div class='text-left'>";
-//
-//     Object.keys(storedResponses).forEach(questionKey => {
-//       const response = storedResponses[questionKey];
-//       formattedTranscript += `<p class="text-xl font-bold mt-6">${questionKey}</p>`;
-//       formattedTranscript += `<p class="mt-2"><strong>Your response:</strong> ${response.transcript}</p>`;
-//
-//       if (response.filler_words && response.filler_words.length > 0) {
-//         formattedTranscript += `<p class="mt-1"><strong>Filler words used:</strong> ${response.filler_words.join(", ")}</p>`;
-//       } else {
-//         formattedTranscript += `<p class="mt-1"><strong>Filler words used:</strong> None detected</p>`;
-//       }
-//
-//       formattedTranscript += `<hr class="my-4" />`;
-//     });
-//
-//     formattedTranscript += "</div>";
-//     return formattedTranscript;
-//   } catch (error) {
-//     console.error("Error fetching transcripts:", error);
-//     return `<p>Error loading transcripts: ${error.message}</p>`;
-//   }
-// };
