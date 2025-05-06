@@ -1,13 +1,9 @@
-from flask import Flask, request, jsonify, send_file, Response, session
+from flask import Flask, request, jsonify, send_file, Response, session, flash, redirect, url_for, render_template
 from flask_cors import CORS
 import openai
 import os
 import re
 from dotenv import load_dotenv
-import io
-import requests
-import json
-import asyncio
 import logging
 import uuid
 import tempfile
@@ -20,10 +16,7 @@ from deepgram import (
     FileSource,
     PrerecordedOptions,
 )
-import httpx
-import aiofiles
 from deepgram.utils import verboselogs
-from pprint import pprint  # At the top of your file
 from flask_session import Session
 
 
