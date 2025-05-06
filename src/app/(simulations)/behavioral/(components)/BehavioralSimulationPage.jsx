@@ -8,7 +8,7 @@ import MicIcon from "@mui/icons-material/Mic";
 import StopIcon from "@mui/icons-material/Stop";
 import Button from "@mui/material/Button";
 import TalkingInterviewer from "./TalkingInterviewer";
-import { CircularProgress, Typography, Snackbar, Alert } from "@mui/material";
+import {CircularProgress, Typography, Snackbar, Alert} from "@mui/material";
 
 // Add this import if you're using React recorder or similar
 // import { ReactMic } from 'react-mic';
@@ -18,9 +18,9 @@ const InterviewQuestions = ({questions}) => {
 
     // instead of current question index
     const [currentRecordingQuestion, setCurrentRecordingQuestion] = useState({
-    index: 0,
-    text: ""
-});
+        index: 0,
+        text: ""
+    });
 
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
 
@@ -126,7 +126,7 @@ const InterviewQuestions = ({questions}) => {
     useEffect(() => {
         const setupRecording = async () => {
             try {
-                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                const stream = await navigator.mediaDevices.getUserMedia({audio: true});
                 mediaRecorder.current = new MediaRecorder(stream);
 
                 mediaRecorder.current.ondataavailable = (event) => {
@@ -136,7 +136,7 @@ const InterviewQuestions = ({questions}) => {
                 };
 
                 mediaRecorder.current.onstop = async () => {
-                    const audioBlob = new Blob(audioChunks.current, { type: 'audio/wav' });
+                    const audioBlob = new Blob(audioChunks.current, {type: 'audio/wav'});
                     audioChunks.current = [];
                     await processAudioBlob(audioBlob);
                 };
@@ -161,12 +161,12 @@ const InterviewQuestions = ({questions}) => {
             setIsRecording(true);
             console.log("Recording started");
 
-             // Override the onstop handler to pass the captured index
-        mediaRecorder.current.onstop = async () => {
-            const audioBlob = new Blob(audioChunks.current, { type: 'audio/wav' });
-            audioChunks.current = [];
-            await processAudioBlob(audioBlob, questionIndexAtRecordingStart); // Pass it down
-        };
+            // Override the onstop handler to pass the captured index
+            mediaRecorder.current.onstop = async () => {
+                const audioBlob = new Blob(audioChunks.current, {type: 'audio/wav'});
+                audioChunks.current = [];
+                await processAudioBlob(audioBlob, questionIndexAtRecordingStart); // Pass it down
+            };
 
             setAlertMessage("Recording started");
             setAlertSeverity("info");
@@ -196,11 +196,9 @@ const InterviewQuestions = ({questions}) => {
             const formData = new FormData();
             formData.append("audio", audioBlob, "recording.wav");
             formData.append("question_number", (currentQuestionIndex + 1).toString()); // Use captured index
-            console.log("question number:   ", currentQuestionIndex + 1);
+            // console.log("question number:   ", currentQuestionIndex + 1);
             formData.append("question_text", questions[currentQuestionIndex]); // Use captured index
-            console.log("question text:   ", questions[currentQuestionIndex]);
-            // formData.append("question_number", (currentQuestionIndex + 1).toString());
-            // formData.append("question_text", questions[currentQuestionIndex]);
+            // console.log("question text:   ", questions[currentQuestionIndex]);
             formData.append("session_id", sessionId);
 
             console.log("Sending audio for transcription...");
@@ -246,9 +244,10 @@ const InterviewQuestions = ({questions}) => {
         if (currentQuestionIndex < questions.length - 1) {
             setCurrentQuestionIndex(currentQuestionIndex + 1);
         } else {
-            // Pass the session ID to the results page
+            // Pass session ID both in URL and sessionStorage
+            const url = `/behavioral/results?sessionId=${encodeURIComponent(sessionId)}`;
             sessionStorage.setItem("interviewSessionId", sessionId);
-            router.push(`/behavioral/results?sessionId=${sessionId}`);
+            router.push(url);
         }
         setHasRecorded(false);
         setTranscript("");
@@ -284,7 +283,7 @@ const InterviewQuestions = ({questions}) => {
             </Box>
 
             {/* Hidden audio element used to play TTS audio */}
-            <audio ref={audioRef} style={{display: "none"}} src={audioUrl} controls />
+            <audio ref={audioRef} style={{display: "none"}} src={audioUrl} controls/>
 
             {/* Transcript display (optional) */}
             {transcript && (
@@ -319,21 +318,21 @@ const InterviewQuestions = ({questions}) => {
                     sx={{
                         fontSize: 40,
                         backgroundColor: isProcessing ? "#f0f0f0" :
-                                         hasRecorded ? "lightgray" :
-                                         isRecording ? "#ff6b6b" : "lightgray",
+                            hasRecorded ? "lightgray" :
+                                isRecording ? "#ff6b6b" : "lightgray",
                         borderRadius: "50%",
                         width: 60,
                         height: 60,
                         "&:hover": {
                             backgroundColor: isProcessing ? "#f0f0f0" :
-                                             hasRecorded ? "lightgray" :
-                                             isRecording ? "#ff5252" : "#b0b0b0"
+                                hasRecorded ? "lightgray" :
+                                    isRecording ? "#ff5252" : "#b0b0b0"
                         }
                     }}
                 >
-                    {isProcessing ? <CircularProgress size={24} /> :
-                     isRecording ? <StopIcon fontSize="inherit"/> :
-                     <MicIcon fontSize="inherit"/>}
+                    {isProcessing ? <CircularProgress size={24}/> :
+                        isRecording ? <StopIcon fontSize="inherit"/> :
+                            <MicIcon fontSize="inherit"/>}
                 </IconButton>
             </Box>
 
@@ -359,7 +358,7 @@ const InterviewQuestions = ({questions}) => {
                 open={showAlert}
                 autoHideDuration={5000}
                 onClose={() => setShowAlert(false)}
-                anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+                anchorOrigin={{vertical: 'top', horizontal: 'center'}}
             >
                 <Alert severity={alertSeverity} onClose={() => setShowAlert(false)}>
                     {alertMessage}
