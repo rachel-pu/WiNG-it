@@ -1,41 +1,47 @@
+
+// TalkingInterviewer.jsx
 import React, { useEffect, useRef } from "react";
 
 const TalkingInterviewer = ({ isTalking }) => {
     const videoRef = useRef(null);
+    const talkingSrc = "/static/videos/interviewer_talking.mp4";
+    const idleBg    = "/static/images/interviewer_idle.png";
 
     useEffect(() => {
-        const video = videoRef.current;
-        if (video) {
-            if (isTalking) {
-                video.currentTime = 0;
-                video.play();
-            } else {
-                video.pause();
-            }
+        const vid = videoRef.current;
+        if (!vid) return;
+        if (isTalking) {
+            vid.currentTime = 0;
+            vid.play().catch(console.error);
+        } else {
+            vid.pause();
         }
     }, [isTalking]);
 
     return (
-        <div style={{ width: 500, height: 500 }}>
-            {isTalking ? (
-                <video
-                    ref={videoRef}
-                    src="/static/videos/talking-interviewer.mp4"
-                    width="464"
-                    height="466"
-                    muted
-                    loop
-                    style={{ display: "block" }}
-                />
-            ) : (
-                <img
-                    src="/static/images/standing still.png"
-                    alt="Interviewer idle"
-                    width="464"
-                    height="466"
-                    style={{ display: "block" }}
-                />
-            )}
+        <div
+            style={{
+                width: "98%",
+                height: "100%",
+                backgroundImage: `url(${idleBg})`,
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+            }}
+        >
+            <video
+                ref={videoRef}
+                src={talkingSrc}
+                muted
+                loop
+                playsInline
+                style={{
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "cover",
+                    backgroundPosition: "center",
+                    display: isTalking ? "block" : "none",
+                }}
+            />
         </div>
     );
 };

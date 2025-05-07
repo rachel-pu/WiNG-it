@@ -1,6 +1,6 @@
 "use client";
 import Toolbar from "@mui/material/Toolbar";
-import React, {useRef, useState} from "react";
+import React, {useRef, useState, useEffect} from "react";
 import Box from "@mui/material/Box";
 import {SignedIn} from "@clerk/nextjs";
 import {Autocomplete, Button, FormControlLabel, FormLabel, Radio, RadioGroup, Switch, Typography} from "@mui/material";
@@ -71,6 +71,7 @@ const QuickstartPage = ({
                             jobRole,
                             numQuestions,
                             questionTypes,
+                            interviewerDifficulty,
                             handleQuestionsChange,
                             handleJobRoleChange,
                             handleQuestionTypesChange,
@@ -95,8 +96,6 @@ const QuickstartPage = ({
     const [error, setError] = useState("");
 
     const micStreamRef = useRef(null);
-    const videoStreamRef = useRef(null);
-
 
     const handleToggleMicrophone = async () => {
         if (micActive) {
@@ -117,24 +116,13 @@ const QuickstartPage = ({
             }
         }
     };
-    const handleToggleVideo = async () => {
-        if (videoActive) {
-            // Stop all video tracks if camera is active
-            if (videoStreamRef.current) {
-                videoStreamRef.current.getTracks().forEach((track) => track.stop());
-                videoStreamRef.current = null;
-            }
-            setVideoActive(false);
-        } else {
-            try {
-                const stream = await navigator.mediaDevices.getUserMedia({video: true});
-                videoStreamRef.current = stream;
-                setVideoActive(true);
-            } catch (error) {
-                console.error("Error accessing video:", error);
-                setVideoActive(false);
-            }
+
+    const onGetStarted = () => {
+        if (!micActive) {
+            alert("Please enable the microphone to continue.");
+            return;
         }
+        handleGetStarted();
     };
 
     const theme = createTheme({
@@ -173,6 +161,34 @@ const QuickstartPage = ({
                         </Typography>
                     </Box>
                 </motion.div>
+
+                {/* ----- draggable webcam when it's toggled! ----- */}
+                {/*{videoActive && (*/}
+                {/*    <motion.div*/}
+                {/*        drag*/}
+                {/*        dragMomentum={false}*/}
+                {/*        style={{*/}
+                {/*            position: "absolute",*/}
+                {/*            top: 100,*/}
+                {/*            right: "2.5%",*/}
+                {/*            width: 300,*/}
+                {/*            height: 200,*/}
+                {/*            border: "1px solid #ccc",*/}
+                {/*            borderRadius: 8,*/}
+                {/*            overflow: "hidden",*/}
+                {/*            backgroundColor: "#000",*/}
+                {/*            zIndex: 1000,*/}
+                {/*        }}*/}
+                {/*    >*/}
+                {/*        <video*/}
+                {/*            ref={videoRef}*/}
+                {/*            autoPlay*/}
+                {/*            playsInline*/}
+                {/*            muted*/}
+                {/*            style={{ width: "100%", height: "100%", objectFit: "cover" }}*/}
+                {/*        />*/}
+                {/*    </motion.div>*/}
+                {/*)}*/}
 
                 {/*  div box of both instructions + options to choose  */}
                 <motion.div
@@ -317,6 +333,8 @@ const QuickstartPage = ({
                                             practice. </Typography>
                                         <RadioGroup
                                             row
+                                            value={interviewerDifficulty}
+                                            onChange={e => handleInterviewerDifficultyChange(e.target.value)}
                                             name="row-radio-buttons-group"
                                         >
                                             <FormControlLabel value="easy-going-personality" control={<Radio/>}
@@ -367,21 +385,6 @@ const QuickstartPage = ({
                                 >
                                     Toggle Microphone
                                 </Button>
-                                <Button
-                                    variant="outlined"
-                                    endIcon={<VideocamIcon/>}
-                                    onClick={handleToggleVideo}
-                                    sx={{
-                                        backgroundColor: videoActive ? '#74b973' : '#c4c2bf',
-                                        '&:hover': {backgroundColor: videoActive ? '#6bab6b' : '#b7b5b1'},
-                                        textTransform: 'none',
-                                        fontFamily: 'DM Sans, sans-serif',
-                                        color: videoActive ? '#4b854b' : '#85817d',
-                                        borderColor: videoActive ? '#74b973' : '#c4c2bf'
-                                    }}
-                                >
-                                    Toggle Video
-                                </Button>
                             </Box>
                         </Box>
 
@@ -396,7 +399,8 @@ const QuickstartPage = ({
                     viewport={{once: true}}
                     transition={{delay: 0.8}}
                     variants={itemVariants}>
-                    <Button color='inherit' onClick={handleGetStarted} sx={{
+
+                    <Button color='inherit' onClick={onGetStarted} sx={{
                         fontSize: '2rem',
                         margin: '0 auto',
                         fontFamily: 'Satoshi Bold',
