@@ -452,18 +452,18 @@ export default function HomePage() {
             {/*  ---------- about us ----------  */}
             <Box id="about-us"
                  sx={{
-                     height: '100vh',
+                     minHeight: '100vh',
                      paddingTop: '6%'
                  }}
                  className="h-screen w-full flex justify-center bg-colorF3F1EA" >
                 <Grid container
                       spacing={5}
                       direction={"column"}
-                      width={'80%'}
+                      width={'100%'}
                       sx={{paddingLeft: '5%', paddingRight: '5%'}}>
 
                     {/* title  */}
-                    <Grid item xs>
+                    <Grid item xs={12}>
                         <motion.div
                             initial="hidden"
                             whileInView="visible"
@@ -477,7 +477,7 @@ export default function HomePage() {
                     </Grid>
 
                     {/* description */}
-                    <Grid item xs>
+                    <Grid item xs={12}>
                         <motion.div
                             initial="hidden"
                             whileInView="visible"
@@ -508,33 +508,13 @@ export default function HomePage() {
                     </Grid>
 
                     {/*  developer section  */}
-                    <Grid item xs>
+                    <Grid item xs={12}>
                         <motion.div initial="hidden"
                                     whileInView="visible"
                                     viewport={{ once: true }}
                                     variants = {itemVariants}
                                     transition={{ delay: 1.25 }}>
-                        <Grid container columns={4} rows={1} spacing={4}>
-
-                            {/* rachel */}
-                            <Grid item size={1}>
-                                <motion.div className=" flex justify-end flex-col pr-3">
-                                    <svg className="ml-[70%]" width="80" height="40" viewBox="0 0 156 56" fill="none"
-                                         xmlns="http://www.w3.org/2000/svg">
-                                        <path
-                                            d="M3.99998 52.5C6.02093 50.3144 18.632 34.0592 34.1879 29.6093C46.2347 26.1631 59.6206 26.21 71.5011 30.3838C75.3596 31.7393 82.1324 35.3006 79.9973 40.5341C79.0224 42.9238 76.7045 44.0966 74.5102 45.2101C72.9866 45.9833 70.6661 46.8286 68.9682 46.1033C66.4295 45.0189 64.7111 41.9117 64.5937 39.2509C64.439 35.7427 66.5308 32.415 68.7462 29.8706C70.4192 27.9491 72.3633 26.3738 74.5499 25.0624C79.412 22.1464 84.7923 19.7864 90.3243 18.515C95.8318 17.2493 101.621 16.9695 107.243 17.4405C114.45 18.0441 120.997 20.4928 127.434 23.678C133.228 26.5455 138.742 29.9302 144.475 32.9122C145.228 33.3036 146.001 33.6551 146.747 34.0592C146.759 34.0659 147.619 34.4429 147.391 34.7138C146.78 35.4375 144.851 35.8704 144.055 36.1581C139.857 37.6758 135.7 39.2394 131.636 41.0978C128.71 42.4359 125.836 43.8887 123.049 45.4977C122.48 45.8266 124.25 45.0185 124.346 44.9773C130.666 42.2509 137.234 40.3551 143.888 38.6119C145.059 38.305 147.069 37.7838 148.285 37.4924C149.322 37.244 150.65 37.1544 151.647 36.7301C152.301 36.4519 149.804 34.1245 149.655 33.9387C146.703 30.2618 144.361 26.0767 141.996 22.0122C139.515 17.7465 137.494 13.4329 135.843 8.78583C135.612 8.13512 134.575 3.33449 133.528 3.63402"
-                                            stroke="black" stroke-width="7" stroke-linecap="round"/>
-                                    </svg>
-                                    <h2 style={{fontFamily: 'Satoshi Bold'}} className="tracking-tight text-color282523 text-2.5xl text-right -mb-1">
-                                        Rachel Pu
-                                    </h2>
-                                    <p style={{color: " #81807C"}} className="font-dm-sans-medium tracking-tight leading-tight text-right">
-                                        Student at UF majoring in
-                                        Computer Science and
-                                        minoring in Digital Arts & Sciences
-                                    </p>
-                                </motion.div>
-                            </Grid>
+                        <Grid container columns={6} rows={1} spacing={4} justifyContent="center" alignItems="center">
                             {/* rachel photo */}
                             <Grid item size={1}>
                                 <Link component="a" href="https://www.linkedin.com/in/rachel-pu-ufl/" target="_blank" rel="noopener noreferrer">
@@ -548,6 +528,26 @@ export default function HomePage() {
                                     whileHover={{ scale: 1.05, rotate: -2, cursor: 'pointer'}}
                                 />
                                 </Link>
+                            </Grid>
+                            {/* rachel */}
+                            <Grid item size={1}>
+                                <motion.div className=" flex justify-end flex-col"
+                                >
+                                    <svg className="mr-[75%]" width="80" height="40" viewBox="0 0 160 81" fill="none"
+                                         xmlns="http://www.w3.org/2000/svg">
+                                        <path
+                                            d="M156.5 77.0683C154.41 74.8293 159.5 47.9643 124.573 31.436C112.186 27.8405 98.4507 27.7896 86.2908 31.9493C82.3414 33.3003 75.4181 36.8744 77.6474 42.2157C78.6654 44.6548 81.0524 45.8653 83.3122 47.0145C84.8813 47.8125 87.2686 48.6898 89.0055 47.9643C91.6025 46.8795 93.3429 43.7303 93.4438 41.0234C93.5767 37.4546 91.4058 34.0529 89.1138 31.4474C87.3829 29.4798 85.3765 27.8624 83.1231 26.5118C78.1125 23.5086 72.5744 21.0674 66.8886 19.7329C61.228 18.4043 55.2856 18.077 49.5198 18.5148C42.1294 19.076 35.4292 21.5196 28.8482 24.7135C22.9236 27.5887 17.2903 30.9925 11.43 33.9847C10.6607 34.3775 9.86975 34.7294 9.1074 35.1352C9.09475 35.1419 8.21484 35.5192 8.45132 35.7966C9.08297 36.5375 11.0659 36.9922 11.8847 37.2908C16.2038 38.8662 20.4808 40.488 24.6644 42.409C27.6769 43.7922 30.6364 45.2918 33.5077 46.9496C34.0948 47.2885 32.272 46.4532 32.1737 46.4105C25.6681 43.5896 18.9151 41.612 12.0745 39.7891C10.8699 39.4681 8.80368 38.923 7.55391 38.6175C6.48865 38.3571 5.12525 38.2561 4.09873 37.817C3.42585 37.5291 5.97025 35.1791 6.12197 34.9911C9.12405 31.2712 11.4965 27.0298 13.8929 22.9111C16.408 18.5885 18.4498 14.2139 20.1097 9.49715C20.3421 8.83669 21.371 3.95918 22.4476 4.27169"
+                                            stroke="black" stroke-width="7" stroke-linecap="round"/>
+                                    </svg>
+                                    <h2 style={{fontFamily: 'Satoshi Bold'}} className="tracking-tight text-color282523 text-2xl text-left -mb-1">
+                                        Rachel Pu
+                                    </h2>
+                                    <p style={{color: " #81807C"}} className="font-dm-sans-medium tracking-tight leading-tight text-left">
+                                        Student at UF majoring in
+                                        Computer Science and
+                                        minoring in Digital Arts & Sciences
+                                    </p>
+                                </motion.div>
                             </Grid>
                             {/* chelsea photo */}
                             <Grid item size={1}>
@@ -583,12 +583,46 @@ export default function HomePage() {
                                     </p>
                                 </motion.div>
                             </Grid>
+                            {/* clarissa photo */}
+                            <Grid item size={1}>
+                                <Link component="a" href="https://www.linkedin.com/in/clarissa-cheung-054035187/" target="_blank" rel="noopener noreferrer">
+                                <motion.img
+                                    src="/static/images/clarissa-cheung.jpg"
+                                    alt="clarissa cheung's image"
+                                    width={230}
+                                    height={230}
+                                    unoptimized
+                                    className="rounded-2xl drop-shadow-lg"
+                                    whileHover={{ scale: 1.05, rotate: 2, cursor: 'pointer' }}
+                                />
+                                </Link>
+                            </Grid>
+                            {/* clarissa */}
+                            <Grid item size={1}>
+                                <motion.div className=" flex justify-end flex-col"
+                                >
+                                    <svg className="mr-[75%]" width="80" height="40" viewBox="0 0 160 81" fill="none"
+                                         xmlns="http://www.w3.org/2000/svg">
+                                        <path
+                                            d="M156.5 77.0683C154.41 74.8293 159.5 47.9643 124.573 31.436C112.186 27.8405 98.4507 27.7896 86.2908 31.9493C82.3414 33.3003 75.4181 36.8744 77.6474 42.2157C78.6654 44.6548 81.0524 45.8653 83.3122 47.0145C84.8813 47.8125 87.2686 48.6898 89.0055 47.9643C91.6025 46.8795 93.3429 43.7303 93.4438 41.0234C93.5767 37.4546 91.4058 34.0529 89.1138 31.4474C87.3829 29.4798 85.3765 27.8624 83.1231 26.5118C78.1125 23.5086 72.5744 21.0674 66.8886 19.7329C61.228 18.4043 55.2856 18.077 49.5198 18.5148C42.1294 19.076 35.4292 21.5196 28.8482 24.7135C22.9236 27.5887 17.2903 30.9925 11.43 33.9847C10.6607 34.3775 9.86975 34.7294 9.1074 35.1352C9.09475 35.1419 8.21484 35.5192 8.45132 35.7966C9.08297 36.5375 11.0659 36.9922 11.8847 37.2908C16.2038 38.8662 20.4808 40.488 24.6644 42.409C27.6769 43.7922 30.6364 45.2918 33.5077 46.9496C34.0948 47.2885 32.272 46.4532 32.1737 46.4105C25.6681 43.5896 18.9151 41.612 12.0745 39.7891C10.8699 39.4681 8.80368 38.923 7.55391 38.6175C6.48865 38.3571 5.12525 38.2561 4.09873 37.817C3.42585 37.5291 5.97025 35.1791 6.12197 34.9911C9.12405 31.2712 11.4965 27.0298 13.8929 22.9111C16.408 18.5885 18.4498 14.2139 20.1097 9.49715C20.3421 8.83669 21.371 3.95918 22.4476 4.27169"
+                                            stroke="black" stroke-width="7" stroke-linecap="round"/>
+                                    </svg>
+                                    <h2 style={{fontFamily: 'Satoshi Bold'}} className="tracking-tight text-color282523 text-2xl text-left -mb-1">
+                                        Clarissa Cheung
+                                    </h2>
+                                    <p style={{color: " #81807C"}} className="font-dm-sans-medium tracking-tight leading-tight text-left">
+                                        Student at UF majoring in
+                                        Computer Science and
+                                        minoring in Economics
+                                    </p>
+                                </motion.div>
+                            </Grid>
                         </Grid>
                         </motion.div>
                     </Grid>
 
                     {/*  honorable mention */}
-                    <Grid item xs>
+                    <Grid item xs={12}>
                         <motion.div
                             initial = "hidden"
                             whileInView="visible"
