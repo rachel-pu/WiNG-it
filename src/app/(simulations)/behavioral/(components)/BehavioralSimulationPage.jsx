@@ -8,6 +8,7 @@ import MicIcon from "@mui/icons-material/Mic";
 import StopIcon from "@mui/icons-material/Stop";
 import Button from "@mui/material/Button";
 import TalkingInterviewer from "./TalkingInterviewer";
+import VideocamIcon from "@mui/icons-material/Videocam";
 import {CircularProgress, Typography, Snackbar, Alert} from "@mui/material";
 
 // Add this import if you're using React recorder or similar
@@ -36,6 +37,11 @@ const InterviewQuestions = ({questions}) => {
     const [alertSeverity, setAlertSeverity] = useState("info");
     const [showAlert, setShowAlert] = useState(false);
 
+    const videoRef = useRef(null);
+    const [mediaStream, setMediaStream] = useState(null);
+    const [micActive, setMicActive] = useState(false);
+    const [videoActive, setVideoActive] = useState(false);
+
     // Media recorder objects
     const mediaRecorder = useRef(null);
     const audioChunks = useRef([]);
@@ -46,6 +52,44 @@ const InterviewQuestions = ({questions}) => {
         setSessionId(newSessionId);
         console.log("Interview session ID:", newSessionId);
     }, []);
+
+    // setting up for webcam
+    //  webcam stream
+    const handleToggleVideo = async () => {
+        if (videoActive) {
+            // stop and clear
+            mediaStream.getTracks().forEach((t) => t.stop());
+            setMediaStream(null);
+            setVideoActive(false);
+        } else {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                setMediaStream(stream);
+                setVideoActive(true);
+            } catch (err) {
+                console.error("Error accessing video:", err);
+                setVideoActive(false);
+            }
+        }
+    };
+
+    // set up webcam stream
+    useEffect(() => {
+        if (videoRef.current && mediaStream) {
+            videoRef.current.srcObject = mediaStream;
+        }
+    }, [videoRef, mediaStream]);
+
+    // cleanup function
+    useEffect(() => {
+        return () => {
+            if (mediaStream) {
+                mediaStream.getTracks().forEach((track) => {
+                    track.stop();
+                });
+            }
+        };
+    }, [mediaStream]);
 
     // Fetch the TTS audio for the current question using your Flask endpoint.
     const fetchAndPlayQuestionAudio = async (text) => {
@@ -269,6 +313,55 @@ const InterviewQuestions = ({questions}) => {
                 position: 'relative'
             }}
         >
+            {/* toggle webcam */}
+            <Box
+                onClick={handleToggleVideo}
+                sx={{
+                    width: { xs: "50%", sm: "25%", md: "13.5%" },
+                    mt: 1,
+                    aspectRatio: "4/3",
+                    border: "2px solid #ccc",
+                    borderRadius: 1,
+                    zIndex: 1000,
+                    overflow: "hidden",
+                    position: "relative",
+                    cursor: "pointer",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    backgroundColor: videoActive ? "transparent" : "#f0f0f0",
+                    "&:hover": {
+                        backgroundColor: videoActive ? "rgba(0, 0, 0, 0.1)" : "#e0e0e0",
+                    },
+                }}
+            >
+                {videoActive ? (
+                    <video
+                        ref={videoRef}
+                        autoPlay
+                        playsInline
+                        muted
+                        style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                    />
+                ) : (
+                    <Box sx={{
+                        fontSize: "0.75rem",
+                        color: "#7c7c7c",
+                        fontFamily: 'DM Sans, sans-serif',
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "0.2rem"
+                    }}>
+                        Toggle Webcam <VideocamIcon sx={{color:"#7c7c7c", fontSize: '1rem'}}/>
+                    </Box>
+                )}
+            </Box>
+
+            {/* talking interviewer component */}
+            <Box sx={{ width: "100%", height: "100%", display: "flex", justifyContent: "center", alignItems: "center", overflow: "hidden" }}>
+                <TalkingInterviewer isTalking={isSpeaking} />
+            </Box>
+
             {/* Current question indicator */}
             <Box sx={{
                 position: 'absolute',
@@ -281,6 +374,7 @@ const InterviewQuestions = ({questions}) => {
             }}>
                 Question {currentQuestionIndex + 1} of {questions.length}
             </Box>
+
 
             {/* Hidden audio element used to play TTS audio */}
             <audio ref={audioRef} style={{display: "none"}} src={audioUrl} controls/>
@@ -310,8 +404,11 @@ const InterviewQuestions = ({questions}) => {
             )}
 
             {/* Recording controls */}
-            <Box sx={{position: "absolute", bottom: 40, left: '50%', transform: 'translateX(-50%)'}}>
-                <IconButton
+            <Box
+                sx={{
+                    width: { xs: "50%", sm: "25%", md: "13.5%" },
+                    mt: 1,}}
+            >                <IconButton
                     disabled={isProcessing || hasRecorded}
                     onClick={isRecording ? stopRecording : startRecording}
                     color="primary"
@@ -334,11 +431,6 @@ const InterviewQuestions = ({questions}) => {
                         isRecording ? <StopIcon fontSize="inherit"/> :
                             <MicIcon fontSize="inherit"/>}
                 </IconButton>
-            </Box>
-
-            {/* Animated interviewer */}
-            <Box sx={{position: "absolute", bottom: 96, left: '50%', transform: 'translateX(-50%)'}}>
-                <TalkingInterviewer isTalking={isSpeaking}/>
             </Box>
 
             {/* Next button */}

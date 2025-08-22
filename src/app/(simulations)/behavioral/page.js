@@ -51,6 +51,7 @@ export default function BehavioralInterviewSimulation() {
 
     const handleQuestionsChange = (event) => {
         setNumQuestions(event.target.value);
+        console.log(event.target.value);
     }
 
     const handleJobRoleChange = (e) => {
