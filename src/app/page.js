@@ -374,12 +374,15 @@ export default function HomePage() {
                 <Grid container 
                     spacing={4}
                     columns={5}
+                    rows={1}
+                    wrap={{ xs: "wrap", sm: "wrap", md: "nowrap", lg: "nowrap" }}
+                    justifyContent={{ xs: "center", sm: "center", md: "flex-start", lg: "flex-start" }}
                     direction={{ xs: 'column', md: 'row' }}
                     width={{ xs: '98%', sm: '90%', md: '80%' }}
                 >
 
                     {/* ---------- title / description ---------- */}
-                    <Grid item size={3} >
+                    <Grid item xs={12} sm={6} md={4} lg={3} >
                         <motion.div style={{padding: '2.5%'}}
                                     initial="hidden"
                                     whileInView="visible"
@@ -422,7 +425,7 @@ export default function HomePage() {
                     </Grid>
 
                     {/* picture */}
-                    <Grid item size={2} style={{backgroundColor: '#C1D6E6', borderRadius: '30px'}}>
+                    <Grid item xs={12} sm={6} md={4} lg={3} style={{backgroundColor: '#C1D6E6', borderRadius: '30px'}}>
                         <motion.div
                             initial="hidden"
                             whileInView="visible"
