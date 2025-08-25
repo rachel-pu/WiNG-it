@@ -18,6 +18,7 @@ import {IoSettings} from "react-icons/io5";
 import SavesButtons from "./SavesButtons";
 import {SignedIn, UserButton} from '@clerk/nextjs'
 import MainAppBar from "../../../../components/MainAppBar";
+import Page_Template from "../../page_template";
 
 export default function Saves() {
     const drawerWidth = 240;
@@ -48,51 +49,43 @@ export default function Saves() {
 
     return(
         <SignedIn>
-        <Box sx={{ display: 'flex' }}>
-            <CssBaseline />
+            <Box sx={{ display: 'flex' }}>
+                <CssBaseline />
+                <Page_Template title="Behavioral Interview Simulation" color="#2850d9">
+                    {/* --------- main content --------- */}{/* --------- main content --------- */}
+                    <Box
+                        component="main"
+                        sx={{ flexGrow: 1, bgcolor: '#F3F1EB', p: 3, height: '100vh', overflow: 'auto' }}
+                    >
+                        <Toolbar />
 
-            {/* ----------- title header div w/ user profile ----------- */}
-            <MainAppBar title="Saves" color="#6a39cb" />
+                        {/* --------- horizontal layout for list and responses --------- */}
+                        <Stack direction={"row"}>
 
-            {/* --------- sidebar navigation --------- */}
-            <LeftNavbar />
+                        {/*  --------- list of saves   ---------  */}
+                        <Box width = "34%" sx={{height: '100vh', marginRight: '2%'}}>
+                            <List sx={{ flexGrow: 1 , }}>
+                                <SavesButtons items={items} />
+                        </List>
+                        </Box>
 
-            {/* --------- left bar options --------- */}
+                        {/* vertical divider */}
+                            <Divider orientation="vertical" variant="middle" flexItem />
 
+                        {/*  --------- screen of save list button ---------  */}
+                        <Box sx={{margin: '1%', width: '61%', height: '100vh', backgroundColor: 'blue'}}>
+                            {/* header */}
+                            <Box>
+                            <Typography>
 
-            {/* --------- main content --------- */}
-            <Box
-                component="main"
-                sx={{ flexGrow: 1, bgcolor: '#F3F1EB', p: 3, height: '100vh', overflow: 'auto' }}
-            >
-                <Toolbar />
+                            </Typography>
+                            </Box>
+                        </Box>
 
-                {/* --------- horizontal layout for list and responses --------- */}
-                <Stack direction={"row"}>
-
-                {/*  --------- list of saves   ---------  */}
-                <Box width = "34%" sx={{height: '100vh', marginRight: '2%'}}>
-                    <List sx={{ flexGrow: 1 , }}>
-                        <SavesButtons items={items} />
-                </List>
-                </Box>
-
-                {/* vertical divider */}
-                    <Divider orientation="vertical" variant="middle" flexItem />
-
-                {/*  --------- screen of save list button ---------  */}
-                <Box sx={{margin: '1%', width: '61%', height: '100vh', backgroundColor: 'blue'}}>
-                    {/* header */}
-                    <Box>
-                    <Typography>
-
-                    </Typography>
+                        </Stack>
                     </Box>
-                </Box>
-
-                </Stack>
+                </Page_Template>
             </Box>
-        </Box>
         </SignedIn>
     )
 }

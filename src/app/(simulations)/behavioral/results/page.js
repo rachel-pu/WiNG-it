@@ -11,6 +11,7 @@ import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import { useSearchParams } from "next/navigation";
 import { getTranscriptContentForQuestion } from "./FeedbackTabs";
+import Page_Template from "../../page_template";
 
 export default function InterviewResults() {
     const [selectedTab, setSelectedTab] = useState(null);
@@ -313,10 +314,8 @@ export default function InterviewResults() {
         <SignedIn>
             <Box sx={{ display: "flex" }}>
                 <CssBaseline />
-                <MainAppBar title="Behavioral Interview Simulation" color="#2850d9" />
-                <LeftNavbar />
-
-                <Box component="main" sx={{ flexGrow: 1, bgcolor: '#F3F1EB', p: 4.5, height: '100vh', overflow: 'auto' }}>
+                <Page_Template title="Behavioral Interview Simulation" color="#2850d9">
+                    <Box component="main" sx={{ flexGrow: 1, bgcolor: '#F3F1EB', p: 4.5, height: '100vh', overflow: 'auto' }}>
                     <Toolbar />
                     <Box>
                         <Typography color={"black"} fontFamily={"Satoshi Bold"} fontSize={"1.7rem"}>
@@ -445,6 +444,7 @@ export default function InterviewResults() {
                         </div>
                     </div>
                 </Box>
+                </Page_Template>
             </Box>
         </SignedIn>
     );
