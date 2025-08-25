@@ -18,13 +18,8 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-scroll';
 import Menu from '@mui/material/Menu';
 import MenuIcon from '@mui/icons-material/Menu';
-import Avatar from '@mui/material/Avatar';
-import Tooltip from '@mui/material/Tooltip';
-import MenuItem from '@mui/material/MenuItem';
-import AdbIcon from '@mui/icons-material/Adb';
 import Container from '@mui/material/Container';
-import {IconButton} from "@mui/material";
-import {SignedOut} from '@clerk/nextjs'
+import {IconButton, Paper} from "@mui/material";
 
 const pages = ['Why WiNG.it', 'About Us', 'Login'];
 export default function HomePage() {
@@ -47,7 +42,6 @@ export default function HomePage() {
 
 
     return (
-        // <SignedOut>
         <Box className="bg-colorF3F1EA">
             {/* ---------- nav bar ---------- */}
             <AppBar position="static"
@@ -225,22 +219,23 @@ export default function HomePage() {
         {/*//  container*/}
         <Box
             sx={{
-            height: '100vh',
+            minHeight: '100dvh',
         }}>
 
             {/* ---------- home page ----------  */}
             <Box id="home-page"
-                 sx={{
-                     height: '100vh',
+                sx={{
+                    minHeight: '100dvh',
+                    pt: { xs: "5%", md: 0 }
                  }}
-                 className=" h-screen w-full bg-colorF3F1EA flex justify-center items-center">
+                 className="w-full bg-colorF3F1EA flex justify-center items-center">
 
                 {/*  main content box  */}
                 <Grid container
-                      spacing={5}
-                      direction={"column"}
-                      width={'80%'}
-                      sx={{paddingLeft: '5%', paddingRight: '5%'}}>
+                    spacing={5}
+                    direction={"column"}
+                    width={'80%'}
+                    sx={{px: "5%"}}>
 
                     {/*  title/slogan  */}
                     <Grid item xs>
@@ -260,16 +255,8 @@ export default function HomePage() {
                                             variants = {itemVariants}
                                 >
                                     <motion.p style={{fontFamily:'Satoshi Bold', color: 'black', fontSize: '3.2rem', letterSpacing: '-0.5px',userSelect: 'none'}}>
-                                        with no strings attached.
+                                        with no strings attached. 😉
                                     </motion.p>
-
-                                    {/* smiley */}
-                                    <motion.div initial="hidden"
-                                                whileInView="visible"
-                                                viewport={{ once: true }}>
-                                        <Typography style = {{fontSize: '55px'}}>😉</Typography>
-                                    </motion.div>
-
                                 </motion.div>
                             </motion.div>
 
@@ -299,19 +286,23 @@ export default function HomePage() {
                         <motion.div initial="hidden"
                                     whileInView="visible"
                                     viewport={{ once: true }}>
-                            <Grid container spacing={2} columns={3} rows={1}>
+                            <Grid container spacing={2} columns={3} rows={1}  direction="row"
+  wrap={{ xs: "wrap", sm: "wrap", md: "nowrap", lg: "nowrap" }} >
                                 {/* career prep tools card */}
-                                <Grid size={1}>
+                                <Grid xs={12} sm={6} md={4} lg={3}>
                                     <motion.div variants = {itemVariants}
                                                 transition={{ delay: 0.4 }}>
-                                        <Card style={{padding: '8%', borderRadius: '20px'}}>
+                                        <Card style={{
+                                            padding: '8%',
+                                            borderRadius: '20px',
+                                        }}>
                                             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', backgroundColor: '#f1c4a8', borderRadius: '50%', width: '40px', height: '40px', marginBottom:'15px'}}>
                                                 <FaPencilRuler color={'#E3632E'} size={20} />
                                             </div>
-                                            <Typography variant="h5" style={{fontFamily: 'Satoshi Bold', color: 'black', letterSpacing: '-0.5px'}}>
+                                            <Typography variant="h5" sx={{fontFamily: 'Satoshi Bold', color: 'black', letterSpacing: '-0.5px', fontSize: { xs: "1.1rem", sm: "1.4rem", md: "1.5rem" }}}>
                                                 Career Prep Tools
                                             </Typography>
-                                            <Typography style={{fontFamily: 'DM Sans', color: '#696862', letterSpacing: '-0.5px', fontSize: '1.1rem'}}>
+                                            <Typography sx={{fontFamily: 'DM Sans', color: '#696862', letterSpacing: '-0.5px', fontSize: { xs: "1.0rem", sm: "1.4rem", md: "1.5rem" }}}>
                                                 Using our variety of tools, you can practice for interviews, networking, and more.
                                             </Typography>
                                         </Card>
@@ -319,17 +310,17 @@ export default function HomePage() {
                                 </Grid>
 
                                 {/* saving saves card */}
-                                <Grid size={1}>
+                                <Grid xs={12} sm={6} md={4} lg={3}>
                                     <motion.div variants = {itemVariants}
                                                 transition={{ delay: 0.6 }}>
                                         <Card style={{padding: '8%', borderRadius: '20px'}}>
                                             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', backgroundColor: '#9db8ea', borderRadius: '50%', width: '40px', height: '40px', marginBottom:'15px'}}>
                                                 <IoDocumentText color={'#2a6ed5'} size={25} />
                                             </div>
-                                            <Typography variant="h5" style={{fontFamily: 'Satoshi Bold', color: 'black', letterSpacing: '-0.5px'}}>
+                                            <Typography variant="h5" sx={{fontFamily: 'Satoshi Bold', color: 'black', letterSpacing: '-0.5px', fontSize: { xs: "1.1rem", sm: "1.4rem", md: "1.5rem" }}}>
                                                 Saves Transcripts
                                             </Typography>
-                                            <Typography style={{fontFamily: 'DM Sans', color: '#696862', letterSpacing: '-0.5px', fontSize: '1.1rem'}}>
+                                            <Typography sx={{fontFamily: 'DM Sans', color: '#696862', letterSpacing: '-0.5px', fontSize: { xs: "1.0rem", sm: "1.4rem", md: "1.5rem" }}}>
                                                 After each practice session, you can save your transcripts to review for later.
                                             </Typography>
                                         </Card>
@@ -337,17 +328,17 @@ export default function HomePage() {
                                 </Grid>
 
                                 {/* personalized feedback card */}
-                                <Grid size={1}>
+                                <Grid xs={12} sm={6} md={4} lg={3}>
                                     <motion.div variants = {itemVariants}
                                                 transition={{ delay: 0.8 }}>
                                         <Card style={{padding: '8%', borderRadius: '20px'}}>
                                             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', backgroundColor: '#9fcb95', borderRadius: '50%', width: '40px', height: '40px', marginBottom:'15px'}}>
                                                 <BiSolidMessageCheck color={'#559437'} size={25} style={{marginTop: '2.5px'}}/>
                                             </div>
-                                            <Typography variant="h5" style={{fontFamily: 'Satoshi Bold', color: 'black', letterSpacing: '-0.5px'}}>
+                                            <Typography variant="h5" sx={{fontFamily: 'Satoshi Bold', color: 'black', letterSpacing: '-0.5px', fontSize: { xs: "1.1rem", sm: "1.4rem", md: "1.5rem" }}}>
                                                 Personalized Feedback
                                             </Typography>
-                                            <Typography style={{fontFamily: 'DM Sans', color: '#696862', letterSpacing: '-0.5px', fontSize: '1.1rem'}}>
+                                            <Typography sx={{fontFamily: 'DM Sans', color: '#696862', letterSpacing: '-0.5px', fontSize: { xs: "1.0rem", sm: "1.4rem", md: "1.5rem" }}}>
                                                 Receive customized feedback on your performance to help you improve your skills.
                                             </Typography>
                                         </Card>
@@ -378,14 +369,23 @@ export default function HomePage() {
 
             {/* ---------- why wing it ----------*/}
             <Box id="why-wing-it"
-                 sx={{
-                     height: '100vh',
-                 }}
-                 className="h-screen w-full bg-colorF3F1EA flex justify-center items-center">
-                <Grid container columns={5} rows={1} width={'80%'}>
+                sx={{
+                    minHeight: '100vh',
+                    pt: { xs: "10%", md: 0 }
+                }}
+                 className="w-full bg-colorF3F1EA flex justify-center items-center">
+                <Grid container 
+                    spacing={4}
+                    columns={5}
+                    rows={1}
+                    wrap={{ xs: "wrap", sm: "wrap", md: "nowrap", lg: "nowrap" }}
+                    justifyContent={{ xs: "center", sm: "center", md: "flex-start", lg: "flex-start" }}
+                    direction={{ xs: 'column', md: 'row' }}
+                    width={{ xs: '98%', sm: '90%', md: '80%' }}
+                >
 
                     {/* ---------- title / description ---------- */}
-                    <Grid item size={3} >
+                    <Grid item xs={12} sm={6} md={4} lg={3} >
                         <motion.div style={{padding: '2.5%'}}
                                     initial="hidden"
                                     whileInView="visible"
@@ -428,7 +428,7 @@ export default function HomePage() {
                     </Grid>
 
                     {/* picture */}
-                    <Grid item size={2} style={{backgroundColor: '#C1D6E6', borderRadius: '30px'}}>
+                    <Grid item xs={12} sm={6} md={4} lg={3} style={{backgroundColor: '#C1D6E6', borderRadius: '30px'}}>
                         <motion.div
                             initial="hidden"
                             whileInView="visible"
@@ -452,32 +452,31 @@ export default function HomePage() {
             {/*  ---------- about us ----------  */}
             <Box id="about-us"
                  sx={{
-                     minHeight: '100vh',
-                     paddingTop: '6%'
+                    minHeight: '40dvh',
+                    paddingTop: { xs: '12%', sm: '8%', md: '6%' },
                  }}
-                 className="h-screen w-full flex justify-center bg-colorF3F1EA" >
+                 className=" w-full flex justify-center bg-colorF3F1EA" >
                 <Grid container
-                      spacing={5}
-                      direction={"column"}
-                      width={'100%'}
-                      sx={{paddingLeft: '5%', paddingRight: '5%'}}>
+                    direction={"row"}
+                    width={{ xs: '98%', sm: '90%', md: '80%' }}
+                    sx={{ paddingLeft: { xs: '2%', sm: '5%' }, paddingRight: { xs: '2%', sm: '5%' } }}>
 
                     {/* title  */}
-                    <Grid item xs={12}>
+                    <Stack spacing={1} direction="column">
+                    <Grid item xs={12} sm={6} md={4} lg={3}>
                         <motion.div
                             initial="hidden"
                             whileInView="visible"
                             viewport={{ once: true }}
                             transition={{ delay: 0.5 }}
                             variants={itemVariants}>
-                        <Typography style={{fontFamily:'Satoshi Bold', color: 'black', fontSize: '3.3rem', letterSpacing: '-0.5px',userSelect: 'none', textAlign:'center', marginBottom: "-20px"}}>
+                        <Typography style={{fontFamily:'Satoshi Bold', color: 'black', fontSize: '3.3rem', letterSpacing: '-0.5px',userSelect: 'none', textAlign:'center'}}>
                             Really quick, here&#39;s a little about us.
                         </Typography>
                         </motion.div>
                     </Grid>
 
                     {/* description */}
-                    <Grid item xs={12}>
                         <motion.div
                             initial="hidden"
                             whileInView="visible"
@@ -505,122 +504,207 @@ export default function HomePage() {
                             </motion.p>
                         </Stack>
                         </motion.div>
-                    </Grid>
+                        </Stack>
+                </Grid>
+            </Box>
 
-                    {/*  developer section  */}
-                    <Grid item xs={12}>
-                        <motion.div initial="hidden"
-                                    whileInView="visible"
-                                    viewport={{ once: true }}
-                                    variants = {itemVariants}
-                                    transition={{ delay: 1.25 }}>
-                        <Grid container columns={6} rows={1} spacing={4} justifyContent="center" alignItems="center">
-                            {/* rachel photo */}
-                            <Grid item size={1}>
-                                <Link component="a" href="https://www.linkedin.com/in/rachel-pu-ufl/" target="_blank" rel="noopener noreferrer">
+
+            {/*  developer section  */}
+            <Grid 
+                sx={{
+                    py: { xs: 6, sm: 8, md: 10 },
+                    // backgroundColor: '#F3F1EA'
+                }}>
+                <Grid container
+                    spacing={3}
+                    alignItems="center"
+                    direction={{ xs: 'row', md: 'row', lg: 'row' }}
+                    width={{ xs: '98%', sm: '90%', md: '80%', lg: '80%' }}
+                    wrap={{ xs: "wrap", sm: "wrap", md: "nowrap", lg: "nowrap" }}
+                    sx={{ mx: 'auto', pl: '250px', px: { xs: '2%', sm: '5%', lg: '8%' } }}>
+
+                        {/* Rachel */}
+                        <Grid item xs={12} sm={6} md={4} lg={3}>
+                            <Grid container spacing={2} alignItems="center">
+                            {/* Photo */}
+                            <Grid item xs={6}>
+                                <Link
+                                component="a"
+                                href="https://www.linkedin.com/in/rachel-pu-ufl/"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                >
                                 <motion.img
                                     src="/static/images/rachel%20pu%20image.png"
-                                    alt="rachel pu image"
-                                    width={230}
-                                    height={230}
-                                    unoptimized
-                                    className="rounded-2xl drop-shadow-lg"
-                                    whileHover={{ scale: 1.05, rotate: -2, cursor: 'pointer'}}
+                                    alt="Rachel Pu"
+                                    className="rounded-2xl drop-shadow-lg w-32 h-32 sm:w-40 sm:h-40 md:w-46 md:h-46"
+                                    whileHover={{ scale: 1.05, rotate: 2, cursor: "pointer" }}
                                 />
                                 </Link>
                             </Grid>
-                            {/* rachel */}
-                            <Grid item size={1}>
+                            {/* Text */}
+                            <Grid item xs={6}>
                                 <motion.div className=" flex justify-end flex-col"
                                 >
                                     <svg className="mr-[75%]" width="80" height="40" viewBox="0 0 160 81" fill="none"
                                          xmlns="http://www.w3.org/2000/svg">
                                         <path
                                             d="M156.5 77.0683C154.41 74.8293 159.5 47.9643 124.573 31.436C112.186 27.8405 98.4507 27.7896 86.2908 31.9493C82.3414 33.3003 75.4181 36.8744 77.6474 42.2157C78.6654 44.6548 81.0524 45.8653 83.3122 47.0145C84.8813 47.8125 87.2686 48.6898 89.0055 47.9643C91.6025 46.8795 93.3429 43.7303 93.4438 41.0234C93.5767 37.4546 91.4058 34.0529 89.1138 31.4474C87.3829 29.4798 85.3765 27.8624 83.1231 26.5118C78.1125 23.5086 72.5744 21.0674 66.8886 19.7329C61.228 18.4043 55.2856 18.077 49.5198 18.5148C42.1294 19.076 35.4292 21.5196 28.8482 24.7135C22.9236 27.5887 17.2903 30.9925 11.43 33.9847C10.6607 34.3775 9.86975 34.7294 9.1074 35.1352C9.09475 35.1419 8.21484 35.5192 8.45132 35.7966C9.08297 36.5375 11.0659 36.9922 11.8847 37.2908C16.2038 38.8662 20.4808 40.488 24.6644 42.409C27.6769 43.7922 30.6364 45.2918 33.5077 46.9496C34.0948 47.2885 32.272 46.4532 32.1737 46.4105C25.6681 43.5896 18.9151 41.612 12.0745 39.7891C10.8699 39.4681 8.80368 38.923 7.55391 38.6175C6.48865 38.3571 5.12525 38.2561 4.09873 37.817C3.42585 37.5291 5.97025 35.1791 6.12197 34.9911C9.12405 31.2712 11.4965 27.0298 13.8929 22.9111C16.408 18.5885 18.4498 14.2139 20.1097 9.49715C20.3421 8.83669 21.371 3.95918 22.4476 4.27169"
-                                            stroke="black" stroke-width="7" stroke-linecap="round"/>
+                                            stroke="black" strokeWidth="7" strokeLinecap="round"/>
                                     </svg>
-                                    <h2 style={{fontFamily: 'Satoshi Bold'}} className="tracking-tight text-color282523 text-2xl text-left -mb-1">
-                                        Rachel Pu
-                                    </h2>
-                                    <p style={{color: " #81807C"}} className="font-dm-sans-medium tracking-tight leading-tight text-left">
-                                        Student at UF majoring in
-                                        Computer Science and
-                                        minoring in Digital Arts & Sciences
-                                    </p>
+                                    <Typography
+                                    variant="h2"
+                                    sx={{
+                                        fontFamily: 'Satoshi Bold',
+                                        fontSize: { xs: "1.1rem", sm: "1.2rem", md: "1.2rem" },
+                                        marginBottom: '-4px',
+                                        lineHeight: { xs: 1.8, sm: 2, md: 2.2, lg: 2.2 }
+                                    }}
+                                    className="tracking-tight text-color282523 text-left"
+                                    >
+                                    Rachel Pu
+                                    </Typography>
+                                    <Typography
+                                        sx={{
+                                            color:"#81807C",
+                                            fontFamily: 'Satoshi Medium',
+                                            fontSize:{ xs: "1.0rem", sm: "1.0rem", md: "1.0rem" },
+                                            lineHeight: { xs: 1.1, sm: 1.2, md: 1.2, lg: 1.3 }
+                                        }}
+                                        className="font-dm-sans-medium text-left"
+                                        >
+                                        Student at UF majoring in Computer Science and minoring in Digital Arts & Sciences
+                                    </Typography>
                                 </motion.div>
                             </Grid>
-                            {/* chelsea photo */}
-                            <Grid item size={1}>
-                                <Link component="a" href="https://www.linkedin.com/in/chelseaqnguyen/" target="_blank" rel="noopener noreferrer">
-                                <motion.img
-                                    src="/static/images/chelsea nguyen image.png"
-                                    alt="chelsea nguyen's image"
-                                    width={230}
-                                    height={230}
-                                    unoptimized
-                                    className="rounded-2xl drop-shadow-lg"
-                                    whileHover={{ scale: 1.05, rotate: 2, cursor: 'pointer' }}
-                                />
-                                </Link>
-                            </Grid>
-                            {/* chelsea */}
-                            <Grid item size={1}>
-                                <motion.div className=" flex justify-end flex-col"
-                                >
-                                    <svg className="mr-[75%]" width="80" height="40" viewBox="0 0 160 81" fill="none"
-                                         xmlns="http://www.w3.org/2000/svg">
-                                        <path
-                                            d="M156.5 77.0683C154.41 74.8293 159.5 47.9643 124.573 31.436C112.186 27.8405 98.4507 27.7896 86.2908 31.9493C82.3414 33.3003 75.4181 36.8744 77.6474 42.2157C78.6654 44.6548 81.0524 45.8653 83.3122 47.0145C84.8813 47.8125 87.2686 48.6898 89.0055 47.9643C91.6025 46.8795 93.3429 43.7303 93.4438 41.0234C93.5767 37.4546 91.4058 34.0529 89.1138 31.4474C87.3829 29.4798 85.3765 27.8624 83.1231 26.5118C78.1125 23.5086 72.5744 21.0674 66.8886 19.7329C61.228 18.4043 55.2856 18.077 49.5198 18.5148C42.1294 19.076 35.4292 21.5196 28.8482 24.7135C22.9236 27.5887 17.2903 30.9925 11.43 33.9847C10.6607 34.3775 9.86975 34.7294 9.1074 35.1352C9.09475 35.1419 8.21484 35.5192 8.45132 35.7966C9.08297 36.5375 11.0659 36.9922 11.8847 37.2908C16.2038 38.8662 20.4808 40.488 24.6644 42.409C27.6769 43.7922 30.6364 45.2918 33.5077 46.9496C34.0948 47.2885 32.272 46.4532 32.1737 46.4105C25.6681 43.5896 18.9151 41.612 12.0745 39.7891C10.8699 39.4681 8.80368 38.923 7.55391 38.6175C6.48865 38.3571 5.12525 38.2561 4.09873 37.817C3.42585 37.5291 5.97025 35.1791 6.12197 34.9911C9.12405 31.2712 11.4965 27.0298 13.8929 22.9111C16.408 18.5885 18.4498 14.2139 20.1097 9.49715C20.3421 8.83669 21.371 3.95918 22.4476 4.27169"
-                                            stroke="black" stroke-width="7" stroke-linecap="round"/>
-                                    </svg>
-                                    <h2 style={{fontFamily: 'Satoshi Bold'}} className="tracking-tight text-color282523 text-2xl text-left -mb-1">
-                                        Chelsea Nguyen
-                                    </h2>
-                                    <p style={{color: " #81807C"}} className="font-dm-sans-medium tracking-tight leading-tight text-left">
-                                        Student at UF majoring in
-                                        Computer Science and
-                                        minoring in Digital Arts & Sciences
-                                    </p>
-                                </motion.div>
-                            </Grid>
-                            {/* clarissa photo */}
-                            <Grid item size={1}>
-                                <Link component="a" href="https://www.linkedin.com/in/clarissa-cheung-054035187/" target="_blank" rel="noopener noreferrer">
-                                <motion.img
-                                    src="/static/images/clarissa-cheung.jpg"
-                                    alt="clarissa cheung's image"
-                                    width={230}
-                                    height={230}
-                                    unoptimized
-                                    className="rounded-2xl drop-shadow-lg"
-                                    whileHover={{ scale: 1.05, rotate: 2, cursor: 'pointer' }}
-                                />
-                                </Link>
-                            </Grid>
-                            {/* clarissa */}
-                            <Grid item size={1}>
-                                <motion.div className=" flex justify-end flex-col"
-                                >
-                                    <svg className="mr-[75%]" width="80" height="40" viewBox="0 0 160 81" fill="none"
-                                         xmlns="http://www.w3.org/2000/svg">
-                                        <path
-                                            d="M156.5 77.0683C154.41 74.8293 159.5 47.9643 124.573 31.436C112.186 27.8405 98.4507 27.7896 86.2908 31.9493C82.3414 33.3003 75.4181 36.8744 77.6474 42.2157C78.6654 44.6548 81.0524 45.8653 83.3122 47.0145C84.8813 47.8125 87.2686 48.6898 89.0055 47.9643C91.6025 46.8795 93.3429 43.7303 93.4438 41.0234C93.5767 37.4546 91.4058 34.0529 89.1138 31.4474C87.3829 29.4798 85.3765 27.8624 83.1231 26.5118C78.1125 23.5086 72.5744 21.0674 66.8886 19.7329C61.228 18.4043 55.2856 18.077 49.5198 18.5148C42.1294 19.076 35.4292 21.5196 28.8482 24.7135C22.9236 27.5887 17.2903 30.9925 11.43 33.9847C10.6607 34.3775 9.86975 34.7294 9.1074 35.1352C9.09475 35.1419 8.21484 35.5192 8.45132 35.7966C9.08297 36.5375 11.0659 36.9922 11.8847 37.2908C16.2038 38.8662 20.4808 40.488 24.6644 42.409C27.6769 43.7922 30.6364 45.2918 33.5077 46.9496C34.0948 47.2885 32.272 46.4532 32.1737 46.4105C25.6681 43.5896 18.9151 41.612 12.0745 39.7891C10.8699 39.4681 8.80368 38.923 7.55391 38.6175C6.48865 38.3571 5.12525 38.2561 4.09873 37.817C3.42585 37.5291 5.97025 35.1791 6.12197 34.9911C9.12405 31.2712 11.4965 27.0298 13.8929 22.9111C16.408 18.5885 18.4498 14.2139 20.1097 9.49715C20.3421 8.83669 21.371 3.95918 22.4476 4.27169"
-                                            stroke="black" stroke-width="7" stroke-linecap="round"/>
-                                    </svg>
-                                    <h2 style={{fontFamily: 'Satoshi Bold'}} className="tracking-tight text-color282523 text-2xl text-left -mb-1">
-                                        Clarissa Cheung
-                                    </h2>
-                                    <p style={{color: " #81807C"}} className="font-dm-sans-medium tracking-tight leading-tight text-left">
-                                        Student at UF majoring in
-                                        Computer Science and
-                                        minoring in Economics
-                                    </p>
-                                </motion.div>
                             </Grid>
                         </Grid>
-                        </motion.div>
-                    </Grid>
 
+                        {/* Chelsea */}
+                        <Grid item xs={12} sm={6} md={4} lg={3}>
+                            <Grid container spacing={2} alignItems="center">
+                            {/* Photo */}
+                            <Grid item xs={6}>
+                                <Link
+                                component="a"
+                                href="https://www.linkedin.com/in/chelseaqnguyen/"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                >
+                             
+                                <motion.img
+                                    src="/static/images/chelsea nguyen image.png"
+                                    alt="Chelsea Nguyen"
+                                    className="rounded-2xl drop-shadow-lg w-32 h-32 sm:w-40 sm:h-40 md:w-46 md:h-46"
+                                    whileHover={{ scale: 1.05, rotate: 2, cursor: "pointer" }}
+                                />
+                                </Link>
+                            </Grid>
+                            {/* Text */}
+                            <Grid item xs={6}>
+                                <motion.div className=" flex justify-end flex-col"
+                                >
+                                    <svg className="mr-[75%]" width="80" height="40" viewBox="0 0 160 81" fill="none"
+                                         xmlns="http://www.w3.org/2000/svg">
+                                        <path
+                                            d="M156.5 77.0683C154.41 74.8293 159.5 47.9643 124.573 31.436C112.186 27.8405 98.4507 27.7896 86.2908 31.9493C82.3414 33.3003 75.4181 36.8744 77.6474 42.2157C78.6654 44.6548 81.0524 45.8653 83.3122 47.0145C84.8813 47.8125 87.2686 48.6898 89.0055 47.9643C91.6025 46.8795 93.3429 43.7303 93.4438 41.0234C93.5767 37.4546 91.4058 34.0529 89.1138 31.4474C87.3829 29.4798 85.3765 27.8624 83.1231 26.5118C78.1125 23.5086 72.5744 21.0674 66.8886 19.7329C61.228 18.4043 55.2856 18.077 49.5198 18.5148C42.1294 19.076 35.4292 21.5196 28.8482 24.7135C22.9236 27.5887 17.2903 30.9925 11.43 33.9847C10.6607 34.3775 9.86975 34.7294 9.1074 35.1352C9.09475 35.1419 8.21484 35.5192 8.45132 35.7966C9.08297 36.5375 11.0659 36.9922 11.8847 37.2908C16.2038 38.8662 20.4808 40.488 24.6644 42.409C27.6769 43.7922 30.6364 45.2918 33.5077 46.9496C34.0948 47.2885 32.272 46.4532 32.1737 46.4105C25.6681 43.5896 18.9151 41.612 12.0745 39.7891C10.8699 39.4681 8.80368 38.923 7.55391 38.6175C6.48865 38.3571 5.12525 38.2561 4.09873 37.817C3.42585 37.5291 5.97025 35.1791 6.12197 34.9911C9.12405 31.2712 11.4965 27.0298 13.8929 22.9111C16.408 18.5885 18.4498 14.2139 20.1097 9.49715C20.3421 8.83669 21.371 3.95918 22.4476 4.27169"
+                                            stroke="black" stroke-width="7" strokeLinecap="round"/>
+                                    </svg>
+                                    <Typography
+                                    variant="h2"
+                                    sx={{
+                                        fontFamily: 'Satoshi Bold',
+                                        fontSize: { xs: "1.1rem", sm: "1.2rem", md: "1.2rem" },
+                                        marginBottom: '-4px',
+                                        lineHeight: { xs: 1.8, sm: 2, md: 2.2, lg: 2.2 }
+                                    }}
+                                    className="tracking-tight text-color282523 text-left"
+                                    >
+                                    Chelsea Nguyen
+                                    </Typography>
+                                    <Typography
+                                        sx={{
+                                            color:"#81807C",
+                                            fontFamily: 'Satoshi Medium',
+                                            fontSize:{ xs: "1.0rem", sm: "1.0rem", md: "1.0rem" },
+                                            lineHeight: { xs: 1.1, sm: 1.2, md: 1.2, lg: 1.3 }
+                                        }}
+                                        className="font-dm-sans-medium text-left"
+                                        >
+                                        Student at UF majoring in Computer Science and minoring in Digital Arts & Sciences
+                                    </Typography>
+                                    </motion.div>
+                            </Grid>
+                        </Grid>
+                        </Grid>
+
+                        {/* Clarissa */}
+                        <Grid item xs={12} sm={6} md={4} lg={3}>
+                            <Grid container spacing={2} alignItems="center">
+                            {/* Photo */}
+                            <Grid item xs={6}>
+                                <Link
+                                component="a"
+                                href="https://www.linkedin.com/in/clarissa-cheung-054035187/"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                >
+                                <motion.img
+                                    src="/static/images/clarissa-cheung.jpg"
+                                    alt="Clarissa Cheung"
+                                    className="rounded-2xl drop-shadow-lg w-32 h-32 sm:w-40 sm:h-40 md:w-46 md:h-46"
+                                    whileHover={{ scale: 1.05, rotate: 2, cursor: "pointer" }}
+                                />
+
+                                </Link>
+                            </Grid>
+                            {/* Text */}
+                            <Grid item xs={6}>
+                                <motion.div className=" flex justify-end flex-col"
+                                >
+                                    <svg className="mr-[75%]" width="80" height="40" viewBox="0 0 160 81" fill="none"
+                                         xmlns="http://www.w3.org/2000/svg">
+                                        <path
+                                            d="M156.5 77.0683C154.41 74.8293 159.5 47.9643 124.573 31.436C112.186 27.8405 98.4507 27.7896 86.2908 31.9493C82.3414 33.3003 75.4181 36.8744 77.6474 42.2157C78.6654 44.6548 81.0524 45.8653 83.3122 47.0145C84.8813 47.8125 87.2686 48.6898 89.0055 47.9643C91.6025 46.8795 93.3429 43.7303 93.4438 41.0234C93.5767 37.4546 91.4058 34.0529 89.1138 31.4474C87.3829 29.4798 85.3765 27.8624 83.1231 26.5118C78.1125 23.5086 72.5744 21.0674 66.8886 19.7329C61.228 18.4043 55.2856 18.077 49.5198 18.5148C42.1294 19.076 35.4292 21.5196 28.8482 24.7135C22.9236 27.5887 17.2903 30.9925 11.43 33.9847C10.6607 34.3775 9.86975 34.7294 9.1074 35.1352C9.09475 35.1419 8.21484 35.5192 8.45132 35.7966C9.08297 36.5375 11.0659 36.9922 11.8847 37.2908C16.2038 38.8662 20.4808 40.488 24.6644 42.409C27.6769 43.7922 30.6364 45.2918 33.5077 46.9496C34.0948 47.2885 32.272 46.4532 32.1737 46.4105C25.6681 43.5896 18.9151 41.612 12.0745 39.7891C10.8699 39.4681 8.80368 38.923 7.55391 38.6175C6.48865 38.3571 5.12525 38.2561 4.09873 37.817C3.42585 37.5291 5.97025 35.1791 6.12197 34.9911C9.12405 31.2712 11.4965 27.0298 13.8929 22.9111C16.408 18.5885 18.4498 14.2139 20.1097 9.49715C20.3421 8.83669 21.371 3.95918 22.4476 4.27169"
+                                            stroke="black" stroke-width="7" strokeLinecap="round"/>
+                                    </svg>
+                                    <Typography
+                                    variant="h2"
+                                    sx={{
+                                        fontFamily: 'Satoshi Bold',
+                                        fontSize: { xs: "1.1rem", sm: "1.2rem", md: "1.2rem" },
+                                        marginBottom: '-4px',
+                                        lineHeight: { xs: 1.8, sm: 2, md: 2.2, lg: 2.2 }
+                                    }}
+                                    className="tracking-tight text-color282523 text-left"
+                                    >
+                                    Clarissa Cheung
+                                    </Typography>
+                                    <Typography
+                                        sx={{
+                                            color:"#81807C",
+                                            fontFamily: 'Satoshi Medium',
+                                            fontSize:{ xs: "1.0rem", sm: "1.0rem", md: "1.0rem" },
+                                            lineHeight: { xs: 1.1, sm: 1.2, md: 1.2, lg: 1.3 }
+                                        }}
+                                        className="font-dm-sans-medium text-left"
+                                        >
+                                        Student at UF majoring in Computer Science and minoring in Economics
+                                    </Typography>
+                                </motion.div>
+                            </Grid>
+                            </Grid>
+                            
+                        </Grid>
+                        
+                    </Grid>
+                </Grid>
+
+                <Box 
+                 sx={{
+                    height: '10vh',
+                 }}
+                 className="h-screen w-full flex justify-center bg-colorF3F1EA" >
                     {/*  honorable mention */}
                     <Grid item xs={12}>
                         <motion.div
@@ -628,25 +712,32 @@ export default function HomePage() {
                             whileInView="visible"
                             viewport={{ once: true }}>
                             <motion.p
-                                style = {{fontFamily: 'Satoshi Medium', fontSize: '1.2rem'}}
+                                style={{
+                                    fontFamily: 'Satoshi Medium',
+                                    fontSize: '1.2rem',
+                                    whiteSpace: 'normal',   
+                                    wordBreak: 'break-word',
+                                    width: '100%', 
+                                    textWrap: 'balance',
+                                }}
                                 className="text-color282523 text-center leading-tight"
-                                variants = {itemVariants}
-                                transition={{ delay: 1.45 }}>
+                                variants={itemVariants}
+                                transition={{ delay: 1.45 }}
+                                >
                                 Honorable developers from the original WiNGHacks project team:
+                                <br/>
                                 <span className="font-dm-sans-black tracking-tight"> Xiaguo Jia</span>,
                                 <span className="font-dm-sans-black tracking-tight"> Sara Smith</span>
                             </motion.p>
+
                         </motion.div>
                     </Grid>
-
-
-                </Grid>
             </Box>
 
             {/* ---------- getting started section ---------- */}
             <Box id="getting-started"
                  sx={{
-                     height: '100vh',
+                    minHeight: '100vh',
                  }}
                  className="h-screen w-full bg-colorF3F1EA flex justify-center items-center flex-col" >
                 <Stack direction={'column'} spacing={-0.5} style={{marginBottom:'40px'}}>
@@ -684,8 +775,6 @@ export default function HomePage() {
                 </motion.div>
             </Box>
         </Box>
-            {/*  end  */}
         </Box>
-        // </SignedOut>
     );
 }
