@@ -292,7 +292,10 @@ export default function HomePage() {
                                 <Grid xs={12} sm={6} md={4} lg={3}>
                                     <motion.div variants = {itemVariants}
                                                 transition={{ delay: 0.4 }}>
-                                        <Card style={{padding: '8%', borderRadius: '20px'}}>
+                                        <Card style={{
+                                            padding: '8%',
+                                            borderRadius: '20px',
+                                        }}>
                                             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', backgroundColor: '#f1c4a8', borderRadius: '50%', width: '40px', height: '40px', marginBottom:'15px'}}>
                                                 <FaPencilRuler color={'#E3632E'} size={20} />
                                             </div>
@@ -449,10 +452,10 @@ export default function HomePage() {
             {/*  ---------- about us ----------  */}
             <Box id="about-us"
                  sx={{
-                    height: '50vh',
+                    minHeight: '40dvh',
                     paddingTop: { xs: '12%', sm: '8%', md: '6%' },
                  }}
-                 className="h-screen w-full flex justify-center bg-colorF3F1EA" >
+                 className=" w-full flex justify-center bg-colorF3F1EA" >
                 <Grid container
                     direction={"row"}
                     width={{ xs: '98%', sm: '90%', md: '80%' }}
@@ -460,7 +463,7 @@ export default function HomePage() {
 
                     {/* title  */}
                     <Stack spacing={1} direction="column">
-                    <Grid item xs={12}>
+                    <Grid item xs={12} sm={6} md={4} lg={3}>
                         <motion.div
                             initial="hidden"
                             whileInView="visible"
@@ -517,6 +520,7 @@ export default function HomePage() {
                     alignItems="center"
                     direction={{ xs: 'row', md: 'row', lg: 'row' }}
                     width={{ xs: '98%', sm: '90%', md: '80%', lg: '80%' }}
+                    wrap={{ xs: "wrap", sm: "wrap", md: "nowrap", lg: "nowrap" }}
                     sx={{ mx: 'auto', pl: '250px', px: { xs: '2%', sm: '5%', lg: '8%' } }}>
 
                         {/* Rachel */}
@@ -533,10 +537,8 @@ export default function HomePage() {
                                 <motion.img
                                     src="/static/images/rachel%20pu%20image.png"
                                     alt="Rachel Pu"
-                                    width={150}
-                                    height={150}
-                                    className="rounded-2xl drop-shadow-lg"
-                                    whileHover={{ scale: 1.05, rotate: -2, cursor: "pointer" }}
+                                    className="rounded-2xl drop-shadow-lg w-32 h-32 sm:w-40 sm:h-40 md:w-46 md:h-46"
+                                    whileHover={{ scale: 1.05, rotate: 2, cursor: "pointer" }}
                                 />
                                 </Link>
                             </Grid>
@@ -550,14 +552,29 @@ export default function HomePage() {
                                             d="M156.5 77.0683C154.41 74.8293 159.5 47.9643 124.573 31.436C112.186 27.8405 98.4507 27.7896 86.2908 31.9493C82.3414 33.3003 75.4181 36.8744 77.6474 42.2157C78.6654 44.6548 81.0524 45.8653 83.3122 47.0145C84.8813 47.8125 87.2686 48.6898 89.0055 47.9643C91.6025 46.8795 93.3429 43.7303 93.4438 41.0234C93.5767 37.4546 91.4058 34.0529 89.1138 31.4474C87.3829 29.4798 85.3765 27.8624 83.1231 26.5118C78.1125 23.5086 72.5744 21.0674 66.8886 19.7329C61.228 18.4043 55.2856 18.077 49.5198 18.5148C42.1294 19.076 35.4292 21.5196 28.8482 24.7135C22.9236 27.5887 17.2903 30.9925 11.43 33.9847C10.6607 34.3775 9.86975 34.7294 9.1074 35.1352C9.09475 35.1419 8.21484 35.5192 8.45132 35.7966C9.08297 36.5375 11.0659 36.9922 11.8847 37.2908C16.2038 38.8662 20.4808 40.488 24.6644 42.409C27.6769 43.7922 30.6364 45.2918 33.5077 46.9496C34.0948 47.2885 32.272 46.4532 32.1737 46.4105C25.6681 43.5896 18.9151 41.612 12.0745 39.7891C10.8699 39.4681 8.80368 38.923 7.55391 38.6175C6.48865 38.3571 5.12525 38.2561 4.09873 37.817C3.42585 37.5291 5.97025 35.1791 6.12197 34.9911C9.12405 31.2712 11.4965 27.0298 13.8929 22.9111C16.408 18.5885 18.4498 14.2139 20.1097 9.49715C20.3421 8.83669 21.371 3.95918 22.4476 4.27169"
                                             stroke="black" strokeWidth="7" stroke-linecap="round"/>
                                     </svg>
-                                    <h2 style={{fontFamily: 'Satoshi Bold'}} className="tracking-tight text-color282523 text-2xl text-left -mb-1">
-                                        Rachel Pu
-                                    </h2>
-                                    <p style={{color: " #81807C"}} className="font-dm-sans-medium tracking-tight leading-tight text-left">
-                                        Student at UF majoring in
-                                        Computer Science and
-                                        minoring in Digital Arts & Sciences
-                                    </p>
+                                    <Typography
+                                    variant="h2"
+                                    sx={{
+                                        fontFamily: 'Satoshi Bold',
+                                        fontSize: { xs: "1.1rem", sm: "1.2rem", md: "1.2rem" },
+                                        marginBottom: '-4px',
+                                        lineHeight: { xs: 1.8, sm: 2, md: 2.2, lg: 2.2 }
+                                    }}
+                                    className="tracking-tight text-color282523 text-left"
+                                    >
+                                    Rachel Pu
+                                    </Typography>
+                                    <Typography
+                                        sx={{
+                                            color:"#81807C",
+                                            fontFamily: 'Satoshi Medium',
+                                            fontSize:{ xs: "1.0rem", sm: "1.0rem", md: "1.0rem" },
+                                            lineHeight: { xs: 1.1, sm: 1.2, md: 1.2, lg: 1.3 }
+                                        }}
+                                        className="font-dm-sans-medium text-left"
+                                        >
+                                        Student at UF majoring in Computer Science and minoring in Digital Arts & Sciences
+                                    </Typography>
                                 </motion.div>
                             </Grid>
                             </Grid>
@@ -574,12 +591,11 @@ export default function HomePage() {
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 >
+                             
                                 <motion.img
                                     src="/static/images/chelsea nguyen image.png"
                                     alt="Chelsea Nguyen"
-                                    width={150}
-                                    height={150}
-                                    className="rounded-2xl drop-shadow-lg"
+                                    className="rounded-2xl drop-shadow-lg w-32 h-32 sm:w-40 sm:h-40 md:w-46 md:h-46"
                                     whileHover={{ scale: 1.05, rotate: 2, cursor: "pointer" }}
                                 />
                                 </Link>
@@ -594,15 +610,30 @@ export default function HomePage() {
                                             d="M156.5 77.0683C154.41 74.8293 159.5 47.9643 124.573 31.436C112.186 27.8405 98.4507 27.7896 86.2908 31.9493C82.3414 33.3003 75.4181 36.8744 77.6474 42.2157C78.6654 44.6548 81.0524 45.8653 83.3122 47.0145C84.8813 47.8125 87.2686 48.6898 89.0055 47.9643C91.6025 46.8795 93.3429 43.7303 93.4438 41.0234C93.5767 37.4546 91.4058 34.0529 89.1138 31.4474C87.3829 29.4798 85.3765 27.8624 83.1231 26.5118C78.1125 23.5086 72.5744 21.0674 66.8886 19.7329C61.228 18.4043 55.2856 18.077 49.5198 18.5148C42.1294 19.076 35.4292 21.5196 28.8482 24.7135C22.9236 27.5887 17.2903 30.9925 11.43 33.9847C10.6607 34.3775 9.86975 34.7294 9.1074 35.1352C9.09475 35.1419 8.21484 35.5192 8.45132 35.7966C9.08297 36.5375 11.0659 36.9922 11.8847 37.2908C16.2038 38.8662 20.4808 40.488 24.6644 42.409C27.6769 43.7922 30.6364 45.2918 33.5077 46.9496C34.0948 47.2885 32.272 46.4532 32.1737 46.4105C25.6681 43.5896 18.9151 41.612 12.0745 39.7891C10.8699 39.4681 8.80368 38.923 7.55391 38.6175C6.48865 38.3571 5.12525 38.2561 4.09873 37.817C3.42585 37.5291 5.97025 35.1791 6.12197 34.9911C9.12405 31.2712 11.4965 27.0298 13.8929 22.9111C16.408 18.5885 18.4498 14.2139 20.1097 9.49715C20.3421 8.83669 21.371 3.95918 22.4476 4.27169"
                                             stroke="black" stroke-width="7" stroke-linecap="round"/>
                                     </svg>
-                                    <h2 style={{fontFamily: 'Satoshi Bold'}} className="tracking-tight text-color282523 text-2xl text-left -mb-1">
-                                        Chelsea Nguyen
-                                    </h2>
-                                    <p style={{color: " #81807C"}} className="font-dm-sans-medium tracking-tight leading-tight text-left">
-                                        Student at UF majoring in
-                                        Computer Science and
-                                        minoring in Digital Arts & Sciences
-                                    </p>
-                                </motion.div>
+                                    <Typography
+                                    variant="h2"
+                                    sx={{
+                                        fontFamily: 'Satoshi Bold',
+                                        fontSize: { xs: "1.1rem", sm: "1.2rem", md: "1.2rem" },
+                                        marginBottom: '-4px',
+                                        lineHeight: { xs: 1.8, sm: 2, md: 2.2, lg: 2.2 }
+                                    }}
+                                    className="tracking-tight text-color282523 text-left"
+                                    >
+                                    Chelsea Nguyen
+                                    </Typography>
+                                    <Typography
+                                        sx={{
+                                            color:"#81807C",
+                                            fontFamily: 'Satoshi Medium',
+                                            fontSize:{ xs: "1.0rem", sm: "1.0rem", md: "1.0rem" },
+                                            lineHeight: { xs: 1.1, sm: 1.2, md: 1.2, lg: 1.3 }
+                                        }}
+                                        className="font-dm-sans-medium text-left"
+                                        >
+                                        Student at UF majoring in Computer Science and minoring in Digital Arts & Sciences
+                                    </Typography>
+                                    </motion.div>
                             </Grid>
                         </Grid>
                         </Grid>
@@ -621,11 +652,10 @@ export default function HomePage() {
                                 <motion.img
                                     src="/static/images/clarissa-cheung.jpg"
                                     alt="Clarissa Cheung"
-                                    width={150}
-                                    height={150}
-                                    className="rounded-2xl drop-shadow-lg"
+                                    className="rounded-2xl drop-shadow-lg w-32 h-32 sm:w-40 sm:h-40 md:w-46 md:h-46"
                                     whileHover={{ scale: 1.05, rotate: 2, cursor: "pointer" }}
                                 />
+
                                 </Link>
                             </Grid>
                             {/* Text */}
@@ -638,14 +668,29 @@ export default function HomePage() {
                                             d="M156.5 77.0683C154.41 74.8293 159.5 47.9643 124.573 31.436C112.186 27.8405 98.4507 27.7896 86.2908 31.9493C82.3414 33.3003 75.4181 36.8744 77.6474 42.2157C78.6654 44.6548 81.0524 45.8653 83.3122 47.0145C84.8813 47.8125 87.2686 48.6898 89.0055 47.9643C91.6025 46.8795 93.3429 43.7303 93.4438 41.0234C93.5767 37.4546 91.4058 34.0529 89.1138 31.4474C87.3829 29.4798 85.3765 27.8624 83.1231 26.5118C78.1125 23.5086 72.5744 21.0674 66.8886 19.7329C61.228 18.4043 55.2856 18.077 49.5198 18.5148C42.1294 19.076 35.4292 21.5196 28.8482 24.7135C22.9236 27.5887 17.2903 30.9925 11.43 33.9847C10.6607 34.3775 9.86975 34.7294 9.1074 35.1352C9.09475 35.1419 8.21484 35.5192 8.45132 35.7966C9.08297 36.5375 11.0659 36.9922 11.8847 37.2908C16.2038 38.8662 20.4808 40.488 24.6644 42.409C27.6769 43.7922 30.6364 45.2918 33.5077 46.9496C34.0948 47.2885 32.272 46.4532 32.1737 46.4105C25.6681 43.5896 18.9151 41.612 12.0745 39.7891C10.8699 39.4681 8.80368 38.923 7.55391 38.6175C6.48865 38.3571 5.12525 38.2561 4.09873 37.817C3.42585 37.5291 5.97025 35.1791 6.12197 34.9911C9.12405 31.2712 11.4965 27.0298 13.8929 22.9111C16.408 18.5885 18.4498 14.2139 20.1097 9.49715C20.3421 8.83669 21.371 3.95918 22.4476 4.27169"
                                             stroke="black" stroke-width="7" stroke-linecap="round"/>
                                     </svg>
-                                    <h2 style={{fontFamily: 'Satoshi Bold'}} className="tracking-tight text-color282523 text-2xl text-left -mb-1">
-                                        Clarissa Cheung
-                                    </h2>
-                                    <p style={{color: " #81807C"}} className="font-dm-sans-medium tracking-tight leading-tight text-left">
-                                        Student at UF majoring in
-                                        Computer Science and
-                                        minoring in Economics
-                                    </p>
+                                    <Typography
+                                    variant="h2"
+                                    sx={{
+                                        fontFamily: 'Satoshi Bold',
+                                        fontSize: { xs: "1.1rem", sm: "1.2rem", md: "1.2rem" },
+                                        marginBottom: '-4px',
+                                        lineHeight: { xs: 1.8, sm: 2, md: 2.2, lg: 2.2 }
+                                    }}
+                                    className="tracking-tight text-color282523 text-left"
+                                    >
+                                    Clarissa Cheung
+                                    </Typography>
+                                    <Typography
+                                        sx={{
+                                            color:"#81807C",
+                                            fontFamily: 'Satoshi Medium',
+                                            fontSize:{ xs: "1.0rem", sm: "1.0rem", md: "1.0rem" },
+                                            lineHeight: { xs: 1.1, sm: 1.2, md: 1.2, lg: 1.3 }
+                                        }}
+                                        className="font-dm-sans-medium text-left"
+                                        >
+                                        Student at UF majoring in Computer Science and minoring in Economics
+                                    </Typography>
                                 </motion.div>
                             </Grid>
                             </Grid>
@@ -667,14 +712,24 @@ export default function HomePage() {
                             whileInView="visible"
                             viewport={{ once: true }}>
                             <motion.p
-                                style = {{fontFamily: 'Satoshi Medium', fontSize: '1.2rem'}}
+                                style={{
+                                    fontFamily: 'Satoshi Medium',
+                                    fontSize: '1.2rem',
+                                    whiteSpace: 'normal',   
+                                    wordBreak: 'break-word',
+                                    width: '100%', 
+                                    textWrap: 'balance',
+                                }}
                                 className="text-color282523 text-center leading-tight"
-                                variants = {itemVariants}
-                                transition={{ delay: 1.45 }}>
+                                variants={itemVariants}
+                                transition={{ delay: 1.45 }}
+                                >
                                 Honorable developers from the original WiNGHacks project team:
+                                <br/>
                                 <span className="font-dm-sans-black tracking-tight"> Xiaguo Jia</span>,
                                 <span className="font-dm-sans-black tracking-tight"> Sara Smith</span>
                             </motion.p>
+
                         </motion.div>
                     </Grid>
             </Box>
