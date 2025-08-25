@@ -219,22 +219,23 @@ export default function HomePage() {
         {/*//  container*/}
         <Box
             sx={{
-            minHeight: '100vh',
+            minHeight: '100dvh',
         }}>
 
             {/* ---------- home page ----------  */}
             <Box id="home-page"
                 sx={{
-                    minHeight: '100vh',
+                    minHeight: '100dvh',
+                    pt: { xs: "5%", md: 0 }
                  }}
-                 className=" h-screen w-full bg-colorF3F1EA flex justify-center items-center">
+                 className="w-full bg-colorF3F1EA flex justify-center items-center">
 
                 {/*  main content box  */}
                 <Grid container
                     spacing={5}
                     direction={"column"}
                     width={'80%'}
-                    sx={{paddingLeft: '5%', paddingRight: '5%'}}>
+                    sx={{px: "5%"}}>
 
                     {/*  title/slogan  */}
                     <Grid item xs>
@@ -254,16 +255,8 @@ export default function HomePage() {
                                             variants = {itemVariants}
                                 >
                                     <motion.p style={{fontFamily:'Satoshi Bold', color: 'black', fontSize: '3.2rem', letterSpacing: '-0.5px',userSelect: 'none'}}>
-                                        with no strings attached.
+                                        with no strings attached. 😉
                                     </motion.p>
-
-                                    {/* smiley */}
-                                    <motion.div initial="hidden"
-                                                whileInView="visible"
-                                                viewport={{ once: true }}>
-                                        <Typography style = {{fontSize: '55px'}}>😉</Typography>
-                                    </motion.div>
-
                                 </motion.div>
                             </motion.div>
 
@@ -293,19 +286,20 @@ export default function HomePage() {
                         <motion.div initial="hidden"
                                     whileInView="visible"
                                     viewport={{ once: true }}>
-                            <Grid container spacing={2} columns={3} rows={1}>
+                            <Grid container spacing={2} columns={3} rows={1}  direction="row"
+  wrap={{ xs: "wrap", sm: "wrap", md: "nowrap", lg: "nowrap" }} >
                                 {/* career prep tools card */}
-                                <Grid size={1}>
+                                <Grid xs={12} sm={6} md={4} lg={3}>
                                     <motion.div variants = {itemVariants}
                                                 transition={{ delay: 0.4 }}>
                                         <Card style={{padding: '8%', borderRadius: '20px'}}>
                                             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', backgroundColor: '#f1c4a8', borderRadius: '50%', width: '40px', height: '40px', marginBottom:'15px'}}>
                                                 <FaPencilRuler color={'#E3632E'} size={20} />
                                             </div>
-                                            <Typography variant="h5" style={{fontFamily: 'Satoshi Bold', color: 'black', letterSpacing: '-0.5px'}}>
+                                            <Typography variant="h5" sx={{fontFamily: 'Satoshi Bold', color: 'black', letterSpacing: '-0.5px', fontSize: { xs: "1.1rem", sm: "1.4rem", md: "1.5rem" }}}>
                                                 Career Prep Tools
                                             </Typography>
-                                            <Typography style={{fontFamily: 'DM Sans', color: '#696862', letterSpacing: '-0.5px', fontSize: '1.1rem'}}>
+                                            <Typography sx={{fontFamily: 'DM Sans', color: '#696862', letterSpacing: '-0.5px', fontSize: { xs: "1.0rem", sm: "1.4rem", md: "1.5rem" }}}>
                                                 Using our variety of tools, you can practice for interviews, networking, and more.
                                             </Typography>
                                         </Card>
@@ -313,17 +307,17 @@ export default function HomePage() {
                                 </Grid>
 
                                 {/* saving saves card */}
-                                <Grid size={1}>
+                                <Grid xs={12} sm={6} md={4} lg={3}>
                                     <motion.div variants = {itemVariants}
                                                 transition={{ delay: 0.6 }}>
                                         <Card style={{padding: '8%', borderRadius: '20px'}}>
                                             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', backgroundColor: '#9db8ea', borderRadius: '50%', width: '40px', height: '40px', marginBottom:'15px'}}>
                                                 <IoDocumentText color={'#2a6ed5'} size={25} />
                                             </div>
-                                            <Typography variant="h5" style={{fontFamily: 'Satoshi Bold', color: 'black', letterSpacing: '-0.5px'}}>
+                                            <Typography variant="h5" sx={{fontFamily: 'Satoshi Bold', color: 'black', letterSpacing: '-0.5px', fontSize: { xs: "1.1rem", sm: "1.4rem", md: "1.5rem" }}}>
                                                 Saves Transcripts
                                             </Typography>
-                                            <Typography style={{fontFamily: 'DM Sans', color: '#696862', letterSpacing: '-0.5px', fontSize: '1.1rem'}}>
+                                            <Typography sx={{fontFamily: 'DM Sans', color: '#696862', letterSpacing: '-0.5px', fontSize: { xs: "1.0rem", sm: "1.4rem", md: "1.5rem" }}}>
                                                 After each practice session, you can save your transcripts to review for later.
                                             </Typography>
                                         </Card>
@@ -331,17 +325,17 @@ export default function HomePage() {
                                 </Grid>
 
                                 {/* personalized feedback card */}
-                                <Grid size={1}>
+                                <Grid xs={12} sm={6} md={4} lg={3}>
                                     <motion.div variants = {itemVariants}
                                                 transition={{ delay: 0.8 }}>
                                         <Card style={{padding: '8%', borderRadius: '20px'}}>
                                             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', backgroundColor: '#9fcb95', borderRadius: '50%', width: '40px', height: '40px', marginBottom:'15px'}}>
                                                 <BiSolidMessageCheck color={'#559437'} size={25} style={{marginTop: '2.5px'}}/>
                                             </div>
-                                            <Typography variant="h5" style={{fontFamily: 'Satoshi Bold', color: 'black', letterSpacing: '-0.5px'}}>
+                                            <Typography variant="h5" sx={{fontFamily: 'Satoshi Bold', color: 'black', letterSpacing: '-0.5px', fontSize: { xs: "1.1rem", sm: "1.4rem", md: "1.5rem" }}}>
                                                 Personalized Feedback
                                             </Typography>
-                                            <Typography style={{fontFamily: 'DM Sans', color: '#696862', letterSpacing: '-0.5px', fontSize: '1.1rem'}}>
+                                            <Typography sx={{fontFamily: 'DM Sans', color: '#696862', letterSpacing: '-0.5px', fontSize: { xs: "1.0rem", sm: "1.4rem", md: "1.5rem" }}}>
                                                 Receive customized feedback on your performance to help you improve your skills.
                                             </Typography>
                                         </Card>
@@ -374,8 +368,9 @@ export default function HomePage() {
             <Box id="why-wing-it"
                 sx={{
                     minHeight: '100vh',
+                    pt: { xs: "10%", md: 0 }
                 }}
-                 className="h-screen w-full bg-colorF3F1EA flex justify-center items-center">
+                 className="w-full bg-colorF3F1EA flex justify-center items-center">
                 <Grid container 
                     spacing={4}
                     columns={5}
