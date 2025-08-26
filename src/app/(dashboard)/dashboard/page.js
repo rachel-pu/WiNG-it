@@ -5,7 +5,7 @@ import CssBaseline from '@mui/material/CssBaseline';
 import Grid from '@mui/material/Grid2';
 import DashboardCard from '../dashboard/(components)/DashboardCard';
 
-import AppLayout from "../../AppLayout";
+import DefaultAppLayout from "../../DefaultAppLayout";
 import {  SignedIn } from '@clerk/nextjs'
 
 import "./Dashboard.css";
@@ -15,7 +15,7 @@ export default function Dashboard() {
         <SignedIn>
             <Box sx={{ display: 'flex' }}>
                 <CssBaseline />
-                <AppLayout title="Dashboard" color="#2850d9">
+                <DefaultAppLayout title="Dashboard" color="#2850d9">
                     {/* --------- main content --------- */}
                     <Box
                         component="main"
@@ -81,7 +81,7 @@ export default function Dashboard() {
                             </Grid>
                         </Box>
                     </Box>
-                </AppLayout>
+                </DefaultAppLayout>
             </Box>
         </SignedIn>
     );
