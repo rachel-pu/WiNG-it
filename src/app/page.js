@@ -21,6 +21,8 @@ import MenuIcon from '@mui/icons-material/Menu';
 import Container from '@mui/material/Container';
 import {IconButton, Paper} from "@mui/material";
 
+import "./HomePage.css";
+
 const pages = ['Why WiNG.it', 'About Us', 'Login'];
 export default function HomePage() {
 
@@ -42,12 +44,10 @@ export default function HomePage() {
 
 
     return (
-        <Box className="bg-colorF3F1EA">
+        <Box>
             {/* ---------- nav bar ---------- */}
             <AppBar position="static"
-                    sx={{
-                        backgroundColor: '#e3e1d9'
-                    }}>
+                    className="navigation-bar">
                 <Container maxWidth="xl">
                     <Toolbar disableGutters>
                         {/* desktop logo / big viewport */}
@@ -216,7 +216,7 @@ export default function HomePage() {
                 </Container>
             </AppBar>
 
-        {/*//  container*/}
+        {/* container*/}
         <Box
             sx={{
             minHeight: '100dvh',
@@ -224,11 +224,12 @@ export default function HomePage() {
 
             {/* ---------- home page ----------  */}
             <Box id="home-page"
-                sx={{
-                    minHeight: '100dvh',
-                    pt: { xs: "5%", md: 0 }
-                 }}
-                 className="w-full bg-colorF3F1EA flex justify-center items-center">
+                // sx={{
+                //     minHeight: '100dvh',
+                //     pt: { xs: "5%", md: 0 }
+                //  }}
+                //  className="w-full bg-colorF3F1EA flex justify-center items-center"
+                className="main-home-page-container">
 
                 {/*  main content box  */}
                 <Grid container
@@ -240,41 +241,31 @@ export default function HomePage() {
                     {/*  title/slogan  */}
                     <Grid item xs>
                         <Stack direction={"column"} spacing={2}>
-                            <motion.div className="flex items-center justify-center space-x-2 flex-col -space-y-3.5"
+                            <motion.div
+                                className="main-home-page-title-container"
+                                // className="flex items-center justify-center space-x-2 flex-col -space-y-3.5"
                                         initial="hidden"
                                         whileInView="visible"
                                         viewport={{ once: true }}
                                         >
                                 <motion.p
                                     variants = {itemVariants}
-                                    style={{fontFamily:'Satoshi Bold', color: 'black', fontSize: '3.2rem', letterSpacing: '-0.5px',userSelect: 'none'}}>
+                                    className="main-home-page-title-text">
                                     Unlock all your career tools
+                                    with no strings attached. 😉
                                 </motion.p>
-
-                                <motion.div className="flex flex-row items-center space-x-1"
-                                            variants = {itemVariants}
-                                >
-                                    <motion.p style={{fontFamily:'Satoshi Bold', color: 'black', fontSize: '3.2rem', letterSpacing: '-0.5px',userSelect: 'none'}}>
-                                        with no strings attached. 😉
-                                    </motion.p>
-                                </motion.div>
                             </motion.div>
 
                             {/* description */}
-                            <motion.div className="items-center flex flex-col -space-y-1.2"
+                            <motion.div className="main-home-page-description-container"
                                         initial="hidden"
                                         whileInView="visible"
                                         viewport={{ once: true }}>
                                 <motion.p
                                     variants = {itemVariants}
                                     transition={{ delay: 0.05 }}
-                                    style={{fontFamily:'DM Sans', color: '#81807c', fontSize: '1.3rem', letterSpacing: '-0.5px'}}>
+                                    className="description-text">
                                     WiNG.it provides tools to enhance your skills in
-                                </motion.p>
-                                <motion.p
-                                    variants = {itemVariants}
-                                    transition={{ delay: 0.05 }}
-                                    style={{fontFamily:'DM Sans', color: '#81807c', fontSize: '1.3rem', letterSpacing: '-0.5px'}}>
                                     interviews, networking, and beyond, helping you excel in your career.
                                 </motion.p>
                             </motion.div>
@@ -286,23 +277,22 @@ export default function HomePage() {
                         <motion.div initial="hidden"
                                     whileInView="visible"
                                     viewport={{ once: true }}>
-                            <Grid container spacing={2} columns={3} rows={1}  direction="row"
-  wrap={{ xs: "wrap", sm: "wrap", md: "nowrap", lg: "nowrap" }} >
+                            <Grid container spacing={2} columns={3} rows={1}  direction={{xs: "column", s: "column", md: "row", lg: "row"}}
+                            wrap={{ xs: "wrap", sm: "wrap", md: "nowrap", lg: "nowrap" }}
+                            >
+
                                 {/* career prep tools card */}
                                 <Grid xs={12} sm={6} md={4} lg={3}>
                                     <motion.div variants = {itemVariants}
                                                 transition={{ delay: 0.4 }}>
-                                        <Card style={{
-                                            padding: '8%',
-                                            borderRadius: '20px',
-                                        }}>
+                                        <Card className="main-home-page-card">
                                             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', backgroundColor: '#f1c4a8', borderRadius: '50%', width: '40px', height: '40px', marginBottom:'15px'}}>
                                                 <FaPencilRuler color={'#E3632E'} size={20} />
                                             </div>
-                                            <Typography variant="h5" sx={{fontFamily: 'Satoshi Bold', color: 'black', letterSpacing: '-0.5px', fontSize: { xs: "1.1rem", sm: "1.4rem", md: "1.5rem" }}}>
+                                            <Typography variant="h5" className="main-home-page-card-feature-title">
                                                 Career Prep Tools
                                             </Typography>
-                                            <Typography sx={{fontFamily: 'DM Sans', color: '#696862', letterSpacing: '-0.5px', fontSize: { xs: "1.0rem", sm: "1.4rem", md: "1.5rem" }}}>
+                                            <Typography className="main-home-page-card-feature-description">
                                                 Using our variety of tools, you can practice for interviews, networking, and more.
                                             </Typography>
                                         </Card>
@@ -313,14 +303,14 @@ export default function HomePage() {
                                 <Grid xs={12} sm={6} md={4} lg={3}>
                                     <motion.div variants = {itemVariants}
                                                 transition={{ delay: 0.6 }}>
-                                        <Card style={{padding: '8%', borderRadius: '20px'}}>
+                                        <Card className="main-home-page-card">
                                             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', backgroundColor: '#9db8ea', borderRadius: '50%', width: '40px', height: '40px', marginBottom:'15px'}}>
                                                 <IoDocumentText color={'#2a6ed5'} size={25} />
                                             </div>
-                                            <Typography variant="h5" sx={{fontFamily: 'Satoshi Bold', color: 'black', letterSpacing: '-0.5px', fontSize: { xs: "1.1rem", sm: "1.4rem", md: "1.5rem" }}}>
+                                            <Typography variant="h5" className="main-home-page-card-feature-title">
                                                 Saves Transcripts
                                             </Typography>
-                                            <Typography sx={{fontFamily: 'DM Sans', color: '#696862', letterSpacing: '-0.5px', fontSize: { xs: "1.0rem", sm: "1.4rem", md: "1.5rem" }}}>
+                                            <Typography className="main-home-page-card-feature-description">
                                                 After each practice session, you can save your transcripts to review for later.
                                             </Typography>
                                         </Card>
@@ -331,14 +321,14 @@ export default function HomePage() {
                                 <Grid xs={12} sm={6} md={4} lg={3}>
                                     <motion.div variants = {itemVariants}
                                                 transition={{ delay: 0.8 }}>
-                                        <Card style={{padding: '8%', borderRadius: '20px'}}>
+                                        <Card className="main-home-page-card">
                                             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', backgroundColor: '#9fcb95', borderRadius: '50%', width: '40px', height: '40px', marginBottom:'15px'}}>
                                                 <BiSolidMessageCheck color={'#559437'} size={25} style={{marginTop: '2.5px'}}/>
                                             </div>
-                                            <Typography variant="h5" sx={{fontFamily: 'Satoshi Bold', color: 'black', letterSpacing: '-0.5px', fontSize: { xs: "1.1rem", sm: "1.4rem", md: "1.5rem" }}}>
+                                            <Typography variant="h5" className="main-home-page-card-feature-title">
                                                 Personalized Feedback
                                             </Typography>
-                                            <Typography sx={{fontFamily: 'DM Sans', color: '#696862', letterSpacing: '-0.5px', fontSize: { xs: "1.0rem", sm: "1.4rem", md: "1.5rem" }}}>
+                                            <Typography className="main-home-page-card-feature-description">
                                                 Receive customized feedback on your performance to help you improve your skills.
                                             </Typography>
                                         </Card>
