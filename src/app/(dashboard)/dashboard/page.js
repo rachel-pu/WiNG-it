@@ -14,6 +14,8 @@ import MainAppBar from "../../../../components/MainAppBar";
 import Page_Template from "../../page_template";
 import { ClerkProvider, SignedIn, SignedOut, SignInButton, UserButton } from '@clerk/nextjs'
 
+import "./Dashboard.css";
+
 export default function Dashboard() {
     return (
         <SignedIn>
@@ -23,9 +25,8 @@ export default function Dashboard() {
                     {/* --------- main content --------- */}
                     <Box
                         component="main"
-                        sx={{ flexGrow: 1, bgcolor: '#F3F1EB', p: 3, height: '100vh', overflow: 'auto' }}
+                        className="main-dashboard-container"
                     >
-                        <Toolbar />
                     {/*  --------- grid ---------  */}
                         <Box sx={{ flexGrow: 1 }}>
                             <Grid container spacing={{ xs: 2, md: 3 }} columns={{ xs: 1, sm: 1, md: 2, lg: 3}}>
