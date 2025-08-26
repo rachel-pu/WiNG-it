@@ -16,7 +16,7 @@
     width: 100%;
 }
 
-/** 'unlock all your career tools with no strings attached' **/
+/** ---------- 'unlock all your career tools with no strings attached' ---------- **/
 .main-home-page-title-container{
     display: flex;
     align-items: center;
@@ -36,7 +36,7 @@
     margin: 0;
 }
 
-/** description **/
+/** ---------- description ---------- **/
 .main-home-page-description-container{
     display: flex;
     align-items: center;
@@ -53,7 +53,7 @@
     user-select: none;
 }
 
-/** cards **/
+/** ---------- cards ---------- **/
 .main-home-page-card{
     padding: 8%;
     border-radius: 20px !important;
@@ -65,152 +65,175 @@
 font-family: 'Satoshi Bold', sans-serif !important;
     color: #000000;
     letter-spacing: -0.5px;
-    font-size: 5.1rem;
+    font-size: 4.1rem;
 }
 
 .main-home-page-card-feature-description{
     font-family: 'DM Sans', sans-serif !important;
     color: #696862;
     letter-spacing: -0.5px !important;
-    font-size: 1.5rem !important;
+    font-size: 1.4rem !important;
 }
 
+/* adjusting text size & padding if width size below 'md' */
+@media (max-width: 900px) {
+    .main-home-page-card{
+        padding: 10%;
+    }
+    .main-home-page-card-feature-title {
+        font-size: 4.3rem;
+    }
 
+    .main-home-page-card-feature-description {
+        font-size: 1.25rem !important;
+    }
+}
 
-/*!* MUI default md breakpoint: 900px *!*/
-/*@media (min-width: 900px) {*/
-/*  !* empty block for clarity *!*/
-/*}*/
+/* ---------- why wing it section ---------- */
 
-/*!* wing-it logo icon on desktop *!*/
-/*.desktop-logo {*/
-/*  display: none;*/
-/*  margin-right: 8px; !* mr: 1 *!*/
-/*}*/
-/*@media (min-width: 900px) {*/
-/*  .desktop-logo { display: flex; }*/
-/*}*/
+.why-wing-it-section-container{
+    min-height: 100vh;
+    padding-top: 5%;
+    width: 100%;
+    background-color: #F3F1EA;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 
-/*!* wing-it title on desktop *!*/
-/*.brand-title-desktop {*/
-/*  font-size: 2.5rem;*/
-/*  flex-grow: 1;*/
-/*  color: black;*/
-/*  font-family: "Satoshi Black";*/
-/*}*/
-/*@media (min-width: 900px) {*/
-/*  .brand-title-desktop { display: flex; }*/
-/*}*/
+.why-wing-it-title{
+    padding-left: 23px;
+    font-family: 'Satoshi Bold', sans-serif;
+    color: black;
+    font-size: 3rem;
+    letter-spacing: -0.5px;
+    line-height: 1.32;
+    user-select: none;
+}
 
-/*!* Mobile menu trigger container (Box around IconButton/Menu) *!*/
-/*.mobile-menu-trigger {*/
-/*  display: flex;*/
-/*  margin-left: auto;*/
+.why-wing-it-description-text{
+    font-family: 'DM Sans', sans-serif;
+    color: black;
+    line-height: 150%;
+    font-size: 1.35rem;
+}
 
-/*}*/
-/*@media (min-width: 900px) {*/
-/*  .mobile-menu-trigger { display: none; }*/
-/*}*/
+/* ---------- about us ---------- */
+.about-us-section-container{
+    min-height:40vh;
+    padding-top: 8%;
+    background-color: #F3F1EA;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
 
-/*!* MUI Menu (mobile only) *!*/
-/*.menu-mobile {*/
-/*  display: block;*/
-/*}*/
-/*@media (min-width: 900px) {*/
-/*  .menu-mobile { display: none; }*/
-/*}*/
+.about-us-section-title{
+    font-family:'Satoshi Bold', sans-serif !important;
+    color: black;
+    font-size: 3.3rem !important;
+    letter-spacing: -0.5px;
+    user-select: none;
+    text-align: center;
+}
 
-/*!* Menu list container (Box inside Menu) *!*/
-/*.menu-list {*/
-/*  display: flex;*/
-/*  flex-direction: column;*/
-/*  row-gap: 8px;      !* rowGap: 1 *!*/
-/*  padding: 8px;      !* p: 1 *!*/
-/*}*/
+.about-us-section-description-text{
+    font-size: 1.25rem !important;
+    letter-spacing: -0.3px !important;
+    color: black;
+    line-height: 150%;
+    text-align: center;
+}
 
-/*!* Generic menu buttons (mobile) *!*/
-/*.menu-btn {*/
-/*  font-size: 1.05rem;*/
-/*  text-transform: none;*/
-/*  color: black;*/
-/*  letter-spacing: -0.01px;*/
-/*  padding-left: 16px;   !* px: 2 *!*/
-/*  padding-right: 16px;  !* px: 2 *!*/
-/*}*/
-/*.menu-btn--bold   { font-family: "Satoshi Bold"; }*/
-/*.menu-btn--medium { font-family: "Satoshi Medium"; }*/
+/* developer section */
+.developer-section-container{
+    background-color: #F3F1EA;
+    padding-top: 5%;
+    padding-bottom: 5%;
+}
 
-/*!* Mobile Login button *!*/
-/*.menu-btn-primary {*/
-/*  font-size: 1.05rem;*/
-/*  font-family: "Satoshi Medium";*/
-/*  text-transform: none;*/
-/*  background-color: #2850d9;*/
-/*  padding-left: 20px;   !* px: 2.5 *!*/
-/*  padding-right: 20px;  !* px: 2.5 *!*/
-/*  border-radius: 5px;*/
-/*  color: white;*/
-/*  letter-spacing: -0.01px;*/
-/*  transition: transform 0.3s;*/
-/*}*/
+.developer-section-developer-name{
+    font-family: 'Satoshi Bold', sans-serif !important;
+    font-size: 1.5rem !important;
+    margin-bottom: -4px;
+    line-height: 1.8;
+    color: #282523;
+    text-align: left;
+    letter-spacing: -0.3px;
+}
 
-/*!* Mobile logo (left of mobile title) *!*/
-/*.mobile-logo {*/
-/*  display: flex;*/
-/*  margin-right: 8px;*/
-/*}*/
-/*@media (min-width: 900px) {*/
-/*  .mobile-logo { display: none; }*/
-/*}*/
+.developer-section-developer-description{
+    color: #81807C;
+    font-family: 'Satoshi Medium', sans-serif !important;
+    font-size: 1.0rem !important;
+    line-height: 1.2;
+}
 
-/*!* Brand title on mobile (Typography link-style) *!*/
-/*.brand-title-mobile {*/
-/*  margin-right: 16px;  !* mr: 2 *!*/
-/*  display: flex;*/
-/*  flex-grow: 1;*/
-/*  font-family: "Satoshi Black";*/
-/*  color: #000000;*/
-/*  font-size: 1.75rem;*/
-/*  text-decoration: none;*/
-/*}*/
-/*@media (min-width: 900px) {*/
-/*  .brand-title-mobile { display: none; }*/
-/*}*/
+.honorable-mentions-section-container{
+    height: auto;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    background-color: #F3F1EA;
+}
 
-/*!* Desktop nav container (Box wrapping right-side buttons) *!*/
-/*.desktop-nav {*/
-/*  display: none;*/
-/*  gap: 12px; !* gap: 1.5 (≈ 12px if 8px scale) *!*/
-/*}*/
-/*@media (min-width: 900px) {*/
-/*  .desktop-nav { display: flex; }*/
-/*}*/
+.honorable-mentions-section-text{
+    font-family: 'Satoshi Medium', sans-serif !important;
+    font-size: 1.2rem !important;
+    color: #282523;
+    line-height: 1.5;
+    text-align: center;
+    max-width: 800px;
+    word-break: break-word;
+    white-space: normal;
+    letter-spacing: -0.2px;
+}
 
-/*!* Desktop nav buttons *!*/
-/*.nav-btn {*/
-/*  font-size: 1.05rem;*/
-/*  font-family: "Satoshi Bold";*/
-/*  text-transform: none;*/
-/*  color: black;*/
-/*  letter-spacing: -0.01px;*/
-/*  border-radius: 50px;*/
-/*  padding-left: 16px;  !* px: 2 *!*/
-/*  padding-right: 16px; !* px: 2 *!*/
-/*}*/
+/* ------ getting started section ------ */
+.getting-started-section-container{
+    min-height: 100vh;
+    height: auto;
+    width: 100%;
+    background-color: #F3F1EA;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
 
-/*!* Desktop Login button *!*/
-/*.nav-btn-primary {*/
-/*  font-size: 1.05rem;*/
-/*  font-family: "Satoshi Bold";*/
-/*  text-transform: none;*/
-/*  background-color: #2850d9;*/
-/*  padding-left: 20px;   !* px: 2.5 *!*/
-/*  padding-right: 20px;  !* px: 2.5 *!*/
-/*  border-radius: 50px;*/
-/*  color: white;*/
-/*  letter-spacing: -0.01px;*/
-/*  transition: transform 0.3s;*/
-/*}*/
-/*.nav-btn-primary:hover {*/
-/*  transform: scale(1.05) rotate(-2deg);*/
-/*}*/
+.get-started-title{
+    font-family: 'Satoshi Bold', sans-serif !important;
+    color: black;
+    font-size: 3.2rem !important;
+    letter-spacing: -0.5px;
+    user-select: none;
+    text-align: center;
+}
+
+.get-started-ready-text{
+   font-family: 'DM Sans', sans-serif !important;
+    color: #81807C !important;
+    font-size: 2.3rem !important;
+    letter-spacing: -0.3px;
+    user-select: none;
+    text-align: center;
+}
+
+.get-started-button{
+    font-size: 3.2rem !important;
+    font-family: 'Satoshi Bold', sans-serif !important;
+    background-color: #2850d9 !important;
+    padding-left: 2.5rem !important;
+    padding-right: 2.5rem !important;
+    border-radius: 50px !important;
+    color: white !important;
+    letter-spacing: -0.3px !important;
+    text-transform: none !important;
+    transition: transform 0.3s ease-in-out !important;
+    boxShadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.get-started-button:hover{
+    transform: scale(1.05);
+    rotate: -2deg;
+}
