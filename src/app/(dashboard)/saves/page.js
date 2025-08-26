@@ -18,7 +18,7 @@ import {IoSettings} from "react-icons/io5";
 import SavesButtons from "./SavesButtons";
 import {SignedIn, UserButton} from '@clerk/nextjs'
 import MainAppBar from "../../../../components/MainAppBar";
-import Page_Template from "../../page_template";
+import Page_Template from "../../AppLayout";
 
 export default function Saves() {
     const drawerWidth = 240;

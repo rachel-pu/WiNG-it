@@ -3,7 +3,7 @@ import MainAppBar from "../../components/MainAppBar";
 import LeftNavbar from "../../components/LeftNavbar";
 import { useTheme, useMediaQuery } from '@mui/material';
 
-const Page_Template = ({ title, color, children }) => {
+const AppLayout = ({ title, color, children }) => {
   const theme = useTheme();
   const isXs = useMediaQuery(theme.breakpoints.down('sm'));
   const isSm = useMediaQuery(theme.breakpoints.between('sm', 'md'));
@@ -40,4 +40,4 @@ const Page_Template = ({ title, color, children }) => {
   );
 };
 
-export default Page_Template;
+export default AppLayout;
