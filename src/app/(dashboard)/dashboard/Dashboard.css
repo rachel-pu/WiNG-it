@@ -1,0 +1,12 @@
+/* sx={{ flexGrow: 1, bgcolor: '#F3F1EB', p: 3, height: '100vh', overflow: 'auto' }} */
+.main-dashboard-container{
+    display: flex;
+    background-color: #F3F1EA;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    padding: 2%;
+    margin-top: 2%;
+}
+
+

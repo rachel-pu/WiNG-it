@@ -14,7 +14,7 @@ import Typography from "@mui/material/Typography";
 import QuickstartPage from "@/app/(simulations)/behavioral/(components)/QuickstartPage";
 import BehavioralSimulationPage from "@/app/(simulations)/behavioral/(components)/BehavioralSimulationPage";
 import {CircularProgress} from "@mui/material";
-import Page_Template from "../../page_template";
+import Page_Template from "../../DefaultAppLayout";
 
 export default function BehavioralInterviewSimulation() {
     const [questions, setQuestions] = useState([]);
