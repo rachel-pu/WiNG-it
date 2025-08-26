@@ -1,0 +1,239 @@
+/* // NAVIGATION BAR // */
+.navigation-bar {
+  background-color: #e3e1d9 !important;
+  overflow: hidden;
+}
+
+/* // MAIN HOME PAGE CONTAINER STYLING // */
+.main-home-page-container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 5%;
+    background-color: #F3F1EA;
+    width: 100%;
+}
+
+/** ---------- 'unlock all your career tools with no strings attached' ---------- **/
+.main-home-page-title-container{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    margin-bottom: -4.5rem;
+}
+
+.main-home-page-title-container .main-home-page-title-text {
+    font-family: 'Satoshi Bold', sans-serif;
+    font-size: 3.2rem;
+    color: #000000;
+    max-width: 800px;
+    text-align: center;
+    letter-spacing: -0.02em;
+    user-select: none;
+    margin: 0;
+}
+
+/** ---------- description ---------- **/
+.main-home-page-description-container{
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
+
+.main-home-page-description-container .description-text{
+    font-family: 'DM Sans', sans-serif;
+    color: #81807c;
+    font-size: 1.3rem;
+    text-align: center;
+    max-width: 560px;
+    margin-top: 1rem;
+    user-select: none;
+}
+
+/** ---------- cards ---------- **/
+.main-home-page-card{
+    padding: 8%;
+    border-radius: 20px !important;
+    min-height: 250px;
+    height: 100%;
+}
+
+.main-home-page-card-feature-title{
+font-family: 'Satoshi Bold', sans-serif !important;
+    color: #000000;
+    letter-spacing: -0.5px;
+    font-size: 4.1rem;
+}
+
+.main-home-page-card-feature-description{
+    font-family: 'DM Sans', sans-serif !important;
+    color: #696862;
+    letter-spacing: -0.5px !important;
+    font-size: 1.4rem !important;
+}
+
+/* adjusting text size & padding if width size below 'md' */
+@media (max-width: 900px) {
+    .main-home-page-card{
+        padding: 10%;
+    }
+    .main-home-page-card-feature-title {
+        font-size: 4.3rem;
+    }
+
+    .main-home-page-card-feature-description {
+        font-size: 1.25rem !important;
+    }
+}
+
+/* ---------- why wing it section ---------- */
+
+.why-wing-it-section-container{
+    min-height: 100vh;
+    padding-top: 5%;
+    width: 100%;
+    background-color: #F3F1EA;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.why-wing-it-title{
+    padding-left: 23px;
+    font-family: 'Satoshi Bold', sans-serif;
+    color: black;
+    font-size: 3rem;
+    letter-spacing: -0.5px;
+    line-height: 1.32;
+    user-select: none;
+}
+
+.why-wing-it-description-text{
+    font-family: 'DM Sans', sans-serif;
+    color: black;
+    line-height: 150%;
+    font-size: 1.35rem;
+}
+
+/* ---------- about us ---------- */
+.about-us-section-container{
+    min-height:40vh;
+    padding-top: 8%;
+    background-color: #F3F1EA;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+.about-us-section-title{
+    font-family:'Satoshi Bold', sans-serif !important;
+    color: black;
+    font-size: 3.3rem !important;
+    letter-spacing: -0.5px;
+    user-select: none;
+    text-align: center;
+}
+
+.about-us-section-description-text{
+    font-size: 1.25rem !important;
+    letter-spacing: -0.3px !important;
+    color: black;
+    line-height: 150%;
+    text-align: center;
+}
+
+/* developer section */
+.developer-section-container{
+    background-color: #F3F1EA;
+    padding-top: 5%;
+    padding-bottom: 5%;
+}
+
+.developer-section-developer-name{
+    font-family: 'Satoshi Bold', sans-serif !important;
+    font-size: 1.5rem !important;
+    margin-bottom: -4px;
+    line-height: 1.8;
+    color: #282523;
+    text-align: left;
+    letter-spacing: -0.3px;
+}
+
+.developer-section-developer-description{
+    color: #81807C;
+    font-family: 'Satoshi Medium', sans-serif !important;
+    font-size: 1.0rem !important;
+    line-height: 1.2;
+}
+
+.honorable-mentions-section-container{
+    height: auto;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    background-color: #F3F1EA;
+}
+
+.honorable-mentions-section-text{
+    font-family: 'Satoshi Medium', sans-serif !important;
+    font-size: 1.2rem !important;
+    color: #282523;
+    line-height: 1.5;
+    text-align: center;
+    max-width: 800px;
+    word-break: break-word;
+    white-space: normal;
+    letter-spacing: -0.2px;
+}
+
+/* ------ getting started section ------ */
+.getting-started-section-container{
+    min-height: 100vh;
+    height: auto;
+    width: 100%;
+    background-color: #F3F1EA;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.get-started-title{
+    font-family: 'Satoshi Bold', sans-serif !important;
+    color: black;
+    font-size: 3.2rem !important;
+    letter-spacing: -0.5px;
+    user-select: none;
+    text-align: center;
+}
+
+.get-started-ready-text{
+   font-family: 'DM Sans', sans-serif !important;
+    color: #81807C !important;
+    font-size: 2.3rem !important;
+    letter-spacing: -0.3px;
+    user-select: none;
+    text-align: center;
+}
+
+.get-started-button{
+    font-size: 3.2rem !important;
+    font-family: 'Satoshi Bold', sans-serif !important;
+    background-color: #2850d9 !important;
+    padding-left: 2.5rem !important;
+    padding-right: 2.5rem !important;
+    border-radius: 50px !important;
+    color: white !important;
+    letter-spacing: -0.3px !important;
+    text-transform: none !important;
+    transition: transform 0.3s ease-in-out !important;
+    boxShadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.get-started-button:hover{
+    transform: scale(1.05);
+    rotate: -2deg;
+}
