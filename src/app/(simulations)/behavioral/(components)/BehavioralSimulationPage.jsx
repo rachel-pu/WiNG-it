@@ -1,503 +1,299 @@
 "use client";
-
-import React, {useEffect, useRef, useState} from "react";
-import {useRouter} from "next/navigation";
+import "./QuickstartPage.css";
+import Toolbar from "@mui/material/Toolbar";
+import React, { useState } from "react";
 import Box from "@mui/material/Box";
-import IconButton from "@mui/material/IconButton";
-import MicIcon from "@mui/icons-material/Mic";
-import StopIcon from "@mui/icons-material/Stop";
-import Button from "@mui/material/Button";
-import TalkingInterviewer from "./TalkingInterviewer";
-import VideocamIcon from "@mui/icons-material/Videocam";
-import {CircularProgress, Typography, Snackbar, Alert} from "@mui/material";
+import {SignedIn} from "@clerk/nextjs";
+import {Autocomplete, Button, FormControlLabel, FormLabel, Radio, RadioGroup, Switch, Typography} from "@mui/material";
+import InstructionsStepComponent from "../../(components)/InstructionsStepComponent.jsx";
+import {motion} from "framer-motion";
+import TextField from "@mui/material/TextField";
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import Select from '@mui/material/Select';
+import {createTheme, ThemeProvider} from '@mui/material/styles';
+import {useRouter} from "next/navigation";
 
-const InterviewQuestions = ({questions}) => {
-    const router = useRouter();
 
-    const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-    const [isRecording, setIsRecording] = useState(false);
-    const [audioUrl, setAudioUrl] = useState(null);
-    const [transcript, setTranscript] = useState("");
-    const audioRef = useRef(null);
-    const [isSpeaking, setIsSpeaking] = useState(false);
-    const [hasRecorded, setHasRecorded] = useState(false);
-    const [isProcessing, setIsProcessing] = useState(false);
-    const [sessionId, setSessionId] = useState("");
-    const [alertMessage, setAlertMessage] = useState("");
-    const [alertSeverity, setAlertSeverity] = useState("info");
-    const [showAlert, setShowAlert] = useState(false);
-
-    const videoRef = useRef(null);
-    const [mediaStream, setMediaStream] = useState(null);
-    const [videoActive, setVideoActive] = useState(false);
-
-    // Media recorder objects
-    const mediaRecorder = useRef(null);
-    const audioChunks = useRef([]);
-
-    // Generate a session ID when the component mounts
-    useEffect(() => {
-        const newSessionId = `session-${Date.now()}`;
-        setSessionId(newSessionId);
-        console.log("Interview session ID:", newSessionId);
-    }, []);
-
-    // Webcam stream setup
-    const handleToggleVideo = async () => {
-        if (videoActive) {
-            mediaStream.getTracks().forEach((t) => t.stop());
-            setMediaStream(null);
-            setVideoActive(false);
-        } else {
-            try {
-                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-                setMediaStream(stream);
-                setVideoActive(true);
-            } catch (err) {
-                console.error("Error accessing video:", err);
-                setVideoActive(false);
-            }
-        }
-    };
-
-    useEffect(() => {
-        if (videoRef.current && mediaStream) {
-            videoRef.current.srcObject = mediaStream;
-        }
-    }, [videoRef, mediaStream]);
-
-    // Cleanup function
-    useEffect(() => {
-        return () => {
-            if (mediaStream) {
-                mediaStream.getTracks().forEach((track) => {
-                    track.stop();
-                });
-            }
-        };
-    }, [mediaStream]);
-
-    // Fetch TTS audio for the current question
-    const fetchAndPlayQuestionAudio = async (text) => {
-        try {
-            setAlertMessage("Fetching question audio...");
-            setAlertSeverity("info");
-            setShowAlert(true);
-
-            const response = await fetch("http://127.0.0.1:5000/text-to-speech", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({text})
-            });
-
-            if (!response.ok) {
-                console.error("Error fetching audio:", response.status);
-                setAlertMessage("Failed to load question audio");
-                setAlertSeverity("error");
-                setShowAlert(true);
-                return;
-            }
-
-            const blob = await response.blob();
-            const url = URL.createObjectURL(blob);
-            setAudioUrl(url);
-
-            setAlertMessage("Question audio loaded successfully");
-            setAlertSeverity("success");
-            setShowAlert(true);
-            setTimeout(() => setShowAlert(false), 2000);
-        } catch (error) {
-            console.error("Error in text-to-speech fetch:", error);
-            setAlertMessage("Error loading question audio");
-            setAlertSeverity("error");
-            setShowAlert(true);
-        }
-    };
-
-    // When a new question loads, fetch its audio
-    useEffect(() => {
-        if (questions.length && currentQuestionIndex < questions.length) {
-            fetchAndPlayQuestionAudio(questions[currentQuestionIndex]);
-        }
-    }, [currentQuestionIndex, questions]);
-
-    // When the audio URL is updated, load and play the audio
-    useEffect(() => {
-        const audio = audioRef.current;
-        if (audio && audioUrl) {
-            const handlePlay = () => setIsSpeaking(true);
-            const handleEnded = () => setIsSpeaking(false);
-
-            audio.src = audioUrl;
-            audio.addEventListener("play", handlePlay);
-            audio.addEventListener("ended", handleEnded);
-
-            audio.load();
-            audio.play().catch((err) => {
-                console.error("Autoplay failed:", err);
-                setAlertMessage("Failed to play audio automatically. Please click to play.");
-                setAlertSeverity("warning");
-                setShowAlert(true);
-            });
-
-            return () => {
-                audio.removeEventListener("play", handlePlay);
-                audio.removeEventListener("ended", handleEnded);
-            };
-        }
-    }, [audioUrl]);
-
-    // Set up recording functionality
-    useEffect(() => {
-        const setupRecording = async () => {
-            try {
-                const stream = await navigator.mediaDevices.getUserMedia({audio: true});
-                mediaRecorder.current = new MediaRecorder(stream);
-
-                mediaRecorder.current.ondataavailable = (event) => {
-                    if (event.data.size > 0) {
-                        audioChunks.current.push(event.data);
-                    }
-                };
-
-                mediaRecorder.current.onstop = async () => {
-                    const audioBlob = new Blob(audioChunks.current, {type: 'audio/wav'});
-                    audioChunks.current = [];
-                    await processAudioBlob(audioBlob);
-                };
-
-                console.log("Audio recording initialized successfully");
-            } catch (error) {
-                console.error("Error setting up audio recording:", error);
-                setAlertMessage("Failed to set up audio recording. Please check microphone permissions.");
-                setAlertSeverity("error");
-                setShowAlert(true);
-            }
-        };
-
-        setupRecording();
-    }, []);
-
-    const startRecording = () => {
-        if (mediaRecorder.current && mediaRecorder.current.state === 'inactive') {
-            const questionIndexAtRecordingStart = currentQuestionIndex;
-            audioChunks.current = [];
-            mediaRecorder.current.start();
-            setIsRecording(true);
-            console.log("Recording started");
-
-            mediaRecorder.current.onstop = async () => {
-                const audioBlob = new Blob(audioChunks.current, {type: 'audio/wav'});
-                audioChunks.current = [];
-                await processAudioBlob(audioBlob, questionIndexAtRecordingStart);
-            };
-
-            setAlertMessage("Recording started");
-            setAlertSeverity("info");
-            setShowAlert(true);
-            setTimeout(() => setShowAlert(false), 1500);
-        } else {
-            console.error("MediaRecorder not initialized or already recording");
-        }
-    };
-
-    const stopRecording = () => {
-        if (mediaRecorder.current && mediaRecorder.current.state === 'recording') {
-            mediaRecorder.current.stop();
-            setIsRecording(false);
-            setIsProcessing(true);
-            console.log("Recording stopped");
-
-            setAlertMessage("Processing your answer...");
-            setAlertSeverity("info");
-            setShowAlert(true);
-        }
-    };
-
-    const processAudioBlob = async (audioBlob, questionIndexAtRecordingStart) => {
-        try {
-            const formData = new FormData();
-            formData.append("audio", audioBlob, "recording.wav");
-            formData.append("question_number", (currentQuestionIndex + 1).toString());
-            formData.append("question_text", questions[currentQuestionIndex]);
-            formData.append("session_id", sessionId);
-
-            console.log("Sending audio for transcription...");
-
-            const response = await fetch("http://127.0.0.1:5000/save-and-transcribe", {
-                method: "POST",
-                body: formData
-            });
-
-            if (!response.ok) {
-                throw new Error(`Server responded with ${response.status}`);
-            }
-
-            const data = await response.json();
-            console.log("Transcription response:", data);
-
-            if (data.success) {
-                setTranscript(data.response_data?.transcript || "");
-                setHasRecorded(true);
-                setIsProcessing(false);
-
-                setAlertMessage("Answer recorded successfully!");
-                setAlertSeverity("success");
-                setShowAlert(true);
-                setTimeout(() => setShowAlert(false), 2000);
-            } else {
-                throw new Error(data.error || "Unknown error");
-            }
-
-        } catch (error) {
-            console.error("Error processing audio:", error);
-            setIsProcessing(false);
-
-            setAlertMessage(`Error: ${error.message}`);
-            setAlertSeverity("error");
-            setShowAlert(true);
-        }
-    };
-
-    const handleNextQuestion = () => {
-        if (currentQuestionIndex < questions.length - 1) {
-            setCurrentQuestionIndex(currentQuestionIndex + 1);
-        } else {
-            const url = `/behavioral/results?sessionId=${encodeURIComponent(sessionId)}`;
-            sessionStorage.setItem("interviewSessionId", sessionId);
-            router.push(url);
-        }
-        setHasRecorded(false);
-        setTranscript("");
-    };
-
+function CursorGrowIcon(props) {
     return (
-        <Box
-            sx={{
-                position: 'relative',
-                width: {
-                    xs: 'calc(100vw - 0px)',    // Mobile: full width (no sidebar)
-                    sm: 'calc(100vw - 72px)',   // Small: subtract collapsed sidebar
-                    md: 'calc(100vw - 240px)'   // Medium+: subtract full sidebar
-                },
-                height: 'calc(100vh - 64px)', // Subtract navbar height
-                backgroundImage: "url(/static/images/zoom-background.png)",
-                backgroundSize: "cover",
-                backgroundPosition: "center",
-                display: 'flex',
-                flexDirection: 'column',
-                overflow: 'hidden'
-            }}
+        <svg
+            width="26"
+            height="14"
+            viewBox="0 0 24 14"
+            fill="black"
+            stroke="white"
+            xmlns="http://www.w3.org/2000/svg"
+            {...props}
         >
-            {/* Question indicator - Fixed position */}
-            <Box sx={{
-                position: 'absolute',
-                top: 20,
-                left: 20,
-                color: 'white',
-                backgroundColor: 'rgba(0,0,0,0.7)',
-                padding: '8px 16px',
-                borderRadius: '8px',
-                fontFamily: 'DM Sans',
-                fontSize: '1rem',
-                fontWeight: 'bold',
-                zIndex: 1000
-            }}>
-                Question {currentQuestionIndex + 1} of {questions.length}
-            </Box>
-
-            {/* Webcam toggle - Fixed position */}
-            <Box
-                onClick={handleToggleVideo}
-                sx={{
-                    position: 'absolute',
-                    top: 20,
-                    right: 20,
-                    width: 160,
-                    height: 120,
-                    border: "2px solid #ccc",
-                    borderRadius: 2,
-                    zIndex: 1000,
-                    overflow: "hidden",
-                    cursor: "pointer",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    backgroundColor: videoActive ? "transparent" : "#f0f0f0",
-                    "&:hover": {
-                        backgroundColor: videoActive ? "rgba(0, 0, 0, 0.1)" : "#e0e0e0",
-                    },
-                }}
-            >
-                {videoActive ? (
-                    <video
-                        ref={videoRef}
-                        autoPlay
-                        playsInline
-                        muted
-                        style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                    />
-                ) : (
-                    <Box sx={{
-                        fontSize: "0.8rem",
-                        color: "#7c7c7c",
-                        fontFamily: 'DM Sans, sans-serif',
-                        display: "flex",
-                        flexDirection: "column",
-                        alignItems: "center",
-                        gap: "0.3rem"
-                    }}>
-                        <VideocamIcon sx={{color:"#7c7c7c", fontSize: '1.5rem'}}/>
-                        <span>Toggle Webcam</span>
-                    </Box>
-                )}
-            </Box>
-
-            {/* Main interviewer area - Centered and full size */}
-            <Box sx={{
-                flex: 1,
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                width: "100%",
-                minHeight: 0,
-                position: 'relative'
-            }}>
-                <Box sx={{
-                    width: "100%",
-                    height: "100%",
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center"
-                }}>
-                    <TalkingInterviewer isTalking={isSpeaking} />
-                </Box>
-            </Box>
-
-            {/* Transcript display - Fixed position */}
-            {transcript && (
-                <Box sx={{
-                    position: 'absolute',
-                    bottom: 130,
-                    left: '50%',
-                    transform: 'translateX(-50%)',
-                    width: '70%',
-                    maxWidth: '500px',
-                    maxHeight: '100px',
-                    overflowY: 'auto',
-                    backgroundColor: 'rgba(255,255,255,0.95)',
-                    padding: '12px',
-                    borderRadius: '8px',
-                    textAlign: 'left',
-                    boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
-                    zIndex: 1000
-                }}>
-                    <Typography
-                        variant="body2"
-                        color="textSecondary"
-                        sx={{ fontFamily: 'DM Sans', fontWeight: 'bold', mb: 0.5, fontSize: '0.85rem' }}
-                    >
-                        Your answer (transcript):
-                    </Typography>
-                    <Typography variant="body2" sx={{ fontFamily: 'DM Sans', fontSize: '0.9rem' }}>
-                        {transcript}
-                    </Typography>
-                </Box>
-            )}
-
-            {/* Recording controls - Fixed at bottom center */}
-            <Box sx={{
-                position: 'absolute',
-                bottom: 40,
-                left: '50%',
-                transform: 'translateX(-50%)',
-                display: 'flex',
-                justifyContent: 'center',
-                zIndex: 1000
-            }}>
-                <IconButton
-                    disabled={isProcessing || hasRecorded}
-                    onClick={isRecording ? stopRecording : startRecording}
-                    sx={{
-                        width: 70,
-                        height: 70,
-                        backgroundColor: isProcessing ? "#f0f0f0" :
-                            hasRecorded ? "#4caf50" :
-                                isRecording ? "#ff6b6b" : "#2196f3",
-                        color: 'white',
-                        boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
-                        "&:hover": {
-                            backgroundColor: isProcessing ? "#f0f0f0" :
-                                hasRecorded ? "#45a049" :
-                                    isRecording ? "#ff5252" : "#1976d2",
-                            transform: 'scale(1.05)'
-                        },
-                        "&:disabled": {
-                            backgroundColor: "#f0f0f0",
-                            color: "#ccc"
-                        },
-                        transition: 'all 0.2s ease-in-out'
-                    }}
-                >
-                    {isProcessing ? <CircularProgress size={28} sx={{color: '#666'}}/> :
-                        isRecording ? <StopIcon sx={{fontSize: 35}}/> :
-                            <MicIcon sx={{fontSize: 35}}/>}
-                </IconButton>
-            </Box>
-
-            {/* Next button - Right side, aligned with microphone height */}
-            {hasRecorded && (
-                <Box sx={{
-                    position: "absolute",
-                    bottom: 40, // Same as microphone bottom position
-                    right: 30,
-                    zIndex: 1000
-                }}>
-                    <Button
-                        variant="contained"
-                        onClick={handleNextQuestion}
-                        sx={{
-                            backgroundColor: '#4caf50',
-                            color: 'white',
-                            fontFamily: 'DM Sans',
-                            fontWeight: 'bold',
-                            fontSize: '1rem',
-                            padding: '10px 20px',
-                            borderRadius: '8px',
-                            textTransform: 'none',
-                            boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
-                            "&:hover": {
-                                backgroundColor: '#45a049',
-                                transform: 'translateY(-1px)',
-                                boxShadow: '0 4px 12px rgba(0,0,0,0.3)'
-                            },
-                            transition: 'all 0.2s ease-in-out'
-                        }}
-                    >
-                        {currentQuestionIndex < questions.length - 1 ? "Next Question" : "Finish Interview"}
-                    </Button>
-                </Box>
-            )}
-
-            {/* Hidden audio element */}
-            <audio ref={audioRef} style={{display: "none"}} />
-
-            {/* Status alerts */}
-            <Snackbar
-                open={showAlert}
-                autoHideDuration={5000}
-                onClose={() => setShowAlert(false)}
-                anchorOrigin={{vertical: 'top', horizontal: 'center'}}
-                sx={{ zIndex: 2000 }}
-            >
-                <Alert severity={alertSeverity} onClose={() => setShowAlert(false)}>
-                    {alertMessage}
-                </Alert>
-            </Snackbar>
-        </Box>
+            <path d="M19.5 5.5L6.49737 5.51844V2L1 6.9999L6.5 12L6.49737 8.5L19.5 8.5V12L25 6.9999L19.5 2V5.5Z"/>
+        </svg>
     );
-};
+}
 
-export default InterviewQuestions;
+function PlusIcon(props) {
+    return (
+        <svg
+            width="10"
+            height="10"
+            viewBox="0 0 10 10"
+            fill="none"
+            stroke="currentcolor"
+            strokeWidth="1.6"
+            xmlns="http://www.w3.org/2000/svg"
+            {...props}
+        >
+            <path d="M0 5H5M10 5H5M5 5V0M5 5V10"/>
+        </svg>
+    );
+}
+
+function MinusIcon(props) {
+    return (
+        <svg
+            width="10"
+            height="10"
+            viewBox="0 0 10 10"
+            fill="none"
+            stroke="currentcolor"
+            strokeWidth="1.6"
+            xmlns="http://www.w3.org/2000/svg"
+            {...props}
+        >
+            <path d="M0 5H10"/>
+        </svg>
+    );
+}
+
+const QuickstartPage = ({
+                            jobRole,
+                            numQuestions,
+                            questionTypes,
+                            interviewerDifficulty,
+                            handleQuestionsChange,
+                            handleJobRoleChange,
+                            handleQuestionTypesChange,
+                            handleGetStarted,
+                            handleInterviewerDifficultyChange,
+                            handleTimerChange,
+
+                        }) => {
+
+    const id = React.useId();
+    const router = useRouter();
+    const [loading, setLoading] = useState(false);
+
+    const itemVariants = {
+        hidden: {opacity: 0, y: 5},
+        visible: {opacity: 1, y: 0},
+        transition: {type: "spring"},
+    };
+
+    // Removed all microphone-related state and functions
+
+    const theme = createTheme({
+        typography: {
+            fontFamily: 'DM Sans, sans-serif',
+        },
+    });
+    return (
+        <SignedIn>
+
+            {/* --------- main content --------- */}
+            <Box
+                component="main"
+                className="quickstart-main"
+            >
+                <Toolbar/>
+
+                {/* title and description */}
+                <motion.div
+                    initial="hidden"
+                    whileInView='visible'
+                    viewport={{once: true}}
+                    transition={{delay: 0.2}}
+                    variants={itemVariants}>
+
+                    <Box>
+                        <Typography className="quickstart-title">
+                            Quick Start Guide
+                        </Typography>
+                        <Typography className="quickstart-description">
+                            Practice behavioral interviews with this simulation.
+                            Choose from answering 1–5 questions, type in the role you want to practice for, and receive
+                            personalized feedback.
+                            Have fun practicing!
+                        </Typography>
+                    </Box>
+                </motion.div>
+
+                {/*  div box of both instructions + options to choose  */}
+                <motion.div
+                    initial="hidden"
+                    whileInView='visible'
+                    className="quickstart-content-container"
+                    viewport={{once: true}}
+                    transition={{delay: 0.4}}
+                    variants={itemVariants}>
+
+                    {/*  instructions box  */}
+                    <Box className="quickstart-instructions-box">
+                        {
+                            /*  step components  */}
+                        <InstructionsStepComponent
+                            stepNumber={1}
+                            stepTitle="This is a practice tool"
+                            stepDescription="This is a simulation and not a real representation of how you will do during a real interview!"
+                        />
+                        <InstructionsStepComponent
+                            stepNumber={2}
+                            stepTitle="No skipping"
+                            stepDescription="Like a real interview, you can't skip questions."
+                        />
+                        <InstructionsStepComponent
+                            stepNumber={3}
+                            stepTitle="Caution leaving the simulation"
+                            stepDescription="Exiting will result in loss of progress and results."
+                        />
+                        <InstructionsStepComponent
+                            stepNumber={4}
+                            stepTitle={"Voice recording required"}
+                            stepDescription={"This simulation requires microphone access for voice recording during the interview."}
+                        />
+                        <InstructionsStepComponent
+                            stepNumber={5}
+                            stepTitle={"Make the most of it"}
+                            stepDescription={"Treat this tool as a real interview to maximize its benefits!"}
+                        />
+
+                    </Box>
+
+                    {/*  options box  */}
+                    <ThemeProvider theme={theme}>
+                        <Box className="quickstart-options-box">
+                            <FormLabel
+                                className="quickstart-form-label"
+                            >Interview Customizations</FormLabel>
+
+                            {/*  where the main options can be picked for user  */}
+                            <Box className="quickstart-options-content">
+                                {/* description */}
+                                <Typography className="quickstart-options-description">
+                                    Customize your interview experience by filling out the following fields. Leaving the
+                                    fields blank will give you a general experience.
+                                </Typography>
+
+                                {/*  typing in role + num questions */}
+                                <Box className="quickstart-horizontal-inputs">
+                                    {/* job role text input */}
+                                    <TextField id="outlined-basic" value={jobRole} onChange={handleJobRoleChange}
+                                               fullWidth label="Enter Job Role" placeholder="e.g. Software Engineer"
+                                               variant="outlined" InputLabelProps={{style: {fontFamily: 'DM Sans'}}}
+                                               InputProps={{style: {fontFamily: 'DM Sans'}}}/>
+
+                                    {/* number of questions */}
+                                    <FormControl className="quickstart-select-width">
+                                        <InputLabel id="demo-simple-select-label">Number of Questions</InputLabel>
+                                        <Select
+                                            value={numQuestions}
+                                            label="Number of Questions"
+                                            onChange={handleQuestionsChange}>
+                                            <MenuItem value={1}>1</MenuItem>
+                                            <MenuItem value={2}>2</MenuItem>
+                                            <MenuItem value={3}>3</MenuItem>
+                                            <MenuItem value={4}>4</MenuItem>
+                                            <MenuItem value={5}>5</MenuItem>
+                                        </Select>
+                                    </FormControl>
+                                </Box>
+
+                                {/* multiple input autocomplete for question types */}
+
+                                <Autocomplete
+                                    multiple
+                                    fullWidth
+                                    id="tags-outlined"
+                                    options={['Situational', 'Problem-solving', 'Technical', 'Leadership', 'Teamwork']}
+                                    getOptionLabel={(option) => option}
+                                    onChange={handleQuestionTypesChange}
+                                    filterSelectedOptions
+                                    renderInput={(params) => (
+                                        <TextField
+                                            {...params}
+                                            label="Types of Behavioral Questions"
+                                            placeholder={params.InputProps.startAdornment ? '' : 'Select question types to practice'}
+                                        />
+                                    )}
+                                />
+
+                                {/*  difficulty  */}
+                                <Box className="quickstart-difficulty-container">
+                                    {/* difficulty */}
+                                    <FormControl>
+                                        <FormLabel
+                                            className="quickstart-form-label"
+                                        >Interviewer Difficulty</FormLabel>
+                                        <Typography className="quickstart-difficulty-description">
+                                            Choose a difficulty level to match the style you want to
+                                            practice. </Typography>
+                                        <RadioGroup
+                                            row
+                                            value={interviewerDifficulty}
+                                            onChange={e => handleInterviewerDifficultyChange(e.target.value)}
+                                            name="row-radio-buttons-group"
+                                        >
+                                            <FormControlLabel value="easy-going-personality" control={<Radio/>}
+                                                              label="Easy-going"/>
+                                            <FormControlLabel value="professional-personality" control={<Radio/>}
+                                                              label="Professional"/>
+                                            <FormControlLabel value="intense-personality" control={<Radio/>}
+                                                              label="Intense"/>
+                                            <FormControlLabel value="randomize-personality" control={<Radio/>}
+                                                              label="Randomize"/>
+                                        </RadioGroup>
+                                    </FormControl>
+
+                                </Box>
+
+                                {/* timer */}
+                                <Box>
+                                    <FormControl>
+                                        <FormLabel className="quickstart-form-label">
+                                            Other options
+                                        </FormLabel>
+                                        <FormControlLabel control={<Switch/>} label="2-minute timer"/>
+                                    </FormControl>
+                                </Box>
+                            </Box>
+
+                            {/* Removed the microphone toggle section */}
+
+                        </Box>
+
+                    </ThemeProvider>
+                </motion.div>
+
+
+                {/* get started button */}
+                <motion.div
+                    initial="hidden"
+                    whileInView='visible'
+                    viewport={{once: true}}
+                    transition={{delay: 0.8}}
+                    variants={itemVariants}>
+
+                    <Button color='inherit' onClick={handleGetStarted} className="quickstart-get-started-btn">
+                        Get Started!
+                        <svg className="quickstart-btn-icon" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24"
+                             xmlns="http://www.w3.org/2000/svg">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h12M12 5l7 7-7 7"/>
+                        </svg>
+                    </Button>
+                </motion.div>
+            </Box>
+        </SignedIn>
+    );
+}
+
+export default QuickstartPage;
