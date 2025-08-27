@@ -158,7 +158,7 @@ font-family: 'Satoshi Bold', sans-serif !important;
     margin-bottom: -4px;
     line-height: 1.8;
     color: #282523;
-    text-align: left;
+    text-align: center;
     letter-spacing: -0.3px;
 }
 
@@ -167,6 +167,7 @@ font-family: 'Satoshi Bold', sans-serif !important;
     font-family: 'Satoshi Medium', sans-serif !important;
     font-size: 1.0rem !important;
     line-height: 1.2;
+    text-align: center;
 }
 
 .honorable-mentions-section-container{
