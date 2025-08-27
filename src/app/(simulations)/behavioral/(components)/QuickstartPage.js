@@ -1,4 +1,5 @@
 "use client";
+import "./QuickstartPage.css";
 import Toolbar from "@mui/material/Toolbar";
 import React, {useRef, useState, useEffect} from "react";
 import Box from "@mui/material/Box";
@@ -104,10 +105,9 @@ const QuickstartPage = ({
             {/* --------- main content --------- */}
             <Box
                 component="main"
-                sx={{flexGrow: 1, bgcolor: '#F3F1EB', p: 4.5, height: '100vh', overflow: 'auto'}}
+                className="quickstart-main"
             >
                 <Toolbar/>
-
 
                 {/* title and description */}
                 <motion.div
@@ -118,10 +118,10 @@ const QuickstartPage = ({
                     variants={itemVariants}>
 
                     <Box>
-                        <Typography color={"black"} fontFamily={"Satoshi Bold"} fontSize={"1.7rem"}>
+                        <Typography className="quickstart-title">
                             Quick Start Guide
                         </Typography>
-                        <Typography color={"black"} fontFamily={"DM Sans"} fontSize={"1rem"}>
+                        <Typography className="quickstart-description">
                             Practice behavioral interviews with this simulation.
                             Choose from answering 1–5 questions, type in the role you want to practice for, and receive
                             personalized feedback.
@@ -134,20 +134,13 @@ const QuickstartPage = ({
                 <motion.div
                     initial="hidden"
                     whileInView='visible'
-                    style={{display: 'flex', flexDirection: 'row', gap: '2.5%'}}
+                    className="quickstart-content-container"
                     viewport={{once: true}}
                     transition={{delay: 0.4}}
                     variants={itemVariants}>
 
                     {/*  instructions box  */}
-                    <Box sx={{
-                        marginTop: '20px',
-                        backgroundColor: '#d9d7d0',
-                        padding: '30px',
-                        borderRadius: '20px',
-                        boxShadow: 4,
-                        width: '50%'
-                    }}>
+                    <Box className="quickstart-instructions-box">
                         {
                             /*  step components  */}
                         <InstructionsStepComponent
@@ -180,36 +173,21 @@ const QuickstartPage = ({
 
                     {/*  options box  */}
                     <ThemeProvider theme={theme}>
-                        <Box sx={{
-                            marginTop: '20px',
-                            backgroundColor: '#d9d7d0',
-                            padding: '30px',
-                            borderRadius: '20px',
-                            boxShadow: 4,
-                            width: '50%',
-                            display: 'flex',
-                            flexDirection: 'column'
-                        }}>
+                        <Box className="quickstart-options-box">
                             <FormLabel
-                                sx={{
-                                    color: '#000',
-                                    '&.Mui-focused': {
-                                        color: '#000',
-                                    },
-                                }}
+                                className="quickstart-form-label"
                             >Interview Customizations</FormLabel>
 
                             {/*  where the main options can be picked for user  */}
-                            <Box flex={1} display={'flex'} flexDirection={'column'} gap={'4%'}>
+                            <Box className="quickstart-options-content">
                                 {/* description */}
-                                <Typography color={"#91908C"} fontSize={"0.9rem"}>
+                                <Typography className="quickstart-options-description">
                                     Customize your interview experience by filling out the following fields. Leaving the
                                     fields blank will give you a general experience.
                                 </Typography>
 
                                 {/*  typing in role + num questions */}
-                                <Box flexDirection={'horizontal'} display={'flex'} justifyContent={'space-between'}
-                                     gap={'2.5%'}>
+                                <Box className="quickstart-horizontal-inputs">
                                     {/* job role text input */}
                                     <TextField id="outlined-basic" value={jobRole} onChange={handleJobRoleChange}
                                                fullWidth label="Enter Job Role" placeholder="e.g. Software Engineer"
@@ -217,7 +195,7 @@ const QuickstartPage = ({
                                                InputProps={{style: {fontFamily: 'DM Sans'}}}/>
 
                                     {/* number of questions */}
-                                    <FormControl sx={{width: '48%'}}>
+                                    <FormControl className="quickstart-select-width">
                                         <InputLabel id="demo-simple-select-label">Number of Questions</InputLabel>
                                         <Select
                                             value={numQuestions}
@@ -252,18 +230,13 @@ const QuickstartPage = ({
                                 />
 
                                 {/*  difficulty  */}
-                                <Box fullwidth display={'flex'} justifyContent={'space-between'} gap={'2.5%'}>
+                                <Box className="quickstart-difficulty-container">
                                     {/* difficulty */}
                                     <FormControl>
                                         <FormLabel
-                                            sx={{
-                                                color: '#000',
-                                                '&.Mui-focused': {
-                                                    color: '#000',
-                                                },
-                                            }}
+                                            className="quickstart-form-label"
                                         >Interviewer Difficulty</FormLabel>
-                                        <Typography fontSize={"0.9rem"} color={'#91908C'}>
+                                        <Typography className="quickstart-difficulty-description">
                                             Choose a difficulty level to match the style you want to
                                             practice. </Typography>
                                         <RadioGroup
@@ -288,13 +261,7 @@ const QuickstartPage = ({
                                 {/* timer */}
                                 <Box>
                                     <FormControl>
-                                        <FormLabel sx={{
-                                            color: '#000',
-                                            '&.Mui-focused': {
-                                                color: '#000',
-                                            },
-                                        }}
-                                        >
+                                        <FormLabel className="quickstart-form-label">
                                             Other options
                                         </FormLabel>
                                         <FormControlLabel control={<Switch/>} label="2-minute timer"/>
@@ -318,26 +285,9 @@ const QuickstartPage = ({
                     transition={{delay: 0.8}}
                     variants={itemVariants}>
 
-                    <Button color='inherit' onClick={handleGetStarted} sx={{
-                        fontSize: '2rem',
-                        margin: '0 auto',
-                        fontFamily: 'Satoshi Bold',
-                        textTransform: 'none',
-                        backgroundColor: '#2850d9',
-                        borderRadius: '50px',
-                        color: 'white',
-                        letterSpacing: '-0.01px',
-                        transition: 'transform 0.3s',
-                        '&:hover': {transform: 'scale(1.05) rotate(-2deg)'},
-                        boxShadow: 4,
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: 1,
-                        marginTop: '45px',
-                        width: '350px'
-                    }}>
+                    <Button color='inherit' onClick={handleGetStarted} className="quickstart-get-started-btn">
                         Get Started!
-                        <svg className="w-10 h-10" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24"
+                        <svg className="quickstart-btn-icon" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24"
                              xmlns="http://www.w3.org/2000/svg">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h12M12 5l7 7-7 7"/>
                         </svg>
