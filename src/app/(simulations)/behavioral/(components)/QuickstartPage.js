@@ -91,39 +91,7 @@ const QuickstartPage = ({
         transition: {type: "spring"},
     };
 
-    const [micActive, setMicActive] = useState(false);
-    const [videoActive, setVideoActive] = useState(false);
-    const [error, setError] = useState("");
-
-    const micStreamRef = useRef(null);
-
-    const handleToggleMicrophone = async () => {
-        if (micActive) {
-            // Stop all audio tracks if mic is active
-            if (micStreamRef.current) {
-                micStreamRef.current.getTracks().forEach((track) => track.stop());
-                micStreamRef.current = null;
-            }
-            setMicActive(false);
-        } else {
-            try {
-                const stream = await navigator.mediaDevices.getUserMedia({audio: true});
-                micStreamRef.current = stream;
-                setMicActive(true);
-            } catch (error) {
-                console.error("Error accessing microphone:", error);
-                setMicActive(false);
-            }
-        }
-    };
-
-    const onGetStarted = () => {
-        if (!micActive) {
-            alert("Please enable the microphone to continue.");
-            return;
-        }
-        handleGetStarted();
-    };
+    // Removed all microphone-related state and functions
 
     const theme = createTheme({
         typography: {
@@ -162,34 +130,6 @@ const QuickstartPage = ({
                     </Box>
                 </motion.div>
 
-                {/* ----- draggable webcam when it's toggled! ----- */}
-                {/*{videoActive && (*/}
-                {/*    <motion.div*/}
-                {/*        drag*/}
-                {/*        dragMomentum={false}*/}
-                {/*        style={{*/}
-                {/*            position: "absolute",*/}
-                {/*            top: 100,*/}
-                {/*            right: "2.5%",*/}
-                {/*            width: 300,*/}
-                {/*            height: 200,*/}
-                {/*            border: "1px solid #ccc",*/}
-                {/*            borderRadius: 8,*/}
-                {/*            overflow: "hidden",*/}
-                {/*            backgroundColor: "#000",*/}
-                {/*            zIndex: 1000,*/}
-                {/*        }}*/}
-                {/*    >*/}
-                {/*        <video*/}
-                {/*            ref={videoRef}*/}
-                {/*            autoPlay*/}
-                {/*            playsInline*/}
-                {/*            muted*/}
-                {/*            style={{ width: "100%", height: "100%", objectFit: "cover" }}*/}
-                {/*        />*/}
-                {/*    </motion.div>*/}
-                {/*)}*/}
-
                 {/*  div box of both instructions + options to choose  */}
                 <motion.div
                     initial="hidden"
@@ -227,8 +167,8 @@ const QuickstartPage = ({
                         />
                         <InstructionsStepComponent
                             stepNumber={4}
-                            stepTitle={"Clicking microphone"}
-                            stepDescription={"Once you hit the microphone button, you cannot turn it off."}
+                            stepTitle={"Voice recording required"}
+                            stepDescription={"This simulation requires microphone access for voice recording during the interview."}
                         />
                         <InstructionsStepComponent
                             stepNumber={5}
@@ -362,25 +302,8 @@ const QuickstartPage = ({
                                 </Box>
                             </Box>
 
-                            {/*  asking user to toggle microphone and video camera  */}
-                            <Box sx={{display: 'flex', flexDirection: 'row', gap: '2%'}}>
-                                <Button
-                                    variant="outlined"
-                                    endIcon={<KeyboardVoiceIcon/>}
-                                    onClick={handleToggleMicrophone}
-                                    sx={{
-                                        paddingX: 1.5,
-                                        backgroundColor: micActive ? '#74b973' : '#c4c2bf',
-                                        '&:hover': {backgroundColor: micActive ? '#6bab6b' : '#b7b5b1'},
-                                        textTransform: 'none',
-                                        fontFamily: 'DM Sans, sans-serif',
-                                        color: micActive ? '#4b854b' : '#85817d',
-                                        borderColor: micActive ? '#74b973' : '#c4c2bf'
-                                    }}
-                                >
-                                    Toggle Microphone
-                                </Button>
-                            </Box>
+                            {/* Removed the microphone toggle section */}
+
                         </Box>
 
                     </ThemeProvider>
@@ -395,7 +318,7 @@ const QuickstartPage = ({
                     transition={{delay: 0.8}}
                     variants={itemVariants}>
 
-                    <Button color='inherit' onClick={onGetStarted} sx={{
+                    <Button color='inherit' onClick={handleGetStarted} sx={{
                         fontSize: '2rem',
                         margin: '0 auto',
                         fontFamily: 'Satoshi Bold',
