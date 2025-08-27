@@ -1,7 +1,7 @@
 "use client";
 import "./QuickstartPage.css";
 import Toolbar from "@mui/material/Toolbar";
-import React, {useRef, useState, useEffect} from "react";
+import React, { useState } from "react";
 import Box from "@mui/material/Box";
 import {SignedIn} from "@clerk/nextjs";
 import {Autocomplete, Button, FormControlLabel, FormLabel, Radio, RadioGroup, Switch, Typography} from "@mui/material";
@@ -13,8 +13,6 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import {createTheme, ThemeProvider} from '@mui/material/styles';
-import KeyboardVoiceIcon from '@mui/icons-material/KeyboardVoice';
-import VideocamIcon from '@mui/icons-material/Videocam';
 import {useRouter} from "next/navigation";
 
 
