@@ -11,20 +11,10 @@ import TalkingInterviewer from "./TalkingInterviewer";
 import VideocamIcon from "@mui/icons-material/Videocam";
 import {CircularProgress, Typography, Snackbar, Alert} from "@mui/material";
 
-// Add this import if you're using React recorder or similar
-// import { ReactMic } from 'react-mic';
-
 const InterviewQuestions = ({questions}) => {
     const router = useRouter();
 
-    // instead of current question index
-    const [currentRecordingQuestion, setCurrentRecordingQuestion] = useState({
-        index: 0,
-        text: ""
-    });
-
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-
     const [isRecording, setIsRecording] = useState(false);
     const [audioUrl, setAudioUrl] = useState(null);
     const [transcript, setTranscript] = useState("");
@@ -39,7 +29,6 @@ const InterviewQuestions = ({questions}) => {
 
     const videoRef = useRef(null);
     const [mediaStream, setMediaStream] = useState(null);
-    const [micActive, setMicActive] = useState(false);
     const [videoActive, setVideoActive] = useState(false);
 
     // Media recorder objects
@@ -53,11 +42,9 @@ const InterviewQuestions = ({questions}) => {
         console.log("Interview session ID:", newSessionId);
     }, []);
 
-    // setting up for webcam
-    //  webcam stream
+    // Webcam stream setup
     const handleToggleVideo = async () => {
         if (videoActive) {
-            // stop and clear
             mediaStream.getTracks().forEach((t) => t.stop());
             setMediaStream(null);
             setVideoActive(false);
@@ -73,14 +60,13 @@ const InterviewQuestions = ({questions}) => {
         }
     };
 
-    // set up webcam stream
     useEffect(() => {
         if (videoRef.current && mediaStream) {
             videoRef.current.srcObject = mediaStream;
         }
     }, [videoRef, mediaStream]);
 
-    // cleanup function
+    // Cleanup function
     useEffect(() => {
         return () => {
             if (mediaStream) {
@@ -91,7 +77,7 @@ const InterviewQuestions = ({questions}) => {
         };
     }, [mediaStream]);
 
-    // Fetch the TTS audio for the current question using your Flask endpoint.
+    // Fetch TTS audio for the current question
     const fetchAndPlayQuestionAudio = async (text) => {
         try {
             setAlertMessage("Fetching question audio...");
@@ -121,8 +107,6 @@ const InterviewQuestions = ({questions}) => {
             setAlertMessage("Question audio loaded successfully");
             setAlertSeverity("success");
             setShowAlert(true);
-
-            // Auto-hide the alert after 2 seconds
             setTimeout(() => setShowAlert(false), 2000);
         } catch (error) {
             console.error("Error in text-to-speech fetch:", error);
@@ -132,14 +116,14 @@ const InterviewQuestions = ({questions}) => {
         }
     };
 
-    // When a new question loads, fetch its audio.
+    // When a new question loads, fetch its audio
     useEffect(() => {
         if (questions.length && currentQuestionIndex < questions.length) {
             fetchAndPlayQuestionAudio(questions[currentQuestionIndex]);
         }
     }, [currentQuestionIndex, questions]);
 
-    // When the audio URL is updated, load and play the audio.
+    // When the audio URL is updated, load and play the audio
     useEffect(() => {
         const audio = audioRef.current;
         if (audio && audioUrl) {
@@ -147,7 +131,6 @@ const InterviewQuestions = ({questions}) => {
             const handleEnded = () => setIsSpeaking(false);
 
             audio.src = audioUrl;
-
             audio.addEventListener("play", handlePlay);
             audio.addEventListener("ended", handleEnded);
 
@@ -199,17 +182,16 @@ const InterviewQuestions = ({questions}) => {
 
     const startRecording = () => {
         if (mediaRecorder.current && mediaRecorder.current.state === 'inactive') {
-            const questionIndexAtRecordingStart = currentQuestionIndex; // Capture current index
+            const questionIndexAtRecordingStart = currentQuestionIndex;
             audioChunks.current = [];
             mediaRecorder.current.start();
             setIsRecording(true);
             console.log("Recording started");
 
-            // Override the onstop handler to pass the captured index
             mediaRecorder.current.onstop = async () => {
                 const audioBlob = new Blob(audioChunks.current, {type: 'audio/wav'});
                 audioChunks.current = [];
-                await processAudioBlob(audioBlob, questionIndexAtRecordingStart); // Pass it down
+                await processAudioBlob(audioBlob, questionIndexAtRecordingStart);
             };
 
             setAlertMessage("Recording started");
@@ -236,23 +218,18 @@ const InterviewQuestions = ({questions}) => {
 
     const processAudioBlob = async (audioBlob, questionIndexAtRecordingStart) => {
         try {
-            // Create form data
             const formData = new FormData();
             formData.append("audio", audioBlob, "recording.wav");
-            formData.append("question_number", (currentQuestionIndex + 1).toString()); // Use captured index
-            // console.log("question number:   ", currentQuestionIndex + 1);
-            formData.append("question_text", questions[currentQuestionIndex]); // Use captured index
-            // console.log("question text:   ", questions[currentQuestionIndex]);
+            formData.append("question_number", (currentQuestionIndex + 1).toString());
+            formData.append("question_text", questions[currentQuestionIndex]);
             formData.append("session_id", sessionId);
 
             console.log("Sending audio for transcription...");
 
-            // Try the save-and-transcribe endpoint
             const response = await fetch("http://127.0.0.1:5000/save-and-transcribe", {
                 method: "POST",
                 body: formData
             });
-            console.log(response);
 
             if (!response.ok) {
                 throw new Error(`Server responded with ${response.status}`);
@@ -288,7 +265,6 @@ const InterviewQuestions = ({questions}) => {
         if (currentQuestionIndex < questions.length - 1) {
             setCurrentQuestionIndex(currentQuestionIndex + 1);
         } else {
-            // Pass session ID both in URL and sessionStorage
             const url = `/behavioral/results?sessionId=${encodeURIComponent(sessionId)}`;
             sessionStorage.setItem("interviewSessionId", sessionId);
             router.push(url);
@@ -297,34 +273,54 @@ const InterviewQuestions = ({questions}) => {
         setTranscript("");
     };
 
-
     return (
         <Box
-            component="main"
             sx={{
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                height: '100%',
-                textAlign: 'center',
-                flexDirection: 'column',
+                position: 'relative',
+                width: {
+                    xs: 'calc(100vw - 0px)',    // Mobile: full width (no sidebar)
+                    sm: 'calc(100vw - 72px)',   // Small: subtract collapsed sidebar
+                    md: 'calc(100vw - 240px)'   // Medium+: subtract full sidebar
+                },
+                height: 'calc(100vh - 64px)', // Subtract navbar height
                 backgroundImage: "url(/static/images/zoom-background.png)",
                 backgroundSize: "cover",
-                position: 'relative'
+                backgroundPosition: "center",
+                display: 'flex',
+                flexDirection: 'column',
+                overflow: 'hidden'
             }}
         >
-            {/* toggle webcam */}
+            {/* Question indicator - Fixed position */}
+            <Box sx={{
+                position: 'absolute',
+                top: 20,
+                left: 20,
+                color: 'white',
+                backgroundColor: 'rgba(0,0,0,0.7)',
+                padding: '8px 16px',
+                borderRadius: '8px',
+                fontFamily: 'DM Sans',
+                fontSize: '1rem',
+                fontWeight: 'bold',
+                zIndex: 1000
+            }}>
+                Question {currentQuestionIndex + 1} of {questions.length}
+            </Box>
+
+            {/* Webcam toggle - Fixed position */}
             <Box
                 onClick={handleToggleVideo}
                 sx={{
-                    width: { xs: "50%", sm: "25%", md: "13.5%" },
-                    mt: 1,
-                    aspectRatio: "4/3",
+                    position: 'absolute',
+                    top: 20,
+                    right: 20,
+                    width: 160,
+                    height: 120,
                     border: "2px solid #ccc",
-                    borderRadius: 1,
+                    borderRadius: 2,
                     zIndex: 1000,
                     overflow: "hidden",
-                    position: "relative",
                     cursor: "pointer",
                     display: "flex",
                     alignItems: "center",
@@ -345,105 +341,148 @@ const InterviewQuestions = ({questions}) => {
                     />
                 ) : (
                     <Box sx={{
-                        fontSize: "0.75rem",
+                        fontSize: "0.8rem",
                         color: "#7c7c7c",
                         fontFamily: 'DM Sans, sans-serif',
                         display: "flex",
+                        flexDirection: "column",
                         alignItems: "center",
-                        gap: "0.2rem"
+                        gap: "0.3rem"
                     }}>
-                        Toggle Webcam <VideocamIcon sx={{color:"#7c7c7c", fontSize: '1rem'}}/>
+                        <VideocamIcon sx={{color:"#7c7c7c", fontSize: '1.5rem'}}/>
+                        <span>Toggle Webcam</span>
                     </Box>
                 )}
             </Box>
 
-            {/* talking interviewer component */}
-            <Box sx={{ width: "100%", height: "100%", display: "flex", justifyContent: "center", alignItems: "center", overflow: "hidden" }}>
-                <TalkingInterviewer isTalking={isSpeaking} />
-            </Box>
-
-            {/* Current question indicator */}
+            {/* Main interviewer area - Centered and full size */}
             <Box sx={{
-                position: 'absolute',
-                top: 20,
-                left: 20,
-                color: 'white',
-                backgroundColor: 'rgba(0,0,0,0.5)',
-                padding: '5px 10px',
-                borderRadius: '4px'
+                flex: 1,
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                width: "100%",
+                minHeight: 0,
+                position: 'relative'
             }}>
-                Question {currentQuestionIndex + 1} of {questions.length}
+                <Box sx={{
+                    width: "100%",
+                    height: "100%",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center"
+                }}>
+                    <TalkingInterviewer isTalking={isSpeaking} />
+                </Box>
             </Box>
 
-
-            {/* Hidden audio element used to play TTS audio */}
-            <audio ref={audioRef} style={{display: "none"}} src={audioUrl} controls/>
-
-            {/* Transcript display (optional) */}
+            {/* Transcript display - Fixed position */}
             {transcript && (
                 <Box sx={{
                     position: 'absolute',
-                    bottom: 150,
+                    bottom: 130,
                     left: '50%',
                     transform: 'translateX(-50%)',
-                    width: '80%',
+                    width: '70%',
+                    maxWidth: '500px',
                     maxHeight: '100px',
                     overflowY: 'auto',
-                    backgroundColor: 'rgba(255,255,255,0.8)',
-                    padding: '10px',
+                    backgroundColor: 'rgba(255,255,255,0.95)',
+                    padding: '12px',
                     borderRadius: '8px',
-                    textAlign: 'left'
+                    textAlign: 'left',
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+                    zIndex: 1000
                 }}>
-                    <Typography variant="body2" color="textSecondary">
+                    <Typography
+                        variant="body2"
+                        color="textSecondary"
+                        sx={{ fontFamily: 'DM Sans', fontWeight: 'bold', mb: 0.5, fontSize: '0.85rem' }}
+                    >
                         Your answer (transcript):
                     </Typography>
-                    <Typography variant="body1">
+                    <Typography variant="body2" sx={{ fontFamily: 'DM Sans', fontSize: '0.9rem' }}>
                         {transcript}
                     </Typography>
                 </Box>
             )}
 
-            {/* Recording controls */}
-            <Box
-                sx={{
-                    width: { xs: "50%", sm: "25%", md: "13.5%" },
-                    mt: 1,}}
-            >                <IconButton
+            {/* Recording controls - Fixed at bottom center */}
+            <Box sx={{
+                position: 'absolute',
+                bottom: 40,
+                left: '50%',
+                transform: 'translateX(-50%)',
+                display: 'flex',
+                justifyContent: 'center',
+                zIndex: 1000
+            }}>
+                <IconButton
                     disabled={isProcessing || hasRecorded}
                     onClick={isRecording ? stopRecording : startRecording}
-                    color="primary"
                     sx={{
-                        fontSize: 40,
+                        width: 70,
+                        height: 70,
                         backgroundColor: isProcessing ? "#f0f0f0" :
-                            hasRecorded ? "lightgray" :
-                                isRecording ? "#ff6b6b" : "lightgray",
-                        borderRadius: "50%",
-                        width: 60,
-                        height: 60,
+                            hasRecorded ? "#4caf50" :
+                                isRecording ? "#ff6b6b" : "#2196f3",
+                        color: 'white',
+                        boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
                         "&:hover": {
                             backgroundColor: isProcessing ? "#f0f0f0" :
-                                hasRecorded ? "lightgray" :
-                                    isRecording ? "#ff5252" : "#b0b0b0"
-                        }
+                                hasRecorded ? "#45a049" :
+                                    isRecording ? "#ff5252" : "#1976d2",
+                            transform: 'scale(1.05)'
+                        },
+                        "&:disabled": {
+                            backgroundColor: "#f0f0f0",
+                            color: "#ccc"
+                        },
+                        transition: 'all 0.2s ease-in-out'
                     }}
                 >
-                    {isProcessing ? <CircularProgress size={24}/> :
-                        isRecording ? <StopIcon fontSize="inherit"/> :
-                            <MicIcon fontSize="inherit"/>}
+                    {isProcessing ? <CircularProgress size={28} sx={{color: '#666'}}/> :
+                        isRecording ? <StopIcon sx={{fontSize: 35}}/> :
+                            <MicIcon sx={{fontSize: 35}}/>}
                 </IconButton>
             </Box>
 
-            {/* Next button */}
+            {/* Next button - Right side, aligned with microphone height */}
             {hasRecorded && (
-                <Box sx={{position: "absolute", bottom: 50, right: 50}}>
+                <Box sx={{
+                    position: "absolute",
+                    bottom: 40, // Same as microphone bottom position
+                    right: 30,
+                    zIndex: 1000
+                }}>
                     <Button
                         variant="contained"
                         onClick={handleNextQuestion}
+                        sx={{
+                            backgroundColor: '#4caf50',
+                            color: 'white',
+                            fontFamily: 'DM Sans',
+                            fontWeight: 'bold',
+                            fontSize: '1rem',
+                            padding: '10px 20px',
+                            borderRadius: '8px',
+                            textTransform: 'none',
+                            boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
+                            "&:hover": {
+                                backgroundColor: '#45a049',
+                                transform: 'translateY(-1px)',
+                                boxShadow: '0 4px 12px rgba(0,0,0,0.3)'
+                            },
+                            transition: 'all 0.2s ease-in-out'
+                        }}
                     >
                         {currentQuestionIndex < questions.length - 1 ? "Next Question" : "Finish Interview"}
                     </Button>
                 </Box>
             )}
+
+            {/* Hidden audio element */}
+            <audio ref={audioRef} style={{display: "none"}} />
 
             {/* Status alerts */}
             <Snackbar
@@ -451,6 +490,7 @@ const InterviewQuestions = ({questions}) => {
                 autoHideDuration={5000}
                 onClose={() => setShowAlert(false)}
                 anchorOrigin={{vertical: 'top', horizontal: 'center'}}
+                sx={{ zIndex: 2000 }}
             >
                 <Alert severity={alertSeverity} onClose={() => setShowAlert(false)}>
                     {alertMessage}
