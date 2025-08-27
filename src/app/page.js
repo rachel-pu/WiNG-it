@@ -277,14 +277,23 @@ export default function HomePage() {
                         <motion.div initial="hidden"
                                     whileInView="visible"
                                     viewport={{ once: true }}>
-                            <Grid container spacing={2} columns={3} rows={1}  direction={{xs: "column", s: "column", md: "row", lg: "row"}}
-                            wrap={{ xs: "wrap", sm: "wrap", md: "nowrap", lg: "nowrap" }}
+                            <Grid
+                                container
+                                spacing={2}
+                                columns={3}
+                                rows={1}
+                                direction={{xs: "column", s: "column", md: "row", lg: "row"}}
+                                wrap={{ xs: "wrap", sm: "wrap", md: "nowrap", lg: "nowrap" }}
+                                sx={{ alignItems: 'stretch' }} // This makes all grid items equal height
                             >
 
                                 {/* career prep tools card */}
-                                <Grid xs={12} sm={6} md={4} lg={3}>
-                                    <motion.div variants = {itemVariants}
-                                                transition={{ delay: 0.4 }}>
+                                <Grid xs={12} sm={6} md={4} lg={3} sx={{ display: 'flex' }}>
+                                    <motion.div
+                                        variants={itemVariants}
+                                        transition={{ delay: 0.4 }}
+                                        style={{ width: '100%', display: 'flex' }}
+                                    >
                                         <Card className="main-home-page-card">
                                             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', backgroundColor: '#f1c4a8', borderRadius: '50%', width: '40px', height: '40px', marginBottom:'15px'}}>
                                                 <FaPencilRuler color={'#E3632E'} size={20} />
@@ -300,9 +309,12 @@ export default function HomePage() {
                                 </Grid>
 
                                 {/* saving saves card */}
-                                <Grid xs={12} sm={6} md={4} lg={3}>
-                                    <motion.div variants = {itemVariants}
-                                                transition={{ delay: 0.6 }}>
+                                <Grid xs={12} sm={6} md={4} lg={3} sx={{ display: 'flex' }}>
+                                    <motion.div
+                                        variants={itemVariants}
+                                        transition={{ delay: 0.6 }}
+                                        style={{ width: '100%', display: 'flex' }}
+                                    >
                                         <Card className="main-home-page-card">
                                             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', backgroundColor: '#9db8ea', borderRadius: '50%', width: '40px', height: '40px', marginBottom:'15px'}}>
                                                 <IoDocumentText color={'#2a6ed5'} size={25} />
@@ -318,9 +330,12 @@ export default function HomePage() {
                                 </Grid>
 
                                 {/* personalized feedback card */}
-                                <Grid xs={12} sm={6} md={4} lg={3}>
-                                    <motion.div variants = {itemVariants}
-                                                transition={{ delay: 0.8 }}>
+                                <Grid xs={12} sm={6} md={4} lg={3} sx={{ display: 'flex' }}>
+                                    <motion.div
+                                        variants={itemVariants}
+                                        transition={{ delay: 0.8 }}
+                                        style={{ width: '100%', display: 'flex' }}
+                                    >
                                         <Card className="main-home-page-card">
                                             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', backgroundColor: '#9fcb95', borderRadius: '50%', width: '40px', height: '40px', marginBottom:'15px'}}>
                                                 <BiSolidMessageCheck color={'#559437'} size={25} style={{marginTop: '2.5px'}}/>
