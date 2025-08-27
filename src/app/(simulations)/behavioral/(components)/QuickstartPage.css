@@ -1,0 +1,131 @@
+/* QuickstartPageCSS.css */
+
+/* Main content container */
+.quickstart-main {
+    flex-grow: 1;
+    background-color: #F3F1EB;
+    padding: 36px;
+    height: 100vh;
+    overflow: auto;
+}
+
+/* Title and description section */
+.quickstart-title {
+    color: black;
+    font-family: "Satoshi Bold";
+    font-size: 1.7rem;
+}
+
+.quickstart-description {
+    color: black;
+    font-family: "DM Sans";
+    font-size: 1rem;
+}
+
+/* Main flex container for instructions and options */
+.quickstart-content-container {
+    display: flex;
+    flex-direction: row;
+    gap: 2.5%;
+}
+
+/* Instructions box */
+.quickstart-instructions-box {
+    margin-top: 20px;
+    background-color: #d9d7d0;
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0px 2px 4px -1px rgba(0,0,0,0.2), 0px 4px 5px 0px rgba(0,0,0,0.14), 0px 1px 10px 0px rgba(0,0,0,0.12);
+    width: 50%;
+}
+
+/* Options box */
+.quickstart-options-box {
+    margin-top: 20px;
+    background-color: #d9d7d0;
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0px 2px 4px -1px rgba(0,0,0,0.2), 0px 4px 5px 0px rgba(0,0,0,0.14), 0px 1px 10px 0px rgba(0,0,0,0.12);
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Form label styling */
+.quickstart-form-label {
+    color: #000;
+}
+
+.quickstart-form-label.Mui-focused {
+    color: #000;
+}
+
+/* Options content container */
+.quickstart-options-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4%;
+}
+
+/* Description text */
+.quickstart-options-description {
+    color: #91908C;
+    font-size: 0.9rem;
+}
+
+/* Horizontal input container */
+.quickstart-horizontal-inputs {
+    flex-direction: row;
+    display: flex;
+    justify-content: space-between;
+    gap: 2.5%;
+}
+
+/* Select dropdown width */
+.quickstart-select-width {
+    width: 48%;
+}
+
+/* Difficulty section container */
+.quickstart-difficulty-container {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    gap: 2.5%;
+}
+
+/* Difficulty description */
+.quickstart-difficulty-description {
+    font-size: 0.9rem;
+    color: #91908C;
+}
+
+/* Get Started button */
+.quickstart-get-started-btn {
+    font-size: 2rem;
+    margin: 0 auto;
+    font-family: 'Satoshi Bold';
+    text-transform: none;
+    background-color: #2850d9;
+    border-radius: 50px;
+    color: white;
+    letter-spacing: -0.01px;
+    transition: transform 0.3s;
+    box-shadow: 0px 2px 4px -1px rgba(0,0,0,0.2), 0px 4px 5px 0px rgba(0,0,0,0.14), 0px 1px 10px 0px rgba(0,0,0,0.12);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 45px;
+    width: 350px;
+}
+
+.quickstart-get-started-btn:hover {
+    transform: scale(1.05) rotate(-2deg);
+}
+
+/* Button icon */
+.quickstart-btn-icon {
+    width: 40px;
+    height: 40px;
+}
