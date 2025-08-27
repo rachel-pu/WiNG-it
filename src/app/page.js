@@ -501,16 +501,17 @@ export default function HomePage() {
                 <Grid container
                     spacing={3}
                     alignItems="center"
-                    direction={{ xs: 'row', md: 'row', lg: 'row' }}
+                    justifyContent="center"
+                    direction={{ xs: 'column', sm: 'column', md: 'row', lg: 'row' }}
                     width={{ xs: '98%', sm: '90%', md: '80%', lg: '80%' }}
                     wrap={{ xs: "wrap", sm: "wrap", md: "nowrap", lg: "nowrap" }}
-                    sx={{ mx: 'auto', pl: '250px', px: { xs: '2%', sm: '5%', lg: '8%' } }}>
+                    sx={{ mx: 'auto', px: { xs: '2%', sm: '5%', lg: '8%' } }}>
 
                         {/* Rachel */}
                         <Grid item xs={12} sm={6} md={4} lg={3}>
-                            <Grid container spacing={2}>
+                            <Grid container spacing={2} direction="column" alignItems="center">
                             {/* Photo */}
-                            <Grid item xs={6}>
+                            <Grid item>
                                 <Link
                                 component="a"
                                 href="https://www.linkedin.com/in/rachel-pu-ufl/"
@@ -520,13 +521,13 @@ export default function HomePage() {
                                 <motion.img
                                     src="/static/images/rachel%20pu%20image.png"
                                     alt="Rachel Pu"
-                                    className="rounded-2xl drop-shadow-lg w-32 h-32 sm:w-40 sm:h-40 md:w-46 md:h-46"
+                                    className="rounded-2xl drop-shadow-lg w-32 h-32 object-cover"
                                     whileHover={{ scale: 1.05, rotate: 2, cursor: "pointer" }}
                                 />
                                 </Link>
                             </Grid>
                             {/* Text */}
-                            <Grid item xs={6}>
+                            <Grid item>
                                     <Typography
                                     variant="h2"
                                     className="developer-section-developer-name"
@@ -543,28 +544,25 @@ export default function HomePage() {
 
                         {/* Chelsea */}
                         <Grid item xs={12} sm={6} md={4} lg={3}>
-                            <Grid container spacing={2} alignItems="center">
+                            <Grid container spacing={2} direction="column" alignItems="center">
                             {/* Photo */}
-                            <Grid item xs={6}>
+                            <Grid item>
                                 <Link
                                 component="a"
                                 href="https://www.linkedin.com/in/chelseaqnguyen/"
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 >
-                             
                                 <motion.img
                                     src="/static/images/chelsea nguyen image.png"
                                     alt="Chelsea Nguyen"
-                                    className="rounded-2xl drop-shadow-lg w-32 h-32 sm:w-40 sm:h-40 md:w-46 md:h-46"
+                                    className="rounded-2xl drop-shadow-lg w-32 h-32 object-cover"
                                     whileHover={{ scale: 1.05, rotate: 2, cursor: "pointer" }}
                                 />
                                 </Link>
                             </Grid>
                             {/* Text */}
-                            <Grid item xs={6}>
-                                <motion.div className=" flex justify-end flex-col"
-                                >
+                            <Grid item>
                                     <Typography
                                     variant="h2"
                                     className="developer-section-developer-name"
@@ -576,16 +574,15 @@ export default function HomePage() {
                                         >
                                         Student at UF majoring in Computer Science and minoring in Digital Arts & Sciences
                                     </Typography>
-                                    </motion.div>
                             </Grid>
                         </Grid>
                         </Grid>
 
                         {/* Clarissa */}
                         <Grid item xs={12} sm={6} md={4} lg={3}>
-                            <Grid container spacing={2} alignItems="center">
+                            <Grid container spacing={2} direction="column" alignItems="center">
                             {/* Photo */}
-                            <Grid item xs={6}>
+                            <Grid item>
                                 <Link
                                 component="a"
                                 href="https://www.linkedin.com/in/clarissa-cheung-054035187/"
@@ -595,16 +592,13 @@ export default function HomePage() {
                                 <motion.img
                                     src="/static/images/clarissa-cheung.jpg"
                                     alt="Clarissa Cheung"
-                                    className="rounded-2xl drop-shadow-lg w-32 h-32 sm:w-40 sm:h-40 md:w-46 md:h-46"
+                                    className="rounded-2xl drop-shadow-lg w-32 h-32 object-cover"
                                     whileHover={{ scale: 1.05, rotate: 2, cursor: "pointer" }}
                                 />
-
                                 </Link>
                             </Grid>
                             {/* Text */}
-                            <Grid item xs={6}>
-                                <motion.div className=" flex justify-end flex-col"
-                                >
+                            <Grid item>
                                     <Typography
                                     variant="h2"
                                     className="developer-section-developer-name"
@@ -615,10 +609,8 @@ export default function HomePage() {
                                         className="developer-section-developer-description">
                                         Student at UF majoring in Computer Science and minoring in Economics
                                     </Typography>
-                                </motion.div>
                             </Grid>
                             </Grid>
-                            
                         </Grid>
                         
                     </Grid>
