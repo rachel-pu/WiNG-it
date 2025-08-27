@@ -11,15 +11,15 @@
 
 /* Title and description section */
 .quickstart-title {
-    color: black;
-    font-family: "Satoshi Bold";
-    font-size: 1.7rem;
+    color: black !important;
+    font-family: "Satoshi Bold" !important;
+    font-size: 1.7rem !important;
 }
 
 .quickstart-description {
-    color: black;
-    font-family: "DM Sans";
-    font-size: 1rem;
+    color: black !important;
+    font-family: "DM Sans" !important;
+    font-size: 1rem !important;
 }
 
 /* Main flex container for instructions and options */
@@ -71,7 +71,7 @@
 /* Description text */
 .quickstart-options-description {
     color: #91908C;
-    font-size: 0.9rem;
+    font-size: 0.85rem !important;
 }
 
 /* Horizontal input container */
@@ -97,27 +97,27 @@
 
 /* Difficulty description */
 .quickstart-difficulty-description {
-    font-size: 0.9rem;
+    font-size: 0.85rem !important;
     color: #91908C;
 }
 
 /* Get Started button */
 .quickstart-get-started-btn {
-    font-size: 2rem;
-    margin: 0 auto;
-    font-family: 'Satoshi Bold';
-    text-transform: none;
-    background-color: #2850d9;
-    border-radius: 50px;
-    color: white;
-    letter-spacing: -0.01px;
-    transition: transform 0.3s;
-    box-shadow: 0px 2px 4px -1px rgba(0,0,0,0.2), 0px 4px 5px 0px rgba(0,0,0,0.14), 0px 1px 10px 0px rgba(0,0,0,0.12);
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-top: 45px;
-    width: 350px;
+    font-size: 2rem !important;
+    margin: 0 auto !important;
+    font-family: 'Satoshi Bold' !important;
+    text-transform: none !important;
+    background-color: #2850d9 !important;
+    border-radius: 50px !important;
+    color: white !important;
+    letter-spacing: -0.01px !important;
+    transition: transform 0.3s !important;
+    box-shadow: 0px 2px 4px -1px rgba(0,0,0,0.2), 0px 4px 5px 0px rgba(0,0,0,0.14), 0px 1px 10px 0px rgba(0,0,0,0.12) !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    margin-top: 45px !important;
+    width: 350px !important;
 }
 
 .quickstart-get-started-btn:hover {
