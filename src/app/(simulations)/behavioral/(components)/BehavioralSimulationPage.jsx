@@ -5,11 +5,17 @@ import {useRouter} from "next/navigation";
 import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
 import MicIcon from "@mui/icons-material/Mic";
+import MicOffIcon from "@mui/icons-material/MicOff";
 import StopIcon from "@mui/icons-material/Stop";
 import Button from "@mui/material/Button";
 import TalkingInterviewer from "./TalkingInterviewer";
 import VideocamIcon from "@mui/icons-material/Videocam";
-import {CircularProgress, Typography, Snackbar, Alert} from "@mui/material";
+import VideocamOffIcon from "@mui/icons-material/VideocamOff";
+import {CircularProgress, Typography, Snackbar, Alert, Avatar, Fade} from "@mui/material";
+import FullscreenIcon from "@mui/icons-material/Fullscreen";
+import FullscreenExitIcon from "@mui/icons-material/FullscreenExit";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
+import PinDropIcon from "@mui/icons-material/PinDrop";
 
 const InterviewQuestions = ({questions}) => {
     const router = useRouter();
@@ -26,6 +32,7 @@ const InterviewQuestions = ({questions}) => {
     const [alertMessage, setAlertMessage] = useState("");
     const [alertSeverity, setAlertSeverity] = useState("info");
     const [showAlert, setShowAlert] = useState(false);
+    const [isFullscreen, setIsFullscreen] = useState(false);
 
     const videoRef = useRef(null);
     const [mediaStream, setMediaStream] = useState(null);
@@ -41,6 +48,16 @@ const InterviewQuestions = ({questions}) => {
         setSessionId(newSessionId);
         console.log("Interview session ID:", newSessionId);
     }, []);
+
+    // Auto-hide alert after 5 seconds
+    useEffect(() => {
+        if (showAlert) {
+            const timer = setTimeout(() => {
+                setShowAlert(false);
+            }, 5000);
+            return () => clearTimeout(timer);
+        }
+    }, [showAlert]);
 
     // Webcam stream setup
     const handleToggleVideo = async () => {
@@ -80,9 +97,9 @@ const InterviewQuestions = ({questions}) => {
     // Fetch TTS audio for the current question
     const fetchAndPlayQuestionAudio = async (text) => {
         try {
-            setAlertMessage("Fetching question audio...");
-            setAlertSeverity("info");
-            setShowAlert(true);
+            // setAlertMessage("Fetching question audio...");
+            // setAlertSeverity("info");
+            // setShowAlert(true);
 
             const response = await fetch("http://127.0.0.1:5000/text-to-speech", {
                 method: "POST",
@@ -94,9 +111,9 @@ const InterviewQuestions = ({questions}) => {
 
             if (!response.ok) {
                 console.error("Error fetching audio:", response.status);
-                setAlertMessage("Failed to load question audio");
-                setAlertSeverity("error");
-                setShowAlert(true);
+                // setAlertMessage("Failed to load question audio");
+                // setAlertSeverity("error");
+                // setShowAlert(true);
                 return;
             }
 
@@ -104,15 +121,15 @@ const InterviewQuestions = ({questions}) => {
             const url = URL.createObjectURL(blob);
             setAudioUrl(url);
 
-            setAlertMessage("Question audio loaded successfully");
-            setAlertSeverity("success");
-            setShowAlert(true);
+            // setAlertMessage("Question audio loaded successfully");
+            // setAlertSeverity("success");
+            // setShowAlert(true);
             setTimeout(() => setShowAlert(false), 2000);
         } catch (error) {
             console.error("Error in text-to-speech fetch:", error);
-            setAlertMessage("Error loading question audio");
-            setAlertSeverity("error");
-            setShowAlert(true);
+            // setAlertMessage("Error loading question audio");
+            // setAlertSeverity("error");
+            // setShowAlert(true);
         }
     };
 
@@ -273,229 +290,390 @@ const InterviewQuestions = ({questions}) => {
         setTranscript("");
     };
 
+    const toggleFullscreen = () => {
+        setIsFullscreen(!isFullscreen);
+    };
+
     return (
         <Box
             sx={{
                 position: 'relative',
                 width: {
-                    xs: 'calc(100vw - 0px)',    // Mobile: full width (no sidebar)
-                    sm: 'calc(100vw - 72px)',   // Small: subtract collapsed sidebar
-                    md: 'calc(100vw - 240px)'   // Medium+: subtract full sidebar
+                    xs: 'calc(100vw - 0px)',
+                    sm: 'calc(100vw - 72px)',
+                    md: 'calc(100vw - 240px)'
                 },
-                height: 'calc(100vh - 64px)', // Subtract navbar height
-                backgroundImage: "url(/static/images/zoom-background.png)",
-                backgroundSize: "cover",
-                backgroundPosition: "center",
+                height: 'calc(100vh - 100px)',
+                backgroundColor: '#1f1f23',
                 display: 'flex',
                 flexDirection: 'column',
                 overflow: 'hidden'
             }}
         >
-            {/* Question indicator - Fixed position */}
+            {/* Zoom-like Top Bar */}
             <Box sx={{
                 position: 'absolute',
-                top: 20,
-                left: 20,
-                color: 'white',
-                backgroundColor: 'rgba(0,0,0,0.7)',
-                padding: '8px 16px',
-                borderRadius: '8px',
-                fontFamily: 'DM Sans',
-                fontSize: '1rem',
-                fontWeight: 'bold',
-                zIndex: 1000
+                top: 0,
+                left: 0,
+                right: 0,
+                height: '60px',
+                backgroundColor: 'rgba(0,0,0,0.8)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                padding: '0 20px',
+                zIndex: 1000,
+                backdropFilter: 'blur(10px)'
             }}>
-                Question {currentQuestionIndex + 1} of {questions.length}
+                {/* Left side - Meeting info */}
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                    <Box sx={{
+                        color: 'white',
+                        backgroundColor: 'rgba(255,255,255,0.1)',
+                        padding: '4px 12px',
+                        borderRadius: '12px',
+                        fontSize: '0.85rem',
+                        fontFamily: 'DM Sans',
+                        fontWeight: 'bold'
+                    }}>
+                        Behavioral Interview
+                    </Box>
+                    <Typography sx={{
+                        color: '#ffffff',
+                        fontSize: '0.9rem',
+                        fontFamily: 'DM Sans'
+                    }}>
+                        Question {currentQuestionIndex + 1} of {questions.length}
+                    </Typography>
+                </Box>
+
+                {/* Right side - Controls */}
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <IconButton 
+                        size="small" 
+                        sx={{ color: 'white', backgroundColor: 'rgba(255,255,255,0.1)' }}
+                        onClick={toggleFullscreen}
+                    >
+                        {isFullscreen ? <FullscreenExitIcon /> : <FullscreenIcon />}
+                    </IconButton>
+                    <IconButton 
+                        size="small" 
+                        sx={{ color: 'white', backgroundColor: 'rgba(255,255,255,0.1)' }}
+                    >
+                        <MoreVertIcon />
+                    </IconButton>
+                </Box>
             </Box>
 
-            {/* Webcam toggle - Fixed position */}
-            <Box
-                onClick={handleToggleVideo}
-                sx={{
-                    position: 'absolute',
-                    top: 20,
-                    right: 20,
-                    width: 160,
-                    height: 120,
-                    border: "2px solid #ccc",
-                    borderRadius: 2,
-                    zIndex: 1000,
-                    overflow: "hidden",
-                    cursor: "pointer",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    backgroundColor: videoActive ? "transparent" : "#f0f0f0",
-                    "&:hover": {
-                        backgroundColor: videoActive ? "rgba(0, 0, 0, 0.1)" : "#e0e0e0",
-                    },
-                }}
-            >
-                {videoActive ? (
-                    <video
-                        ref={videoRef}
-                        autoPlay
-                        playsInline
-                        muted
-                        style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                    />
-                ) : (
+            {/* Main video area */}
+            <Box sx={{
+                flex: 1,
+                display: 'flex',
+                flexDirection: 'column',
+                padding: '80px 20px 90px 20px',
+                height: '90%',
+                position: 'relative'
+            }}>
+                {/* Interviewer video - main */}
+                <Box sx={{
+                    position: 'relative',
+                    backgroundColor: '#2d2d30',
+                    borderRadius: '12px',
+                    overflow: 'hidden',
+                    border: isSpeaking ? '3px solid #00ff00' : '1px solid rgba(255,255,255,0.1)',
+                    transition: 'border 0.3s ease',
+                    width: '100%',
+                    height: '98%'
+                }}>
+                    {/* Name tag */}
                     <Box sx={{
-                        fontSize: "0.8rem",
-                        color: "#7c7c7c",
-                        fontFamily: 'DM Sans, sans-serif',
-                        display: "flex",
-                        flexDirection: "column",
-                        alignItems: "center",
-                        gap: "0.3rem"
+                        position: 'absolute',
+                        bottom: 12,
+                        left: 12,
+                        backgroundColor: 'rgba(0,0,0,0.7)',
+                        color: 'white',
+                        padding: '4px 12px',
+                        borderRadius: '6px',
+                        fontSize: '0.85rem',
+                        fontFamily: 'DM Sans',
+                        zIndex: 10
                     }}>
-                        <VideocamIcon sx={{color:"#7c7c7c", fontSize: '1.5rem'}}/>
-                        <span>Toggle Webcam</span>
+                        Winnie (Interviewer) {isSpeaking}
+                    </Box>
+
+                    {/* Interviewer avatar/video */}
+                    <Box sx={{ 
+                        width: '100%', 
+                        height: '105%',
+                        marginTop: '-10px',
+                        '& > div': {
+                            width: '100% !important',
+                            height: '100% !important'
+                        },
+                        '& video, & img': {
+                            width: '100%',
+                            height: '110%',
+                        
+                        }
+                    }}>
+                        <TalkingInterviewer isTalking={isSpeaking} />
+                    </Box>
+                </Box>
+
+                {/* User video - floating overlay when active */}
+                {videoActive && (
+                    <Box sx={{
+                        position: 'absolute',
+                        top: 95,
+                        right: 35,
+                        width: 200,
+                        height: 150,
+                        backgroundColor: '#2d2d30',
+                        borderRadius: '12px',
+                        overflow: 'hidden',
+                        border: isRecording ? '2px solid #30de30ff' : '1px solid rgba(255,255,255,0.1)',
+                        transition: 'border 0.3s ease',
+                        zIndex: 100
+                    }}>
+                        {/* Name tag */}
+                        <Box sx={{
+                            position: 'absolute',
+                            bottom: 8,
+                            left: 8,
+                            backgroundColor: 'rgba(0,0,0,0.8)',
+                            color: 'white',
+                            padding: '2px 8px',
+                            borderRadius: '4px',
+                            fontSize: '0.7rem',
+                            fontFamily: 'DM Sans',
+                            zIndex: 10
+                        }}>
+                            You {isRecording}
+                        </Box>
+
+                        {/* User video */}
+                        <video
+                            ref={videoRef}
+                            autoPlay
+                            playsInline
+                            muted
+                            style={{ 
+                                width: '100%', 
+                                height: '100%', 
+                                objectFit: 'cover',
+                                transform: 'scaleX(-1)' // Mirror effect
+                            }}
+                        />
+
+                        {/* Video toggle overlay */}
+                        <IconButton
+                            onClick={handleToggleVideo}
+                            sx={{
+                                position: 'absolute',
+                                top: 8,
+                                right: 8,
+                                backgroundColor: 'rgba(0,0,0,0.7)',
+                                color: 'white',
+                                width: 24,
+                                height: 24,
+                                '&:hover': { backgroundColor: 'rgba(0,0,0,0.8)' }
+                            }}
+                        >
+                            <VideocamOffIcon sx={{ fontSize: 14 }} />
+                        </IconButton>
+                    </Box>
+                )}
+
+                {/* Floating video toggle (when camera is off) */}
+                {!videoActive && (
+                    <Box sx={{
+                        position: 'absolute',
+                        top: 95,
+                        right: 35,
+                        width: 200,
+                        height: 150,
+                        backgroundColor: '#2d2d30',
+                        borderRadius: '12px',
+                        border: '1px solid rgba(255,255,255,0.1)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        flexDirection: 'column',
+                        cursor: 'pointer',
+                        zIndex: 100,
+                        '&:hover': { backgroundColor: '#3d3d40' }
+                    }}
+                    onClick={handleToggleVideo}
+                    >
+                        <VideocamOffIcon sx={{ color: 'white', fontSize: '2rem', mb: 1 }} />
+                        <Typography sx={{ color: 'white', fontSize: '0.8rem', fontFamily: 'DM Sans' }}>
+                            Start Video
+                        </Typography>
+                        
+                        {/* Name tag */}
+                        <Box sx={{
+                            position: 'absolute',
+                            bottom: 8,
+                            left: 8,
+                            backgroundColor: 'rgba(0,0,0,0.8)',
+                            color: 'white',
+                            padding: '2px 8px',
+                            borderRadius: '4px',
+                            fontSize: '0.7rem',
+                            fontFamily: 'DM Sans'
+                        }}>
+                            You
+                        </Box>
                     </Box>
                 )}
             </Box>
 
-            {/* Main interviewer area - Centered and full size */}
-            <Box sx={{
-                flex: 1,
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                width: "100%",
-                minHeight: 0,
-                position: 'relative'
-            }}>
-                <Box sx={{
-                    width: "100%",
-                    height: "100%",
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center"
-                }}>
-                    <TalkingInterviewer isTalking={isSpeaking} />
-                </Box>
-            </Box>
-
-            {/* Transcript display - Fixed position */}
+            {/* Transcript floating window */}
             {transcript && (
                 <Box sx={{
                     position: 'absolute',
-                    bottom: 130,
+                    bottom: 110,
                     left: '50%',
                     transform: 'translateX(-50%)',
-                    width: '70%',
-                    maxWidth: '500px',
-                    maxHeight: '100px',
+                    width: '80%',
+                    maxWidth: '600px',
+                    maxHeight: '120px',
                     overflowY: 'auto',
-                    backgroundColor: 'rgba(255,255,255,0.95)',
-                    padding: '12px',
-                    borderRadius: '8px',
-                    textAlign: 'left',
-                    boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+                    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+                    color: 'white',
+                    padding: '20px',
+                    borderRadius: '12px',
+                    border: '1px solid rgba(255,255,255,0.2)',
+                    backdropFilter: 'blur(10px)',
                     zIndex: 1000
                 }}>
                     <Typography
                         variant="body2"
-                        color="textSecondary"
-                        sx={{ fontFamily: 'DM Sans', fontWeight: 'bold', mb: 0.5, fontSize: '0.85rem' }}
+                        sx={{ 
+                            fontFamily: 'DM Sans', 
+                            fontWeight: 'bold', 
+                            mb: 1, 
+                            fontSize: '0.8rem',
+                            color: '#adadadff'
+                        }}
                     >
-                        Your answer (transcript):
+                        Transcript:
                     </Typography>
-                    <Typography variant="body2" sx={{ fontFamily: 'DM Sans', fontSize: '0.9rem' }}>
+                    <Typography 
+                        variant="body2" 
+                        sx={{ 
+                            fontFamily: 'DM Sans', 
+                            fontSize: '0.9rem',
+                            lineHeight: 1.4
+                        }}
+                    >
                         {transcript}
                     </Typography>
                 </Box>
             )}
 
-            {/* Recording controls - Fixed at bottom center */}
+            {/* Zoom-like bottom control bar */}
             <Box sx={{
                 position: 'absolute',
-                bottom: 40,
-                left: '50%',
-                transform: 'translateX(-50%)',
+                bottom: 0,
+                left: 0,
+                right: 0,
+                height: '80px',
+                backgroundColor: 'rgba(0,0,0,0.9)',
                 display: 'flex',
+                alignItems: 'flex-start',
                 justifyContent: 'center',
-                zIndex: 1000
+                gap: 2,
+                zIndex: 1000,
+                backdropFilter: 'blur(10px)',
+                paddingTop: '22px'
             }}>
+                {/* Microphone button */}
                 <IconButton
                     disabled={isProcessing || hasRecorded}
                     onClick={isRecording ? stopRecording : startRecording}
                     sx={{
-                        width: 70,
-                        height: 70,
-                        backgroundColor: isProcessing ? "#f0f0f0" :
+                        width: 56,
+                        height: 56,
+                        backgroundColor: isProcessing ? "#666" :
                             hasRecorded ? "#4caf50" :
-                                isRecording ? "#ff6b6b" : "#2196f3",
+                                isRecording ? "#ff4444" : "#404040",
                         color: 'white',
-                        boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
+                        border: isRecording ? '2px solid #ff6666' : '1px solid rgba(255,255,255,0.3)',
                         "&:hover": {
-                            backgroundColor: isProcessing ? "#f0f0f0" :
+                            backgroundColor: isProcessing ? "#666" :
                                 hasRecorded ? "#45a049" :
-                                    isRecording ? "#ff5252" : "#1976d2",
-                            transform: 'scale(1.05)'
+                                    isRecording ? "#ff6666" : "#505050",
                         },
                         "&:disabled": {
-                            backgroundColor: "#f0f0f0",
-                            color: "#ccc"
-                        },
-                        transition: 'all 0.2s ease-in-out'
+                            backgroundColor: "#333",
+                            color: "#666"
+                        }
                     }}
                 >
-                    {isProcessing ? <CircularProgress size={28} sx={{color: '#666'}}/> :
-                        isRecording ? <StopIcon sx={{fontSize: 35}}/> :
-                            <MicIcon sx={{fontSize: 35}}/>}
-                </IconButton>
-            </Box>
+                    {isProcessing ? <CircularProgress size={24} sx={{color: 'white'}}/> :
+                        isRecording ? <StopIcon /> :
+                            <MicIcon />}
+                </IconButton>                
 
-            {/* Next button - Right side, aligned with microphone height */}
-            {hasRecorded && (
-                <Box sx={{
-                    position: "absolute",
-                    bottom: 40, // Same as microphone bottom position
-                    right: 30,
-                    zIndex: 1000
-                }}>
+                {/* Next/Finish button */}
+                {hasRecorded && (
                     <Button
                         variant="contained"
                         onClick={handleNextQuestion}
                         sx={{
-                            backgroundColor: '#4caf50',
+                            backgroundColor: '#0066cc',
                             color: 'white',
                             fontFamily: 'DM Sans',
                             fontWeight: 'bold',
-                            fontSize: '1rem',
-                            padding: '10px 20px',
-                            borderRadius: '8px',
+                            fontSize: '0.9rem',
+                            padding: '8px 20px',
+                            borderRadius: '6px',
                             textTransform: 'none',
-                            boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
+                            height: '56px',
+                            marginLeft: 2,
                             "&:hover": {
-                                backgroundColor: '#45a049',
-                                transform: 'translateY(-1px)',
-                                boxShadow: '0 4px 12px rgba(0,0,0,0.3)'
-                            },
-                            transition: 'all 0.2s ease-in-out'
+                                backgroundColor: '#0052a3'
+                            }
                         }}
                     >
-                        {currentQuestionIndex < questions.length - 1 ? "Next Question" : "Finish Interview"}
+                        {currentQuestionIndex < questions.length - 1 ? "Next Question" : "End Interview"}
                     </Button>
-                </Box>
-            )}
+                )}
+            </Box>
 
             {/* Hidden audio element */}
             <audio ref={audioRef} style={{display: "none"}} />
 
-            {/* Status alerts */}
-            <Snackbar
-                open={showAlert}
-                autoHideDuration={5000}
-                onClose={() => setShowAlert(false)}
-                anchorOrigin={{vertical: 'top', horizontal: 'center'}}
-                sx={{ zIndex: 2000 }}
-            >
-                <Alert severity={alertSeverity} onClose={() => setShowAlert(false)}>
-                    {alertMessage}
-                </Alert>
-            </Snackbar>
+            {/* Status alerts - Fixed positioning within simulation */}
+            <Fade in={showAlert} timeout={300}>
+                <Box sx={{
+                    position: 'absolute',
+                    top: 90,
+                    left: '50%',
+                    transform: 'translateX(-50%)',
+                    zIndex: 2000,
+                    width: 'auto',
+                    maxWidth: '90%'
+                }}>
+                    <Alert 
+                        severity={alertSeverity} 
+                        onClose={() => setShowAlert(false)}
+                        sx={{
+                            backgroundColor: 'rgba(0, 0, 0, 0.78)',
+                            color: 'white',
+                            border: '1px solid rgba(255,255,255,0.2)',
+                            borderRadius: '8px',
+                            boxShadow: '0 4px 20px rgba(0,0,0,0.5)',
+                            backdropFilter: 'blur(10px)',
+                            '& .MuiAlert-icon': { color: 'white' },
+                            '& .MuiAlert-action': { color: 'white' }
+                        }}
+                    >
+                        {alertMessage}
+                    </Alert>
+                </Box>
+            </Fade>
         </Box>
     );
 };
