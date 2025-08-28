@@ -13,7 +13,9 @@ import "./Dashboard.css";
 export default function Dashboard() {
     return (
         <SignedIn>
-            <Box sx={{ display: 'flex' }}>
+            <Box sx={{ display: 'flex'}} bgcolor={
+                            '#F3F1EA'
+                        }>
                 <CssBaseline />
                 <DefaultAppLayout title="Dashboard" color="#2850d9">
                     {/* --------- main content --------- */}
@@ -23,10 +25,10 @@ export default function Dashboard() {
                     >
                     {/*  --------- grid ---------  */}
                         <Box sx={{ flexGrow: 1 }}>
-                            <Grid container spacing={{ xs: 2, md: 3 }} columns={{ xs: 1, sm: 1, md: 2, lg: 3}}>
-
+                            {/* <Grid container spacing={{ xs: 2, md: 3 }} columns={{ xs: 1, sm: 1, md: 2, lg: 3}}> */}
+                            <Grid container spacing={{ xs: 2, md: 3 }}  sx={{ maxWidth: "1200px", width: "100%" }} columns={{ xs: 1, sm: 1, md: 2, lg: 2}}>
                                 {/* behavioral interview simulator  */}
-                                <Grid size={{ xs: 1, sm: 1, md: 1 }}>
+                                 <Grid size={{ xs: 1, sm: 1, md: 1 }}>
                                     <DashboardCard
                                         title="Behavioral Interview"
                                         link={"/behavioral"}
@@ -38,9 +40,21 @@ export default function Dashboard() {
                                         ]}
                                     />
                                 </Grid>
+                                {/* <Grid size={{ xs: 1, sm: 1, md: 1 }}>
+                                    <DashboardCard
+                                        title="Behavioral Interview"
+                                        link={"/behavioral"}
+                                        description="This mode lets you practice behavioral interviews, customize your questions, and receive personalized improvement advice at the end."
+                                        image="static/images/testExample.png"
+                                        buttons={[
+                                            { type: 'Simulation' },
+                                            { type: 'Microphone' },
+                                        ]}
+                                    />
+                                </Grid> */}
 
                             {/*  recruiter networking simulator  */}
-                                <Grid size={{ xs: 1, sm: 1, md: 1 }}>
+                                {/* <Grid size={{ xs: 1, sm: 1, md: 1 }}>
                                     <DashboardCard
                                         title="Recruiter Networking"
                                         link={"/recruiter"}
@@ -51,10 +65,10 @@ export default function Dashboard() {
                                             { type: 'Microphone' },
                                         ]}
                                     />
-                                </Grid>
+                                </Grid> */}
 
                             {/* webscraping tool */}
-                                <Grid size={{ xs: 1, sm: 1, md: 1 }}>
+                                {/* <Grid size={{ xs: 1, sm: 1, md: 1 }}>
                                     <DashboardCard
                                         title="Webscraping Tool"
                                         link={"/recruiter"}
@@ -64,10 +78,10 @@ export default function Dashboard() {
                                             { type: 'Tool'},
                                         ]}
                                     />
-                                </Grid>
+                                </Grid> */}
 
                             {/*  resume review tool  */}
-                                <Grid size={{ xs: 1, sm: 1, md: 1 }}>
+                                {/* <Grid size={{ xs: 1, sm: 1, md: 1 }}>
                                     <DashboardCard
                                         title="Webscraping Tool"
                                         link={"/recruiter"}
@@ -77,7 +91,7 @@ export default function Dashboard() {
                                             { type: 'Tool'},
                                         ]}
                                     />
-                                </Grid>
+                                </Grid> */}
                             </Grid>
                         </Box>
                     </Box>
