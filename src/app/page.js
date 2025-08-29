@@ -23,13 +23,23 @@ import {IconButton, Paper} from "@mui/material";
 
 import "./HomePage.css";
 
-const pages = ['Why WiNG.it', 'About Us', 'Login'];
+const pages = ['Why WiNG.it', 'About Us', 'Get Started'];
 export default function HomePage() {
 
     const itemVariants = {
-        hidden: { opacity: 0, y: 5 },
+        hidden: { opacity: 0, y: 20 },
         visible: { opacity: 1, y: 0 },
-        transition: { type: "spring"},
+        transition: { type: "spring", damping: 20, stiffness: 300 },
+    };
+
+    const staggerContainer = {
+        hidden: { opacity: 0 },
+        visible: {
+            opacity: 1,
+            transition: {
+                staggerChildren: 0.1
+            }
+        }
     };
 
     const [anchorElNav, setAnchorElNav] = React.useState(null);
@@ -42,12 +52,10 @@ export default function HomePage() {
         setAnchorElNav(null);
     };
 
-
     return (
         <Box>
             {/* ---------- nav bar ---------- */}
-            <AppBar position="static"
-                    className="navigation-bar">
+            <AppBar position="static" className="navigation-bar">
                 <Container maxWidth="xl">
                     <Toolbar disableGutters>
                         {/* desktop logo / big viewport */}
@@ -143,20 +151,20 @@ export default function HomePage() {
 
                                     <Button
                                         color="inherit"
-                                        href="/sign-up"
+                                        href="/dashboard"
                                         sx={{
                                             fontSize: '1.05rem',
                                             fontFamily: 'Satoshi Medium',
                                             textTransform: 'none',
-                                            backgroundColor: '#2850d9',
+                                            background: 'linear-gradient(135deg, #2850d9 0%, #667eea 100%)',
                                             px: 2.5,
-                                            borderRadius: '5px',
+                                            borderRadius: '12px',
                                             color: 'white',
                                             letterSpacing: '-0.01px',
                                             transition: 'transform 0.3s',
                                         }}
                                     >
-                                        Login
+                                        Get Started
                                     </Button>
                                 </Box>
                             </Menu>
@@ -185,51 +193,61 @@ export default function HomePage() {
                         </Typography>
 
                         {/* desktop navigation on the right */}
-                                <Box sx={{ display: { xs: 'none', md: 'flex' }, gap:1.5}}>
-                                    <Button color='inherit'  sx={{fontSize: '1.05rem', fontFamily: 'Satoshi Bold', textTransform: 'none', color:  'black', letterSpacing: '-0.01px', borderRadius: '50px',paddingX: 2}}>
-                                        <Link
-                                            activeClass="active"
-                                            to="why-wing-it"
-                                            offset={-50}
-                                            duration={500}
-                                            style={{fontSize: '1.05rem', fontFamily: 'Satoshi Bold', textTransform: 'none', color: 'black', letterSpacing: '-0.01px', borderRadius: '50px', paddingX: 2 }}
-                                        >
-                                            Why WiNG.it
-                                        </Link>
-                                    </Button>
-                                    <Button color='inherit' sx={{fontSize: '1.05rem', fontFamily: 'Satoshi Bold', textTransform: 'none', color: 'black', letterSpacing: '-0.01px',borderRadius: '50px',paddingX: 2}}>
-                                        <Link
-                                            activeClass="active"
-                                            to="about-us"
-                                            offset={-50}
-                                            duration={500}
-                                            style={{ fontSize: '1.05rem', fontFamily: 'Satoshi Bold', textTransform: 'none', color: 'black', letterSpacing: '-0.01px', borderRadius: '50px', paddingX: 2 }}
-                                        >
-                                            About Us
-                                        </Link>
-                                    </Button>
-                                    <Button color='inherit' href='/sign-up' sx={{fontSize: '1.05rem', fontFamily: 'Satoshi Bold', textTransform: 'none', backgroundColor: '#2850d9', paddingX: 2.5,borderRadius: '50px', color:  'white', letterSpacing: '-0.01px', transition: 'transform 0.3s', '&:hover': { transform: 'scale(1.05) rotate(-2deg)' }}}>
-                                        Login
-                                    </Button>
-                                </Box>
+                        <Box sx={{ display: { xs: 'none', md: 'flex' }, gap:1.5}}>
+                            <Button color='inherit' sx={{fontSize: '1.05rem', fontFamily: 'Satoshi Bold', textTransform: 'none', color:  'black', letterSpacing: '-0.01px', borderRadius: '12px', paddingX: 2, '&:hover': { backgroundColor: 'rgba(40, 80, 217, 0.08)' }}}>
+                                <Link
+                                    activeClass="active"
+                                    to="why-wing-it"
+                                    offset={-50}
+                                    duration={500}
+                                    style={{fontSize: '1.05rem', fontFamily: 'Satoshi Bold', textTransform: 'none', color: 'black', letterSpacing: '-0.01px', borderRadius: '12px', paddingX: 2 }}
+                                >
+                                    Why WiNG.it
+                                </Link>
+                            </Button>
+                            <Button color='inherit' sx={{fontSize: '1.05rem', fontFamily: 'Satoshi Bold', textTransform: 'none', color: 'black', letterSpacing: '-0.01px',borderRadius: '12px',paddingX: 2, '&:hover': { backgroundColor: 'rgba(40, 80, 217, 0.08)' }}}>
+                                <Link
+                                    activeClass="active"
+                                    to="about-us"
+                                    offset={-50}
+                                    duration={500}
+                                    style={{ fontSize: '1.05rem', fontFamily: 'Satoshi Bold', textTransform: 'none', color: 'black', letterSpacing: '-0.01px', borderRadius: '12px', paddingX: 2 }}
+                                >
+                                    About Us
+                                </Link>
+                            </Button>
+                            <Button 
+                                color='inherit' 
+                                href='/sign-up' 
+                                sx={{
+                                    fontSize: '1.05rem', 
+                                    fontFamily: 'Satoshi Bold', 
+                                    textTransform: 'none', 
+                                    background: 'linear-gradient(135deg, #2850d9 0%, #667eea 100%)',
+                                    paddingX: 2.5,
+                                    borderRadius: '12px', 
+                                    color: 'white', 
+                                    letterSpacing: '-0.01px', 
+                                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)', 
+                                    boxShadow: '0 4px 14px 0 rgba(40, 80, 217, 0.3)',
+                                    '&:hover': { 
+                                        transform: 'translateY(-2px)',
+                                        boxShadow: '0 8px 25px 0 rgba(40, 80, 217, 0.4)'
+                                    }
+                                }}
+                            >
+                                Get Started
+                            </Button>
+                        </Box>
                     </Toolbar>
                 </Container>
             </AppBar>
 
         {/* container*/}
-        <Box
-            sx={{
-            minHeight: '100dvh',
-        }}>
+        <Box sx={{ minHeight: '100dvh' }}>
 
             {/* ---------- home page ----------  */}
-            <Box id="home-page"
-                // sx={{
-                //     minHeight: '100dvh',
-                //     pt: { xs: "5%", md: 0 }
-                //  }}
-                //  className="w-full bg-colorF3F1EA flex justify-center items-center"
-                className="main-home-page-container">
+            <Box id="home-page" className="main-home-page-container">
 
                 {/*  main content box  */}
                 <Grid container
@@ -240,70 +258,118 @@ export default function HomePage() {
 
                     {/*  title/slogan  */}
                     <Grid item xs>
-                        <Stack direction={"column"} spacing={2}>
+                        <Stack direction={"column"} spacing={3}>
                             <motion.div
                                 className="main-home-page-title-container"
-                                // className="flex items-center justify-center space-x-2 flex-col -space-y-3.5"
-                                        initial="hidden"
-                                        whileInView="visible"
-                                        viewport={{ once: true }}
-                                        >
-                                <motion.p
-                                    variants = {itemVariants}
-                                    className="main-home-page-title-text">
-                                    Unlock all your career tools
-                                    with no strings attached. 😉
-                                </motion.p>
+                                initial="hidden"
+                                whileInView="visible"
+                                viewport={{ once: true }}
+                                variants={staggerContainer}
+                            >
+                                <motion.h1 variants={itemVariants} className="main-home-page-title-text">
+                                    Master your interviews with
+                                    <span className="gradient-text"> AI-powered</span> practice
+                                </motion.h1>
+                                
+                                <motion.div 
+                                    variants={itemVariants}
+                                    className="floating-elements"
+                                >
+                                    <div className="floating-element element-1">💼</div>
+                                    <div className="floating-element element-2">🎯</div>
+                                    <div className="floating-element element-3">⭐</div>
+                                </motion.div>
                             </motion.div>
 
                             {/* description */}
-                            <motion.div className="main-home-page-description-container"
-                                        initial="hidden"
-                                        whileInView="visible"
-                                        viewport={{ once: true }}>
+                            <motion.div 
+                                className="main-home-page-description-container"
+                                initial="hidden"
+                                whileInView="visible"
+                                viewport={{ once: true }}
+                            >
                                 <motion.p
-                                    variants = {itemVariants}
-                                    transition={{ delay: 0.05 }}
-                                    className="description-text">
-                                    WiNG.it provides tools to enhance your skills in
-                                    interviews, networking, and beyond, helping you excel in your career.
+                                    variants={itemVariants}
+                                    transition={{ delay: 0.2 }}
+                                    className="description-text"
+                                >
+                                    Transform your career preparation with realistic interview simulations, 
+                                    personalized feedback, and AI-driven insights. Practice makes perfect – and it'&apos;'s completely free.
                                 </motion.p>
+                            </motion.div>
+
+                            {/* CTA buttons */}
+                            <motion.div
+                                initial="hidden"
+                                whileInView="visible"
+                                viewport={{ once: true }}
+                                variants={staggerContainer}
+                                className="cta-buttons-container"
+                            >
+                                <motion.div variants={itemVariants}>
+                                    <Button
+                                        href="/sign-up"
+                                        className="primary-cta-button"
+                                        size="large"
+                                    >
+                                        Start Practicing
+                                        <svg className="button-arrow" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14M12 5l7 7-7 7"/>
+                                        </svg>
+                                    </Button>
+                                </motion.div>
+                                <motion.div variants={itemVariants}>
+                                    <Button
+                                        className="secondary-cta-button"
+                                        size="large"
+                                        onClick={() => {
+                                            const element = document.getElementById('why-wing-it');
+                                            element?.scrollIntoView({ behavior: 'smooth' });
+                                        }}
+                                    >
+                                        Learn More
+                                    </Button>
+                                </motion.div>
                             </motion.div>
                         </Stack>
                     </Grid>
 
-                    {/* ---------- cards ---------- */}
+                    {/* ---------- feature cards ---------- */}
                     <Grid item xs>
-                        <motion.div initial="hidden"
-                                    whileInView="visible"
-                                    viewport={{ once: true }}>
+                        <motion.div 
+                            initial="hidden"
+                            whileInView="visible"
+                            viewport={{ once: true }}
+                            variants={staggerContainer}
+                        >
                             <Grid
                                 container
-                                spacing={2}
+                                spacing={3}
                                 columns={3}
                                 rows={1}
                                 direction={{xs: "column", s: "column", md: "row", lg: "row"}}
                                 wrap={{ xs: "wrap", sm: "wrap", md: "nowrap", lg: "nowrap" }}
-                                sx={{ alignItems: 'stretch' }} // This makes all grid items equal height
+                                sx={{ alignItems: 'stretch' }}
                             >
 
                                 {/* career prep tools card */}
                                 <Grid xs={12} sm={6} md={4} lg={3} sx={{ display: 'flex' }}>
                                     <motion.div
                                         variants={itemVariants}
-                                        transition={{ delay: 0.4 }}
                                         style={{ width: '100%', display: 'flex' }}
+                                        whileHover={{ y: -8, transition: { duration: 0.3 } }}
                                     >
-                                        <Card className="main-home-page-card">
-                                            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', backgroundColor: '#f1c4a8', borderRadius: '50%', width: '40px', height: '40px', marginBottom:'15px'}}>
-                                                <FaPencilRuler color={'#E3632E'} size={20} />
+                                        <Card className="main-home-page-card modern-card">
+                                            <div className="card-icon-container orange-gradient">
+                                                <FaPencilRuler color={'#E3632E'} size={24} />
                                             </div>
                                             <Typography variant="h5" className="main-home-page-card-feature-title">
-                                                Career Prep Tools
+                                                Interactive Simulations
                                             </Typography>
                                             <Typography className="main-home-page-card-feature-description">
-                                                Using our variety of tools, you can practice for interviews, networking, and more.
+                                                Practice with AI-powered interview scenarios that adapt to your responses and provide real-time feedback.
                                             </Typography>
+                                            <div className="card-hover-effect"></div>
                                         </Card>
                                     </motion.div>
                                 </Grid>
@@ -312,19 +378,20 @@ export default function HomePage() {
                                 <Grid xs={12} sm={6} md={4} lg={3} sx={{ display: 'flex' }}>
                                     <motion.div
                                         variants={itemVariants}
-                                        transition={{ delay: 0.6 }}
                                         style={{ width: '100%', display: 'flex' }}
+                                        whileHover={{ y: -8, transition: { duration: 0.3 } }}
                                     >
-                                        <Card className="main-home-page-card">
-                                            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', backgroundColor: '#9db8ea', borderRadius: '50%', width: '40px', height: '40px', marginBottom:'15px'}}>
-                                                <IoDocumentText color={'#2a6ed5'} size={25} />
+                                        <Card className="main-home-page-card modern-card">
+                                            <div className="card-icon-container blue-gradient">
+                                                <IoDocumentText color={'#2a6ed5'} size={28} />
                                             </div>
                                             <Typography variant="h5" className="main-home-page-card-feature-title">
-                                                Saves Transcripts
+                                                Smart Analytics
                                             </Typography>
                                             <Typography className="main-home-page-card-feature-description">
-                                                After each practice session, you can save your transcripts to review for later.
+                                                Track your progress with detailed transcripts, performance metrics, and personalized improvement suggestions.
                                             </Typography>
+                                            <div className="card-hover-effect"></div>
                                         </Card>
                                     </motion.div>
                                 </Grid>
@@ -333,19 +400,20 @@ export default function HomePage() {
                                 <Grid xs={12} sm={6} md={4} lg={3} sx={{ display: 'flex' }}>
                                     <motion.div
                                         variants={itemVariants}
-                                        transition={{ delay: 0.8 }}
                                         style={{ width: '100%', display: 'flex' }}
+                                        whileHover={{ y: -8, transition: { duration: 0.3 } }}
                                     >
-                                        <Card className="main-home-page-card">
-                                            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', backgroundColor: '#9fcb95', borderRadius: '50%', width: '40px', height: '40px', marginBottom:'15px'}}>
-                                                <BiSolidMessageCheck color={'#559437'} size={25} style={{marginTop: '2.5px'}}/>
+                                        <Card className="main-home-page-card modern-card">
+                                            <div className="card-icon-container green-gradient">
+                                                <BiSolidMessageCheck color={'#559437'} size={28} />
                                             </div>
                                             <Typography variant="h5" className="main-home-page-card-feature-title">
-                                                Personalized Feedback
+                                                AI-Powered Feedback
                                             </Typography>
                                             <Typography className="main-home-page-card-feature-description">
-                                                Receive customized feedback on your performance to help you improve your skills.
+                                                Receive instant, actionable feedback on your communication style, content quality, and interview performance.
                                             </Typography>
+                                            <div className="card-hover-effect"></div>
                                         </Card>
                                     </motion.div>
                                 </Grid>
@@ -353,28 +421,11 @@ export default function HomePage() {
                         </motion.div>
                     </Grid>
 
-                    {/* and it's all for free */}
-                    <Grid item xs>
-                        <motion.div
-                            initial="hidden"
-                            whileInView="visible"
-                            viewport={{ once: true }}
-                            variants={itemVariants}
-                            transition={{ delay: 1.3 }}
-                            >
-                        <Typography style={{color: 'black', textAlign: 'center', fontSize: '1.35rem', fontFamily: 'Satoshi Medium'}}>
-                            And the best part? It&#39;s all for <span style={{fontFamily: 'Satoshi Black', color: 'black'}}>free.</span>
-                        </Typography>
-                        </motion.div>
-                    </Grid>
-
-
                 </Grid>
             </Box>
 
             {/* ---------- why wing it ----------*/}
-            <Box id="why-wing-it"
-                className="why-wing-it-section-container">
+            <Box id="why-wing-it" className="why-wing-it-section-container">
                 <Grid container
                     spacing={4}
                     columns={5}
@@ -386,135 +437,125 @@ export default function HomePage() {
                 >
 
                     {/* ---------- title / description ---------- */}
-                    <Grid item xs={12} sm={6} md={4} lg={3} >
-                        <motion.div style={{padding: '2.5%'}}
-                                    initial="hidden"
-                                    whileInView="visible"
-                                    viewport={{ once: true }}>
+                    <Grid item xs={12} sm={6} md={4} lg={3}>
+                        <motion.div 
+                            style={{padding: '2.5%'}}
+                            initial="hidden"
+                            whileInView="visible"
+                            viewport={{ once: true }}
+                            variants={staggerContainer}
+                        >
 
                             {/* title */}
                             <motion.h2
-                                variants = {itemVariants}
-                                transition={{ delay: 0.5 }}
-                                className="why-wing-it-title">
-                                We created the quality, free tools we needed.️
+                                variants={itemVariants}
+                                className="why-wing-it-title"
+                            >
+                                Built by students, for students 🎓
                             </motion.h2>
 
                             {/* description*/}
-                            <Stack spacing={2}
-                                   style={{padding: '30px'}}>
+                            <Stack spacing={3} style={{padding: '30px'}}>
                                 <motion.p
-                                    variants = {itemVariants}
-                                    transition={{ delay: 0.8 }}
+                                    variants={itemVariants}
                                     className="why-wing-it-description-text"
                                 >
-                                    As students, we know interviewing and networking can be hard. Like, really hard. And unfortunately, there are close to zero good, free, and
-                                    useful career preparation tools out there.
+                                    We'&apos;'ve been in your shoes – stressing about interviews, lacking access to quality practice tools, 
+                                    and struggling to get meaningful feedback on our performance.
                                 </motion.p>
+                                <motion.div
+                                    variants={itemVariants}
+                                    className="highlight-box"
+                                >
+                                    <p className="why-wing-it-description-text highlight-text">
+                                        Our mission: <span className="bold-highlight">Making career preparation accessible for everyone.</span> 
+                                        No subscriptions, no hidden fees, just powerful tools to help you succeed.
+                                    </p>
+                                </motion.div>
                                 <motion.p
-                                    variants = {itemVariants}
-                                    transition={{ delay: 0.95 }}
-                                    className="why-wing-it-description-text">
-                                    Our goal? <span
-                                    style = {{fontFamily: 'DM Sans Bold', color: '#000000', letterSpacing: '-0.5px'}}>Making career preparation more accessible for everybody. </span> No paywall.
-                                    No fees. Just practicing for your upcoming opportunities and needs.
-                                </motion.p>
-                                <motion.p
-                                    variants = {itemVariants}
-                                    transition={{ delay: 1.1}}
-                                    className="why-wing-it-description-text">
-                                    Oh, and as a bonus, making it fun. Because who said preparing for your future can&apos;t be fun?
+                                    variants={itemVariants}
+                                    className="why-wing-it-description-text"
+                                >
+                                    Join thousands of students who'&apos;'ve already improved their interview skills with WiNG.it. 
+                                    Because your future shouldn'&apos;'t be limited by access to resources.
                                 </motion.p>
                             </Stack>
                         </motion.div>
                     </Grid>
 
-                    {/* --- replace this part with gif of a demo..? --- */}
-                    {/*<Grid item xs={12} sm={6} md={4} lg={3} style={{backgroundColor: '#C1D6E6', borderRadius: '30px'}}>*/}
-                    {/*    <motion.div*/}
-                    {/*        initial="hidden"*/}
-                    {/*        whileInView="visible"*/}
-                    {/*        viewport={{ once: true }}*/}
-                    {/*        variants={itemVariants}*/}
-                    {/*        transition={{ delay: 1.3 }}*/}
-                    {/*        >*/}
-                    {/*        <Image*/}
-                    {/*            src={'/static/images/behavioral.png'}*/}
-                    {/*            alt={"Why WiNG.it image"}*/}
-                    {/*            width={500}*/}
-                    {/*            height={500}*/}
-                    {/*        />*/}
-                    {/*    </motion.div>*/}
-                    {/*</Grid>*/}
-
-
                 </Grid>
             </Box>
 
             {/*  ---------- about us ----------  */}
-            <Box id="about-us"
-                 className="about-us-section-container" >
+            <Box id="about-us" className="about-us-section-container">
                 <Grid container
                     direction={"row"}
                     width={{ xs: '98%', sm: '90%', md: '80%' }}
                     sx={{ paddingLeft: { xs: '2%', sm: '5%' }, paddingRight: { xs: '2%', sm: '5%' } }}>
 
                     {/* title  */}
-                    <Stack spacing={1} direction="column">
+                    <Stack spacing={2} direction="column">
                     <Grid item xs={12} sm={6} md={4} lg={3}>
                         <motion.div
                             initial="hidden"
                             whileInView="visible"
                             viewport={{ once: true }}
-                            transition={{ delay: 0.5 }}
-                            variants={itemVariants}>
+                            variants={itemVariants}
+                        >
                         <Typography className="about-us-section-title">
-                            Really quick, here&#39;s a little about us.
+                            Meet the team behind WiNG.it
                         </Typography>
                         </motion.div>
                     </Grid>
 
                     {/* description */}
-                        <motion.div
-                            initial="hidden"
-                            whileInView="visible"
-                            viewport={{ once: true }}>
+                    <motion.div
+                        initial="hidden"
+                        whileInView="visible"
+                        viewport={{ once: true }}
+                        variants={staggerContainer}
+                    >
 
-                        <Stack spacing={3} direction={"column"}>
-                            <motion.p className="about-us-section-description-text"
-                                      variants = {itemVariants}
-                                      transition={{ delay: 0.75 }}>
-                                Our project was created for the
-                                <span className="font-dm-sans-black tracking-tight"> University of Florida’s 🐊</span> first annual
-                                <span className="font-dm-sans-black tracking-tight"> WiNGHacks Hackathon 🪽</span>, a hackathon designed to empower
-                                women, non-binary, and gender minorities by providing them with a platform to innovate and create. Our project won
-                                <span className="font-dm-sans-black tracking-tight"> first place 🏆</span> for best project created by first time hackathoners and was picked up by
-                                <span className="font-dm-sans-black tracking-tight"> UF Professor Amanpreet Kapoor  💻</span> to continue being built for improvement.
-                            </motion.p>
-                            <motion.p className="about-us-section-description-text"
-                                      variants = {itemVariants}
-                                      transition={{ delay: 1 }}>
-                                WiNG.it was created to reduce the stress of interview prep.
-                                As college students, we recognize the importance of being prepared for interviews and networking, as well as having easy access to resources.
-                                We hope that with WiNG.it, we can help elevate that stress & push you to be the best version of yourself.
-                            </motion.p>
+                        <Stack spacing={4} direction={"column"}>
+                            <motion.div variants={itemVariants} className="story-card">
+                                <p className="about-us-section-description-text">
+                                    Our journey started at the
+                                    <span className="highlight-span"> University of Florida'&apos;'s 🐊</span> inaugural
+                                    <span className="highlight-span"> WiNGHacks Hackathon 🪽</span> – a celebration of innovation by 
+                                    women, non-binary, and gender minorities in tech.
+                                </p>
+                            </motion.div>
+                            <motion.div variants={itemVariants} className="achievement-card">
+                                <div className="achievement-badge">🏆</div>
+                                <p className="about-us-section-description-text">
+                                    We'&apos;'re proud to have won <span className="highlight-span">first place</span> for best project by 
+                                    first-time hackathoners and caught the attention of 
+                                    <span className="highlight-span"> UF Professor Amanpreet Kapoor 💻</span>, who believed in our vision 
+                                    enough to support our continued development.
+                                </p>
+                            </motion.div>
+                            <motion.div variants={itemVariants} className="mission-card">
+                                <p className="about-us-section-description-text">
+                                    Today, WiNG.it continues to evolve as a comprehensive career preparation platform, 
+                                    helping students worldwide build confidence, improve their skills, and land their dream opportunities.
+                                </p>
+                            </motion.div>
                         </Stack>
-                        </motion.div>
-                        </Stack>
+                    </motion.div>
+                    </Stack>
                 </Grid>
             </Box>
 
-
             {/*  developer section  */}
-            <Grid 
-                className="developer-section-container">
-                <motion.div initial="hidden"
-                            whileInView="visible"
-                            viewport={{ once: true }}
-                            variants = {itemVariants}
-                            transition={{ delay: 1.25 }}>
+            <Grid className="developer-section-container">
+                <motion.div 
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true }}
+                    variants={staggerContainer}
+                >
                 <Grid container
-                    spacing={3}
+                    spacing={4}
                     alignItems="center"
                     justifyContent="center"
                     direction={{ xs: 'column', sm: 'column', md: 'row', lg: 'row' }}
@@ -524,133 +565,136 @@ export default function HomePage() {
 
                         {/* Rachel */}
                         <Grid item xs={12} sm={6} md={4} lg={3}>
-                            <Grid container spacing={2} direction="column" alignItems="center">
-                            {/* Photo */}
-                            <Grid item>
-                                <Link
-                                component="a"
-                                href="https://www.linkedin.com/in/rachel-pu-ufl/"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                >
-                                <motion.img
-                                    src="/static/images/rachel%20pu%20image.png"
-                                    alt="Rachel Pu"
-                                    className="rounded-2xl drop-shadow-lg w-32 h-32 object-cover"
-                                    whileHover={{ scale: 1.05, rotate: 2, cursor: "pointer" }}
-                                />
-                                </Link>
-                            </Grid>
-                            {/* Text */}
-                            <Grid item>
-                                    <Typography
-                                    variant="h2"
-                                    className="developer-section-developer-name"
-                                    >
-                                    Rachel Pu
-                                    </Typography>
-                                    <Typography
-                                    className="developer-section-developer-description">
-                                        Student at UF majoring in Computer Science and minoring in Digital Arts & Sciences
-                                    </Typography>
-                            </Grid>
-                            </Grid>
+                            <motion.div variants={itemVariants}>
+                                <Grid container spacing={2} direction="column" alignItems="center">
+                                    {/* Photo */}
+                                    <Grid item>
+                                        <Link
+                                        component="a"
+                                        href="https://www.linkedin.com/in/rachel-pu-ufl/"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        >
+                                        <motion.div className="developer-card">
+                                            <motion.img
+                                                src="/static/images/rachel%20pu%20image.png"
+                                                alt="Rachel Pu"
+                                                className="developer-image"
+                                                whileHover={{ scale: 1.05, rotate: 2, cursor: "pointer" }}
+                                            />
+                                            <div className="developer-overlay">
+                                                <span>View LinkedIn →</span>
+                                            </div>
+                                        </motion.div>
+                                        </Link>
+                                    </Grid>
+                                    {/* Text */}
+                                    <Grid item>
+                                        <Typography variant="h2" className="developer-section-developer-name">
+                                            Rachel Pu
+                                        </Typography>
+                                        <Typography className="developer-section-developer-description">
+                                            Computer Science & Digital Arts Sciences @ UF
+                                        </Typography>
+                                    </Grid>
+                                </Grid>
+                            </motion.div>
                         </Grid>
 
                         {/* Chelsea */}
                         <Grid item xs={12} sm={6} md={4} lg={3}>
-                            <Grid container spacing={2} direction="column" alignItems="center">
-                            {/* Photo */}
-                            <Grid item>
-                                <Link
-                                component="a"
-                                href="https://www.linkedin.com/in/chelseaqnguyen/"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                >
-                                <motion.img
-                                    src="/static/images/chelsea nguyen image.png"
-                                    alt="Chelsea Nguyen"
-                                    className="rounded-2xl drop-shadow-lg w-32 h-32 object-cover"
-                                    whileHover={{ scale: 1.05, rotate: 2, cursor: "pointer" }}
-                                />
-                                </Link>
-                            </Grid>
-                            {/* Text */}
-                            <Grid item>
-                                    <Typography
-                                    variant="h2"
-                                    className="developer-section-developer-name"
-                                    >
-                                    Chelsea Nguyen
-                                    </Typography>
-                                    <Typography
-                                        className="developer-section-developer-description"
+                            <motion.div variants={itemVariants}>
+                                <Grid container spacing={2} direction="column" alignItems="center">
+                                    {/* Photo */}
+                                    <Grid item>
+                                        <Link
+                                        component="a"
+                                        href="https://www.linkedin.com/in/chelseaqnguyen/"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
                                         >
-                                        Student at UF majoring in Computer Science and minoring in Digital Arts & Sciences
-                                    </Typography>
-                            </Grid>
-                        </Grid>
+                                        <motion.div className="developer-card">
+                                            <motion.img
+                                                src="/static/images/chelsea nguyen image.png"
+                                                alt="Chelsea Nguyen"
+                                                className="developer-image"
+                                                whileHover={{ scale: 1.05, rotate: 2, cursor: "pointer" }}
+                                            />
+                                            <div className="developer-overlay">
+                                                <span>View LinkedIn →</span>
+                                            </div>
+                                        </motion.div>
+                                        </Link>
+                                    </Grid>
+                                    {/* Text */}
+                                    <Grid item>
+                                        <Typography variant="h2" className="developer-section-developer-name">
+                                            Chelsea Nguyen
+                                        </Typography>
+                                        <Typography className="developer-section-developer-description">
+                                            Computer Science & Digital Arts Sciences @ UF
+                                        </Typography>
+                                    </Grid>
+                                </Grid>
+                            </motion.div>
                         </Grid>
 
                         {/* Clarissa */}
                         <Grid item xs={12} sm={6} md={4} lg={3}>
-                            <Grid container spacing={2} direction="column" alignItems="center">
-                            {/* Photo */}
-                            <Grid item>
-                                <Link
-                                component="a"
-                                href="https://www.linkedin.com/in/clarissa-cheung-054035187/"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                >
-                                <motion.img
-                                    src="/static/images/clarissa-cheung.jpg"
-                                    alt="Clarissa Cheung"
-                                    className="rounded-2xl drop-shadow-lg w-32 h-32 object-cover"
-                                    whileHover={{ scale: 1.05, rotate: 2, cursor: "pointer" }}
-                                />
-                                </Link>
-                            </Grid>
-                            {/* Text */}
-                            <Grid item>
-                                    <Typography
-                                    variant="h2"
-                                    className="developer-section-developer-name"
-                                    >
-                                    Clarissa Cheung
-                                    </Typography>
-                                    <Typography
-                                        className="developer-section-developer-description">
-                                        Student at UF majoring in Computer Science and minoring in Economics
-                                    </Typography>
-                            </Grid>
-                            </Grid>
+                            <motion.div variants={itemVariants}>
+                                <Grid container spacing={2} direction="column" alignItems="center">
+                                    {/* Photo */}
+                                    <Grid item>
+                                        <Link
+                                        component="a"
+                                        href="https://www.linkedin.com/in/clarissa-cheung-054035187/"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        >
+                                        <motion.div className="developer-card">
+                                            <motion.img
+                                                src="/static/images/clarissa-cheung.jpg"
+                                                alt="Clarissa Cheung"
+                                                className="developer-image"
+                                                whileHover={{ scale: 1.05, rotate: 2, cursor: "pointer" }}
+                                            />
+                                            <div className="developer-overlay">
+                                                <span>View LinkedIn →</span>
+                                            </div>
+                                        </motion.div>
+                                        </Link>
+                                    </Grid>
+                                    {/* Text */}
+                                    <Grid item>
+                                        <Typography variant="h2" className="developer-section-developer-name">
+                                            Clarissa Cheung
+                                        </Typography>
+                                        <Typography className="developer-section-developer-description">
+                                            Computer Science & Economics @ UF
+                                        </Typography>
+                                    </Grid>
+                                </Grid>
+                            </motion.div>
                         </Grid>
                         
                     </Grid>
                     </motion.div>
                 </Grid>
+
             {/*  honorable mention */}
-                <Box 
-                 sx={{
-                    height: '10vh',
-                 }}
-                 className="honorable-mentions-section-container">
+                <Box className="honorable-mentions-section-container">
                     <Grid item xs={12}>
                         <motion.div
                             initial = "hidden"
                             whileInView="visible"
-                            viewport={{ once: true }}>
-                            <motion.p
-                                className="honorable-mentions-section-text"
-                                variants={itemVariants}
-                                transition={{ delay: 1.45 }}
-                                >
-                                Honorable developers from the original WiNGHacks project team:
+                            viewport={{ once: true }}
+                            variants={itemVariants}
+                        >
+                            <motion.p className="honorable-mentions-section-text">
+                                Special thanks to our original WiNGHacks team members:
                                 <br/>
-                                <span className="font-dm-sans-black tracking-tight"> Xiaguo Jia</span>,
-                                <span className="font-dm-sans-black tracking-tight"> Sara Smith</span>
+                                <span className="highlight-span"> Xiaguo Jia</span> and
+                                <span className="highlight-span"> Sara Smith</span>
                             </motion.p>
 
                         </motion.div>
@@ -658,43 +702,38 @@ export default function HomePage() {
             </Box>
 
             {/* ---------- getting started section ---------- */}
-            <Box id="getting-started"
-                 sx={{
-                    minHeight: '100vh',
-                 }}
-                 className="getting-started-section-container" >
-                <Stack direction={'column'} spacing={-0.5} style={{marginBottom:'40px'}}>
-                    <motion.p
-                        initial="hidden"
-                        whileInView='visible'
-                        viewport={{ once: true }}
-                        variants = {itemVariants}
-                        transition = {{delay: 0.5}}
-                        className="get-started-title">
-                        Okay, enough about us.
-                    </motion.p>
-                    <motion.p
-                        initial="hidden"
-                        whileInView='visible'
-                        viewport={{ once: true }}
-                        transition={{ delay: 0.7 }}
-                        variants = {itemVariants}
-                        className="get-started-ready-text">
-                        Ready to get started?
-                    </motion.p>
-                </Stack>
+            <Box id="getting-started" className="getting-started-section-container">
                 <motion.div
                     initial="hidden"
-                    whileInView='visible'
+                    whileInView="visible"
                     viewport={{ once: true }}
-                    transition={{ delay: 1 }}
-                    variants = {itemVariants}>
-                    <Button color='inherit' href='/sign-up'
-                            className="get-started-button">                        Get Started
-                        <svg className="w-10 h-10" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h12M12 5l7 7-7 7" />
-                        </svg>
-                    </Button>
+                    variants={staggerContainer}
+                    className="getting-started-content"
+                >
+                    <Stack direction={'column'} spacing={2} alignItems="center">
+                        <motion.h2 variants={itemVariants} className="get-started-title">
+                            Ready to ace your next interview?
+                        </motion.h2>
+                        <motion.p variants={itemVariants} className="get-started-subtitle">
+                            Join us to improve your interview skills with WiNG.it
+                        </motion.p>
+                        <motion.div variants={itemVariants} className="final-cta-container">
+                            <Button 
+                                color='inherit' 
+                                href='/sign-up'
+                                className="final-cta-button"
+                                size="large"
+                            >
+                                Start Your Journey
+                                <svg className="button-arrow" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14M12 5l7 7-7 7" />
+                                </svg>
+                            </Button>
+                            <div className="cta-subtext">
+                                <span>✨ Always free • No credit card required • Get started in 30 seconds</span>
+                            </div>
+                        </motion.div>
+                    </Stack>
                 </motion.div>
             </Box>
         </Box>
