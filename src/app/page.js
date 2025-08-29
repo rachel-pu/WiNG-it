@@ -294,7 +294,7 @@ export default function HomePage() {
                                     className="description-text"
                                 >
                                     Transform your career preparation with realistic interview simulations, 
-                                    personalized feedback, and AI-driven insights. Practice makes perfect – and it's completely free.
+                                    personalized feedback, and AI-driven insights. Practice makes perfect – and it'&apos;'s completely free.
                                 </motion.p>
                             </motion.div>
 
@@ -460,7 +460,7 @@ export default function HomePage() {
                                     variants={itemVariants}
                                     className="why-wing-it-description-text"
                                 >
-                                    We've been in your shoes – stressing about interviews, lacking access to quality practice tools, 
+                                    We'&apos;'ve been in your shoes – stressing about interviews, lacking access to quality practice tools, 
                                     and struggling to get meaningful feedback on our performance.
                                 </motion.p>
                                 <motion.div
@@ -476,8 +476,8 @@ export default function HomePage() {
                                     variants={itemVariants}
                                     className="why-wing-it-description-text"
                                 >
-                                    Join thousands of students who've already improved their interview skills with WiNG.it. 
-                                    Because your future shouldn't be limited by access to resources.
+                                    Join thousands of students who'&apos;'ve already improved their interview skills with WiNG.it. 
+                                    Because your future shouldn'&apos;'t be limited by access to resources.
                                 </motion.p>
                             </Stack>
                         </motion.div>
@@ -520,7 +520,7 @@ export default function HomePage() {
                             <motion.div variants={itemVariants} className="story-card">
                                 <p className="about-us-section-description-text">
                                     Our journey started at the
-                                    <span className="highlight-span"> University of Florida's 🐊</span> inaugural
+                                    <span className="highlight-span"> University of Florida'&apos;'s 🐊</span> inaugural
                                     <span className="highlight-span"> WiNGHacks Hackathon 🪽</span> – a celebration of innovation by 
                                     women, non-binary, and gender minorities in tech.
                                 </p>
@@ -528,7 +528,7 @@ export default function HomePage() {
                             <motion.div variants={itemVariants} className="achievement-card">
                                 <div className="achievement-badge">🏆</div>
                                 <p className="about-us-section-description-text">
-                                    We're proud to have won <span className="highlight-span">first place</span> for best project by 
+                                    We'&apos;'re proud to have won <span className="highlight-span">first place</span> for best project by 
                                     first-time hackathoners and caught the attention of 
                                     <span className="highlight-span"> UF Professor Amanpreet Kapoor 💻</span>, who believed in our vision 
                                     enough to support our continued development.
