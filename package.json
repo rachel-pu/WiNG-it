@@ -10,24 +10,23 @@
   },
   "dependencies": {
     "@base-ui-components/react": "^1.0.0-alpha.6",
-    "@clerk/nextjs": "^6.10.2",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
     "@mui/icons-material": "^6.3.1",
     "@mui/material": "^6.3.1",
+    "@types/react": "^19.1.12",
     "firebase-admin": "^13.5.0",
     "firebase-functions": "^6.4.0",
     "framer-motion": "^11.15.0",
     "motion": "^11.15.0",
     "next": "^15.5.2",
+    "picomatch": "^2.3.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-icons": "^5.4.0",
     "react-scroll": "^1.9.0",
     "tailwind-merge": "^2.5.5",
-    "typescript": "^5.9.2",
-    "@types/react" : "^19.1.12",
-    "picomatch": "^2.3.1"
+    "typescript": "^5.9.2"
   },
   "devDependencies": {
     "eslint": "^8",
