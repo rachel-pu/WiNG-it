@@ -16,7 +16,6 @@ import {MdSpaceDashboard} from "react-icons/md";
 import {HiDocumentText} from "react-icons/hi";
 import {IoSettings} from "react-icons/io5";
 import SavesButtons from "./SavesButtons";
-import {SignedIn, UserButton} from '@clerk/nextjs'
 import MainAppBar from "../../../../components/MainAppBar";
 import Page_Template from "../../DefaultAppLayout";
 
@@ -48,7 +47,6 @@ export default function Saves() {
 
 
     return(
-        <SignedIn>
             <Box sx={{ display: 'flex' }}>
                 <CssBaseline />
                 <Page_Template title="Behavioral Interview Simulation" color="#2850d9">
@@ -86,6 +84,5 @@ export default function Saves() {
                     </Box>
                 </Page_Template>
             </Box>
-        </SignedIn>
     )
 }
