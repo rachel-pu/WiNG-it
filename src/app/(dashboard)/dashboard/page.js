@@ -6,13 +6,10 @@ import Grid from '@mui/material/Grid2';
 import DashboardCard from '../dashboard/(components)/DashboardCard';
 
 import DefaultAppLayout from "../../DefaultAppLayout";
-import {  SignedIn } from '@clerk/nextjs'
-
 import "./Dashboard.css";
 
 export default function Dashboard() {
     return (
-        <SignedIn>
             <Box sx={{ display: 'flex'}} bgcolor={
                             '#F3F1EA'
                         }>
@@ -97,6 +94,5 @@ export default function Dashboard() {
                     </Box>
                 </DefaultAppLayout>
             </Box>
-        </SignedIn>
     );
 }
