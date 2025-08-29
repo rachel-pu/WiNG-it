@@ -32,9 +32,10 @@ jobs:
 
       # 5. Deploy to Firebase
       - name: Deploy to Firebase Hosting
-        uses: FirebaseExtended/action-hosting-deploy@v0
-        with:
-          repoToken: ${{ secrets.GITHUB_TOKEN }}
-          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_WING_IT_E6A3A }}
-          channelId: live
-          projectId: wing-it-e6a3a
+        # uses: FirebaseExtended/action-hosting-deploy@v0
+        # with:
+        #   repoToken: ${{ secrets.GITHUB_TOKEN }}
+        #   firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_WING_IT_E6A3A }}
+        #   channelId: live
+        #   projectId: wing-it-e6a3a
+        run: firebase deploy --only hosting,functions --token ${{ secrets.FIREBASE_SERVICE_ACCOUNT_WING_IT_E6A3A }}
