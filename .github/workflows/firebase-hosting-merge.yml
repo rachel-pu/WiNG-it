@@ -8,6 +8,7 @@ on:
 jobs:
   build_and_deploy:
     runs-on: ubuntu-latest
+    environment: production   # <-- uses production environment secrets
     steps:
       # 1. Check out the code
       - uses: actions/checkout@v4
@@ -16,14 +17,17 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 20  # match your local Node version
+          node-version: 24
 
       # 3. Install dependencies
       - name: Install dependencies
         run: npm ci
-        
+
       # 4. Build the Next.js app
       - name: Build Next.js app
+        env:
+          NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY }}
+          CLERK_SECRET_KEY: ${{ secrets.CLERK_SECRET_KEY }}
         run: npm run build
 
       # 5. Deploy to Firebase
