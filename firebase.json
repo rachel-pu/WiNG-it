@@ -14,18 +14,19 @@
     }
   ],
   "hosting": {
-    "public": "public",
+    "public": "src/app",
     "ignore": [
       "firebase.json",
       "**/.*",
-      "**/node_modules/**"
-    ],
-    "rewrites": [
-      {
-        "source": "**",
-        "destination": "/index.html",
-        "function": "nextApp"
-      }
+      "**/node_modules/**",
+      "page.js",
+      "HomePage.css",
+      "DefaultAppLayout.js",
+      "globals.css",
+      "favicon.ico",
+      "(simulations)",
+      "(dashboard)",
+      "(authentication)"
     ]
   }
 }
