@@ -4,7 +4,6 @@
 // import MainAppBar from "../../../../../components/MainAppBar";
 // import LeftNavbar from "../../../../../components/LeftNavbar";
 // import React, { useEffect, useState } from "react";
-// import { SignedIn } from "@clerk/nextjs";
 // import { Box, Typography, CircularProgress } from "@mui/material";
 // import Toolbar from "@mui/material/Toolbar";
 // import Link from "next/link";
@@ -310,7 +309,6 @@
 //     );
 //
 //     return (
-//         <SignedIn>
 //             <Box sx={{ display: "flex" }}>
 //                 <CssBaseline />
 //                 <MainAppBar title="Behavioral Interview Simulation" color="#2850d9" />
@@ -446,6 +444,5 @@
 //                     </div>
 //                 </Box>
 //             </Box>
-//         </SignedIn>
 //     );
 // }
