@@ -312,7 +312,7 @@ export default function HomePage() {
                                         className="primary-cta-button"
                                         size="large"
                                     >
-                                        Start Practicing Free
+                                        Start Practicing
                                         <svg className="button-arrow" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                                             <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14M12 5l7 7-7 7"/>
                                         </svg>
@@ -715,7 +715,7 @@ export default function HomePage() {
                             Ready to ace your next interview?
                         </motion.h2>
                         <motion.p variants={itemVariants} className="get-started-subtitle">
-                            Join thousands of students who've improved their interview skills with WiNG.it
+                            Join us to improve your interview skills with WiNG.it
                         </motion.p>
                         <motion.div variants={itemVariants} className="final-cta-container">
                             <Button 

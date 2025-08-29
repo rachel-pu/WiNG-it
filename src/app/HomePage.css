@@ -1,8 +1,8 @@
 /* // NAVIGATION BAR // */
 .navigation-bar {
   background-color: rgba(243, 241, 234, 0.95) !important;
-  backdrop-filter: blur(20px);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  /* backdrop-filter: blur(20px); */
+  /* border-bottom: 1px solid rgba(0, 0, 0, 0.1); */
   overflow: hidden;
   position: sticky !important;
   top: 0;
@@ -88,7 +88,7 @@
 }
 
 .element-1 {
-    top: 10%;
+    top: 0%;
     left: 15%;
     animation-delay: 0s;
 }
@@ -100,14 +100,14 @@
 }
 
 .element-3 {
-    bottom: 30%;
-    left: 10%;
+    bottom: -20%;
+    left: 20%;
     animation-delay: 4s;
 }
 
 @keyframes float {
     0%, 100% { transform: translateY(0px) rotate(0deg); }
-    50% { transform: translateY(-20px) rotate(5deg); }
+    50% { transform: translateY(-20px) rotate(15deg); }
 }
 
 /** ---------- description ---------- **/
@@ -266,7 +266,7 @@
 }
 
 .main-home-page-container .modern-card:hover {
-    box-shadow: 0 25px 80px rgba(40, 80, 217, 0.25) !important;
+    box-shadow: 0 25px 80px rgba(40, 80, 217, 0.15) !important;
     transform: translateY(-4px);
 }
 
@@ -292,15 +292,15 @@
 }
 
 .orange-gradient {
-    background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 50%, #fecfef 100%);
+    background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
 }
 
 .blue-gradient {
-    background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+    background: linear-gradient(135deg, #a8c7ed 0%, #c0e7c2 100%);
 }
 
 .green-gradient {
-    background: linear-gradient(135deg, #d299c2 0%, #fef9d7 100%);
+    background: linear-gradient(135deg, #99d2a8 0%, #e4dfc3 100%);
 }
 
 .main-home-page-card-feature-title{
