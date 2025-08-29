@@ -3,7 +3,6 @@ import "./QuickstartPage.css";
 import Toolbar from "@mui/material/Toolbar";
 import React, {useRef, useState, useEffect} from "react";
 import Box from "@mui/material/Box";
-import {SignedIn} from "@clerk/nextjs";
 import {Autocomplete, Button, FormControlLabel, FormLabel, Radio, RadioGroup, Switch, Typography} from "@mui/material";
 import InstructionsStepComponent from "../../(components)/InstructionsStepComponent.jsx";
 import {motion} from "framer-motion";
@@ -100,9 +99,7 @@ const QuickstartPage = ({
         },
     });
     return (
-        <SignedIn>
-
-            {/* --------- main content --------- */}
+// {/* --------- main content --------- */}
             <Box
                 component="main"
                 className="quickstart-main"
@@ -294,7 +291,6 @@ const QuickstartPage = ({
                     </Button>
                 </motion.div>
             </Box>
-        </SignedIn>
     );
 }
 

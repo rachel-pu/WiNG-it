@@ -2,7 +2,6 @@
 // import InterviewQuestions from "../../../../components/InterviewQuestions";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
-import { SignedIn } from "@clerk/nextjs";
 import CssBaseline from "@mui/material/CssBaseline";
 import MainAppBar from "../../../../components/MainAppBar";
 import LeftNavbar from "../../../../components/LeftNavbar";
@@ -75,7 +74,6 @@ export default function BehavioralInterviewSimulation() {
 
 
   return (
-      <SignedIn>
         <Box sx={{ display: "flex" }}>
         <CssBaseline />
         <Page_Template title="Behavioral Interview Simulation" color="#2850d9">
@@ -120,6 +118,5 @@ export default function BehavioralInterviewSimulation() {
                   )}
             </Page_Template>  
         </Box>
-    </SignedIn>
   );
 }

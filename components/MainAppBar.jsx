@@ -1,6 +1,5 @@
 import React from 'react';
 import { AppBar, Toolbar, Typography, Box } from '@mui/material';
-import { UserButton } from '@clerk/nextjs';
 
 const drawerWidth = 240;
 const collapsedWidth = 72;
@@ -39,11 +38,6 @@ const MainAppBar = ({ title, color }) => (
                 >
                     {title}
                 </Typography>
-                <UserButton appearance={{
-                    variables: {
-                        fontFamily: 'DM Sans',
-                    }
-                }} />
             </Box>
         </Toolbar>
     </AppBar>
