@@ -218,7 +218,7 @@ export default function HomePage() {
                             </Button>
                             <Button 
                                 color='inherit' 
-                                href='/sign-up' 
+                                href='/dashboard' 
                                 sx={{
                                     fontSize: '1.05rem', 
                                     fontFamily: 'Satoshi Bold', 
@@ -308,7 +308,7 @@ export default function HomePage() {
                             >
                                 <motion.div variants={itemVariants}>
                                     <Button
-                                        href="/sign-up"
+                                        href="/dashboard"
                                         className="primary-cta-button"
                                         size="large"
                                     >
@@ -720,7 +720,7 @@ export default function HomePage() {
                         <motion.div variants={itemVariants} className="final-cta-container">
                             <Button 
                                 color='inherit' 
-                                href='/sign-up'
+                                href='/dashboard'
                                 className="final-cta-button"
                                 size="large"
                             >
