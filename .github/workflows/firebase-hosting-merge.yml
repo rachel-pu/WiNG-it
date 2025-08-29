@@ -20,11 +20,8 @@ jobs:
 
       # 3. Install dependencies
       - name: Install dependencies
-        run: npm install
-
-      - name: Install yarn dependencies
-        run: yarn install
-
+        run: npm ci
+        
       # 4. Build the Next.js app
       - name: Build Next.js app
         run: npm run build
