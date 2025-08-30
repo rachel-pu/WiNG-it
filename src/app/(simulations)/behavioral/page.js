@@ -13,7 +13,7 @@ import Typography from "@mui/material/Typography";
 import QuickstartPage from "@/app/(simulations)/behavioral/(components)/QuickstartPage";
 import BehavioralSimulationPage from "@/app/(simulations)/behavioral/(components)/BehavioralSimulationPage";
 import {CircularProgress} from "@mui/material";
-import Page_Template from "../../DefaultAppLayout";
+import DefaultAppLayout from "../../DefaultAppLayout";
 
 export default function BehavioralInterviewSimulation() {
     const [questions, setQuestions] = useState([]);
@@ -76,7 +76,7 @@ export default function BehavioralInterviewSimulation() {
   return (
         <Box sx={{ display: "flex" }}>
         <CssBaseline />
-        <Page_Template title="Behavioral Interview Simulation" color="#2850d9">
+        <DefaultAppLayout title="Behavioral Interview Simulation" color="#2850d9">
 
 
               {/* --------- main content --------- */}
@@ -116,7 +116,7 @@ export default function BehavioralInterviewSimulation() {
                           </Box>
                       </Box>
                   )}
-            </Page_Template>  
+            </DefaultAppLayout>  
         </Box>
   );
 }
