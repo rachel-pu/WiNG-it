@@ -1,13 +1,14 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import MainAppBar from "../../components/MainAppBar";
 import LeftNavbar from "../../components/LeftNavbar";
 import { useTheme, useMediaQuery } from '@mui/material';
 
 const DefaultAppLayout = ({ title, color, children }) => {
   const theme = useTheme();
-  const isXs = useMediaQuery(theme.breakpoints.down('sm'));
-  const isSm = useMediaQuery(theme.breakpoints.between('sm', 'md'));
-  const isMdUp = useMediaQuery(theme.breakpoints.up('md'));
+  const isXs = useMediaQuery(theme.breakpoints.down('sm') , { noSsr: true });
+  const isSm = useMediaQuery(theme.breakpoints.between('sm', 'md') , { noSsr: true });
+  const isMdUp = useMediaQuery(theme.breakpoints.up('md') , { noSsr: true });
+  const [ready, setReady] = useState(false);
 
   // Match these with your LeftNavbar widths
   const drawerWidth = 240;
@@ -19,7 +20,19 @@ const DefaultAppLayout = ({ title, color, children }) => {
   else if (isSm) marginLeft = collapsedWidth;
   else if (isMdUp) marginLeft = drawerWidth;
 
-  return (
+  useEffect(() => {
+    setReady(true);
+  }, []);
+
+  if (!ready) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        {/* You can replace with a spinner or skeleton loader */}
+      </div>
+    );
+  }
+
+  return (  
     <div className="flex flex-col min-h-screen">
       {/* Top Navbar */}
       <MainAppBar title={title} color={color} />
