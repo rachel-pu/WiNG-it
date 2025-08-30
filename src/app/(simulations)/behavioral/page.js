@@ -28,7 +28,7 @@ export default function BehavioralInterviewSimulation() {
 
     const fetchQuestions = async () => {
         try {
-            const response = await fetch('http://127.0.0.1:5000/generate_questions', {
+            const response = await fetch('https://wing-it-un4w.onrender.com/generate_questions', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

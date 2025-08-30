@@ -48,7 +48,7 @@
 //             console.log("Fetching results for session:", sessionId);
 //
 //             const response = await fetch(
-//                 `http://127.0.0.1:5000/get-all-responses/${sessionId}`
+//                 `https://wing-it-un4w.onrender.com/get-all-responses/${sessionId}`
 //             );
 //             const data = await response.json();
 //             console.log("fetched data:", data); // Debugging
