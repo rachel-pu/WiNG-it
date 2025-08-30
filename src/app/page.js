@@ -642,7 +642,7 @@ export default function HomePage() {
                                     lineHeight: '1.5'
                                 }}
                             >
-                                We're ambitious with expanding WiNG.it. Our goals?
+                                We&apos;re ambitious with expanding WiNG.it. Our goals?
                             </p>
 
                             {/* Feature highlights */}
