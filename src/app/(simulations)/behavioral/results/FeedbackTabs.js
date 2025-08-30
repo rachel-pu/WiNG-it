@@ -17,7 +17,7 @@ export const getTranscriptContentForQuestion = async (questionNumber, sessionId)
     console.log(`Fetching transcript for session ${sessionId}${questionNumber ? `, question ${questionNumber}` : ''}`);
 
     // Fetch responses from backend using sessionId
-    const response = await fetch(`http://127.0.0.1:5000/get-all-responses/${sessionId}`);
+    const response = await fetch(`https://wing-it-un4w.onrender.com/get-all-responses/${sessionId}`);
 
     if (!response.ok) {
       throw new Error(`Failed to fetch interview results: ${response.status}`);
