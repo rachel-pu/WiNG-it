@@ -679,7 +679,8 @@ export default function HomePage() {
                                             color: 'white',
                                             fontWeight: '600',
                                             fontSize: '0.9rem',
-                                            marginBottom: '0.3rem'
+                                            marginBottom: '0.3rem',
+                                            fontFamily: 'DM Sans'
                                         }}
                                     >
                                         Networking
@@ -688,7 +689,8 @@ export default function HomePage() {
                                         style={{
                                             color: 'rgba(255, 255, 255, 0.8)',
                                             fontSize: '0.75rem',
-                                            lineHeight: '1.3'
+                                            lineHeight: '1.3',
+                                            fontFamily: 'DM Sans'
                                         }}
                                     >
                                         Practice connecting
@@ -717,7 +719,8 @@ export default function HomePage() {
                                             color: 'white',
                                             fontWeight: '600',
                                             fontSize: '0.9rem',
-                                            marginBottom: '0.3rem'
+                                            marginBottom: '0.3rem',
+                                            fontFamily: 'DM Sans'
                                         }}
                                     >
                                         Smarter Feedback
@@ -726,7 +729,8 @@ export default function HomePage() {
                                         style={{
                                             color: 'rgba(255, 255, 255, 0.8)',
                                             fontSize: '0.75rem',
-                                            lineHeight: '1.3'
+                                            lineHeight: '1.3',
+                                            fontFamily: 'DM Sans'
                                         }}
                                     >
                                         Deeper insights
@@ -755,7 +759,8 @@ export default function HomePage() {
                                             color: 'white',
                                             fontWeight: '600',
                                             fontSize: '0.9rem',
-                                            marginBottom: '0.3rem'
+                                            marginBottom: '0.3rem',
+                                            fontFamily: 'DM Sans'
                                         }}
                                     >
                                        New Tools
@@ -764,7 +769,8 @@ export default function HomePage() {
                                         style={{
                                             color: 'rgba(255, 255, 255, 0.8)',
                                             fontSize: '0.75rem',
-                                            lineHeight: '1.3'
+                                            lineHeight: '1.3',
+                                             fontFamily: 'DM Sans'
                                         }}
                                     >
                                         Expand your career prep
