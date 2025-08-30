@@ -12,7 +12,7 @@ export default function InterviewQuestions() {
   const fetchQuestions = async () => {
     setLoading(true);
     try {
-      const response = await fetch("http://127.0.0.1:5000/generate_questions", {
+      const response = await fetch("https://wing-it-un4w.onrender.com/generate_questions", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ job_role: jobRole }),
@@ -35,7 +35,7 @@ export default function InterviewQuestions() {
 
   const handleQuestionClick = async (question) => {
     try {
-      const response = await fetch("http://127.0.0.1:5000/text-to-speech", {
+      const response = await fetch("https://wing-it-un4w.onrender.com/text-to-speech", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ text: question }),
