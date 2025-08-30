@@ -9,7 +9,7 @@ import Toolbar from "@mui/material/Toolbar";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import { getTranscriptContentForQuestion } from "./FeedbackTabs";
-
+import DefaultAppLayout from "../../../DefaultAppLayout";
 export default function InterviewResults() {
     const [selectedTab, setSelectedTab] = useState(null);
     const [questionNumber, setQuestionNumber] = useState(null);
@@ -349,21 +349,21 @@ export default function InterviewResults() {
         return (
             <Box sx={{ display: "flex" }}>
                 <CssBaseline />
-                <MainAppBar title="Interview Results" />
-                <LeftNavbar />
-                <Box component="main" sx={{ flexGrow: 1, bgcolor: "background.default", p: 3 }}>
-                    <Toolbar />
-                    <Box sx={{ textAlign: "center", mt: 4 }}>
-                        <Typography variant="h6" color="error">
-                            No session ID found. Please complete an interview first.
-                        </Typography>
-                        <Link href="/behavioral" style={{ textDecoration: 'none' }}>
-                            <Typography variant="body1" sx={{ mt: 2, color: 'primary.main' }}>
-                                Start a new interview
+                <DefaultAppLayout title="Behavioral Interview Simulation" color="#2850d9">
+                    <Box component="main" sx={{ flexGrow: 1, bgcolor: "background.default", p: 3 }}>
+                        <Toolbar />
+                        <Box sx={{ textAlign: "center", mt: 4 }}>
+                            <Typography variant="h6" color="error">
+                                No session ID found. Please complete an interview first.
                             </Typography>
-                        </Link>
+                            <Link href="/behavioral" style={{ textDecoration: 'none' }}>
+                                <Typography variant="body1" sx={{ mt: 2, color: 'primary.main' }}>
+                                    Start a new interview
+                                </Typography>
+                            </Link>
+                        </Box>
                     </Box>
-                </Box>
+                </DefaultAppLayout>
             </Box>
         );
     }
@@ -372,21 +372,21 @@ export default function InterviewResults() {
         return (
             <Box sx={{ display: "flex" }}>
                 <CssBaseline />
-                <MainAppBar title="Interview Results" />
-                <LeftNavbar />
-                <Box component="main" sx={{ flexGrow: 1, bgcolor: "background.default", p: 3 }}>
-                    <Toolbar />
-                    <Box sx={{ textAlign: "center", mt: 4 }}>
-                        <Typography variant="h6" color="error">
-                            {error}
-                        </Typography>
-                        <Link href="/behavioral" style={{ textDecoration: 'none' }}>
-                            <Typography variant="body1" sx={{ mt: 2, color: 'primary.main' }}>
-                                Try again
+                <DefaultAppLayout title="Behavioral Interview Simulation" color="#2850d9">
+                    <Box component="main" sx={{ flexGrow: 1, bgcolor: "background.default", p: 3 }}>
+                        <Toolbar />
+                        <Box sx={{ textAlign: "center", mt: 4 }}>
+                            <Typography variant="h6" color="error">
+                                {error}
                             </Typography>
-                        </Link>
+                            <Link href="/behavioral" style={{ textDecoration: 'none' }}>
+                                <Typography variant="body1" sx={{ mt: 2, color: 'primary.main' }}>
+                                    Try again
+                                </Typography>
+                            </Link>
+                        </Box>
                     </Box>
-                </Box>
+                </DefaultAppLayout>
             </Box>
         );
     }
@@ -394,117 +394,117 @@ export default function InterviewResults() {
     return (
         <Box sx={{ display: "flex" }}>
             <CssBaseline />
-            <MainAppBar title="Interview Results" />
-            <LeftNavbar />
-            <Box component="main" sx={{ flexGrow: 1, bgcolor: "background.default" }}>
-                <Toolbar />
-                <div className="min-h-screen bg-gradient-to-br from-colorFAF8F1 via-white to-colorF3F1EB p-6">
-                    <div className="max-w-7xl mx-auto">
-                        {/* Header */}
-                        <div className="text-center mb-8">
-                            <h1 className="text-4xl font-bold text-color282523 mb-4">
-                                Your Interview Results
-                            </h1>
-                            <p className="text-xl text-color282523/80">
-                                Review your performance and get personalized feedback
-                            </p>
-                        </div>
-
-                        {isLoading ? (
-                            <div className="flex justify-center items-center h-64">
-                                <CircularProgress size={60} />
+            <DefaultAppLayout title="Behavioral Interview Simulation" color="#2850d9">
+                <Box component="main" sx={{ flexGrow: 1, bgcolor: "background.default" }}>
+                    <Toolbar />
+                    <div className="min-h-screen bg-gradient-to-br from-colorFAF8F1 via-white to-colorF3F1EB p-6">
+                        <div className="max-w-7xl mx-auto">
+                            {/* Header */}
+                            <div className="text-center mb-8">
+                                <h1 className="text-4xl font-bold text-color282523 mb-4">
+                                    Your Interview Results
+                                </h1>
+                                <p className="text-xl text-color282523/80">
+                                    Review your performance and get personalized feedback
+                                </p>
                             </div>
-                        ) : (
-                            <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-                                {/* Left Panel - Question Navigation */}
-                                <div className="lg:col-span-1">
-                                    <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg">
-                                        <h3 className="text-xl font-bold text-color282523 mb-4">
-                                            Questions
-                                        </h3>
-                                        <div className="space-y-3">
-                                            <button
-                                                className={`
-                                                    rounded-2xl bg-gradient-to-r w-full font-satoshi shadow-[0_6px_#1d3557]
-                                                    text-lg px-4 py-3 transition-all duration-150
-                                                    ${questionNumber === null ? 
-                                                        'from-green-500 to-green-600 text-white shadow-lg' : 
-                                                        'from-color6BAEDB to-colorACD9DB text-color282523'
-                                                    }
-                                                    hover:from-color307999 hover:to-color6EAFCC 
-                                                    active:shadow-[0_3px_#1d3557] active:translate-y-1 focus:outline-none
-                                                `}
-                                                onClick={handleViewAllQuestions}
-                                            >
-                                                All Questions
-                                            </button>
-                                            {questions.map((q) => (
-                                                <QuestionButton
-                                                    key={q.number}
-                                                    number={q.number}
-                                                    text={q.text}
-                                                />
-                                            ))}
-                                        </div>
-                                    </div>
-                                </div>
 
-                                {/* Right Panel - Content */}
-                                <div className="lg:col-span-3">
-                                    <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg overflow-hidden">
-                                        {/* Tab Navigation */}
-                                        <div className="flex border-b border-gray-200">
-                                            {tabs.map((tab, index) => (
+                            {isLoading ? (
+                                <div className="flex justify-center items-center h-64">
+                                    <CircularProgress size={60} />
+                                </div>
+                            ) : (
+                                <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+                                    {/* Left Panel - Question Navigation */}
+                                    <div className="lg:col-span-1">
+                                        <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg">
+                                            <h3 className="text-xl font-bold text-color282523 mb-4">
+                                                Questions
+                                            </h3>
+                                            <div className="space-y-3">
                                                 <button
-                                                    key={index}
                                                     className={`
-                                                        flex items-center space-x-2 px-6 py-4 text-lg font-medium transition-all duration-200
-                                                        ${selectedTab?.label === tab.label
-                                                            ? 'bg-gradient-to-r from-color6BAEDB to-colorACD9DB text-color282523 border-b-2 border-color282523'
-                                                            : 'text-color282523/70 hover:text-color282523 hover:bg-gray-50'
+                                                        rounded-2xl bg-gradient-to-r w-full font-satoshi shadow-[0_6px_#1d3557]
+                                                        text-lg px-4 py-3 transition-all duration-150
+                                                        ${questionNumber === null ? 
+                                                            'from-green-500 to-green-600 text-white shadow-lg' : 
+                                                            'from-color6BAEDB to-colorACD9DB text-color282523'
                                                         }
+                                                        hover:from-color307999 hover:to-color6EAFCC 
+                                                        active:shadow-[0_3px_#1d3557] active:translate-y-1 focus:outline-none
                                                     `}
-                                                    onClick={() => setSelectedTab(tab)}
+                                                    onClick={handleViewAllQuestions}
                                                 >
-                                                    <span className="text-xl">{tab.icon}</span>
-                                                    <span>{tab.label}</span>
+                                                    All Questions
                                                 </button>
-                                            ))}
-                                        </div>
-
-                                        {/* Tab Content */}
-                                        <div className="p-6">
-                                            <AnimatePresence mode="wait">
-                                                {selectedTab && (
-                                                    <motion.div
-                                                        key={selectedTab.label}
-                                                        initial={{ opacity: 0, y: 20 }}
-                                                        animate={{ opacity: 1, y: 0 }}
-                                                        exit={{ opacity: 0, y: -20 }}
-                                                        transition={{ duration: 0.2 }}
-                                                        dangerouslySetInnerHTML={{
-                                                            __html: selectedTab.content
-                                                        }}
+                                                {questions.map((q) => (
+                                                    <QuestionButton
+                                                        key={q.number}
+                                                        number={q.number}
+                                                        text={q.text}
                                                     />
-                                                )}
-                                            </AnimatePresence>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Right Panel - Content */}
+                                    <div className="lg:col-span-3">
+                                        <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg overflow-hidden">
+                                            {/* Tab Navigation */}
+                                            <div className="flex border-b border-gray-200">
+                                                {tabs.map((tab, index) => (
+                                                    <button
+                                                        key={index}
+                                                        className={`
+                                                            flex items-center space-x-2 px-6 py-4 text-lg font-medium transition-all duration-200
+                                                            ${selectedTab?.label === tab.label
+                                                                ? 'bg-gradient-to-r from-color6BAEDB to-colorACD9DB text-color282523 border-b-2 border-color282523'
+                                                                : 'text-color282523/70 hover:text-color282523 hover:bg-gray-50'
+                                                            }
+                                                        `}
+                                                        onClick={() => setSelectedTab(tab)}
+                                                    >
+                                                        <span className="text-xl">{tab.icon}</span>
+                                                        <span>{tab.label}</span>
+                                                    </button>
+                                                ))}
+                                            </div>
+
+                                            {/* Tab Content */}
+                                            <div className="p-6">
+                                                <AnimatePresence mode="wait">
+                                                    {selectedTab && (
+                                                        <motion.div
+                                                            key={selectedTab.label}
+                                                            initial={{ opacity: 0, y: 20 }}
+                                                            animate={{ opacity: 1, y: 0 }}
+                                                            exit={{ opacity: 0, y: -20 }}
+                                                            transition={{ duration: 0.2 }}
+                                                            dangerouslySetInnerHTML={{
+                                                                __html: selectedTab.content
+                                                            }}
+                                                        />
+                                                    )}
+                                                </AnimatePresence>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        )}
+                            )}
 
-                        {/* Action Buttons */}
-                        <div className="flex justify-center mt-8 space-x-4">
-                            <Link href="/behavioral" className="no-underline">
-                                <button className="bg-gradient-to-r from-color6BAEDB to-colorACD9DB text-color282523 px-8 py-3 rounded-full font-semibold shadow-lg hover:from-color307999 hover:to-color6EAFCC transition-all duration-200 transform hover:scale-105">
-                                    Take Another Interview
-                                </button>
-                            </Link>
+                            {/* Action Buttons */}
+                            <div className="flex justify-center mt-8 space-x-4">
+                                <Link href="/behavioral" className="no-underline">
+                                    <button className="bg-gradient-to-r from-color6BAEDB to-colorACD9DB text-color282523 px-8 py-3 rounded-full font-semibold shadow-lg hover:from-color307999 hover:to-color6EAFCC transition-all duration-200 transform hover:scale-105">
+                                        Take Another Interview
+                                    </button>
+                                </Link>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </Box>
+                </Box>
+            </DefaultAppLayout>
         </Box>
     );
 }
