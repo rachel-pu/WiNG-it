@@ -29,13 +29,10 @@ const navItems = [
 ];
 
 const LeftNavbar = () => {
-    const [mobileOpen, setMobileOpen] = useState(false);
     const [drawerWidthXs, setDrawerWidthXs] = useState(0);
     const toggleDrawerXs = () => {
         setDrawerWidthXs(prev => (prev === 0 ? collapsedWidth : 0));
     };
-    const toggleDrawer = () => setMobileOpen(!mobileOpen);
-
     const drawerContent = (hideText = false) => (
     <>
       <Toolbar>
@@ -66,12 +63,12 @@ const LeftNavbar = () => {
                 justifyContent: { xs: 'center', sm: 'center', md: 'flex-start' },
               }}
             >
-              <ListItemIcon sx={{ minWidth: { xs: 0, md: 40 }, justifyContent: 'center' }}>
+              <ListItemIcon sx={{ minWidth: { xs: 0, sm: 0, md: 40 }, justifyContent: 'center' }}>
                 {icon}
               </ListItemIcon>
               <ListItemText
                 primary={text}
-                sx={{ display: { xs: 'none', md: 'block' } }}
+                sx={{ display: { xs: 'none', sm: "none", md: 'block' } }}
                 primaryTypographyProps={{ fontFamily: 'Satoshi Bold' }}
               />
             </ListItemButton>
@@ -79,7 +76,7 @@ const LeftNavbar = () => {
         ))}
       </List>
       <Divider />
-      <Box sx={{ padding: 3, textAlign: 'center', display: { xs: 'none', md: 'block' } }}>
+      <Box sx={{ padding: 3, textAlign: 'center', display: { xs: 'none', sm: "none", md: 'block' } }}>
         <Typography variant="caption" sx={{ fontFamily: 'Satoshi Medium' }}>
           © 2024-2025 WiNG.it
         </Typography>
@@ -110,39 +107,22 @@ const LeftNavbar = () => {
         <MenuIcon />
     </IconButton>
 
-    {/* <Drawer
-        variant="permanent"
-        open={mobileOpen}
-        onClose={toggleDrawer}
-        ModalProps={{ keepMounted: true }}
-        sx={{
-            width: { xs: 0, sm: collapsedWidth, md: drawerWidth },
-            flexShrink: 0,
-            "& .MuiDrawer-paper": {
-            width: { xs: 0, sm: collapsedWidth, md: drawerWidth },
-            boxSizing: "border-box",
-            },
-        }}
-    >
-        {drawerContent}
-      </Drawer> */}
-      {/* Drawer for xs screens, toggles width between 0 and collapsedWidth */}
       <Drawer
-        variant="permanent"
+        variant="temporary"
+        open={drawerWidthXs > 0}
+        onClose={toggleDrawerXs}
+        ModalProps={{
+          keepMounted: true, 
+        }}
         sx={{
-          width: drawerWidthXs,
-          flexShrink: 0,
-          transition: 'width 0.3s ease',
           display: { xs: 'block', md: 'none' },
           '& .MuiDrawer-paper': {
-            width: drawerWidthXs,
+            width: collapsedWidth,
             boxSizing: 'border-box',
-            overflowX: 'hidden',
-            transition: 'width 0.3s ease',
           },
         }}
       >
-        {drawerContent(true)} {/* hideText = true */}
+        {drawerContent(true)}
       </Drawer>
 
       {/* Permanent drawer for sm+ screens */}
@@ -152,7 +132,7 @@ const LeftNavbar = () => {
           display: { xs: 'none', md: 'block' },
           '& .MuiDrawer-paper': {
             boxSizing: 'border-box',
-            width: { sm: collapsedWidth, md: drawerWidth },
+            width: {sm: collapsedWidth, md: drawerWidth },
             transition: 'width 0.3s',
           },
         }}
