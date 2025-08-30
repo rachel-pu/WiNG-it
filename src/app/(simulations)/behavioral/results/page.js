@@ -1,451 +1,741 @@
-// "use client";
-//
-// import CssBaseline from "@mui/material/CssBaseline";
-// import MainAppBar from "../../../../../components/MainAppBar";
-// import LeftNavbar from "../../../../../components/LeftNavbar";
-// import React, { useEffect, useState } from "react";
-// import { SignedIn } from "@clerk/nextjs";
-// import { Box, Typography, CircularProgress } from "@mui/material";
-// import Toolbar from "@mui/material/Toolbar";
-// import Link from "next/link";
-// import { AnimatePresence, motion } from "framer-motion";
-// import { useSearchParams } from "next/navigation";
-// import { getTranscriptContentForQuestion } from "./FeedbackTabs";
-//
-// export default function InterviewResults() {
-//     const [selectedTab, setSelectedTab] = useState(null);
-//     const [questionNumber, setQuestionNumber] = useState(null);
-//     const [questions, setQuestions] = useState([]);
-//     const [isLoading, setIsLoading] = useState(true);
-//     const [error, setError] = useState(null);
-//     const [interviewData, setInterviewData] = useState(null);
-//     const [tabs, setTabs] = useState([
-//         {
-//             icon: "📊",
-//             label: "Statistics",
-//             content: "<div class='text-left'><p>Interview analytics will appear here</p></div>"
-//         },
-//         {
-//             icon: "💡",
-//             label: "Advice",
-//             content: "<div class='text-left'><p>Personalized feedback will appear here</p></div>"
-//         },
-//         {
-//             icon: "📜",
-//             label: "Transcript",
-//             content: "<div class='text-left'><p>Loading your interview transcript...</p></div>"
-//         }
-//     ]);
-//
-//     const searchParams = useSearchParams();
-//     // Try to get from URL first, then fallback to sessionStorage
-//     const sessionId = searchParams.get('sessionId') || sessionStorage.getItem("interviewSessionId");
-//
-//     // Fetch interview results from backend
-//     const fetchInterviewResults = async () => {
-//         try {
-//             if (!sessionId) throw new Error('No session ID provided');
-//             console.log("Fetching results for session:", sessionId);
-//
-//             const response = await fetch(
-//                 `https://wing-it-un4w.onrender.com/get-all-responses/${sessionId}`
-//             );
-//             const data = await response.json();
-//             console.log("fetched data:", data); // Debugging
-//
-//             if (!response.ok) throw new Error('Failed to fetch results');
-//             return data;
-//         } catch (err) {
-//             console.error("Fetch error:", err);
-//             setError(err.message);
-//             return null;
-//         }
-//     };
-//
-//     // Update transcript tab content
-//     const updateTranscriptTab = async (specificQuestion = null) => {
-//         try {
-//             setIsLoading(true);
-//             const result = await getTranscriptContentForQuestion(
-//                 specificQuestion,
-//                 sessionId
-//             );
-//
-//             // Update the transcript tab with new content
-//             setTabs(currentTabs =>
-//                 currentTabs.map(tab =>
-//                     tab.label === "Transcript"
-//                         ? { ...tab, content: result.html }
-//                         : tab
-//                 )
-//             );
-//
-//             setIsLoading(false);
-//             return result;
-//         } catch (err) {
-//             console.error("Error updating transcript tab:", err);
-//             setIsLoading(false);
-//             return { html: "<p>Error loading transcript data</p>", data: null };
-//         }
-//     };
-//
-//     // Update statistics tab with filler word analytics
-//     const updateStatisticsTab = (responses) => {
-//         if (!responses || Object.keys(responses).length === 0) {
-//             return;
-//         }
-//
-//         // Collect all filler words
-//         let allFillerWords = [];
-//         let fillerWordsPerQuestion = {};
-//         let totalWords = 0;
-//         let totalResponseLength = 0;
-//
-//         Object.entries(responses).forEach(([questionNum, response]) => {
-//             const fillerWords = response.filler_words || [];
-//             allFillerWords = [...allFillerWords, ...fillerWords];
-//
-//             // Count words in transcript
-//             const wordCount = response.transcript ? response.transcript.split(/\s+/).length : 0;
-//             totalWords += wordCount;
-//             totalResponseLength += response.transcript ? response.transcript.length : 0;
-//
-//             fillerWordsPerQuestion[questionNum] = fillerWords.length;
-//         });
-//
-//         // Calculate statistics
-//         const totalFillerWords = allFillerWords.length;
-//         const fillerWordPercentage = totalWords ? ((totalFillerWords / totalWords) * 100).toFixed(1) : 0;
-//         const averageResponseLength = Object.keys(responses).length ?
-//             (totalResponseLength / Object.keys(responses).length).toFixed(0) : 0;
-//
-//         // Common filler words distribution
-//         const fillerWordCounts = {};
-//         allFillerWords.forEach(word => {
-//             fillerWordCounts[word] = (fillerWordCounts[word] || 0) + 1;
-//         });
-//
-//         // Sort by frequency
-//         const sortedFillerWords = Object.entries(fillerWordCounts)
-//             .sort((a, b) => b[1] - a[1])
-//             .slice(0, 5); // Top 5
-//
-//         const statsContent = `
-//             <div class='text-left'>
-//                 <h3 class="text-2xl font-bold mb-4">Interview Statistics</h3>
-//
-//                 <div class="mb-6">
-//                     <p class="text-xl font-semibold mb-2">Overall</p>
-//                     <p><strong>Total questions answered:</strong> ${Object.keys(responses).length}</p>
-//                     <p><strong>Average response length:</strong> ~${averageResponseLength} characters</p>
-//                     <p><strong>Total filler words used:</strong> ${totalFillerWords} (${fillerWordPercentage}% of your speech)</p>
-//                 </div>
-//
-//                 ${sortedFillerWords.length > 0 ? `
-//                 <div class="mb-6">
-//                     <p class="text-xl font-semibold mb-2">Top Filler Words</p>
-//                     <ul class="list-disc pl-5">
-//                         ${sortedFillerWords.map(([word, count]) =>
-//                             `<li><strong>${word}:</strong> ${count} times</li>`
-//                         ).join('')}
-//                     </ul>
-//                 </div>
-//                 ` : ''}
-//
-//                 <div class="mb-6">
-//                     <p class="text-xl font-semibold mb-2">Filler Words By Question</p>
-//                     <ul class="list-disc pl-5">
-//                         ${Object.entries(fillerWordsPerQuestion).map(([questionNum, count]) =>
-//                             `<li><strong>Question ${questionNum}:</strong> ${count} filler words</li>`
-//                         ).join('')}
-//                     </ul>
-//                 </div>
-//             </div>
-//         `;
-//
-//         // Update the statistics tab
-//         setTabs(currentTabs =>
-//             currentTabs.map(tab =>
-//                 tab.label === "Statistics"
-//                     ? { ...tab, content: statsContent }
-//                     : tab
-//             )
-//         );
-//     };
-//
-//     // Generate feedback for the Advice tab
-//     const generateAdviceTab = (responses) => {
-//         if (!responses || Object.keys(responses).length === 0) {
-//             return;
-//         }
-//
-//         const adviceContent = `
-//             <div class='text-left'>
-//                 <h3 class="text-2xl font-bold mb-4">Interview Feedback</h3>
-//
-//                 <div class="mb-6">
-//                     <p class="text-xl font-semibold mb-2">Communication Style</p>
-//                     <ul class="list-disc pl-5">
-//                         <li>Focus on reducing filler words like "um" and "uh" to sound more confident.</li>
-//                         <li>Try practicing the STAR method (Situation, Task, Action, Result) for structured responses.</li>
-//                         <li>Record yourself answering practice questions to become aware of speech patterns.</li>
-//                     </ul>
-//                 </div>
-//
-//                 <div class="mb-6">
-//                     <p class="text-xl font-semibold mb-2">Content Improvement</p>
-//                     <ul class="list-disc pl-5">
-//                         <li>Include specific metrics and outcomes when describing your achievements.</li>
-//                         <li>Keep your answers concise while still providing sufficient detail.</li>
-//                         <li>Practice transitioning smoothly between different parts of your answer.</li>
-//                     </ul>
-//                 </div>
-//
-//                 <div class="mb-6">
-//                     <p class="text-xl font-semibold mb-2">Next Steps</p>
-//                     <p>Schedule another practice interview focusing on the feedback above. Try to reduce filler words by at least 25% in your next session.</p>
-//                 </div>
-//             </div>
-//         `;
-//
-//         // Update the advice tab
-//         setTabs(currentTabs =>
-//             currentTabs.map(tab =>
-//                 tab.label === "Advice"
-//                     ? { ...tab, content: adviceContent }
-//                     : tab
-//             )
-//         );
-//     };
-//
-//     // Load data on mount
-//     useEffect(() => {
-//         const loadResults = async () => {
-//             setIsLoading(true);
-//
-//             if (!sessionId) {
-//                 setError("No session ID found. Please complete an interview first.");
-//                 setIsLoading(false);
-//                 return;
-//             }
-//
-//             // Log session ID to verify it's correctly passed
-//             console.log("Using session ID for results:", sessionId);
-//
-//             // Fetch all results
-//             const result = await fetchInterviewResults();
-//
-//             if (result && result.success && result.responses) {
-//                 setInterviewData(result);
-//
-//                 // Extract questions from the response data
-//                 const questionsList = Object.entries(result.responses).map(([num, response]) => ({
-//                     number: num,
-//                     text: response.question_text || `Question ${num}`
-//                 }));
-//
-//                 // Sort questions by number
-//                 questionsList.sort((a, b) => parseInt(a.number) - parseInt(b.number));
-//                 setQuestions(questionsList);
-//
-//                 console.log("Found questions:", questionsList.map(q => q.number));
-//
-//                 // Update all tabs with data
-//                 const transcriptResult = await updateTranscriptTab();
-//                 updateStatisticsTab(result.responses);
-//                 generateAdviceTab(result.responses);
-//
-//                 // Select transcript tab by default
-//                 setSelectedTab(tabs.find(tab => tab.label === "Transcript"));
-//                 setIsLoading(false);
-//             } else {
-//                 setError("No interview data found or error retrieving data");
-//                 setIsLoading(false);
-//             }
-//         };
-//
-//         loadResults();
-//     }, [sessionId]);
-//
-//     // Effect to initialize selectedTab after tabs are updated
-//     useEffect(() => {
-//         if (!selectedTab && tabs.length > 0) {
-//             setSelectedTab(tabs.find(tab => tab.label === "Transcript") || tabs[0]);
-//         }
-//     }, [tabs, selectedTab]);
-//
-//     // Handle question selection
-//     const handleQuestionSelect = async (number) => {
-//         setIsLoading(true);
-//         setQuestionNumber(number);
-//
-//         await updateTranscriptTab(number);
-//
-//         setIsLoading(false);
-//     };
-//
-//     // Handle "All Questions" button
-//     const handleViewAllQuestions = async () => {
-//         setIsLoading(true);
-//         setQuestionNumber(null);
-//         await updateTranscriptTab();
-//         setIsLoading(false);
-//     };
-//
-//     // Question button component
-//     const QuestionButton = ({ number, text }) => (
-//         <button
-//             className={`
-//                 rounded-2xl bg-gradient-to-r
-//                 ${questionNumber === number ? 'from-color307999 to-color6EAFCC' : 'from-color6BAEDB to-colorACD9DB'}
-//                 w-full text-color282523 font-satoshi font-bold shadow-[0_9px_#1d3557]
-//                 text-black text-xl px-6 py-4 hover:from-color307999
-//                 hover:to-color6EAFCC active:bg-color7DBE73
-//                 active:shadow-[0_5px_#1d3557] active:translate-y-1 focus:outline-none
-//             `}
-//             onClick={() => handleQuestionSelect(number)}
-//         >
-//             {`Question ${number}`}
-//         </button>
-//     );
-//
-//     return (
-//         <SignedIn>
-//             <Box sx={{ display: "flex" }}>
-//                 <CssBaseline />
-//                 <MainAppBar title="Behavioral Interview Simulation" color="#2850d9" />
-//                 <LeftNavbar />
-//
-//                 <Box component="main" sx={{ flexGrow: 1, bgcolor: '#F3F1EB', p: 4.5, height: '100vh', overflow: 'auto' }}>
-//                     <Toolbar />
-//                     <Box>
-//                         <Typography color={"black"} fontFamily={"Satoshi Bold"} fontSize={"1.7rem"}>
-//                             Interview Results Summary
-//                         </Typography>
-//                         <Typography color={"black"} fontFamily={"DM Sans"} fontSize={"1rem"}>
-//                             Review your interview performance and transcripts below.
-//                         </Typography>
-//                     </Box>
-//
-//                     <div className="flex flex-row justify-between w-full">
-//                         {/* Questions Panel */}
-//                         <Box className="w-[34%] pt-5 flex flex-col justify-between">
-//                             <div className="flex flex-col space-y-5">
-//                                 {isLoading && !questions.length ? (
-//                                     <div className="flex justify-center py-10">
-//                                         <CircularProgress />
-//                                     </div>
-//                                 ) : error && !questions.length ? (
-//                                     <div className="text-red-500 p-4 bg-white rounded-lg shadow">
-//                                         <p>{error}</p>
-//                                         <p className="mt-2">Try completing an interview first.</p>
-//                                     </div>
-//                                 ) : questions.length > 0 ? (
-//                                     <>
-//                                         <button
-//                                             className={`
-//                                                 rounded-2xl bg-gradient-to-r
-//                                                 ${!questionNumber ? 'from-color307999 to-color6EAFCC' : 'from-[#98D781] to-[#6BC26B]'}
-//                                                 w-full text-color282523 font-satoshi font-bold shadow-[0_9px_#1d3557]
-//                                                 text-black text-xl px-6 py-4 hover:from-color307999
-//                                                 hover:to-color6EAFCC active:bg-color7DBE73
-//                                                 active:shadow-[0_5px_#1d3557] active:translate-y-1 focus:outline-none
-//                                             `}
-//                                             onClick={handleViewAllQuestions}
-//                                         >
-//                                             All Questions
-//                                         </button>
-//                                         {questions.map(q => (
-//                                             <QuestionButton key={q.number} number={q.number} text={q.text} />
-//                                         ))}
-//                                     </>
-//                                 ) : (
-//                                     <div className="p-4 bg-white rounded-lg shadow">
-//                                         <p>No questions found. Try completing an interview first.</p>
-//                                     </div>
-//                                 )}
-//                             </div>
-//
-//                             <div className='group flex justify-center items-center mt-8'>
-//                                 <Link href='/dashboard' className="bg-gradient-to-r from-[#98D781] to-[#7A9BE2] text-2xl font-dm-sans tracking-tight bg-colorFAF8F1 text-color282523 py-2 px-6 rounded-full font-semibold shadow-lg flex items-center space-x-2 transition-transform duration-300 transform group-hover:scale-105 group-hover:-rotate-2">
-//                                     <span className='font-satoshi text-center text-2xl'>Dashboard</span>
-//                                     <svg className="w-7 h-7" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-//                                         <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h12M12 5l7 7-7 7" />
-//                                     </svg>
-//                                 </Link>
-//                             </div>
-//                         </Box>
-//
-//                         {/* Content Panel */}
-//                         <div className="w-[65%] flex flex-col space-y-3 pt-5">
-//                             <div className="p-5 pt-5 rounded-3xl" style={{backgroundColor: "#D9D7D1"}}>
-//                                 <h2 className="text-color282523 font-satoshi text-2xl">
-//                                     {questionNumber ? `Question ${questionNumber}` : "All Questions"}
-//                                 </h2>
-//
-//                                 <div className="w-120 h-200 rounded-2xl overflow-hidden shadow">
-//                                     <nav className="font-dm-sans text-color282523 tracking-tight rounded-t-xl" style={{textAlign: "center"}}>
-//                                         <ul className="flex w-full space-x-1.5">
-//                                             {tabs.map((item) => (
-//                                                 <li
-//                                                     key={item.label}
-//                                                     className={`flex-1 min-w-0 p-3 relative cursor-pointer rounded-t-xl justify-between items-center font-bold text-xl ${
-//                                                         selectedTab?.label === item.label
-//                                                             ? "bg-colorF3F1EA text-color6998C2"
-//                                                             : "bg-colorB0B0B0"
-//                                                     }`}
-//                                                     onClick={() => setSelectedTab(item)}
-//                                                 >
-//                                                     {`${item.icon} ${item.label}`}
-//                                                     {selectedTab?.label === item.label && (
-//                                                         <motion.div
-//                                                             className="absolute bottom-0 left-0 right-0 h-0.5 bg-colorB7B7B7"
-//                                                             layoutId="underline"
-//                                                         />
-//                                                     )}
-//                                                 </li>
-//                                             ))}
-//                                         </ul>
-//                                     </nav>
-//
-//                                     <main className="flex justify-center h-[600px] flex-grow text-base" style={{backgroundColor: "#F3F1EA"}}>
-//                                         <AnimatePresence mode="wait">
-//                                             {selectedTab && (
-//                                                 <motion.div
-//                                                     key={selectedTab.label}
-//                                                     initial={{ y: 10, opacity: 0 }}
-//                                                     animate={{ y: 0, opacity: 1 }}
-//                                                     exit={{ y: -10, opacity: 0 }}
-//                                                     transition={{ duration: 0.12 }}
-//                                                     className="overflow-y-auto w-full"
-//                                                 >
-//                                                     {isLoading ? (
-//                                                         <div className="flex justify-center items-center h-full">
-//                                                             <CircularProgress />
-//                                                         </div>
-//                                                     ) : error ? (
-//                                                         <div className="text-red-500 p-8">
-//                                                             Error: {error}
-//                                                         </div>
-//                                                     ) : (
-//                                                         <div
-//                                                             className="text-color282523 p-8 w-full"
-//                                                             style={{fontSize: "18px", fontFamily: "DM Sans"}}
-//                                                             dangerouslySetInnerHTML={{
-//                                                                 __html: selectedTab.content
-//                                                             }}
-//                                                         />
-//                                                     )}
-//                                                 </motion.div>
-//                                             )}
-//                                         </AnimatePresence>
-//                                     </main>
-//                                 </div>
-//                             </div>
-//                         </div>
-//                     </div>
-//                 </Box>
-//             </Box>
-//         </SignedIn>
-//     );
-// }
+import React from "react";
+import Image from "next/image";
+import {motion, inView, animate} from "framer-motion";
+import Box from '@mui/material/Box';
+import Grid from '@mui/material/Grid2';
+import {Typography} from "@mui/material";
+import Stack from '@mui/material/Stack';
+import {AppBar} from "@mui/material";
+import Toolbar from '@mui/material/Toolbar';
+import {Button} from "@mui/material";
+import { GiFluffyWing } from "react-icons/gi";
+import Card from '@mui/material/Card';
+import { FaPencilRuler } from "react-icons/fa";
+import { IoDocumentText } from "react-icons/io5";
+import { BiSolidMessageCheck } from "react-icons/bi";
+import { useEffect, useState } from 'react';
+import { Link } from 'react-scroll';
+import Menu from '@mui/material/Menu';
+import MenuIcon from '@mui/icons-material/Menu';
+import Container from '@mui/material/Container';
+import {IconButton, Paper} from "@mui/material";
+
+import "./HomePage.css";
+
+const pages = ['Why WiNG.it', 'About Us', 'Get Started'];
+export default function HomePage() {
+
+    const itemVariants = {
+        hidden: { opacity: 0, y: 20 },
+        visible: { opacity: 1, y: 0 },
+        transition: { type: "spring", damping: 20, stiffness: 300 },
+    };
+
+    const staggerContainer = {
+        hidden: { opacity: 0 },
+        visible: {
+            opacity: 1,
+            transition: {
+                staggerChildren: 0.1
+            }
+        }
+    };
+
+    const [anchorElNav, setAnchorElNav] = React.useState(null);
+
+    const handleOpenNavMenu = (event) => {
+        setAnchorElNav(event.currentTarget);
+    };
+
+    const handleCloseNavMenu = () => {
+        setAnchorElNav(null);
+    };
+
+    return (
+        <Box>
+            {/* ---------- nav bar ---------- */}
+            <AppBar position="static" className="navigation-bar">
+                <Container maxWidth="xl">
+                    <Toolbar disableGutters>
+                        {/* desktop logo / big viewport */}
+                        <Box sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }}>
+                            <GiFluffyWing color="#324FD1" size={25} />
+                        </Box>
+                        <Typography component='div' sx={{ fontSize: '1.75rem', flexGrow: 1, display:{xs:'none', md:'flex', fontFamily: 'Satoshi Black'}, color: 'black'}}>WiNG.it</Typography>
+
+                        {/* smaller viewport: hamburger icon */}
+                        <Box sx={{ display: { xs: 'flex', md: 'none' }, ml: 'auto' }}>
+                            <IconButton
+                                size="large"
+                                aria-label="open navigation menu"
+                                onClick={handleOpenNavMenu}
+                                color="black"
+                            >
+                                <MenuIcon />
+                            </IconButton>
+                            <Menu
+                                id="menu-appbar"
+                                anchorEl={anchorElNav}
+                                anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+                                keepMounted
+                                transformOrigin={{ vertical: 'top', horizontal: 'left' }}
+                                open={Boolean(anchorElNav)}
+                                onClose={handleCloseNavMenu}
+                                sx={{ display: { xs: 'block', md: 'none' } }}
+                            >
+                                {/* navigation bar drop down */}
+                                <Box
+                                    sx={{
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        rowGap: 1,
+                                        p: 1
+                                    }}
+                                >
+                                    <Button
+                                        color="inherit"
+                                        sx={{
+                                            fontSize: '1.05rem',
+                                            fontFamily: 'Satoshi Bold',
+                                            textTransform: 'none',
+                                            color: 'black',
+                                            letterSpacing: '-0.01px',
+                                            px: 2,
+                                        }}
+                                    >
+                                        <Link
+                                            activeClass="active"
+                                            to="why-wing-it"
+                                            offset={-50}
+                                            duration={500}
+                                            style={{
+                                                fontSize: '1.05rem',
+                                                fontFamily: 'Satoshi Medium',
+                                                textTransform: 'none',
+                                                color: 'black',
+                                                letterSpacing: '-0.01px',
+                                            }}
+                                        >
+                                            Why WiNG.it
+                                        </Link>
+                                    </Button>
+
+                                    <Button
+                                        color="inherit"
+                                        sx={{
+                                            fontSize: '1.05rem',
+                                            fontFamily: 'Satoshi Medium',
+                                            textTransform: 'none',
+                                            color: 'black',
+                                            letterSpacing: '-0.01px',
+                                            px: 2,
+                                        }}
+                                    >
+                                        <Link
+                                            activeClass="active"
+                                            to="about-us"
+                                            offset={-50}
+                                            duration={500}
+                                            style={{
+                                                fontSize: '1.05rem',
+                                                fontFamily: 'Satoshi Medium',
+                                                textTransform: 'none',
+                                                color: 'black',
+                                                letterSpacing: '-0.01px',
+                                            }}
+                                        >
+                                            About Us
+                                        </Link>
+                                    </Button>
+
+                                    <Button
+                                        color="inherit"
+                                        href="/dashboard"
+                                        sx={{
+                                            fontSize: '1.05rem',
+                                            fontFamily: 'Satoshi Medium',
+                                            textTransform: 'none',
+                                            background: 'linear-gradient(135deg, #2850d9 0%, #667eea 100%)',
+                                            px: 2.5,
+                                            borderRadius: '12px',
+                                            color: 'white',
+                                            letterSpacing: '-0.01px',
+                                            transition: 'transform 0.3s',
+                                        }}
+                                    >
+                                        Get Started
+                                    </Button>
+                                </Box>
+                            </Menu>
+                        </Box>
+
+                        {/* mobile logo / small viewport */}
+                        <Box sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }}>
+                            <GiFluffyWing color="#324FD1" size={25} />
+                        </Box>
+                        <Typography
+                            variant="h5"
+                            noWrap
+                            component="a"
+                            href="#app-bar-with-responsive-menu"
+                            sx={{
+                                mr: 2,
+                                display: { xs: 'flex', md: 'none' },
+                                flexGrow: 1,
+                                fontFamily: 'Satoshi Black',
+                                color: '#000000',
+                                fontSize: '1.75rem',
+                                textDecoration: 'none',
+                            }}
+                        >
+                            WiNG.it
+                        </Typography>
+
+                        {/* desktop navigation on the right */}
+                        <Box sx={{ display: { xs: 'none', md: 'flex' }, gap:1.5}}>
+                            <Button color='inherit' sx={{fontSize: '1.05rem', fontFamily: 'Satoshi Bold', textTransform: 'none', color:  'black', letterSpacing: '-0.01px', borderRadius: '12px', paddingX: 2, '&:hover': { backgroundColor: 'rgba(40, 80, 217, 0.08)' }}}>
+                                <Link
+                                    activeClass="active"
+                                    to="why-wing-it"
+                                    offset={-50}
+                                    duration={500}
+                                    style={{fontSize: '1.05rem', fontFamily: 'Satoshi Bold', textTransform: 'none', color: 'black', letterSpacing: '-0.01px', borderRadius: '12px', paddingX: 2 }}
+                                >
+                                    Why WiNG.it
+                                </Link>
+                            </Button>
+                            <Button color='inherit' sx={{fontSize: '1.05rem', fontFamily: 'Satoshi Bold', textTransform: 'none', color: 'black', letterSpacing: '-0.01px',borderRadius: '12px',paddingX: 2, '&:hover': { backgroundColor: 'rgba(40, 80, 217, 0.08)' }}}>
+                                <Link
+                                    activeClass="active"
+                                    to="about-us"
+                                    offset={-50}
+                                    duration={500}
+                                    style={{ fontSize: '1.05rem', fontFamily: 'Satoshi Bold', textTransform: 'none', color: 'black', letterSpacing: '-0.01px', borderRadius: '12px', paddingX: 2 }}
+                                >
+                                    About Us
+                                </Link>
+                            </Button>
+                            <Button 
+                                color='inherit' 
+                                href='/dashboard' 
+                                sx={{
+                                    fontSize: '1.05rem', 
+                                    fontFamily: 'Satoshi Bold', 
+                                    textTransform: 'none', 
+                                    background: 'linear-gradient(135deg, #2850d9 0%, #667eea 100%)',
+                                    paddingX: 2.5,
+                                    borderRadius: '12px', 
+                                    color: 'white', 
+                                    letterSpacing: '-0.01px', 
+                                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)', 
+                                    boxShadow: '0 4px 14px 0 rgba(40, 80, 217, 0.3)',
+                                    '&:hover': { 
+                                        transform: 'translateY(-2px)',
+                                        boxShadow: '0 8px 25px 0 rgba(40, 80, 217, 0.4)'
+                                    }
+                                }}
+                            >
+                                Get Started
+                            </Button>
+                        </Box>
+                    </Toolbar>
+                </Container>
+            </AppBar>
+
+        {/* container*/}
+        <Box sx={{ minHeight: '100dvh' }}>
+
+            {/* ---------- home page ----------  */}
+            <Box id="home-page" className="main-home-page-container">
+
+                {/*  main content box  */}
+                <Grid container
+                    spacing={5}
+                    direction={"column"}
+                    width={'80%'}
+                    sx={{px: "5%"}}>
+
+                    {/*  title/slogan  */}
+                    <Grid item xs>
+                        <Stack direction={"column"} spacing={3}>
+                            <motion.div
+                                className="main-home-page-title-container"
+                                initial="hidden"
+                                whileInView="visible"
+                                viewport={{ once: true }}
+                                variants={staggerContainer}
+                            >
+                                <motion.h1 variants={itemVariants} className="main-home-page-title-text">
+                                    Master your interviews with
+                                    <span className="gradient-text"> AI-powered</span> practice
+                                </motion.h1>
+                                
+                                <motion.div 
+                                    variants={itemVariants}
+                                    className="floating-elements"
+                                >
+                                    <div className="floating-element element-1">💼</div>
+                                    <div className="floating-element element-2">🎯</div>
+                                    <div className="floating-element element-3">⭐</div>
+                                </motion.div>
+                            </motion.div>
+
+                            {/* description */}
+                            <motion.div 
+                                className="main-home-page-description-container"
+                                initial="hidden"
+                                whileInView="visible"
+                                viewport={{ once: true }}
+                            >
+                                <motion.p
+                                    variants={itemVariants}
+                                    transition={{ delay: 0.2 }}
+                                    className="description-text"
+                                >
+                                    Transform your career preparation with realistic interview simulations, 
+                                    personalized feedback, and AI-driven insights. Practice makes perfect – and it &apos;s completely free.
+                                </motion.p>
+                            </motion.div>
+
+                            {/* CTA buttons */}
+                            <motion.div
+                                initial="hidden"
+                                whileInView="visible"
+                                viewport={{ once: true }}
+                                variants={staggerContainer}
+                                className="cta-buttons-container"
+                            >
+                                <motion.div variants={itemVariants}>
+                                    <Button
+                                        href="/dashboard"
+                                        className="primary-cta-button"
+                                        size="large"
+                                    >
+                                        Start Practicing
+                                        <svg className="button-arrow" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14M12 5l7 7-7 7"/>
+                                        </svg>
+                                    </Button>
+                                </motion.div>
+                                <motion.div variants={itemVariants}>
+                                    <Button
+                                        className="secondary-cta-button"
+                                        size="large"
+                                        onClick={() => {
+                                            const element = document.getElementById('why-wing-it');
+                                            element?.scrollIntoView({ behavior: 'smooth' });
+                                        }}
+                                    >
+                                        Learn More
+                                    </Button>
+                                </motion.div>
+                            </motion.div>
+                        </Stack>
+                    </Grid>
+
+                    {/* ---------- feature cards ---------- */}
+                    <Grid item xs>
+                        <motion.div 
+                            initial="hidden"
+                            whileInView="visible"
+                            viewport={{ once: true }}
+                            variants={staggerContainer}
+                        >
+                            <Grid
+                                container
+                                spacing={3}
+                                columns={3}
+                                rows={1}
+                                direction={{xs: "column", s: "column", md: "row", lg: "row"}}
+                                wrap={{ xs: "wrap", sm: "wrap", md: "nowrap", lg: "nowrap" }}
+                                sx={{ alignItems: 'stretch' }}
+                            >
+
+                                {/* career prep tools card */}
+                                <Grid xs={12} sm={6} md={4} lg={3} sx={{ display: 'flex' }}>
+                                    <motion.div
+                                        variants={itemVariants}
+                                        style={{ width: '100%', display: 'flex' }}
+                                        whileHover={{ y: -8, transition: { duration: 0.3 } }}
+                                    >
+                                        <Card className="main-home-page-card modern-card">
+                                            <div className="card-icon-container orange-gradient">
+                                                <FaPencilRuler color={'#E3632E'} size={24} />
+                                            </div>
+                                            <Typography variant="h5" className="main-home-page-card-feature-title">
+                                                Interactive Simulations
+                                            </Typography>
+                                            <Typography className="main-home-page-card-feature-description">
+                                                Practice with AI-powered interview scenarios that adapt to your responses and provide real-time feedback.
+                                            </Typography>
+                                            <div className="card-hover-effect"></div>
+                                        </Card>
+                                    </motion.div>
+                                </Grid>
+
+                                {/* saving saves card */}
+                                <Grid xs={12} sm={6} md={4} lg={3} sx={{ display: 'flex' }}>
+                                    <motion.div
+                                        variants={itemVariants}
+                                        style={{ width: '100%', display: 'flex' }}
+                                        whileHover={{ y: -8, transition: { duration: 0.3 } }}
+                                    >
+                                        <Card className="main-home-page-card modern-card">
+                                            <div className="card-icon-container blue-gradient">
+                                                <IoDocumentText color={'#2a6ed5'} size={28} />
+                                            </div>
+                                            <Typography variant="h5" className="main-home-page-card-feature-title">
+                                                Smart Analytics
+                                            </Typography>
+                                            <Typography className="main-home-page-card-feature-description">
+                                                Track your progress with detailed transcripts, performance metrics, and personalized improvement suggestions.
+                                            </Typography>
+                                            <div className="card-hover-effect"></div>
+                                        </Card>
+                                    </motion.div>
+                                </Grid>
+
+                                {/* personalized feedback card */}
+                                <Grid xs={12} sm={6} md={4} lg={3} sx={{ display: 'flex' }}>
+                                    <motion.div
+                                        variants={itemVariants}
+                                        style={{ width: '100%', display: 'flex' }}
+                                        whileHover={{ y: -8, transition: { duration: 0.3 } }}
+                                    >
+                                        <Card className="main-home-page-card modern-card">
+                                            <div className="card-icon-container green-gradient">
+                                                <BiSolidMessageCheck color={'#559437'} size={28} />
+                                            </div>
+                                            <Typography variant="h5" className="main-home-page-card-feature-title">
+                                                AI-Powered Feedback
+                                            </Typography>
+                                            <Typography className="main-home-page-card-feature-description">
+                                                Receive instant, actionable feedback on your communication style, content quality, and interview performance.
+                                            </Typography>
+                                            <div className="card-hover-effect"></div>
+                                        </Card>
+                                    </motion.div>
+                                </Grid>
+                            </Grid>
+                        </motion.div>
+                    </Grid>
+
+                </Grid>
+            </Box>
+
+            {/* ---------- why wing it ----------*/}
+            <Box id="why-wing-it" className="why-wing-it-section-container">
+                <Grid container
+                    spacing={4}
+                    columns={5}
+                    rows={1}
+                    wrap={{ xs: "wrap", sm: "wrap", md: "nowrap", lg: "nowrap" }}
+                    justifyContent={{ xs: "center", sm: "center", md: "flex-start", lg: "flex-start" }}
+                    direction={{ xs: 'column', md: 'row' }}
+                    width={{ xs: '98%', sm: '90%', md: '80%' }}
+                >
+
+                    {/* ---------- title / description ---------- */}
+                    <Grid item xs={12} sm={6} md={4} lg={3}>
+                        <motion.div 
+                            style={{padding: '2.5%'}}
+                            initial="hidden"
+                            whileInView="visible"
+                            viewport={{ once: true }}
+                            variants={staggerContainer}
+                        >
+
+                            {/* title */}
+                            <motion.h2
+                                variants={itemVariants}
+                                className="why-wing-it-title"
+                            >
+                                Built by students, for students 🎓
+                            </motion.h2>
+
+                            {/* description*/}
+                            <Stack spacing={3} style={{padding: '30px'}}>
+                                <motion.p
+                                    variants={itemVariants}
+                                    className="why-wing-it-description-text"
+                                >
+                                    We &apos;ve been in your shoes – stressing about interviews, lacking access to quality practice tools, 
+                                    and struggling to get meaningful feedback on our performance.
+                                </motion.p>
+                                <motion.div
+                                    variants={itemVariants}
+                                    className="highlight-box"
+                                >
+                                    <p className="why-wing-it-description-text highlight-text">
+                                        Our mission: <span className="bold-highlight">Making career preparation accessible for everyone.</span> 
+                                        No subscriptions, no hidden fees, just powerful tools to help you succeed.
+                                    </p>
+                                </motion.div>
+                                <motion.p
+                                    variants={itemVariants}
+                                    className="why-wing-it-description-text"
+                                >
+                                    Join thousands of students who &apos;ve already improved their interview skills with WiNG.it. 
+                                    Because your future shouldn &apos;t be limited by access to resources.
+                                </motion.p>
+                            </Stack>
+                        </motion.div>
+                    </Grid>
+
+                </Grid>
+            </Box>
+
+            {/*  ---------- about us ----------  */}
+            <Box id="about-us" className="about-us-section-container">
+                <Grid container
+                    direction={"row"}
+                    width={{ xs: '98%', sm: '90%', md: '80%' }}
+                    sx={{ paddingLeft: { xs: '2%', sm: '5%' }, paddingRight: { xs: '2%', sm: '5%' } }}>
+
+                    {/* title  */}
+                    <Stack spacing={2} direction="column">
+                    <Grid item xs={12} sm={6} md={4} lg={3}>
+                        <motion.div
+                            initial="hidden"
+                            whileInView="visible"
+                            viewport={{ once: true }}
+                            variants={itemVariants}
+                        >
+                        <Typography className="about-us-section-title">
+                            Meet the team behind WiNG.it
+                        </Typography>
+                        </motion.div>
+                    </Grid>
+
+                    {/* description */}
+                    <motion.div
+                        initial="hidden"
+                        whileInView="visible"
+                        viewport={{ once: true }}
+                        variants={staggerContainer}
+                    >
+
+                        <Stack spacing={4} direction={"column"}>
+                            <motion.div variants={itemVariants} className="story-card">
+                                <p className="about-us-section-description-text">
+                                    Our journey started at the
+                                    <span className="highlight-span"> University of Florida&apos;s 🐊</span> inaugural
+                                    <span className="highlight-span"> WiNGHacks Hackathon 🪽</span> – a celebration of innovation by 
+                                    women, non-binary, and gender minorities in tech.
+                                </p>
+                            </motion.div>
+                            <motion.div variants={itemVariants} className="achievement-card">
+                                <div className="achievement-badge">🏆</div>
+                                <p className="about-us-section-description-text">
+                                    We &apos;re proud to have won <span className="highlight-span">first place</span> for best project by 
+                                    first-time hackathoners and caught the attention of 
+                                    <span className="highlight-span"> UF Professor Amanpreet Kapoor 💻</span>, who believed in our vision 
+                                    enough to support our continued development.
+                                </p>
+                            </motion.div>
+                            <motion.div variants={itemVariants} className="mission-card">
+                                <p className="about-us-section-description-text">
+                                    Today, WiNG.it continues to evolve as a comprehensive career preparation platform, 
+                                    helping students worldwide build confidence, improve their skills, and land their dream opportunities.
+                                </p>
+                            </motion.div>
+                        </Stack>
+                    </motion.div>
+                    </Stack>
+                </Grid>
+            </Box>
+
+            {/*  developer section  */}
+            <Grid className="developer-section-container">
+                <motion.div 
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true }}
+                    variants={staggerContainer}
+                >
+                <Grid container
+                    spacing={4}
+                    alignItems="center"
+                    justifyContent="center"
+                    direction={{ xs: 'column', sm: 'column', md: 'row', lg: 'row' }}
+                    width={{ xs: '98%', sm: '90%', md: '80%', lg: '80%' }}
+                    wrap={{ xs: "wrap", sm: "wrap", md: "nowrap", lg: "nowrap" }}
+                    sx={{ mx: 'auto', px: { xs: '2%', sm: '5%', lg: '8%' } }}>
+
+                        {/* Rachel */}
+                        <Grid item xs={12} sm={6} md={4} lg={3}>
+                            <motion.div variants={itemVariants}>
+                                <Grid container spacing={2} direction="column" alignItems="center">
+                                    {/* Photo */}
+                                    <Grid item>
+                                        <Link
+                                        component="a"
+                                        href="https://www.linkedin.com/in/rachel-pu-ufl/"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        >
+                                        <motion.div className="developer-card">
+                                            <motion.img
+                                                src="/static/images/rachel%20pu%20image.png"
+                                                alt="Rachel Pu"
+                                                className="developer-image"
+                                                whileHover={{ scale: 1.05, rotate: 2, cursor: "pointer" }}
+                                            />
+                                            <div className="developer-overlay">
+                                                <span>View LinkedIn →</span>
+                                            </div>
+                                        </motion.div>
+                                        </Link>
+                                    </Grid>
+                                    {/* Text */}
+                                    <Grid item>
+                                        <Typography variant="h2" className="developer-section-developer-name">
+                                            Rachel Pu
+                                        </Typography>
+                                        <Typography className="developer-section-developer-description">
+                                            Computer Science & Digital Arts Sciences @ UF
+                                        </Typography>
+                                    </Grid>
+                                </Grid>
+                            </motion.div>
+                        </Grid>
+
+                        {/* Chelsea */}
+                        <Grid item xs={12} sm={6} md={4} lg={3}>
+                            <motion.div variants={itemVariants}>
+                                <Grid container spacing={2} direction="column" alignItems="center">
+                                    {/* Photo */}
+                                    <Grid item>
+                                        <Link
+                                        component="a"
+                                        href="https://www.linkedin.com/in/chelseaqnguyen/"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        >
+                                        <motion.div className="developer-card">
+                                            <motion.img
+                                                src="/static/images/chelsea nguyen image.png"
+                                                alt="Chelsea Nguyen"
+                                                className="developer-image"
+                                                whileHover={{ scale: 1.05, rotate: 2, cursor: "pointer" }}
+                                            />
+                                            <div className="developer-overlay">
+                                                <span>View LinkedIn →</span>
+                                            </div>
+                                        </motion.div>
+                                        </Link>
+                                    </Grid>
+                                    {/* Text */}
+                                    <Grid item>
+                                        <Typography variant="h2" className="developer-section-developer-name">
+                                            Chelsea Nguyen
+                                        </Typography>
+                                        <Typography className="developer-section-developer-description">
+                                            Computer Science & Digital Arts Sciences @ UF
+                                        </Typography>
+                                    </Grid>
+                                </Grid>
+                            </motion.div>
+                        </Grid>
+
+                        {/* Clarissa */}
+                        <Grid item xs={12} sm={6} md={4} lg={3}>
+                            <motion.div variants={itemVariants}>
+                                <Grid container spacing={2} direction="column" alignItems="center">
+                                    {/* Photo */}
+                                    <Grid item>
+                                        <Link
+                                        component="a"
+                                        href="https://www.linkedin.com/in/clarissa-cheung-054035187/"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        >
+                                        <motion.div className="developer-card">
+                                            <motion.img
+                                                src="/static/images/clarissa-cheung.jpg"
+                                                alt="Clarissa Cheung"
+                                                className="developer-image"
+                                                whileHover={{ scale: 1.05, rotate: 2, cursor: "pointer" }}
+                                            />
+                                            <div className="developer-overlay">
+                                                <span>View LinkedIn →</span>
+                                            </div>
+                                        </motion.div>
+                                        </Link>
+                                    </Grid>
+                                    {/* Text */}
+                                    <Grid item>
+                                        <Typography variant="h2" className="developer-section-developer-name">
+                                            Clarissa Cheung
+                                        </Typography>
+                                        <Typography className="developer-section-developer-description">
+                                            Computer Science & Economics @ UF
+                                        </Typography>
+                                    </Grid>
+                                </Grid>
+                            </motion.div>
+                        </Grid>
+                        
+                    </Grid>
+                    </motion.div>
+                </Grid>
+
+            {/*  honorable mention */}
+                <Box className="honorable-mentions-section-container">
+                    <Grid item xs={12}>
+                        <motion.div
+                            initial = "hidden"
+                            whileInView="visible"
+                            viewport={{ once: true }}
+                            variants={itemVariants}
+                        >
+                            <motion.p className="honorable-mentions-section-text">
+                                Special thanks to our original WiNGHacks team members:
+                                <br/>
+                                <span className="highlight-span"> Xiaguo Jia</span> and
+                                <span className="highlight-span"> Sara Smith</span>
+                            </motion.p>
+
+                        </motion.div>
+                    </Grid>
+            </Box>
+
+            {/* ---------- getting started section ---------- */}
+            <Box id="getting-started" className="getting-started-section-container">
+                <motion.div
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true }}
+                    variants={staggerContainer}
+                    className="getting-started-content"
+                >
+                    <Stack direction={'column'} spacing={2} alignItems="center">
+                        <motion.h2 variants={itemVariants} className="get-started-title">
+                            Ready to ace your next interview?
+                        </motion.h2>
+                        <motion.p variants={itemVariants} className="get-started-subtitle">
+                            Join us to improve your interview skills with WiNG.it
+                        </motion.p>
+                        <motion.div variants={itemVariants} className="final-cta-container">
+                            <Button 
+                                color='inherit' 
+                                href='/dashboard'
+                                className="final-cta-button"
+                                size="large"
+                            >
+                                Start Your Journey
+                                <svg className="button-arrow" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14M12 5l7 7-7 7" />
+                                </svg>
+                            </Button>
+                            <div className="cta-subtext">
+                                <span>✨ Always free • No credit card required • Get started in 30 seconds</span>
+                            </div>
+                        </motion.div>
+                    </Stack>
+                </motion.div>
+            </Box>
+        </Box>
+        </Box>
+    );
+}
