@@ -1,742 +1,510 @@
-// "use client";
-// import React from "react";
-// import Image from "next/image";
-// import {motion, inView, animate} from "framer-motion";
-// import Box from '@mui/material/Box';
-// import Grid from '@mui/material/Grid2';
-// import {Typography} from "@mui/material";
-// import Stack from '@mui/material/Stack';
-// import {AppBar} from "@mui/material";
-// import Toolbar from '@mui/material/Toolbar';
-// import {Button} from "@mui/material";
-// import { GiFluffyWing } from "react-icons/gi";
-// import Card from '@mui/material/Card';
-// import { FaPencilRuler } from "react-icons/fa";
-// import { IoDocumentText } from "react-icons/io5";
-// import { BiSolidMessageCheck } from "react-icons/bi";
-// import { useEffect, useState } from 'react';
-// import { Link } from 'react-scroll';
-// import Menu from '@mui/material/Menu';
-// import MenuIcon from '@mui/icons-material/Menu';
-// import Container from '@mui/material/Container';
-// import {IconButton, Paper} from "@mui/material";
+"use client";
 
-// import "./HomePage.css";
+import CssBaseline from "@mui/material/CssBaseline";
+import MainAppBar from "../../../../../components/MainAppBar";
+import LeftNavbar from "../../../../../components/LeftNavbar";
+import React, { useEffect, useState } from "react";
+import { Box, Typography, CircularProgress } from "@mui/material";
+import Toolbar from "@mui/material/Toolbar";
+import Link from "next/link";
+import { AnimatePresence, motion } from "framer-motion";
+import { getTranscriptContentForQuestion } from "./FeedbackTabs";
 
-// const pages = ['Why WiNG.it', 'About Us', 'Get Started'];
-// export default function HomePage() {
+export default function InterviewResults() {
+    const [selectedTab, setSelectedTab] = useState(null);
+    const [questionNumber, setQuestionNumber] = useState(null);
+    const [questions, setQuestions] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const [interviewData, setInterviewData] = useState(null);
+    const [sessionId, setSessionId] = useState(null);
+    const [tabs, setTabs] = useState([
+        {
+            icon: "📊",
+            label: "Statistics",
+            content: "<div class='text-left'><p>Interview analytics will appear here</p></div>"
+        },
+        {
+            icon: "💡",
+            label: "Advice",
+            content: "<div class='text-left'><p>Personalized feedback will appear here</p></div>"
+        },
+        {
+            icon: "📜",
+            label: "Transcript",
+            content: "<div class='text-left'><p>Loading your interview transcript...</p></div>"
+        }
+    ]);
 
-//     const itemVariants = {
-//         hidden: { opacity: 0, y: 20 },
-//         visible: { opacity: 1, y: 0 },
-//         transition: { type: "spring", damping: 20, stiffness: 300 },
-//     };
+    // Get sessionId from URL or sessionStorage on the client side
+    useEffect(() => {
+        // This only runs on the client side, so it's safe for static export
+        const urlParams = new URLSearchParams(window.location.search);
+        const sessionIdFromUrl = urlParams.get('sessionId');
+        const sessionIdFromStorage = sessionStorage.getItem("interviewSessionId");
+        
+        const finalSessionId = sessionIdFromUrl || sessionIdFromStorage;
+        setSessionId(finalSessionId);
+    }, []);
 
-//     const staggerContainer = {
-//         hidden: { opacity: 0 },
-//         visible: {
-//             opacity: 1,
-//             transition: {
-//                 staggerChildren: 0.1
-//             }
-//         }
-//     };
+    // Fetch interview results from backend
+    const fetchInterviewResults = async () => {
+        try {
+            if (!sessionId) throw new Error('No session ID provided');
+            console.log("Fetching results for session:", sessionId);
 
-//     const [anchorElNav, setAnchorElNav] = React.useState(null);
+            const response = await fetch(
+                `http://127.0.0.1:5000/get-all-responses/${sessionId}`
+            );
+            const data = await response.json();
+            console.log("fetched data:", data); // Debugging
 
-//     const handleOpenNavMenu = (event) => {
-//         setAnchorElNav(event.currentTarget);
-//     };
+            if (!response.ok) throw new Error('Failed to fetch results');
+            return data;
+        } catch (err) {
+            console.error("Fetch error:", err);
+            setError(err.message);
+            return null;
+        }
+    };
 
-//     const handleCloseNavMenu = () => {
-//         setAnchorElNav(null);
-//     };
+    // Update transcript tab content
+    const updateTranscriptTab = async (specificQuestion = null) => {
+        try {
+            setIsLoading(true);
+            const result = await getTranscriptContentForQuestion(
+                specificQuestion,
+                sessionId
+            );
 
-//     return (
-//         <Box>
-//             {/* ---------- nav bar ---------- */}
-//             <AppBar position="static" className="navigation-bar">
-//                 <Container maxWidth="xl">
-//                     <Toolbar disableGutters>
-//                         {/* desktop logo / big viewport */}
-//                         <Box sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }}>
-//                             <GiFluffyWing color="#324FD1" size={25} />
-//                         </Box>
-//                         <Typography component='div' sx={{ fontSize: '1.75rem', flexGrow: 1, display:{xs:'none', md:'flex', fontFamily: 'Satoshi Black'}, color: 'black'}}>WiNG.it</Typography>
+            // Update the transcript tab with new content
+            setTabs(currentTabs =>
+                currentTabs.map(tab =>
+                    tab.label === "Transcript"
+                        ? { ...tab, content: result.html }
+                        : tab
+                )
+            );
 
-//                         {/* smaller viewport: hamburger icon */}
-//                         <Box sx={{ display: { xs: 'flex', md: 'none' }, ml: 'auto' }}>
-//                             <IconButton
-//                                 size="large"
-//                                 aria-label="open navigation menu"
-//                                 onClick={handleOpenNavMenu}
-//                                 color="black"
-//                             >
-//                                 <MenuIcon />
-//                             </IconButton>
-//                             <Menu
-//                                 id="menu-appbar"
-//                                 anchorEl={anchorElNav}
-//                                 anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
-//                                 keepMounted
-//                                 transformOrigin={{ vertical: 'top', horizontal: 'left' }}
-//                                 open={Boolean(anchorElNav)}
-//                                 onClose={handleCloseNavMenu}
-//                                 sx={{ display: { xs: 'block', md: 'none' } }}
-//                             >
-//                                 {/* navigation bar drop down */}
-//                                 <Box
-//                                     sx={{
-//                                         display: 'flex',
-//                                         flexDirection: 'column',
-//                                         rowGap: 1,
-//                                         p: 1
-//                                     }}
-//                                 >
-//                                     <Button
-//                                         color="inherit"
-//                                         sx={{
-//                                             fontSize: '1.05rem',
-//                                             fontFamily: 'Satoshi Bold',
-//                                             textTransform: 'none',
-//                                             color: 'black',
-//                                             letterSpacing: '-0.01px',
-//                                             px: 2,
-//                                         }}
-//                                     >
-//                                         <Link
-//                                             activeClass="active"
-//                                             to="why-wing-it"
-//                                             offset={-50}
-//                                             duration={500}
-//                                             style={{
-//                                                 fontSize: '1.05rem',
-//                                                 fontFamily: 'Satoshi Medium',
-//                                                 textTransform: 'none',
-//                                                 color: 'black',
-//                                                 letterSpacing: '-0.01px',
-//                                             }}
-//                                         >
-//                                             Why WiNG.it
-//                                         </Link>
-//                                     </Button>
+            setIsLoading(false);
+            return result;
+        } catch (err) {
+            console.error("Error updating transcript tab:", err);
+            setIsLoading(false);
+            return { html: "<p>Error loading transcript data</p>", data: null };
+        }
+    };
 
-//                                     <Button
-//                                         color="inherit"
-//                                         sx={{
-//                                             fontSize: '1.05rem',
-//                                             fontFamily: 'Satoshi Medium',
-//                                             textTransform: 'none',
-//                                             color: 'black',
-//                                             letterSpacing: '-0.01px',
-//                                             px: 2,
-//                                         }}
-//                                     >
-//                                         <Link
-//                                             activeClass="active"
-//                                             to="about-us"
-//                                             offset={-50}
-//                                             duration={500}
-//                                             style={{
-//                                                 fontSize: '1.05rem',
-//                                                 fontFamily: 'Satoshi Medium',
-//                                                 textTransform: 'none',
-//                                                 color: 'black',
-//                                                 letterSpacing: '-0.01px',
-//                                             }}
-//                                         >
-//                                             About Us
-//                                         </Link>
-//                                     </Button>
+    // Update statistics tab with filler word analytics
+    const updateStatisticsTab = (responses) => {
+        if (!responses || Object.keys(responses).length === 0) {
+            return;
+        }
 
-//                                     <Button
-//                                         color="inherit"
-//                                         href="/dashboard"
-//                                         sx={{
-//                                             fontSize: '1.05rem',
-//                                             fontFamily: 'Satoshi Medium',
-//                                             textTransform: 'none',
-//                                             background: 'linear-gradient(135deg, #2850d9 0%, #667eea 100%)',
-//                                             px: 2.5,
-//                                             borderRadius: '12px',
-//                                             color: 'white',
-//                                             letterSpacing: '-0.01px',
-//                                             transition: 'transform 0.3s',
-//                                         }}
-//                                     >
-//                                         Get Started
-//                                     </Button>
-//                                 </Box>
-//                             </Menu>
-//                         </Box>
+        // Collect all filler words
+        let allFillerWords = [];
+        let fillerWordsPerQuestion = {};
+        let totalWords = 0;
+        let totalResponseLength = 0;
 
-//                         {/* mobile logo / small viewport */}
-//                         <Box sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }}>
-//                             <GiFluffyWing color="#324FD1" size={25} />
-//                         </Box>
-//                         <Typography
-//                             variant="h5"
-//                             noWrap
-//                             component="a"
-//                             href="#app-bar-with-responsive-menu"
-//                             sx={{
-//                                 mr: 2,
-//                                 display: { xs: 'flex', md: 'none' },
-//                                 flexGrow: 1,
-//                                 fontFamily: 'Satoshi Black',
-//                                 color: '#000000',
-//                                 fontSize: '1.75rem',
-//                                 textDecoration: 'none',
-//                             }}
-//                         >
-//                             WiNG.it
-//                         </Typography>
+        Object.entries(responses).forEach(([questionNum, response]) => {
+            const fillerWords = response.filler_words || [];
+            allFillerWords = [...allFillerWords, ...fillerWords];
 
-//                         {/* desktop navigation on the right */}
-//                         <Box sx={{ display: { xs: 'none', md: 'flex' }, gap:1.5}}>
-//                             <Button color='inherit' sx={{fontSize: '1.05rem', fontFamily: 'Satoshi Bold', textTransform: 'none', color:  'black', letterSpacing: '-0.01px', borderRadius: '12px', paddingX: 2, '&:hover': { backgroundColor: 'rgba(40, 80, 217, 0.08)' }}}>
-//                                 <Link
-//                                     activeClass="active"
-//                                     to="why-wing-it"
-//                                     offset={-50}
-//                                     duration={500}
-//                                     style={{fontSize: '1.05rem', fontFamily: 'Satoshi Bold', textTransform: 'none', color: 'black', letterSpacing: '-0.01px', borderRadius: '12px', paddingX: 2 }}
-//                                 >
-//                                     Why WiNG.it
-//                                 </Link>
-//                             </Button>
-//                             <Button color='inherit' sx={{fontSize: '1.05rem', fontFamily: 'Satoshi Bold', textTransform: 'none', color: 'black', letterSpacing: '-0.01px',borderRadius: '12px',paddingX: 2, '&:hover': { backgroundColor: 'rgba(40, 80, 217, 0.08)' }}}>
-//                                 <Link
-//                                     activeClass="active"
-//                                     to="about-us"
-//                                     offset={-50}
-//                                     duration={500}
-//                                     style={{ fontSize: '1.05rem', fontFamily: 'Satoshi Bold', textTransform: 'none', color: 'black', letterSpacing: '-0.01px', borderRadius: '12px', paddingX: 2 }}
-//                                 >
-//                                     About Us
-//                                 </Link>
-//                             </Button>
-//                             <Button 
-//                                 color='inherit' 
-//                                 href='/dashboard' 
-//                                 sx={{
-//                                     fontSize: '1.05rem', 
-//                                     fontFamily: 'Satoshi Bold', 
-//                                     textTransform: 'none', 
-//                                     background: 'linear-gradient(135deg, #2850d9 0%, #667eea 100%)',
-//                                     paddingX: 2.5,
-//                                     borderRadius: '12px', 
-//                                     color: 'white', 
-//                                     letterSpacing: '-0.01px', 
-//                                     transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)', 
-//                                     boxShadow: '0 4px 14px 0 rgba(40, 80, 217, 0.3)',
-//                                     '&:hover': { 
-//                                         transform: 'translateY(-2px)',
-//                                         boxShadow: '0 8px 25px 0 rgba(40, 80, 217, 0.4)'
-//                                     }
-//                                 }}
-//                             >
-//                                 Get Started
-//                             </Button>
-//                         </Box>
-//                     </Toolbar>
-//                 </Container>
-//             </AppBar>
+            // Count words in transcript
+            const wordCount = response.transcript ? response.transcript.split(/\s+/).length : 0;
+            totalWords += wordCount;
+            totalResponseLength += response.transcript ? response.transcript.length : 0;
 
-//         {/* container*/}
-//         <Box sx={{ minHeight: '100dvh' }}>
+            fillerWordsPerQuestion[questionNum] = fillerWords.length;
+        });
 
-//             {/* ---------- home page ----------  */}
-//             <Box id="home-page" className="main-home-page-container">
+        // Calculate statistics
+        const totalFillerWords = allFillerWords.length;
+        const fillerWordPercentage = totalWords ? ((totalFillerWords / totalWords) * 100).toFixed(1) : 0;
+        const averageResponseLength = Object.keys(responses).length ? 
+            Math.round(totalResponseLength / Object.keys(responses).length) : 0;
 
-//                 {/*  main content box  */}
-//                 <Grid container
-//                     spacing={5}
-//                     direction={"column"}
-//                     width={'80%'}
-//                     sx={{px: "5%"}}>
+        // Generate statistics HTML
+        const statisticsContent = `
+            <div class='text-left'>
+                <h3 class='text-2xl font-bold mb-6'>Interview Statistics</h3>
+                <div class='grid grid-cols-1 md:grid-cols-2 gap-6'>
+                    <div class='bg-white p-6 rounded-lg shadow-sm'>
+                        <h4 class='text-lg font-semibold mb-3'>Filler Words Analysis</h4>
+                        <p class='text-3xl font-bold text-blue-600 mb-2'>${totalFillerWords}</p>
+                        <p class='text-sm text-gray-600'>Total filler words used</p>
+                        <p class='text-lg font-semibold mt-4'>${fillerWordPercentage}%</p>
+                        <p class='text-sm text-gray-600'>Of all words spoken</p>
+                    </div>
+                    <div class='bg-white p-6 rounded-lg shadow-sm'>
+                        <h4 class='text-lg font-semibold mb-3'>Response Length</h4>
+                        <p class='text-3xl font-bold text-green-600 mb-2'>${totalWords}</p>
+                        <p class='text-sm text-gray-600'>Total words spoken</p>
+                        <p class='text-lg font-semibold mt-4'>${averageResponseLength}</p>
+                        <p class='text-sm text-gray-600'>Average response length (characters)</p>
+                    </div>
+                </div>
+                <div class='mt-6'>
+                    <h4 class='text-lg font-semibold mb-3'>Filler Words per Question</h4>
+                    <div class='bg-white p-4 rounded-lg shadow-sm'>
+                        ${Object.entries(fillerWordsPerQuestion).map(([qNum, count]) => 
+                            `<div class='flex justify-between items-center py-2 border-b border-gray-100 last:border-b-0'>
+                                <span>Question ${qNum}</span>
+                                <span class='font-semibold ${count === 0 ? 'text-green-600' : count <= 3 ? 'text-yellow-600' : 'text-red-600'}'>${count} filler words</span>
+                            </div>`
+                        ).join('')}
+                    </div>
+                </div>
+            </div>
+        `;
 
-//                     {/*  title/slogan  */}
-//                     <Grid item xs>
-//                         <Stack direction={"column"} spacing={3}>
-//                             <motion.div
-//                                 className="main-home-page-title-container"
-//                                 initial="hidden"
-//                                 whileInView="visible"
-//                                 viewport={{ once: true }}
-//                                 variants={staggerContainer}
-//                             >
-//                                 <motion.h1 variants={itemVariants} className="main-home-page-title-text">
-//                                     Master your interviews with
-//                                     <span className="gradient-text"> AI-powered</span> practice
-//                                 </motion.h1>
-                                
-//                                 <motion.div 
-//                                     variants={itemVariants}
-//                                     className="floating-elements"
-//                                 >
-//                                     <div className="floating-element element-1">💼</div>
-//                                     <div className="floating-element element-2">🎯</div>
-//                                     <div className="floating-element element-3">⭐</div>
-//                                 </motion.div>
-//                             </motion.div>
+        setTabs(currentTabs =>
+            currentTabs.map(tab =>
+                tab.label === "Statistics"
+                    ? { ...tab, content: statisticsContent }
+                    : tab
+            )
+        );
+    };
 
-//                             {/* description */}
-//                             <motion.div 
-//                                 className="main-home-page-description-container"
-//                                 initial="hidden"
-//                                 whileInView="visible"
-//                                 viewport={{ once: true }}
-//                             >
-//                                 <motion.p
-//                                     variants={itemVariants}
-//                                     transition={{ delay: 0.2 }}
-//                                     className="description-text"
-//                                 >
-//                                     Transform your career preparation with realistic interview simulations, 
-//                                     personalized feedback, and AI-driven insights. Practice makes perfect – and it &apos;s completely free.
-//                                 </motion.p>
-//                             </motion.div>
+    // Generate advice based on interview performance
+    const generateAdviceTab = (responses) => {
+        if (!responses || Object.keys(responses).length === 0) {
+            return;
+        }
 
-//                             {/* CTA buttons */}
-//                             <motion.div
-//                                 initial="hidden"
-//                                 whileInView="visible"
-//                                 viewport={{ once: true }}
-//                                 variants={staggerContainer}
-//                                 className="cta-buttons-container"
-//                             >
-//                                 <motion.div variants={itemVariants}>
-//                                     <Button
-//                                         href="/dashboard"
-//                                         className="primary-cta-button"
-//                                         size="large"
-//                                     >
-//                                         Start Practicing
-//                                         <svg className="button-arrow" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-//                                             <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14M12 5l7 7-7 7"/>
-//                                         </svg>
-//                                     </Button>
-//                                 </motion.div>
-//                                 <motion.div variants={itemVariants}>
-//                                     <Button
-//                                         className="secondary-cta-button"
-//                                         size="large"
-//                                         onClick={() => {
-//                                             const element = document.getElementById('why-wing-it');
-//                                             element?.scrollIntoView({ behavior: 'smooth' });
-//                                         }}
-//                                     >
-//                                         Learn More
-//                                     </Button>
-//                                 </motion.div>
-//                             </motion.div>
-//                         </Stack>
-//                     </Grid>
+        // Analyze performance
+        let totalFillerWords = 0;
+        let totalWords = 0;
+        let shortResponses = 0;
+        const questionsCount = Object.keys(responses).length;
 
-//                     {/* ---------- feature cards ---------- */}
-//                     <Grid item xs>
-//                         <motion.div 
-//                             initial="hidden"
-//                             whileInView="visible"
-//                             viewport={{ once: true }}
-//                             variants={staggerContainer}
-//                         >
-//                             <Grid
-//                                 container
-//                                 spacing={3}
-//                                 columns={3}
-//                                 rows={1}
-//                                 direction={{xs: "column", s: "column", md: "row", lg: "row"}}
-//                                 wrap={{ xs: "wrap", sm: "wrap", md: "nowrap", lg: "nowrap" }}
-//                                 sx={{ alignItems: 'stretch' }}
-//                             >
+        Object.values(responses).forEach(response => {
+            const fillerWords = response.filler_words || [];
+            const wordCount = response.transcript ? response.transcript.split(/\s+/).length : 0;
+            
+            totalFillerWords += fillerWords.length;
+            totalWords += wordCount;
+            
+            if (wordCount < 50) shortResponses++;
+        });
 
-//                                 {/* career prep tools card */}
-//                                 <Grid xs={12} sm={6} md={4} lg={3} sx={{ display: 'flex' }}>
-//                                     <motion.div
-//                                         variants={itemVariants}
-//                                         style={{ width: '100%', display: 'flex' }}
-//                                         whileHover={{ y: -8, transition: { duration: 0.3 } }}
-//                                     >
-//                                         <Card className="main-home-page-card modern-card">
-//                                             <div className="card-icon-container orange-gradient">
-//                                                 <FaPencilRuler color={'#E3632E'} size={24} />
-//                                             </div>
-//                                             <Typography variant="h5" className="main-home-page-card-feature-title">
-//                                                 Interactive Simulations
-//                                             </Typography>
-//                                             <Typography className="main-home-page-card-feature-description">
-//                                                 Practice with AI-powered interview scenarios that adapt to your responses and provide real-time feedback.
-//                                             </Typography>
-//                                             <div className="card-hover-effect"></div>
-//                                         </Card>
-//                                     </motion.div>
-//                                 </Grid>
+        const fillerWordRate = totalWords ? (totalFillerWords / totalWords) * 100 : 0;
+        
+        // Generate personalized advice
+        let adviceContent = `
+            <div class='text-left'>
+                <h3 class='text-2xl font-bold mb-6'>Personalized Feedback & Advice</h3>
+        `;
 
-//                                 {/* saving saves card */}
-//                                 <Grid xs={12} sm={6} md={4} lg={3} sx={{ display: 'flex' }}>
-//                                     <motion.div
-//                                         variants={itemVariants}
-//                                         style={{ width: '100%', display: 'flex' }}
-//                                         whileHover={{ y: -8, transition: { duration: 0.3 } }}
-//                                     >
-//                                         <Card className="main-home-page-card modern-card">
-//                                             <div className="card-icon-container blue-gradient">
-//                                                 <IoDocumentText color={'#2a6ed5'} size={28} />
-//                                             </div>
-//                                             <Typography variant="h5" className="main-home-page-card-feature-title">
-//                                                 Smart Analytics
-//                                             </Typography>
-//                                             <Typography className="main-home-page-card-feature-description">
-//                                                 Track your progress with detailed transcripts, performance metrics, and personalized improvement suggestions.
-//                                             </Typography>
-//                                             <div className="card-hover-effect"></div>
-//                                         </Card>
-//                                     </motion.div>
-//                                 </Grid>
+        // Filler words advice
+        if (fillerWordRate < 2) {
+            adviceContent += `
+                <div class='bg-green-50 border-l-4 border-green-500 p-4 mb-4'>
+                    <h4 class='text-lg font-semibold text-green-800 mb-2'>✅ Excellent Speech Clarity</h4>
+                    <p class='text-green-700'>You maintained excellent speech clarity with very few filler words (${fillerWordRate.toFixed(1)}%). Keep up this professional communication style!</p>
+                </div>
+            `;
+        } else if (fillerWordRate < 5) {
+            adviceContent += `
+                <div class='bg-yellow-50 border-l-4 border-yellow-500 p-4 mb-4'>
+                    <h4 class='text-lg font-semibold text-yellow-800 mb-2'>⚠️ Moderate Filler Word Usage</h4>
+                    <p class='text-yellow-700'>You used filler words ${fillerWordRate.toFixed(1)}% of the time. Try pausing briefly instead of using "um" or "uh" to collect your thoughts.</p>
+                </div>
+            `;
+        } else {
+            adviceContent += `
+                <div class='bg-red-50 border-l-4 border-red-500 p-4 mb-4'>
+                    <h4 class='text-lg font-semibold text-red-800 mb-2'>🎯 Focus on Speech Clarity</h4>
+                    <p class='text-red-700'>High filler word usage (${fillerWordRate.toFixed(1)}%) detected. Practice speaking slower and taking brief pauses to gather your thoughts before responding.</p>
+                </div>
+            `;
+        }
 
-//                                 {/* personalized feedback card */}
-//                                 <Grid xs={12} sm={6} md={4} lg={3} sx={{ display: 'flex' }}>
-//                                     <motion.div
-//                                         variants={itemVariants}
-//                                         style={{ width: '100%', display: 'flex' }}
-//                                         whileHover={{ y: -8, transition: { duration: 0.3 } }}
-//                                     >
-//                                         <Card className="main-home-page-card modern-card">
-//                                             <div className="card-icon-container green-gradient">
-//                                                 <BiSolidMessageCheck color={'#559437'} size={28} />
-//                                             </div>
-//                                             <Typography variant="h5" className="main-home-page-card-feature-title">
-//                                                 AI-Powered Feedback
-//                                             </Typography>
-//                                             <Typography className="main-home-page-card-feature-description">
-//                                                 Receive instant, actionable feedback on your communication style, content quality, and interview performance.
-//                                             </Typography>
-//                                             <div className="card-hover-effect"></div>
-//                                         </Card>
-//                                     </motion.div>
-//                                 </Grid>
-//                             </Grid>
-//                         </motion.div>
-//                     </Grid>
+        // Response length advice
+        if (shortResponses > questionsCount / 2) {
+            adviceContent += `
+                <div class='bg-blue-50 border-l-4 border-blue-500 p-4 mb-4'>
+                    <h4 class='text-lg font-semibold text-blue-800 mb-2'>💡 Expand Your Responses</h4>
+                    <p class='text-blue-700'>Several of your responses were quite brief. Try using the STAR method (Situation, Task, Action, Result) to provide more detailed examples.</p>
+                </div>
+            `;
+        }
 
-//                 </Grid>
-//             </Box>
+        // General improvement tips
+        adviceContent += `
+            <div class='bg-gray-50 p-4 rounded-lg mt-6'>
+                <h4 class='text-lg font-semibold mb-3'>💪 Tips for Improvement</h4>
+                <ul class='list-disc pl-5 space-y-2'>
+                    <li>Practice the STAR method for behavioral questions</li>
+                    <li>Record yourself answering common questions to identify speech patterns</li>
+                    <li>Take a brief pause before answering to collect your thoughts</li>
+                    <li>Prepare specific examples from your experience beforehand</li>
+                    <li>Focus on speaking at a moderate pace - don't rush</li>
+                </ul>
+            </div>
+            </div>
+        `;
 
-//             {/* ---------- why wing it ----------*/}
-//             <Box id="why-wing-it" className="why-wing-it-section-container">
-//                 <Grid container
-//                     spacing={4}
-//                     columns={5}
-//                     rows={1}
-//                     wrap={{ xs: "wrap", sm: "wrap", md: "nowrap", lg: "nowrap" }}
-//                     justifyContent={{ xs: "center", sm: "center", md: "flex-start", lg: "flex-start" }}
-//                     direction={{ xs: 'column', md: 'row' }}
-//                     width={{ xs: '98%', sm: '90%', md: '80%' }}
-//                 >
+        setTabs(currentTabs =>
+            currentTabs.map(tab =>
+                tab.label === "Advice"
+                    ? { ...tab, content: adviceContent }
+                    : tab
+            )
+        );
+    };
 
-//                     {/* ---------- title / description ---------- */}
-//                     <Grid item xs={12} sm={6} md={4} lg={3}>
-//                         <motion.div 
-//                             style={{padding: '2.5%'}}
-//                             initial="hidden"
-//                             whileInView="visible"
-//                             viewport={{ once: true }}
-//                             variants={staggerContainer}
-//                         >
+    // Load data when sessionId is available
+    useEffect(() => {
+        if (!sessionId) return;
 
-//                             {/* title */}
-//                             <motion.h2
-//                                 variants={itemVariants}
-//                                 className="why-wing-it-title"
-//                             >
-//                                 Built by students, for students 🎓
-//                             </motion.h2>
+        const loadResults = async () => {
+            setIsLoading(true);
 
-//                             {/* description*/}
-//                             <Stack spacing={3} style={{padding: '30px'}}>
-//                                 <motion.p
-//                                     variants={itemVariants}
-//                                     className="why-wing-it-description-text"
-//                                 >
-//                                     We &apos;ve been in your shoes – stressing about interviews, lacking access to quality practice tools, 
-//                                     and struggling to get meaningful feedback on our performance.
-//                                 </motion.p>
-//                                 <motion.div
-//                                     variants={itemVariants}
-//                                     className="highlight-box"
-//                                 >
-//                                     <p className="why-wing-it-description-text highlight-text">
-//                                         Our mission: <span className="bold-highlight">Making career preparation accessible for everyone.</span> 
-//                                         No subscriptions, no hidden fees, just powerful tools to help you succeed.
-//                                     </p>
-//                                 </motion.div>
-//                                 <motion.p
-//                                     variants={itemVariants}
-//                                     className="why-wing-it-description-text"
-//                                 >
-//                                     Join thousands of students who &apos;ve already improved their interview skills with WiNG.it. 
-//                                     Because your future shouldn &apos;t be limited by access to resources.
-//                                 </motion.p>
-//                             </Stack>
-//                         </motion.div>
-//                     </Grid>
+            console.log("Using session ID for results:", sessionId);
 
-//                 </Grid>
-//             </Box>
+            // Fetch all results
+            const result = await fetchInterviewResults();
 
-//             {/*  ---------- about us ----------  */}
-//             <Box id="about-us" className="about-us-section-container">
-//                 <Grid container
-//                     direction={"row"}
-//                     width={{ xs: '98%', sm: '90%', md: '80%' }}
-//                     sx={{ paddingLeft: { xs: '2%', sm: '5%' }, paddingRight: { xs: '2%', sm: '5%' } }}>
+            if (result && result.success && result.responses) {
+                setInterviewData(result);
 
-//                     {/* title  */}
-//                     <Stack spacing={2} direction="column">
-//                     <Grid item xs={12} sm={6} md={4} lg={3}>
-//                         <motion.div
-//                             initial="hidden"
-//                             whileInView="visible"
-//                             viewport={{ once: true }}
-//                             variants={itemVariants}
-//                         >
-//                         <Typography className="about-us-section-title">
-//                             Meet the team behind WiNG.it
-//                         </Typography>
-//                         </motion.div>
-//                     </Grid>
+                // Extract questions from the response data
+                const questionsList = Object.entries(result.responses).map(([num, response]) => ({
+                    number: num,
+                    text: response.question_text || `Question ${num}`
+                }));
 
-//                     {/* description */}
-//                     <motion.div
-//                         initial="hidden"
-//                         whileInView="visible"
-//                         viewport={{ once: true }}
-//                         variants={staggerContainer}
-//                     >
+                // Sort questions by number
+                questionsList.sort((a, b) => parseInt(a.number) - parseInt(b.number));
+                setQuestions(questionsList);
 
-//                         <Stack spacing={4} direction={"column"}>
-//                             <motion.div variants={itemVariants} className="story-card">
-//                                 <p className="about-us-section-description-text">
-//                                     Our journey started at the
-//                                     <span className="highlight-span"> University of Florida&apos;s 🐊</span> inaugural
-//                                     <span className="highlight-span"> WiNGHacks Hackathon 🪽</span> – a celebration of innovation by 
-//                                     women, non-binary, and gender minorities in tech.
-//                                 </p>
-//                             </motion.div>
-//                             <motion.div variants={itemVariants} className="achievement-card">
-//                                 <div className="achievement-badge">🏆</div>
-//                                 <p className="about-us-section-description-text">
-//                                     We &apos;re proud to have won <span className="highlight-span">first place</span> for best project by 
-//                                     first-time hackathoners and caught the attention of 
-//                                     <span className="highlight-span"> UF Professor Amanpreet Kapoor 💻</span>, who believed in our vision 
-//                                     enough to support our continued development.
-//                                 </p>
-//                             </motion.div>
-//                             <motion.div variants={itemVariants} className="mission-card">
-//                                 <p className="about-us-section-description-text">
-//                                     Today, WiNG.it continues to evolve as a comprehensive career preparation platform, 
-//                                     helping students worldwide build confidence, improve their skills, and land their dream opportunities.
-//                                 </p>
-//                             </motion.div>
-//                         </Stack>
-//                     </motion.div>
-//                     </Stack>
-//                 </Grid>
-//             </Box>
+                console.log("Found questions:", questionsList.map(q => q.number));
 
-//             {/*  developer section  */}
-//             <Grid className="developer-section-container">
-//                 <motion.div 
-//                     initial="hidden"
-//                     whileInView="visible"
-//                     viewport={{ once: true }}
-//                     variants={staggerContainer}
-//                 >
-//                 <Grid container
-//                     spacing={4}
-//                     alignItems="center"
-//                     justifyContent="center"
-//                     direction={{ xs: 'column', sm: 'column', md: 'row', lg: 'row' }}
-//                     width={{ xs: '98%', sm: '90%', md: '80%', lg: '80%' }}
-//                     wrap={{ xs: "wrap", sm: "wrap", md: "nowrap", lg: "nowrap" }}
-//                     sx={{ mx: 'auto', px: { xs: '2%', sm: '5%', lg: '8%' } }}>
+                // Update all tabs with data
+                const transcriptResult = await updateTranscriptTab();
+                updateStatisticsTab(result.responses);
+                generateAdviceTab(result.responses);
 
-//                         {/* Rachel */}
-//                         <Grid item xs={12} sm={6} md={4} lg={3}>
-//                             <motion.div variants={itemVariants}>
-//                                 <Grid container spacing={2} direction="column" alignItems="center">
-//                                     {/* Photo */}
-//                                     <Grid item>
-//                                         <Link
-//                                         component="a"
-//                                         href="https://www.linkedin.com/in/rachel-pu-ufl/"
-//                                         target="_blank"
-//                                         rel="noopener noreferrer"
-//                                         >
-//                                         <motion.div className="developer-card">
-//                                             <motion.img
-//                                                 src="/static/images/rachel%20pu%20image.png"
-//                                                 alt="Rachel Pu"
-//                                                 className="developer-image"
-//                                                 whileHover={{ scale: 1.05, rotate: 2, cursor: "pointer" }}
-//                                             />
-//                                             <div className="developer-overlay">
-//                                                 <span>View LinkedIn →</span>
-//                                             </div>
-//                                         </motion.div>
-//                                         </Link>
-//                                     </Grid>
-//                                     {/* Text */}
-//                                     <Grid item>
-//                                         <Typography variant="h2" className="developer-section-developer-name">
-//                                             Rachel Pu
-//                                         </Typography>
-//                                         <Typography className="developer-section-developer-description">
-//                                             Computer Science & Digital Arts Sciences @ UF
-//                                         </Typography>
-//                                     </Grid>
-//                                 </Grid>
-//                             </motion.div>
-//                         </Grid>
+                // Select transcript tab by default
+                setSelectedTab(tabs.find(tab => tab.label === "Transcript"));
+                setIsLoading(false);
+            } else {
+                setError("No interview data found or error retrieving data");
+                setIsLoading(false);
+            }
+        };
 
-//                         {/* Chelsea */}
-//                         <Grid item xs={12} sm={6} md={4} lg={3}>
-//                             <motion.div variants={itemVariants}>
-//                                 <Grid container spacing={2} direction="column" alignItems="center">
-//                                     {/* Photo */}
-//                                     <Grid item>
-//                                         <Link
-//                                         component="a"
-//                                         href="https://www.linkedin.com/in/chelseaqnguyen/"
-//                                         target="_blank"
-//                                         rel="noopener noreferrer"
-//                                         >
-//                                         <motion.div className="developer-card">
-//                                             <motion.img
-//                                                 src="/static/images/chelsea nguyen image.png"
-//                                                 alt="Chelsea Nguyen"
-//                                                 className="developer-image"
-//                                                 whileHover={{ scale: 1.05, rotate: 2, cursor: "pointer" }}
-//                                             />
-//                                             <div className="developer-overlay">
-//                                                 <span>View LinkedIn →</span>
-//                                             </div>
-//                                         </motion.div>
-//                                         </Link>
-//                                     </Grid>
-//                                     {/* Text */}
-//                                     <Grid item>
-//                                         <Typography variant="h2" className="developer-section-developer-name">
-//                                             Chelsea Nguyen
-//                                         </Typography>
-//                                         <Typography className="developer-section-developer-description">
-//                                             Computer Science & Digital Arts Sciences @ UF
-//                                         </Typography>
-//                                     </Grid>
-//                                 </Grid>
-//                             </motion.div>
-//                         </Grid>
+        loadResults();
+    }, [sessionId]);
 
-//                         {/* Clarissa */}
-//                         <Grid item xs={12} sm={6} md={4} lg={3}>
-//                             <motion.div variants={itemVariants}>
-//                                 <Grid container spacing={2} direction="column" alignItems="center">
-//                                     {/* Photo */}
-//                                     <Grid item>
-//                                         <Link
-//                                         component="a"
-//                                         href="https://www.linkedin.com/in/clarissa-cheung-054035187/"
-//                                         target="_blank"
-//                                         rel="noopener noreferrer"
-//                                         >
-//                                         <motion.div className="developer-card">
-//                                             <motion.img
-//                                                 src="/static/images/clarissa-cheung.jpg"
-//                                                 alt="Clarissa Cheung"
-//                                                 className="developer-image"
-//                                                 whileHover={{ scale: 1.05, rotate: 2, cursor: "pointer" }}
-//                                             />
-//                                             <div className="developer-overlay">
-//                                                 <span>View LinkedIn →</span>
-//                                             </div>
-//                                         </motion.div>
-//                                         </Link>
-//                                     </Grid>
-//                                     {/* Text */}
-//                                     <Grid item>
-//                                         <Typography variant="h2" className="developer-section-developer-name">
-//                                             Clarissa Cheung
-//                                         </Typography>
-//                                         <Typography className="developer-section-developer-description">
-//                                             Computer Science & Economics @ UF
-//                                         </Typography>
-//                                     </Grid>
-//                                 </Grid>
-//                             </motion.div>
-//                         </Grid>
-                        
-//                     </Grid>
-//                     </motion.div>
-//                 </Grid>
+    // Effect to initialize selectedTab after tabs are updated
+    useEffect(() => {
+        if (!selectedTab && tabs.length > 0) {
+            setSelectedTab(tabs.find(tab => tab.label === "Transcript") || tabs[0]);
+        }
+    }, [tabs, selectedTab]);
 
-//             {/*  honorable mention */}
-//                 <Box className="honorable-mentions-section-container">
-//                     <Grid item xs={12}>
-//                         <motion.div
-//                             initial = "hidden"
-//                             whileInView="visible"
-//                             viewport={{ once: true }}
-//                             variants={itemVariants}
-//                         >
-//                             <motion.p className="honorable-mentions-section-text">
-//                                 Special thanks to our original WiNGHacks team members:
-//                                 <br/>
-//                                 <span className="highlight-span"> Xiaguo Jia</span> and
-//                                 <span className="highlight-span"> Sara Smith</span>
-//                             </motion.p>
+    // Handle question selection
+    const handleQuestionSelect = async (number) => {
+        setIsLoading(true);
+        setQuestionNumber(number);
 
-//                         </motion.div>
-//                     </Grid>
-//             </Box>
+        await updateTranscriptTab(number);
 
-//             {/* ---------- getting started section ---------- */}
-//             <Box id="getting-started" className="getting-started-section-container">
-//                 <motion.div
-//                     initial="hidden"
-//                     whileInView="visible"
-//                     viewport={{ once: true }}
-//                     variants={staggerContainer}
-//                     className="getting-started-content"
-//                 >
-//                     <Stack direction={'column'} spacing={2} alignItems="center">
-//                         <motion.h2 variants={itemVariants} className="get-started-title">
-//                             Ready to ace your next interview?
-//                         </motion.h2>
-//                         <motion.p variants={itemVariants} className="get-started-subtitle">
-//                             Join us to improve your interview skills with WiNG.it
-//                         </motion.p>
-//                         <motion.div variants={itemVariants} className="final-cta-container">
-//                             <Button 
-//                                 color='inherit' 
-//                                 href='/dashboard'
-//                                 className="final-cta-button"
-//                                 size="large"
-//                             >
-//                                 Start Your Journey
-//                                 <svg className="button-arrow" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-//                                     <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14M12 5l7 7-7 7" />
-//                                 </svg>
-//                             </Button>
-//                             <div className="cta-subtext">
-//                                 <span>✨ Always free • No credit card required • Get started in 30 seconds</span>
-//                             </div>
-//                         </motion.div>
-//                     </Stack>
-//                 </motion.div>
-//             </Box>
-//         </Box>
-//         </Box>
-//     );
-// }
+        setIsLoading(false);
+    };
+
+    // Handle "All Questions" button
+    const handleViewAllQuestions = async () => {
+        setIsLoading(true);
+        setQuestionNumber(null);
+        await updateTranscriptTab();
+        setIsLoading(false);
+    };
+
+    // Question button component
+    const QuestionButton = ({ number, text }) => (
+        <button
+            className={`
+                rounded-2xl bg-gradient-to-r
+                ${questionNumber === number ? 
+                    'from-blue-500 to-blue-600 text-white shadow-lg' : 
+                    'from-color6BAEDB to-colorACD9DB text-color282523'
+                }
+                w-full font-satoshi shadow-[0_6px_#1d3557]
+                text-lg px-4 py-3 hover:from-color307999
+                hover:to-color6EAFCC active:shadow-[0_3px_#1d3557] 
+                active:translate-y-1 focus:outline-none transition-all duration-150
+            `}
+            onClick={() => handleQuestionSelect(number)}
+        >
+            Q{number}
+        </button>
+    );
+
+    if (!sessionId) {
+        return (
+            <Box sx={{ display: "flex" }}>
+                <CssBaseline />
+                <MainAppBar title="Interview Results" />
+                <LeftNavbar />
+                <Box component="main" sx={{ flexGrow: 1, bgcolor: "background.default", p: 3 }}>
+                    <Toolbar />
+                    <Box sx={{ textAlign: "center", mt: 4 }}>
+                        <Typography variant="h6" color="error">
+                            No session ID found. Please complete an interview first.
+                        </Typography>
+                        <Link href="/behavioral" style={{ textDecoration: 'none' }}>
+                            <Typography variant="body1" sx={{ mt: 2, color: 'primary.main' }}>
+                                Start a new interview
+                            </Typography>
+                        </Link>
+                    </Box>
+                </Box>
+            </Box>
+        );
+    }
+
+    if (error) {
+        return (
+            <Box sx={{ display: "flex" }}>
+                <CssBaseline />
+                <MainAppBar title="Interview Results" />
+                <LeftNavbar />
+                <Box component="main" sx={{ flexGrow: 1, bgcolor: "background.default", p: 3 }}>
+                    <Toolbar />
+                    <Box sx={{ textAlign: "center", mt: 4 }}>
+                        <Typography variant="h6" color="error">
+                            {error}
+                        </Typography>
+                        <Link href="/behavioral" style={{ textDecoration: 'none' }}>
+                            <Typography variant="body1" sx={{ mt: 2, color: 'primary.main' }}>
+                                Try again
+                            </Typography>
+                        </Link>
+                    </Box>
+                </Box>
+            </Box>
+        );
+    }
+
+    return (
+        <Box sx={{ display: "flex" }}>
+            <CssBaseline />
+            <MainAppBar title="Interview Results" />
+            <LeftNavbar />
+            <Box component="main" sx={{ flexGrow: 1, bgcolor: "background.default" }}>
+                <Toolbar />
+                <div className="min-h-screen bg-gradient-to-br from-colorFAF8F1 via-white to-colorF3F1EB p-6">
+                    <div className="max-w-7xl mx-auto">
+                        {/* Header */}
+                        <div className="text-center mb-8">
+                            <h1 className="text-4xl font-bold text-color282523 mb-4">
+                                Your Interview Results
+                            </h1>
+                            <p className="text-xl text-color282523/80">
+                                Review your performance and get personalized feedback
+                            </p>
+                        </div>
+
+                        {isLoading ? (
+                            <div className="flex justify-center items-center h-64">
+                                <CircularProgress size={60} />
+                            </div>
+                        ) : (
+                            <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+                                {/* Left Panel - Question Navigation */}
+                                <div className="lg:col-span-1">
+                                    <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg">
+                                        <h3 className="text-xl font-bold text-color282523 mb-4">
+                                            Questions
+                                        </h3>
+                                        <div className="space-y-3">
+                                            <button
+                                                className={`
+                                                    rounded-2xl bg-gradient-to-r w-full font-satoshi shadow-[0_6px_#1d3557]
+                                                    text-lg px-4 py-3 transition-all duration-150
+                                                    ${questionNumber === null ? 
+                                                        'from-green-500 to-green-600 text-white shadow-lg' : 
+                                                        'from-color6BAEDB to-colorACD9DB text-color282523'
+                                                    }
+                                                    hover:from-color307999 hover:to-color6EAFCC 
+                                                    active:shadow-[0_3px_#1d3557] active:translate-y-1 focus:outline-none
+                                                `}
+                                                onClick={handleViewAllQuestions}
+                                            >
+                                                All Questions
+                                            </button>
+                                            {questions.map((q) => (
+                                                <QuestionButton
+                                                    key={q.number}
+                                                    number={q.number}
+                                                    text={q.text}
+                                                />
+                                            ))}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Right Panel - Content */}
+                                <div className="lg:col-span-3">
+                                    <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg overflow-hidden">
+                                        {/* Tab Navigation */}
+                                        <div className="flex border-b border-gray-200">
+                                            {tabs.map((tab, index) => (
+                                                <button
+                                                    key={index}
+                                                    className={`
+                                                        flex items-center space-x-2 px-6 py-4 text-lg font-medium transition-all duration-200
+                                                        ${selectedTab?.label === tab.label
+                                                            ? 'bg-gradient-to-r from-color6BAEDB to-colorACD9DB text-color282523 border-b-2 border-color282523'
+                                                            : 'text-color282523/70 hover:text-color282523 hover:bg-gray-50'
+                                                        }
+                                                    `}
+                                                    onClick={() => setSelectedTab(tab)}
+                                                >
+                                                    <span className="text-xl">{tab.icon}</span>
+                                                    <span>{tab.label}</span>
+                                                </button>
+                                            ))}
+                                        </div>
+
+                                        {/* Tab Content */}
+                                        <div className="p-6">
+                                            <AnimatePresence mode="wait">
+                                                {selectedTab && (
+                                                    <motion.div
+                                                        key={selectedTab.label}
+                                                        initial={{ opacity: 0, y: 20 }}
+                                                        animate={{ opacity: 1, y: 0 }}
+                                                        exit={{ opacity: 0, y: -20 }}
+                                                        transition={{ duration: 0.2 }}
+                                                        dangerouslySetInnerHTML={{
+                                                            __html: selectedTab.content
+                                                        }}
+                                                    />
+                                                )}
+                                            </AnimatePresence>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Action Buttons */}
+                        <div className="flex justify-center mt-8 space-x-4">
+                            <Link href="/behavioral" className="no-underline">
+                                <button className="bg-gradient-to-r from-color6BAEDB to-colorACD9DB text-color282523 px-8 py-3 rounded-full font-semibold shadow-lg hover:from-color307999 hover:to-color6EAFCC transition-all duration-200 transform hover:scale-105">
+                                    Take Another Interview
+                                </button>
+                            </Link>
+                        </div>
+                    </div>
+                </div>
+            </Box>
+        </Box>
+    );
+}
