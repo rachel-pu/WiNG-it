@@ -19,7 +19,7 @@ import PinDropIcon from "@mui/icons-material/PinDrop";
 
 const InterviewQuestions = ({questions}) => {
     const router = useRouter();
-
+    const containerRef = useRef(null);
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
     const [isRecording, setIsRecording] = useState(false);
     const [audioUrl, setAudioUrl] = useState(null);
@@ -291,11 +291,23 @@ const InterviewQuestions = ({questions}) => {
     };
 
     const toggleFullscreen = () => {
-        setIsFullscreen(!isFullscreen);
+        // setIsFullscreen(!isFullscreen);
+        if (!document.fullscreenElement) {
+            // Enter fullscreen
+            containerRef.current.requestFullscreen?.()
+            .then(() => setIsFullscreen(true))
+            .catch((err) => console.error("Fullscreen request failed:", err));
+        } else {
+            // Exit fullscreen
+            document.exitFullscreen?.()
+            .then(() => setIsFullscreen(false))
+            .catch((err) => console.error("Exit fullscreen failed:", err));
+        }
     };
 
     return (
         <Box
+            ref={containerRef}
             sx={{
                 position: 'relative',
                 width: {
