@@ -32,6 +32,10 @@ import json
 #     load_dotenv(dotenv_path)
 load_dotenv()
 
+logging.basicConfig(level=logging.DEBUG)
+
+print("🚀 Flask app starting...")
+
 # Keep OpenAI as primary for now - you can switch to Gemini later
 openai.api_key = os.getenv('OPENAI_API_KEY')
 if not openai.api_key:
@@ -521,4 +525,5 @@ if __name__ == "__main__":
     
     # app.run(debug=True)
     port = int(os.environ.get("PORT", 5000))
+    print(f"📡 Starting server on port {port}")
     app.run(host="0.0.0.0", port=port, debug=False)
