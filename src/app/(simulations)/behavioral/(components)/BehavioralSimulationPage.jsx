@@ -101,7 +101,7 @@ const InterviewQuestions = ({questions}) => {
             // setAlertSeverity("info");
             // setShowAlert(true);
 
-            const response = await fetch("http://127.0.0.1:5000/text-to-speech", {
+            const response = await fetch("https://wing-it-un4w.onrender.com/text-to-speech", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
@@ -243,7 +243,7 @@ const InterviewQuestions = ({questions}) => {
 
             console.log("Sending audio for transcription...");
 
-            const response = await fetch("http://127.0.0.1:5000/save-and-transcribe", {
+            const response = await fetch("https://wing-it-un4w.onrender.com/save-and-transcribe", {
                 method: "POST",
                 body: formData
             });
