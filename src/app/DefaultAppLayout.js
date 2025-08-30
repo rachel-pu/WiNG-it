@@ -17,7 +17,7 @@ const DefaultAppLayout = ({ title, color, children }) => {
 
   let marginLeft = 0;
   if (isXs) marginLeft = drawerWidthXs; // can toggle dynamically with your LeftNavbar state
-  else if (isSm) marginLeft = collapsedWidth;
+  else if (isSm) marginLeft = 0;
   else if (isMdUp) marginLeft = drawerWidth;
 
   useEffect(() => {
