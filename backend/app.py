@@ -25,11 +25,16 @@ from functools import lru_cache
 import json
 
 # Load environment variables
-dotenv_path = "/Users/rachelpu/Coding/WiNG-it/.env.local"
-if not os.path.exists(dotenv_path):
-    print("❌ .env file not found")
-else:
-    load_dotenv(dotenv_path)
+# dotenv_path = "/Users/rachelpu/Coding/WiNG-it/.env.local"
+# if not os.path.exists(dotenv_path):
+#     print("❌ .env file not found")
+# else:
+#     load_dotenv(dotenv_path)
+load_dotenv()
+
+logging.basicConfig(level=logging.DEBUG)
+
+print("🚀 Flask app starting...")
 
 # Keep OpenAI as primary for now - you can switch to Gemini later
 openai.api_key = os.getenv('OPENAI_API_KEY')
@@ -518,4 +523,7 @@ if __name__ == "__main__":
     print(f"🤖 Primary provider: Google Gemini")
     print(f"🔄 Fallback provider: {'OpenAI' if OPENAI_FALLBACK else 'None'}")
     
-    app.run(debug=True)
+    # app.run(debug=True)
+    port = int(os.environ.get("PORT", 5000))
+    print(f"📡 Starting server on port {port}")
+    app.run(host="0.0.0.0", port=port, debug=False)
