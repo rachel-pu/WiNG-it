@@ -30,7 +30,7 @@ export default function Dashboard() {
                                         title="Behavioral Interview"
                                         link={"/behavioral"}
                                         description="This mode lets you practice behavioral interviews, customize your questions, and receive personalized improvement advice at the end."
-                                        image="static/images/testExample.png"
+                                        image="../static/images/testExample.png"
                                         buttons={[
                                             { type: 'Simulation' },
                                             { type: 'Microphone' },
