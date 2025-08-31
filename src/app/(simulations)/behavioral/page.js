@@ -23,7 +23,7 @@ export default function BehavioralInterviewSimulation() {
     const [questionTypes, setQuestionTypes] = useState([]);
     const [interviewerDifficulty, setInterviewerDifficulty] = useState("easy-going");
     const [showQuickstart, setShowQuickstart] = useState(true);
-
+    const [showTimer, setShowTimer] = useState(false);
 
     const fetchQuestions = async () => {
         try {
@@ -68,6 +68,11 @@ export default function BehavioralInterviewSimulation() {
         fetchQuestions();
     }
 
+    const handleTimerChange = (checked) => {
+        setShowTimer(checked);
+        console.log("Timer visibility set to:", checked);
+    }
+
     const handleInterviewerDifficultyChange = (event) => {
 
     }
@@ -83,6 +88,7 @@ export default function BehavioralInterviewSimulation() {
                   {showQuickstart ? (
                       <QuickstartPage
                           jobRole={jobRole}
+                          showTimer={showTimer}
                           numQuestions={numQuestions}
                           questionTypes={questionTypes}
                           handleJobRoleChange={handleJobRoleChange}
@@ -90,7 +96,7 @@ export default function BehavioralInterviewSimulation() {
                           handleQuestionTypesChange={handleQuestionTypesChange}
                           handleGetStarted={handleGetStarted}
                           handleInterviewerDifficultyChange={() => {}}
-                          handleTimerChange={() => {}}
+                          handleTimerChange={handleTimerChange}
                       />
                   ) : (
                       <Box
@@ -102,7 +108,7 @@ export default function BehavioralInterviewSimulation() {
                           <Box component="main" sx={{ height: "90vh", overflow: "auto", textAlign: "center"}}>
 
                           {questions.length > 0 ? (
-                                  <BehavioralSimulationPage questions={questions} />
+                                  <BehavioralSimulationPage questions={questions} showTimer={showTimer}/>
                               ) : (
                                   <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%', flexDirection: 'column', gap: 2}}>
 

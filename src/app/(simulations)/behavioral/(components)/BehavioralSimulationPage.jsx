@@ -17,7 +17,7 @@ import FullscreenExitIcon from "@mui/icons-material/FullscreenExit";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import PinDropIcon from "@mui/icons-material/PinDrop";
 
-const InterviewQuestions = ({questions}) => {
+const InterviewQuestions = ({questions, showTimer}) => {
     const router = useRouter();
     const containerRef = useRef(null);
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -33,6 +33,9 @@ const InterviewQuestions = ({questions}) => {
     const [alertSeverity, setAlertSeverity] = useState("info");
     const [showAlert, setShowAlert] = useState(false);
     const [isFullscreen, setIsFullscreen] = useState(false);
+    const [recordTime, setRecordTime] = useState(0); 
+    const [recordInterval, setRecordInterval] = useState(null);
+
 
     const videoRef = useRef(null);
     const [mediaStream, setMediaStream] = useState(null);
@@ -211,6 +214,15 @@ const InterviewQuestions = ({questions}) => {
                 await processAudioBlob(audioBlob, questionIndexAtRecordingStart);
             };
 
+            if (showTimer) {
+                setRecordTime(0);
+                const interval = setInterval(() => {
+                    setRecordTime(prev => prev + 1);
+                }, 1000);
+                setRecordInterval(interval);
+            }
+            
+
             setAlertMessage("Recording started");
             setAlertSeverity("info");
             setShowAlert(true);
@@ -226,6 +238,11 @@ const InterviewQuestions = ({questions}) => {
             setIsRecording(false);
             setIsProcessing(true);
             console.log("Recording stopped");
+
+             if (recordInterval) {
+                clearInterval(recordInterval);
+                setRecordInterval(null);
+            }
 
             setAlertMessage("Processing your answer...");
             setAlertSeverity("info");
@@ -279,6 +296,11 @@ const InterviewQuestions = ({questions}) => {
     };
 
     const handleNextQuestion = () => {
+        if (recordInterval) {
+            clearInterval(recordInterval);
+            setRecordInterval(null);
+        }
+        setRecordTime(0);
         if (currentQuestionIndex < questions.length - 1) {
             setCurrentQuestionIndex(currentQuestionIndex + 1);
         } else {
@@ -361,6 +383,14 @@ const InterviewQuestions = ({questions}) => {
 
                 {/* Right side - Controls */}
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    {showTimer && (
+                        <Typography sx={{ color: 'white', fontFamily: 'DM Sans', fontSize: '0.9rem' }}>
+                            {Math.floor(recordTime / 60)
+                                .toString()
+                                .padStart(2, '0')}:
+                            {(recordTime % 60).toString().padStart(2, '0')}
+                        </Typography>
+                    )}
                     <IconButton 
                         size="small" 
                         sx={{ color: 'white', backgroundColor: 'rgba(255,255,255,0.1)' }}
@@ -368,6 +398,8 @@ const InterviewQuestions = ({questions}) => {
                     >
                         {isFullscreen ? <FullscreenExitIcon /> : <FullscreenIcon />}
                     </IconButton>
+
+                    
                     <IconButton 
                         size="small" 
                         sx={{ color: 'white', backgroundColor: 'rgba(255,255,255,0.1)' }}
