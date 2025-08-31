@@ -656,7 +656,9 @@ export default function HomePage() {
                                     gap: '2rem',
                                     marginTop: '1.5rem',
                                     flexWrap: 'wrap',
-                                    marginBottom: '1.5rem'
+                                    marginBottom: '1.5rem',
+                                    maxWidth: '800px', // Add this to control overall width
+                                    margin: '1.5rem auto' // Center the container
                                 }}
                             >
                                 <motion.div 
@@ -668,6 +670,7 @@ export default function HomePage() {
                                         border: '1px solid rgba(255, 255, 255, 0.15)',
                                         textAlign: 'center',
                                         minWidth: '140px',
+                                        flex: 1,
                                         transition: 'all 0.3s ease'
                                     }}
                                     whileHover={{
@@ -708,6 +711,7 @@ export default function HomePage() {
                                         border: '1px solid rgba(255, 255, 255, 0.15)',
                                         textAlign: 'center',
                                         minWidth: '140px',
+                                         flex: 1,
                                         transition: 'all 0.3s ease'
                                     }}
                                     whileHover={{
@@ -748,6 +752,7 @@ export default function HomePage() {
                                         border: '1px solid rgba(255, 255, 255, 0.15)',
                                         textAlign: 'center',
                                         minWidth: '140px',
+                                         flex: 1,
                                         transition: 'all 0.3s ease'
                                     }}
                                     whileHover={{
