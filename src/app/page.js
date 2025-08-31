@@ -23,7 +23,7 @@ import {IconButton, Paper} from "@mui/material";
 
 import "./HomePage.css";
 
-const pages = ['Why WiNG.it', 'About Us', 'Get Started'];
+const pages = ['Why WiNG.it', 'Our Story', 'Get Started'];
 export default function HomePage() {
 
     const itemVariants = {
@@ -145,7 +145,7 @@ export default function HomePage() {
                                                 letterSpacing: '-0.01px',
                                             }}
                                         >
-                                            About Us
+                                            Our Story
                                         </Link>
                                     </Button>
 
@@ -213,7 +213,7 @@ export default function HomePage() {
                                     duration={500}
                                     style={{ fontSize: '1.05rem', fontFamily: 'Satoshi Bold', textTransform: 'none', color: 'black', letterSpacing: '-0.01px', borderRadius: '12px', paddingX: 2 }}
                                 >
-                                    About Us
+                                    Our Story
                                 </Link>
                             </Button>
                             <Button 
@@ -915,9 +915,9 @@ export default function HomePage() {
         </Grid>
     </Box>
 
-{/*  ---------- about us ----------  */}
+{/*  ---------- Our Story ----------  */}
 <Box 
-    id="about-us" 
+    id="our-story" 
     sx={{
         minHeight: '100vh',
         background: 'linear-gradient(135deg, #F3F1EA 0%, #E8E6D9 100%)',
@@ -950,7 +950,7 @@ export default function HomePage() {
                     letterSpacing: '-0.02em'
                 }}
             >
-                Meet the team behind WiNG.it
+                Our Story
             </Typography>
             <Typography 
                 sx={{
@@ -967,8 +967,8 @@ export default function HomePage() {
         </motion.div>
     </Box>
 
-    {/* Story Section - Full Width */}
-    <Box sx={{ maxWidth: '1200px', width: '100%', margin: '0 auto', marginBottom: '6rem' }}>
+    {/* Story Section - COMPLETELY REDESIGNED */}
+    <Box sx={{ maxWidth: '900px', width: '100%', margin: '0 auto', marginBottom: '4rem' }}>
         <motion.div
             initial="hidden"
             whileInView="visible"
@@ -978,34 +978,20 @@ export default function HomePage() {
             <Box 
                 sx={{
                     background: 'rgba(255, 255, 255, 0.95)',
-                    borderRadius: '32px',
-                    padding: { xs: '2rem', md: '3rem' },
+                    borderRadius: '20px',
+                    padding: { xs: '2rem 1.5rem', md: '2.5rem 3rem' },
                     backdropFilter: 'blur(20px)',
                     border: '1px solid rgba(255, 255, 255, 0.3)',
-                    boxShadow: '0 20px 64px rgba(0, 0, 0, 0.1)',
+                    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
                     position: 'relative',
                     overflow: 'hidden'
                 }}
             >
-                {/* Background Decoration */}
-                <Box
-                    sx={{
-                        position: 'absolute',
-                        top: 0,
-                        right: 0,
-                        width: '200px',
-                        height: '200px',
-                        background: 'linear-gradient(135deg, rgba(40, 80, 217, 0.1), rgba(102, 126, 234, 0.05))',
-                        borderRadius: '50%',
-                        transform: 'translate(50%, -50%)',
-                        zIndex: 0
-                    }}
-                />
                 
                 <Box sx={{ position: 'relative', zIndex: 1 }}>
                     <Typography 
                         sx={{
-                            fontSize: { xs: '1.5rem', md: '1.8rem' },
+                            fontSize: { xs: '1.4rem', md: '1.6rem' },
                             fontWeight: 700,
                             color: '#1e293b',
                             marginBottom: '2rem',
@@ -1016,157 +1002,179 @@ export default function HomePage() {
                         Our Journey
                     </Typography>
 
-                    <Grid container spacing={4}>
-                        {/* Timeline Item 1 */}
-                        <Grid item xs={12} md={4}>
+                    {/* Modern Timeline */}
+                    <Box sx={{ position: 'relative' }}>
+                        {/* Timeline line */}
+                        <Box 
+                            sx={{
+                                position: 'absolute',
+                                left: '20px',
+                                top: '20px',
+                                bottom: '20px',
+                                width: '2px',
+                                background: 'linear-gradient(to bottom, #ff6b6b, #ffd700, #667eea)',
+                                display: { xs: 'none', md: 'block' }
+                            }}
+                        />
+
+                        <Stack spacing={3}>
+                            {/* Timeline Item 1 */}
                             <motion.div variants={itemVariants}>
-                                <Box sx={{ textAlign: 'center', height: '100%' }}>
+                                <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: '1.5rem' }}>
                                     <Box 
                                         sx={{
-                                            width: '60px',
-                                            height: '60px',
+                                            width: '42px',
+                                            height: '42px',
                                             borderRadius: '50%',
                                             display: 'flex',
                                             alignItems: 'center',
                                             justifyContent: 'center',
-                                            fontSize: '1.5rem',
+                                            fontSize: '1.2rem',
                                             background: 'linear-gradient(135deg, #ff6b6b, #feca57)',
-                                            margin: '0 auto 1.5rem',
-                                            boxShadow: '0 8px 24px rgba(255, 107, 107, 0.3)'
+                                            flexShrink: 0,
+                                            boxShadow: '0 4px 12px rgba(255, 107, 107, 0.25)',
+                                            zIndex: 1,
+                                            border: '3px solid white'
                                         }}
                                     >
                                         🐊
                                     </Box>
-                                    <Typography 
-                                        sx={{
-                                            fontSize: '1.2rem',
-                                            fontWeight: 700,
-                                            color: '#1e293b',
-                                            marginBottom: '1rem',
-                                            fontFamily: 'Satoshi Bold, sans-serif'
-                                        }}
-                                    >
-                                        The Beginning
-                                    </Typography>
-                                    <Typography 
-                                        sx={{
-                                            color: '#64748b',
-                                            lineHeight: 1.6,
-                                            fontSize: '1rem',
-                                            fontFamily: 'DM Sans, sans-serif',
-                                            '& .highlight': {
-                                                color: '#2850d9',
+                                    <Box sx={{ flex: 1, paddingTop: '0.2rem' }}>
+                                        <Typography 
+                                            sx={{
+                                                fontSize: '1rem',
                                                 fontWeight: 600,
-                                                fontFamily: 'DM Sans Bold, sans-serif'
-                                            }
-                                        }}
-                                    >
-                                        Our journey started at the <span className="highlight">University of Florida's 🐊 inaugural WiNGHacks Hackathon 🪽</span> – a celebration of innovation by women, non-binary, and gender minorities in tech.
-                                    </Typography>
+                                                color: '#1e293b',
+                                                marginBottom: '0.5rem',
+                                                fontFamily: 'Satoshi Bold, sans-serif'
+                                            }}
+                                        >
+                                            Started at UF's WiNGHacks
+                                        </Typography>
+                                        <Typography 
+                                            sx={{
+                                                color: '#64748b',
+                                                fontSize: '1rem',
+                                                lineHeight: 1.5,
+                                                fontFamily: 'DM Sans, sans-serif',
+                                                '& .highlight': {
+                                                    color: '#2850d9',
+                                                    fontWeight: 600,
+                                                    fontFamily: 'DM Sans Bold, sans-serif'
+                                                }
+                                            }}
+                                        >
+                                            Our journey began at the <span className="highlight">University of Florida's inaugural WiNGHacks Hackathon</span> – celebrating innovation by women, non-binary, and gender minorities in tech.
+                                        </Typography>
+                                    </Box>
                                 </Box>
                             </motion.div>
-                        </Grid>
 
-                        {/* Timeline Item 2 */}
-                        <Grid item xs={12} md={4}>
+                            {/* Timeline Item 2 */}
                             <motion.div variants={itemVariants}>
-                                <Box sx={{ textAlign: 'center', height: '100%' }}>
+                                <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: '1.5rem' }}>
                                     <Box 
                                         sx={{
-                                            width: '60px',
-                                            height: '60px',
+                                            width: '42px',
+                                            height: '42px',
                                             borderRadius: '50%',
                                             display: 'flex',
                                             alignItems: 'center',
                                             justifyContent: 'center',
-                                            fontSize: '1.5rem',
+                                            fontSize: '1.2rem',
                                             background: 'linear-gradient(135deg, #ffd700, #ffb347)',
-                                            margin: '0 auto 1.5rem',
-                                            boxShadow: '0 8px 24px rgba(255, 215, 0, 0.3)'
+                                            flexShrink: 0,
+                                            boxShadow: '0 4px 12px rgba(255, 215, 0, 0.25)',
+                                            zIndex: 1,
+                                            border: '3px solid white'
                                         }}
                                     >
                                         🏆
                                     </Box>
-                                    <Typography 
-                                        sx={{
-                                            fontSize: '1.2rem',
-                                            fontWeight: 700,
-                                            color: '#1e293b',
-                                            marginBottom: '1rem',
-                                            fontFamily: 'Satoshi Bold, sans-serif'
-                                        }}
-                                    >
-                                        First Place Victory
-                                    </Typography>
-                                    <Typography 
-                                        sx={{
-                                            color: '#64748b',
-                                            lineHeight: 1.6,
-                                            fontSize: '1rem',
-                                            fontFamily: 'DM Sans, sans-serif',
-                                            '& .highlight': {
-                                                color: '#2850d9',
+                                    <Box sx={{ flex: 1, paddingTop: '0.2rem' }}>
+                                        <Typography 
+                                            sx={{
+                                                fontSize: '1rem',
                                                 fontWeight: 600,
-                                                fontFamily: 'DM Sans Bold, sans-serif'
-                                            }
-                                        }}
-                                    >
-                                        We won <span className="highlight">first place</span> for best project by first-time hackathoners and caught the attention of <span className="highlight">UF Professor Amanpreet Kapoor 💻</span>, who supported our continued development.
-                                    </Typography>
+                                                color: '#1e293b',
+                                                marginBottom: '0.5rem',
+                                                fontFamily: 'Satoshi Bold, sans-serif'
+                                            }}
+                                        >
+                                            Won First Place
+                                        </Typography>
+                                        <Typography 
+                                            sx={{
+                                                color: '#64748b',
+                                                fontSize: '1rem',
+                                                lineHeight: 1.5,
+                                                fontFamily: 'DM Sans, sans-serif',
+                                                '& .highlight': {
+                                                    color: '#2850d9',
+                                                    fontWeight: 600,
+                                                    fontFamily: 'DM Sans Bold, sans-serif'
+                                                }
+                                            }}
+                                        >
+                                            We won <span className="highlight">first place</span> for best project by first-time hackathoners and caught the attention of <span className="highlight">UF Professor Amanpreet Kapoor</span>, who supported our continued development.
+                                        </Typography>
+                                    </Box>
                                 </Box>
                             </motion.div>
-                        </Grid>
 
-                        {/* Timeline Item 3 */}
-                        <Grid item xs={12} md={4}>
+                            {/* Timeline Item 3 */}
                             <motion.div variants={itemVariants}>
-                                <Box sx={{ textAlign: 'center', height: '100%' }}>
+                                <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: '1.5rem' }}>
                                     <Box 
                                         sx={{
-                                            width: '60px',
-                                            height: '60px',
+                                            width: '42px',
+                                            height: '42px',
                                             borderRadius: '50%',
                                             display: 'flex',
                                             alignItems: 'center',
                                             justifyContent: 'center',
-                                            fontSize: '1.5rem',
+                                            fontSize: '1.2rem',
                                             background: 'linear-gradient(135deg, #667eea, #764ba2)',
-                                            margin: '0 auto 1.5rem',
-                                            boxShadow: '0 8px 24px rgba(102, 126, 234, 0.3)'
+                                            flexShrink: 0,
+                                            boxShadow: '0 4px 12px rgba(102, 126, 234, 0.25)',
+                                            zIndex: 1,
+                                            border: '3px solid white'
                                         }}
                                     >
                                         🚀
                                     </Box>
-                                    <Typography 
-                                        sx={{
-                                            fontSize: '1.2rem',
-                                            fontWeight: 700,
-                                            color: '#1e293b',
-                                            marginBottom: '1rem',
-                                            fontFamily: 'Satoshi Bold, sans-serif'
-                                        }}
-                                    >
-                                        Today
-                                    </Typography>
-                                    <Typography 
-                                        sx={{
-                                            color: '#64748b',
-                                            lineHeight: 1.6,
-                                            fontSize: '1rem',
-                                            fontFamily: 'DM Sans, sans-serif',
-                                            '& .highlight': {
-                                                color: '#2850d9',
+                                    <Box sx={{ flex: 1, paddingTop: '0.2rem' }}>
+                                        <Typography 
+                                            sx={{
+                                                fontSize: '1rem',
                                                 fontWeight: 600,
-                                                fontFamily: 'DM Sans Bold, sans-serif'
-                                            }
-                                        }}
-                                    >
-                                        Today, WiNG.it continues to evolve as a <span className="highlight">comprehensive career preparation platform</span>, helping students worldwide build confidence, improve their skills, and land their dream opportunities.
-                                    </Typography>
+                                                color: '#1e293b',
+                                                marginBottom: '0.5rem',
+                                                fontFamily: 'Satoshi Bold, sans-serif'
+                                            }}
+                                        >
+                                            Building the Future
+                                        </Typography>
+                                        <Typography 
+                                            sx={{
+                                                color: '#64748b',
+                                                fontSize: '1rem',
+                                                lineHeight: 1.5,
+                                                fontFamily: 'DM Sans, sans-serif',
+                                                '& .highlight': {
+                                                    color: '#2850d9',
+                                                    fontWeight: 600,
+                                                    fontFamily: 'DM Sans Bold, sans-serif'
+                                                }
+                                            }}
+                                        >
+                                            Today, it continues to evolve as a <span className="highlight">comprehensive career preparation platform</span>, helping students worldwide build confidence and land their dream opportunities.
+                                        </Typography>
+                                    </Box>
                                 </Box>
                             </motion.div>
-                        </Grid>
-                    </Grid>
+                        </Stack>
+                    </Box>
                 </Box>
             </Box>
         </motion.div>
@@ -1193,7 +1201,8 @@ export default function HomePage() {
                             background: 'linear-gradient(135deg, #1e293b 0%, #2850d9 100%)',
                             WebkitBackgroundClip: 'text',
                             WebkitTextFillColor: 'transparent',
-                            backgroundClip: 'text'
+                            backgroundClip: 'text',
+                            letterSpacing: '-0.05px'
                         }}
                     >
                         Meet Our Team
@@ -1497,14 +1506,14 @@ export default function HomePage() {
             <motion.div variants={itemVariants}>
                 <Box 
                     sx={{
-                        background: 'rgba(255, 255, 255, 0.8)',
+                        // background: 'rgba(255, 255, 255, 0.8)',
+                        // backdropFilter: 'blur(10px)',
+                        // border: '1px solid rgba(255, 255, 255, 0.3)',
+                        // boxShadow: '0 8px 24px rgba(0, 0, 0, 0.05)',
                         borderRadius: '20px',
                         padding: '2rem',
                         textAlign: 'center',
-                        backdropFilter: 'blur(10px)',
-                        border: '1px solid rgba(255, 255, 255, 0.3)',
-                        marginTop: '3rem',
-                        boxShadow: '0 8px 24px rgba(0, 0, 0, 0.05)'
+                        marginTop: '1.5rem',
                     }}
                 >
                     <Typography 
