@@ -1175,7 +1175,7 @@ export default function HomePage() {
                                                 }
                                             }}
                                         >
-                                            Today, it continues to evolve as a <span className="highlight">comprehensive career preparation platform</span>, helping students worldwide build confidence and land their dream opportunities.
+                                            Today, it continues to evolve as a <span className="highlight">comprehensive career preparation platform</span>, helping students to build confidence and land opportunities.
                                         </Typography>
                                     </Box>
                                 </Box>
@@ -1253,7 +1253,7 @@ export default function HomePage() {
                             whileHover={{ 
                                 scale: 1.03, 
                                 y: -8,
-                                boxShadow: '0 20px 40px rgba(40, 80, 217, 0.2)'
+                                boxShadow: '0 20px 40px rgba(55, 85, 183, 0.2)'
                             }}
                             style={{
                                 background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)',
@@ -1330,96 +1330,7 @@ export default function HomePage() {
                     </Link>
                 </motion.div>
 
-                {/* Clarissa */}
-                <motion.div variants={itemVariants} style={{ height: '100%' }}>
-                    <Link
-                        component="a"
-                        href="https://www.linkedin.com/in/clarissa-cheung-054035187/"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        sx={{ textDecoration: 'none', height: '100%', display: 'block' }}
-                    >
-                        <motion.div
-                            whileHover={{ 
-                                scale: 1.03, 
-                                y: -8,
-                                boxShadow: '0 20px 40px rgba(40, 80, 217, 0.2)'
-                            }}
-                            style={{
-                                background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)',
-                                borderRadius: '24px',
-                                padding: '2rem 1.5rem',
-                                textAlign: 'center',
-                                backdropFilter: 'blur(20px)',
-                                border: '1px solid rgba(255, 255, 255, 0.4)',
-                                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.08)',
-                                transition: 'all 0.15s cubic-bezier(0.4, 0, 0.2, 1)',
-                                cursor: 'pointer',
-                                position: 'relative',
-                                overflow: 'hidden',
-                                height: '100%',
-                                display: 'flex',
-                                flexDirection: 'column',
-                                alignItems: 'center',
-                                justifyContent: 'space-between'
-                            }}
-                        >
-                            <Box
-                                sx={{
-                                    position: 'absolute',
-                                    top: 0,
-                                    left: 0,
-                                    right: 0,
-                                    height: '4px',
-                                    background: 'linear-gradient(135deg, #667eea, #764ba2)',
-                                    borderRadius: '24px 24px 0 0'
-                                }}
-                            />
-                            
-                            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                                <Box
-                                    component="img"
-                                    src="/static/images/clarissa-cheung.jpg"
-                                    alt="Clarissa Cheung"
-                                    sx={{
-                                        width: '100px',
-                                        height: '100px',
-                                        borderRadius: '50%',
-                                        objectFit: 'cover',
-                                        marginBottom: '1.5rem',
-                                        transition: 'all 0.3s ease',
-                                        boxShadow: '0 8px 24px rgba(0, 0, 0, 0.1)'
-                                    }}
-                                />
-                                <Typography 
-                                    sx={{
-                                        fontSize: '1.3rem',
-                                        fontWeight: 700,
-                                        color: '#1e293b',
-                                        marginBottom: '0.5rem',
-                                        fontFamily: 'Satoshi Bold, sans-serif'
-                                    }}
-                                >
-                                    Clarissa Cheung
-                                </Typography>
-                            </Box>
-                            
-                            <Typography 
-                                sx={{
-                                    color: '#64748b',
-                                    fontSize: '0.9rem',
-                                    lineHeight: 1.4,
-                                    fontFamily: 'DM Sans Medium, sans-serif',
-                                    textAlign: 'center'
-                                }}
-                            >
-                                Computer Science & Economics @ UF
-                            </Typography>
-                        </motion.div>
-                    </Link>
-                </motion.div>
-
-                {/* Chelsea */}
+                                {/* Chelsea */}
                 <motion.div variants={itemVariants} style={{ height: '100%' }}>
                     <Link
                         component="a"
@@ -1432,7 +1343,7 @@ export default function HomePage() {
                             whileHover={{ 
                                 scale: 1.03, 
                                 y: -8,
-                                boxShadow: '0 20px 40px rgba(40, 80, 217, 0.2)'
+                                boxShadow: '0 20px 40px rgba(173, 123, 47, 0.2)'
                             }}
                             style={{
                                 background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)',
@@ -1507,6 +1418,95 @@ export default function HomePage() {
                         </motion.div>
                     </Link>
                 </motion.div>
+
+                {/* Clarissa */}
+                <motion.div variants={itemVariants} style={{ height: '100%' }}>
+                    <Link
+                        component="a"
+                        href="https://www.linkedin.com/in/clarissa-cheung-054035187/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        sx={{ textDecoration: 'none', height: '100%', display: 'block' }}
+                    >
+                        <motion.div
+                            whileHover={{ 
+                                scale: 1.03, 
+                                y: -8,
+                                boxShadow: '0 20px 40px rgba(47, 137, 73, 0.14)'
+                            }}
+                            style={{
+                                background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)',
+                                borderRadius: '24px',
+                                padding: '2rem 1.5rem',
+                                textAlign: 'center',
+                                backdropFilter: 'blur(20px)',
+                                border: '1px solid rgba(255, 255, 255, 0.4)',
+                                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.08)',
+                                transition: 'all 0.15s cubic-bezier(0.4, 0, 0.2, 1)',
+                                cursor: 'pointer',
+                                position: 'relative',
+                                overflow: 'hidden',
+                                height: '100%',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                alignItems: 'center',
+                                justifyContent: 'space-between'
+                            }}
+                        >
+                            <Box
+                                sx={{
+                                    position: 'absolute',
+                                    top: 0,
+                                    left: 0,
+                                    right: 0,
+                                    height: '4px',
+                                    background: 'linear-gradient(135deg, #5faec0ff, #6bb07dff)',
+                                    borderRadius: '24px 24px 0 0'
+                                }}
+                            />
+                            
+                            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                                <Box
+                                    component="img"
+                                    src="/static/images/clarissa-cheung.jpg"
+                                    alt="Clarissa Cheung"
+                                    sx={{
+                                        width: '100px',
+                                        height: '100px',
+                                        borderRadius: '50%',
+                                        objectFit: 'cover',
+                                        marginBottom: '1.5rem',
+                                        transition: 'all 0.3s ease',
+                                        boxShadow: '0 8px 24px rgba(0, 0, 0, 0.1)'
+                                    }}
+                                />
+                                <Typography 
+                                    sx={{
+                                        fontSize: '1.3rem',
+                                        fontWeight: 700,
+                                        color: '#1e293b',
+                                        marginBottom: '0.5rem',
+                                        fontFamily: 'Satoshi Bold, sans-serif'
+                                    }}
+                                >
+                                    Clarissa Cheung
+                                </Typography>
+                            </Box>
+                            
+                            <Typography 
+                                sx={{
+                                    color: '#64748b',
+                                    fontSize: '0.9rem',
+                                    lineHeight: 1.4,
+                                    fontFamily: 'DM Sans Medium, sans-serif',
+                                    textAlign: 'center'
+                                }}
+                            >
+                                Computer Science & Economics @ UF
+                            </Typography>
+                        </motion.div>
+                    </Link>
+                </motion.div>
             </Box>
 
             {/* Acknowledgment */}
@@ -1550,42 +1550,166 @@ export default function HomePage() {
     </Box>
 </Box>
 
-            {/* ---------- getting started section ---------- */}
-            <Box id="getting-started" className="getting-started-section-container">
-                <motion.div
-                    initial="hidden"
-                    whileInView="visible"
-                    viewport={{ once: true }}
-                    variants={staggerContainer}
-                    className="getting-started-content"
+{/* ---------- getting started section ---------- */}
+<Box id="getting-started" className="getting-started-section-container">
+    {/* Animated background components */}
+    <div className="background-animations">
+        <motion.div 
+            className="floating-shape shape-1"
+            animate={{
+                y: [-20, 20, -20],
+                x: [-10, 10, -10],
+                rotate: [0, 360]
+            }}
+            transition={{
+                duration: 8,
+                repeat: Infinity,
+                ease: "easeInOut"
+            }}
+        />
+        <motion.div 
+            className="floating-shape shape-2"
+            animate={{
+                y: [20, -25, 20],
+                x: [15, -10, 15],
+                rotate: [0, -360]
+            }}
+            transition={{
+                duration: 10,
+                repeat: Infinity,
+                ease: "easeInOut",
+                delay: 2
+            }}
+        />
+        <motion.div 
+            className="floating-shape shape-3"
+            animate={{
+                y: [-15, 30, -15],
+                x: [-20, 5, -20],
+                rotate: [0, 180, 360]
+            }}
+            transition={{
+                duration: 12,
+                repeat: Infinity,
+                ease: "easeInOut",
+                delay: 4
+            }}
+        />
+        
+        {/* Floating particles */}
+        <motion.div 
+            className="particle particle-1"
+            animate={{
+                y: [-100, -300],
+                opacity: [0, 1, 0]
+            }}
+            transition={{
+                duration: 6,
+                repeat: Infinity,
+                ease: "easeOut",
+                delay: 1
+            }}
+        />
+        <motion.div 
+            className="particle particle-2"
+            animate={{
+                y: [-80, -250],
+                opacity: [0, 1, 0]
+            }}
+            transition={{
+                duration: 5,
+                repeat: Infinity,
+                ease: "easeOut",
+                delay: 3
+            }}
+        />
+        <motion.div 
+            className="particle particle-3"
+            animate={{
+                y: [-90, -280],
+                opacity: [0, 1, 0]
+            }}
+            transition={{
+                duration: 7,
+                repeat: Infinity,
+                ease: "easeOut",
+                delay: 0.5
+            }}
+        />
+    </div>
+
+    <motion.div
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true }}
+        variants={staggerContainer}
+        className="getting-started-content"
+    >
+        <Stack direction={'column'} spacing={2} alignItems="center">
+            <motion.h2 variants={itemVariants} className="get-started-title">
+                Ready to ace your next interview?
+            </motion.h2>
+            
+            <motion.p variants={itemVariants} className="get-started-subtitle">
+                Join us to improve your interview skills with WiNG.it
+            </motion.p>
+            
+            <motion.div variants={itemVariants} className="final-cta-container">
+                <Button 
+                    color='inherit' 
+                    href='/dashboard'
+                    className="final-cta-button-glow"
+                    size="large"
+                    sx={{
+                        fontSize: '1.5rem !important',
+                        fontFamily: 'Satoshi Bold, sans-serif !important',
+                        background: 'rgba(255, 255, 255, 0.98) !important',
+                        color: '#2850d9 !important',
+                        padding: '22px 55px !important',
+                        borderRadius: '50px !important',
+                        letterSpacing: '-0.01em !important',
+                        textTransform: 'none !important',
+                        transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important',
+                        boxShadow: '0 12px 40px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.5) !important',
+                        display: 'flex !important',
+                        alignItems: 'center !important',
+                        gap: '15px !important',
+                        fontWeight: '700 !important',
+                        position: 'relative',
+                        border: '2px solid transparent !important',
+                        '&:hover': {
+                            transform: 'translateY(-5px) scale(1.05)',
+                            boxShadow: `
+                                0 20px 60px rgba(0, 0, 0, 0.35),
+                                0 0 0 3px rgba(40, 80, 217, 0.4),
+                                0 0 20px rgba(40, 80, 217, 0.3),
+                                0 0 40px rgba(40, 80, 217, 0.2),
+                                0 0 60px rgba(40, 80, 217, 0.1) !important`,
+                            background: '#ffffff !important',
+                            border: '2px solid rgba(40, 80, 217, 0.6) !important',
+                        }
+                    }}
                 >
-                    <Stack direction={'column'} spacing={2} alignItems="center">
-                        <motion.h2 variants={itemVariants} className="get-started-title">
-                            Ready to ace your next interview?
-                        </motion.h2>
-                        <motion.p variants={itemVariants} className="get-started-subtitle">
-                            Join us to improve your interview skills with WiNG.it
-                        </motion.p>
-                        <motion.div variants={itemVariants} className="final-cta-container">
-                            <Button 
-                                color='inherit' 
-                                // href='/sign-up'
-                                href = '/dashboard'
-                                className="final-cta-button"
-                                size="large"
-                            >
-                                Start Your Journey
-                                <svg className="button-arrow" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14M12 5l7 7-7 7" />
-                                </svg>
-                            </Button>
-                            <div className="cta-subtext">
-                                <span>✨ Always free • No credit card required • Get started in 30 seconds</span>
-                            </div>
-                        </motion.div>
-                    </Stack>
-                </motion.div>
-            </Box>
+                    Start Your Journey
+                    <svg 
+                        className="button-arrow" 
+                        fill="none" 
+                        stroke="currentColor" 
+                        strokeWidth="2.5" 
+                        viewBox="0 0 24 24"
+                        style={{ width: '28px', height: '28px' }}
+                    >
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14M12 5l7 7-7 7" />
+                    </svg>
+                </Button>
+                
+                <div className="cta-subtext">
+                    <span>Get started easily in less than 30 seconds!</span>
+                </div>
+            </motion.div>
+        </Stack>
+    </motion.div>
+</Box>
         </Box>
         </Box>
     );
