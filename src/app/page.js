@@ -1049,7 +1049,7 @@ export default function HomePage() {
                                                 fontFamily: 'Satoshi Bold, sans-serif'
                                             }}
                                         >
-                                            Started at UF's WiNGHacks
+                                            Started at UF&apos;s WiNGHacks
                                         </Typography>
                                         <Typography 
                                             sx={{
@@ -1064,7 +1064,7 @@ export default function HomePage() {
                                                 }
                                             }}
                                         >
-                                            Our journey began at the <span className="highlight">University of Florida's inaugural WiNGHacks Hackathon</span> – celebrating innovation by women, non-binary, and gender minorities in tech.
+                                            Our journey began at the <span className="highlight">University of Florida&apos;s inaugural WiNGHacks Hackathon</span> – celebrating innovation by women, non-binary, and gender minorities in tech.
                                         </Typography>
                                     </Box>
                                 </Box>
