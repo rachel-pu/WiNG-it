@@ -70,6 +70,7 @@ function MinusIcon(props) {
 const QuickstartPage = ({
                             jobRole,
                             numQuestions,
+                            showTimer,
                             questionTypes,
                             interviewerDifficulty,
                             handleQuestionsChange,
@@ -255,13 +256,20 @@ const QuickstartPage = ({
 
                                 </Box>
 
-                                {/* timer */}
                                 <Box>
                                     <FormControl>
                                         <FormLabel className="quickstart-form-label">
                                             Other options
                                         </FormLabel>
-                                        <FormControlLabel control={<Switch/>} label="2-minute timer"/>
+                                        <FormControlLabel 
+                                            control={
+                                                <Switch 
+                                                    checked={showTimer} 
+                                                    onChange={(e) => handleTimerChange(e.target.checked)} 
+                                                />
+                                            } 
+                                            label="Timer Visible" 
+                                        />
                                     </FormControl>
                                 </Box>
                             </Box>
