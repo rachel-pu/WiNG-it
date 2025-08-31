@@ -1253,7 +1253,7 @@ export default function HomePage() {
                             whileHover={{ 
                                 scale: 1.03, 
                                 y: -8,
-                                boxShadow: '0 20px 40px rgba(40, 80, 217, 0.2)'
+                                boxShadow: '0 20px 40px rgba(55, 85, 183, 0.2)'
                             }}
                             style={{
                                 background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)',
@@ -1330,96 +1330,7 @@ export default function HomePage() {
                     </Link>
                 </motion.div>
 
-                {/* Clarissa */}
-                <motion.div variants={itemVariants} style={{ height: '100%' }}>
-                    <Link
-                        component="a"
-                        href="https://www.linkedin.com/in/clarissa-cheung-054035187/"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        sx={{ textDecoration: 'none', height: '100%', display: 'block' }}
-                    >
-                        <motion.div
-                            whileHover={{ 
-                                scale: 1.03, 
-                                y: -8,
-                                boxShadow: '0 20px 40px rgba(40, 80, 217, 0.2)'
-                            }}
-                            style={{
-                                background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)',
-                                borderRadius: '24px',
-                                padding: '2rem 1.5rem',
-                                textAlign: 'center',
-                                backdropFilter: 'blur(20px)',
-                                border: '1px solid rgba(255, 255, 255, 0.4)',
-                                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.08)',
-                                transition: 'all 0.15s cubic-bezier(0.4, 0, 0.2, 1)',
-                                cursor: 'pointer',
-                                position: 'relative',
-                                overflow: 'hidden',
-                                height: '100%',
-                                display: 'flex',
-                                flexDirection: 'column',
-                                alignItems: 'center',
-                                justifyContent: 'space-between'
-                            }}
-                        >
-                            <Box
-                                sx={{
-                                    position: 'absolute',
-                                    top: 0,
-                                    left: 0,
-                                    right: 0,
-                                    height: '4px',
-                                    background: 'linear-gradient(135deg, #667eea, #764ba2)',
-                                    borderRadius: '24px 24px 0 0'
-                                }}
-                            />
-                            
-                            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                                <Box
-                                    component="img"
-                                    src="/static/images/clarissa-cheung.jpg"
-                                    alt="Clarissa Cheung"
-                                    sx={{
-                                        width: '100px',
-                                        height: '100px',
-                                        borderRadius: '50%',
-                                        objectFit: 'cover',
-                                        marginBottom: '1.5rem',
-                                        transition: 'all 0.3s ease',
-                                        boxShadow: '0 8px 24px rgba(0, 0, 0, 0.1)'
-                                    }}
-                                />
-                                <Typography 
-                                    sx={{
-                                        fontSize: '1.3rem',
-                                        fontWeight: 700,
-                                        color: '#1e293b',
-                                        marginBottom: '0.5rem',
-                                        fontFamily: 'Satoshi Bold, sans-serif'
-                                    }}
-                                >
-                                    Clarissa Cheung
-                                </Typography>
-                            </Box>
-                            
-                            <Typography 
-                                sx={{
-                                    color: '#64748b',
-                                    fontSize: '0.9rem',
-                                    lineHeight: 1.4,
-                                    fontFamily: 'DM Sans Medium, sans-serif',
-                                    textAlign: 'center'
-                                }}
-                            >
-                                Computer Science & Economics @ UF
-                            </Typography>
-                        </motion.div>
-                    </Link>
-                </motion.div>
-
-                {/* Chelsea */}
+                                {/* Chelsea */}
                 <motion.div variants={itemVariants} style={{ height: '100%' }}>
                     <Link
                         component="a"
@@ -1432,7 +1343,7 @@ export default function HomePage() {
                             whileHover={{ 
                                 scale: 1.03, 
                                 y: -8,
-                                boxShadow: '0 20px 40px rgba(40, 80, 217, 0.2)'
+                                boxShadow: '0 20px 40px rgba(173, 123, 47, 0.2)'
                             }}
                             style={{
                                 background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)',
@@ -1503,6 +1414,95 @@ export default function HomePage() {
                                 }}
                             >
                                 Computer Science & Digital Arts Sciences @ UF
+                            </Typography>
+                        </motion.div>
+                    </Link>
+                </motion.div>
+
+                {/* Clarissa */}
+                <motion.div variants={itemVariants} style={{ height: '100%' }}>
+                    <Link
+                        component="a"
+                        href="https://www.linkedin.com/in/clarissa-cheung-054035187/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        sx={{ textDecoration: 'none', height: '100%', display: 'block' }}
+                    >
+                        <motion.div
+                            whileHover={{ 
+                                scale: 1.03, 
+                                y: -8,
+                                boxShadow: '0 20px 40px rgba(47, 137, 73, 0.14)'
+                            }}
+                            style={{
+                                background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)',
+                                borderRadius: '24px',
+                                padding: '2rem 1.5rem',
+                                textAlign: 'center',
+                                backdropFilter: 'blur(20px)',
+                                border: '1px solid rgba(255, 255, 255, 0.4)',
+                                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.08)',
+                                transition: 'all 0.15s cubic-bezier(0.4, 0, 0.2, 1)',
+                                cursor: 'pointer',
+                                position: 'relative',
+                                overflow: 'hidden',
+                                height: '100%',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                alignItems: 'center',
+                                justifyContent: 'space-between'
+                            }}
+                        >
+                            <Box
+                                sx={{
+                                    position: 'absolute',
+                                    top: 0,
+                                    left: 0,
+                                    right: 0,
+                                    height: '4px',
+                                    background: 'linear-gradient(135deg, #5faec0ff, #6bb07dff)',
+                                    borderRadius: '24px 24px 0 0'
+                                }}
+                            />
+                            
+                            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                                <Box
+                                    component="img"
+                                    src="/static/images/clarissa-cheung.jpg"
+                                    alt="Clarissa Cheung"
+                                    sx={{
+                                        width: '100px',
+                                        height: '100px',
+                                        borderRadius: '50%',
+                                        objectFit: 'cover',
+                                        marginBottom: '1.5rem',
+                                        transition: 'all 0.3s ease',
+                                        boxShadow: '0 8px 24px rgba(0, 0, 0, 0.1)'
+                                    }}
+                                />
+                                <Typography 
+                                    sx={{
+                                        fontSize: '1.3rem',
+                                        fontWeight: 700,
+                                        color: '#1e293b',
+                                        marginBottom: '0.5rem',
+                                        fontFamily: 'Satoshi Bold, sans-serif'
+                                    }}
+                                >
+                                    Clarissa Cheung
+                                </Typography>
+                            </Box>
+                            
+                            <Typography 
+                                sx={{
+                                    color: '#64748b',
+                                    fontSize: '0.9rem',
+                                    lineHeight: 1.4,
+                                    fontFamily: 'DM Sans Medium, sans-serif',
+                                    textAlign: 'center'
+                                }}
+                            >
+                                Computer Science & Economics @ UF
                             </Typography>
                         </motion.div>
                     </Link>
