@@ -1,7 +1,7 @@
 /* // NAVIGATION BAR // */
 .navigation-bar {
   background-color: rgba(243, 241, 234, 0.95) !important;
-  /* backdrop-filter: blur(20px); */
+  backdrop-filter: blur(10px);
   /* border-bottom: 1px solid rgba(0, 0, 0, 0.1); */
   overflow: hidden;
   position: sticky !important;
