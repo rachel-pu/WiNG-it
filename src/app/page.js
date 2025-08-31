@@ -915,220 +915,624 @@ export default function HomePage() {
         </Grid>
     </Box>
 
-            {/*  ---------- about us ----------  */}
-            <Box id="about-us" className="about-us-section-container">
-                <Grid container
-                    direction={"row"}
-                    width={{ xs: '98%', sm: '90%', md: '80%' }}
-                    sx={{ paddingLeft: { xs: '2%', sm: '5%' }, paddingRight: { xs: '2%', sm: '5%' } }}>
+{/*  ---------- about us ----------  */}
+<Box 
+    id="about-us" 
+    sx={{
+        minHeight: '100vh',
+        background: 'linear-gradient(135deg, #F3F1EA 0%, #E8E6D9 100%)',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        padding: { xs: '3rem 1rem', md: '4rem 2rem' },
+        position: 'relative',
+        overflow: 'hidden'
+    }}
+>
+    {/* Header Section */}
+    <Box sx={{ textAlign: 'center', marginBottom: '4rem' }}>
+        <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            variants={itemVariants}
+        >
+            <Typography 
+                sx={{
+                    fontSize: { xs: '2.5rem', md: '3.5rem', lg: '4rem' },
+                    fontWeight: 900,
+                    fontFamily: 'Satoshi Black, sans-serif',
+                    background: 'linear-gradient(135deg, #1a202c 0%, #2850d9 100%)',
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                    backgroundClip: 'text',
+                    marginBottom: '1rem',
+                    letterSpacing: '-0.02em'
+                }}
+            >
+                Meet the team behind WiNG.it
+            </Typography>
+            <Typography 
+                sx={{
+                    fontSize: '1.2rem',
+                    color: '#64748b',
+                    maxWidth: '600px',
+                    margin: '0 auto',
+                    lineHeight: 1.6,
+                    fontFamily: 'DM Sans, sans-serif'
+                }}
+            >
+                From hackathon winners to career platform builders
+            </Typography>
+        </motion.div>
+    </Box>
 
-                    {/* title  */}
-                    <Stack spacing={2} direction="column">
-                    <Grid item xs={12} sm={6} md={4} lg={3}>
-                        <motion.div
-                            initial="hidden"
-                            whileInView="visible"
-                            viewport={{ once: true }}
-                            variants={itemVariants}
-                        >
-                        <Typography className="about-us-section-title">
-                            Meet the team behind WiNG.it
-                        </Typography>
-                        </motion.div>
-                    </Grid>
-
-                    {/* description */}
-                    <motion.div
-                        initial="hidden"
-                        whileInView="visible"
-                        viewport={{ once: true }}
-                        variants={staggerContainer}
+    {/* Story Section - Full Width */}
+    <Box sx={{ maxWidth: '1200px', width: '100%', margin: '0 auto', marginBottom: '6rem' }}>
+        <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            variants={staggerContainer}
+        >
+            <Box 
+                sx={{
+                    background: 'rgba(255, 255, 255, 0.95)',
+                    borderRadius: '32px',
+                    padding: { xs: '2rem', md: '3rem' },
+                    backdropFilter: 'blur(20px)',
+                    border: '1px solid rgba(255, 255, 255, 0.3)',
+                    boxShadow: '0 20px 64px rgba(0, 0, 0, 0.1)',
+                    position: 'relative',
+                    overflow: 'hidden'
+                }}
+            >
+                {/* Background Decoration */}
+                <Box
+                    sx={{
+                        position: 'absolute',
+                        top: 0,
+                        right: 0,
+                        width: '200px',
+                        height: '200px',
+                        background: 'linear-gradient(135deg, rgba(40, 80, 217, 0.1), rgba(102, 126, 234, 0.05))',
+                        borderRadius: '50%',
+                        transform: 'translate(50%, -50%)',
+                        zIndex: 0
+                    }}
+                />
+                
+                <Box sx={{ position: 'relative', zIndex: 1 }}>
+                    <Typography 
+                        sx={{
+                            fontSize: { xs: '1.5rem', md: '1.8rem' },
+                            fontWeight: 700,
+                            color: '#1e293b',
+                            marginBottom: '2rem',
+                            textAlign: 'center',
+                            fontFamily: 'Satoshi Bold, sans-serif'
+                        }}
                     >
+                        Our Journey
+                    </Typography>
 
-                        <Stack spacing={4} direction={"column"}>
-                            <motion.div variants={itemVariants} className="story-card">
-                                <p className="about-us-section-description-text">
-                                    Our journey started at the
-                                    <span className="highlight-span"> University of Florida&apos;s 🐊</span> inaugural
-                                    <span className="highlight-span"> WiNGHacks Hackathon 🪽</span> – a celebration of innovation by 
-                                    women, non-binary, and gender minorities in tech.
-                                </p>
+                    <Grid container spacing={4}>
+                        {/* Timeline Item 1 */}
+                        <Grid item xs={12} md={4}>
+                            <motion.div variants={itemVariants}>
+                                <Box sx={{ textAlign: 'center', height: '100%' }}>
+                                    <Box 
+                                        sx={{
+                                            width: '60px',
+                                            height: '60px',
+                                            borderRadius: '50%',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            fontSize: '1.5rem',
+                                            background: 'linear-gradient(135deg, #ff6b6b, #feca57)',
+                                            margin: '0 auto 1.5rem',
+                                            boxShadow: '0 8px 24px rgba(255, 107, 107, 0.3)'
+                                        }}
+                                    >
+                                        🐊
+                                    </Box>
+                                    <Typography 
+                                        sx={{
+                                            fontSize: '1.2rem',
+                                            fontWeight: 700,
+                                            color: '#1e293b',
+                                            marginBottom: '1rem',
+                                            fontFamily: 'Satoshi Bold, sans-serif'
+                                        }}
+                                    >
+                                        The Beginning
+                                    </Typography>
+                                    <Typography 
+                                        sx={{
+                                            color: '#64748b',
+                                            lineHeight: 1.6,
+                                            fontSize: '1rem',
+                                            fontFamily: 'DM Sans, sans-serif',
+                                            '& .highlight': {
+                                                color: '#2850d9',
+                                                fontWeight: 600,
+                                                fontFamily: 'DM Sans Bold, sans-serif'
+                                            }
+                                        }}
+                                    >
+                                        Our journey started at the <span className="highlight">University of Florida's 🐊 inaugural WiNGHacks Hackathon 🪽</span> – a celebration of innovation by women, non-binary, and gender minorities in tech.
+                                    </Typography>
+                                </Box>
                             </motion.div>
-                            <motion.div variants={itemVariants} className="achievement-card">
-                                <div className="achievement-badge">🏆</div>
-                                <p className="about-us-section-description-text">
-                                    We&apos;re proud to have won <span className="highlight-span">first place</span> for best project by 
-                                    first-time hackathoners and caught the attention of 
-                                    <span className="highlight-span"> UF Professor Amanpreet Kapoor 💻</span>, who believed in our vision 
-                                    enough to support our continued development.
-                                </p>
+                        </Grid>
+
+                        {/* Timeline Item 2 */}
+                        <Grid item xs={12} md={4}>
+                            <motion.div variants={itemVariants}>
+                                <Box sx={{ textAlign: 'center', height: '100%' }}>
+                                    <Box 
+                                        sx={{
+                                            width: '60px',
+                                            height: '60px',
+                                            borderRadius: '50%',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            fontSize: '1.5rem',
+                                            background: 'linear-gradient(135deg, #ffd700, #ffb347)',
+                                            margin: '0 auto 1.5rem',
+                                            boxShadow: '0 8px 24px rgba(255, 215, 0, 0.3)'
+                                        }}
+                                    >
+                                        🏆
+                                    </Box>
+                                    <Typography 
+                                        sx={{
+                                            fontSize: '1.2rem',
+                                            fontWeight: 700,
+                                            color: '#1e293b',
+                                            marginBottom: '1rem',
+                                            fontFamily: 'Satoshi Bold, sans-serif'
+                                        }}
+                                    >
+                                        First Place Victory
+                                    </Typography>
+                                    <Typography 
+                                        sx={{
+                                            color: '#64748b',
+                                            lineHeight: 1.6,
+                                            fontSize: '1rem',
+                                            fontFamily: 'DM Sans, sans-serif',
+                                            '& .highlight': {
+                                                color: '#2850d9',
+                                                fontWeight: 600,
+                                                fontFamily: 'DM Sans Bold, sans-serif'
+                                            }
+                                        }}
+                                    >
+                                        We won <span className="highlight">first place</span> for best project by first-time hackathoners and caught the attention of <span className="highlight">UF Professor Amanpreet Kapoor 💻</span>, who supported our continued development.
+                                    </Typography>
+                                </Box>
                             </motion.div>
-                            <motion.div variants={itemVariants} className="mission-card">
-                                <p className="about-us-section-description-text">
-                                    Today, WiNG.it continues to evolve as a comprehensive career preparation platform, 
-                                    helping students worldwide build confidence, improve their skills, and land their dream opportunities.
-                                </p>
+                        </Grid>
+
+                        {/* Timeline Item 3 */}
+                        <Grid item xs={12} md={4}>
+                            <motion.div variants={itemVariants}>
+                                <Box sx={{ textAlign: 'center', height: '100%' }}>
+                                    <Box 
+                                        sx={{
+                                            width: '60px',
+                                            height: '60px',
+                                            borderRadius: '50%',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            fontSize: '1.5rem',
+                                            background: 'linear-gradient(135deg, #667eea, #764ba2)',
+                                            margin: '0 auto 1.5rem',
+                                            boxShadow: '0 8px 24px rgba(102, 126, 234, 0.3)'
+                                        }}
+                                    >
+                                        🚀
+                                    </Box>
+                                    <Typography 
+                                        sx={{
+                                            fontSize: '1.2rem',
+                                            fontWeight: 700,
+                                            color: '#1e293b',
+                                            marginBottom: '1rem',
+                                            fontFamily: 'Satoshi Bold, sans-serif'
+                                        }}
+                                    >
+                                        Today
+                                    </Typography>
+                                    <Typography 
+                                        sx={{
+                                            color: '#64748b',
+                                            lineHeight: 1.6,
+                                            fontSize: '1rem',
+                                            fontFamily: 'DM Sans, sans-serif',
+                                            '& .highlight': {
+                                                color: '#2850d9',
+                                                fontWeight: 600,
+                                                fontFamily: 'DM Sans Bold, sans-serif'
+                                            }
+                                        }}
+                                    >
+                                        Today, WiNG.it continues to evolve as a <span className="highlight">comprehensive career preparation platform</span>, helping students worldwide build confidence, improve their skills, and land their dream opportunities.
+                                    </Typography>
+                                </Box>
                             </motion.div>
-                        </Stack>
-                    </motion.div>
-                    </Stack>
-                </Grid>
+                        </Grid>
+                    </Grid>
+                </Box>
+            </Box>
+        </motion.div>
+    </Box>
+
+    {/* Team Section - Dedicated Space */}
+    <Box sx={{ maxWidth: '1000px', width: '100%', margin: '0 auto' }}>
+        <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            variants={staggerContainer}
+        >
+            {/* Team Header */}
+            <Box sx={{ textAlign: 'center', marginBottom: '3rem' }}>
+                <motion.div variants={itemVariants}>
+                    <Typography 
+                        sx={{
+                            fontSize: { xs: '2rem', md: '2.5rem' },
+                            fontWeight: 800,
+                            color: '#1e293b',
+                            marginBottom: '1rem',
+                            fontFamily: 'Satoshi Black, sans-serif',
+                            background: 'linear-gradient(135deg, #1e293b 0%, #2850d9 100%)',
+                            WebkitBackgroundClip: 'text',
+                            WebkitTextFillColor: 'transparent',
+                            backgroundClip: 'text'
+                        }}
+                    >
+                        Meet Our Team
+                    </Typography>
+                    <Typography 
+                        sx={{
+                            color: '#64748b',
+                            fontSize: '1.1rem',
+                            fontFamily: 'DM Sans, sans-serif',
+                            maxWidth: '500px',
+                            margin: '0 auto'
+                        }}
+                    >
+                        The passionate individuals dedicated to transforming career preparation
+                    </Typography>
+                </motion.div>
             </Box>
 
-            {/*  developer section  */}
-            <Grid className="developer-section-container">
-                <motion.div 
-                    initial="hidden"
-                    whileInView="visible"
-                    viewport={{ once: true }}
-                    variants={staggerContainer}
-                >
-                <Grid container
-                    spacing={4}
-                    alignItems="center"
-                    justifyContent="center"
-                    direction={{ xs: 'column', sm: 'column', md: 'row', lg: 'row' }}
-                    width={{ xs: '98%', sm: '90%', md: '80%', lg: '80%' }}
-                    wrap={{ xs: "wrap", sm: "wrap", md: "nowrap", lg: "nowrap" }}
-                    sx={{ mx: 'auto', px: { xs: '2%', sm: '5%', lg: '8%' } }}>
-
-                        {/* Rachel */}
-                        <Grid item xs={12} sm={6} md={4} lg={3}>
-                            <motion.div variants={itemVariants}>
-                                <Grid container spacing={2} direction="column" alignItems="center">
-                                    {/* Photo */}
-                                    <Grid item>
-                                        <Link
-                                        component="a"
-                                        href="https://www.linkedin.com/in/rachel-pu-ufl/"
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        >
-                                        <motion.div className="developer-card">
-                                            <motion.img
-                                                src="/static/images/rachel%20pu%20image.png"
-                                                alt="Rachel Pu"
-                                                className="developer-image"
-                                                whileHover={{ scale: 1.05, rotate: 2, cursor: "pointer" }}
-                                            />
-                                            <div className="developer-overlay">
-                                                <span>View LinkedIn →</span>
-                                            </div>
-                                        </motion.div>
-                                        </Link>
-                                    </Grid>
-                                    {/* Text */}
-                                    <Grid item>
-                                        <Typography variant="h2" className="developer-section-developer-name">
-                                            Rachel Pu
-                                        </Typography>
-                                        <Typography className="developer-section-developer-description">
-                                            Computer Science & Digital Arts Sciences @ UF
-                                        </Typography>
-                                    </Grid>
-                                </Grid>
-                            </motion.div>
-                        </Grid>
-
-                        {/* Chelsea */}
-                        <Grid item xs={12} sm={6} md={4} lg={3}>
-                            <motion.div variants={itemVariants}>
-                                <Grid container spacing={2} direction="column" alignItems="center">
-                                    {/* Photo */}
-                                    <Grid item>
-                                        <Link
-                                        component="a"
-                                        href="https://www.linkedin.com/in/chelseaqnguyen/"
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        >
-                                        <motion.div className="developer-card">
-                                            <motion.img
-                                                src="/static/images/chelsea nguyen image.png"
-                                                alt="Chelsea Nguyen"
-                                                className="developer-image"
-                                                whileHover={{ scale: 1.05, rotate: 2, cursor: "pointer" }}
-                                            />
-                                            <div className="developer-overlay">
-                                                <span>View LinkedIn →</span>
-                                            </div>
-                                        </motion.div>
-                                        </Link>
-                                    </Grid>
-                                    {/* Text */}
-                                    <Grid item>
-                                        <Typography variant="h2" className="developer-section-developer-name">
-                                            Chelsea Nguyen
-                                        </Typography>
-                                        <Typography className="developer-section-developer-description">
-                                            Computer Science & Digital Arts Sciences @ UF
-                                        </Typography>
-                                    </Grid>
-                                </Grid>
-                            </motion.div>
-                        </Grid>
-
-                        {/* Clarissa */}
-                        <Grid item xs={12} sm={6} md={4} lg={3}>
-                            <motion.div variants={itemVariants}>
-                                <Grid container spacing={2} direction="column" alignItems="center">
-                                    {/* Photo */}
-                                    <Grid item>
-                                        <Link
-                                        component="a"
-                                        href="https://www.linkedin.com/in/clarissa-cheung-054035187/"
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        >
-                                        <motion.div className="developer-card">
-                                            <motion.img
-                                                src="/static/images/clarissa-cheung.jpg"
-                                                alt="Clarissa Cheung"
-                                                className="developer-image"
-                                                whileHover={{ scale: 1.05, rotate: 2, cursor: "pointer" }}
-                                            />
-                                            <div className="developer-overlay">
-                                                <span>View LinkedIn →</span>
-                                            </div>
-                                        </motion.div>
-                                        </Link>
-                                    </Grid>
-                                    {/* Text */}
-                                    <Grid item>
-                                        <Typography variant="h2" className="developer-section-developer-name">
-                                            Clarissa Cheung
-                                        </Typography>
-                                        <Typography className="developer-section-developer-description">
-                                            Computer Science & Economics @ UF
-                                        </Typography>
-                                    </Grid>
-                                </Grid>
-                            </motion.div>
-                        </Grid>
-                        
-                    </Grid>
-                    </motion.div>
-                </Grid>
-
-            {/*  honorable mention */}
-                <Box className="honorable-mentions-section-container">
-                    <Grid item xs={12}>
+            {/* Team Cards */}
+            <Box 
+                sx={{
+                    display: 'grid',
+                    gridTemplateColumns: { 
+                        xs: '1fr', 
+                        sm: 'repeat(3, 1fr)' 
+                    },
+                    gap: '2rem',
+                    alignItems: 'stretch'
+                }}
+            >
+                {/* Rachel */}
+                <motion.div variants={itemVariants} style={{ height: '100%' }}>
+                    <Link
+                        component="a"
+                        href="https://www.linkedin.com/in/rachel-pu-ufl/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        sx={{ textDecoration: 'none', height: '100%', display: 'block' }}
+                    >
                         <motion.div
-                            initial = "hidden"
-                            whileInView="visible"
-                            viewport={{ once: true }}
-                            variants={itemVariants}
+                            whileHover={{ 
+                                scale: 1.03, 
+                                y: -8,
+                                boxShadow: '0 20px 40px rgba(40, 80, 217, 0.2)'
+                            }}
+                            style={{
+                                background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)',
+                                borderRadius: '24px',
+                                padding: '2rem 1.5rem',
+                                textAlign: 'center',
+                                backdropFilter: 'blur(20px)',
+                                border: '1px solid rgba(255, 255, 255, 0.4)',
+                                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.08)',
+                                transition: 'all 0.15s cubic-bezier(0.4, 0, 0.2, 1)',
+                                cursor: 'pointer',
+                                position: 'relative',
+                                overflow: 'hidden',
+                                height: '100%',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                alignItems: 'center',
+                                justifyContent: 'space-between'
+                            }}
                         >
-                            <motion.p className="honorable-mentions-section-text">
-                                Special thanks to our original WiNGHacks team members:
-                                <br/>
-                                <span className="highlight-span"> Xiaguo Jia</span> and
-                                <span className="highlight-span"> Sara Smith</span>
-                            </motion.p>
-
+                            {/* Gradient overlay on hover */}
+                            <Box
+                                sx={{
+                                    position: 'absolute',
+                                    top: 0,
+                                    left: 0,
+                                    right: 0,
+                                    height: '4px',
+                                    background: 'linear-gradient(135deg, #2850d9, #667eea)',
+                                    borderRadius: '24px 24px 0 0'
+                                }}
+                            />
+                            
+                            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                                <Box
+                                    component="img"
+                                    src="/static/images/rachel%20pu%20image.png"
+                                    alt="Rachel Pu"
+                                    sx={{
+                                        width: '100px',
+                                        height: '100px',
+                                        borderRadius: '50%',
+                                        objectFit: 'cover',
+                                        marginBottom: '1.5rem',
+                                        transition: 'all 0.3s ease',
+                                        boxShadow: '0 8px 24px rgba(0, 0, 0, 0.1)'
+                                    }}
+                                />
+                                <Typography 
+                                    sx={{
+                                        fontSize: '1.3rem',
+                                        fontWeight: 700,
+                                        color: '#1e293b',
+                                        marginBottom: '0.5rem',
+                                        fontFamily: 'Satoshi Bold, sans-serif'
+                                    }}
+                                >
+                                    Rachel Pu
+                                </Typography>
+                            </Box>
+                            
+                            <Typography 
+                                sx={{
+                                    color: '#64748b',
+                                    fontSize: '0.9rem',
+                                    lineHeight: 1.4,
+                                    fontFamily: 'DM Sans Medium, sans-serif',
+                                    textAlign: 'center'
+                                }}
+                            >
+                                Computer Science & Digital Arts Sciences @ UF
+                            </Typography>
                         </motion.div>
-                    </Grid>
+                    </Link>
+                </motion.div>
+
+                {/* Clarissa */}
+                <motion.div variants={itemVariants} style={{ height: '100%' }}>
+                    <Link
+                        component="a"
+                        href="https://www.linkedin.com/in/clarissa-cheung-054035187/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        sx={{ textDecoration: 'none', height: '100%', display: 'block' }}
+                    >
+                        <motion.div
+                            whileHover={{ 
+                                scale: 1.03, 
+                                y: -8,
+                                boxShadow: '0 20px 40px rgba(40, 80, 217, 0.2)'
+                            }}
+                            style={{
+                                background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)',
+                                borderRadius: '24px',
+                                padding: '2rem 1.5rem',
+                                textAlign: 'center',
+                                backdropFilter: 'blur(20px)',
+                                border: '1px solid rgba(255, 255, 255, 0.4)',
+                                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.08)',
+                                transition: 'all 0.15s cubic-bezier(0.4, 0, 0.2, 1)',
+                                cursor: 'pointer',
+                                position: 'relative',
+                                overflow: 'hidden',
+                                height: '100%',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                alignItems: 'center',
+                                justifyContent: 'space-between'
+                            }}
+                        >
+                            <Box
+                                sx={{
+                                    position: 'absolute',
+                                    top: 0,
+                                    left: 0,
+                                    right: 0,
+                                    height: '4px',
+                                    background: 'linear-gradient(135deg, #667eea, #764ba2)',
+                                    borderRadius: '24px 24px 0 0'
+                                }}
+                            />
+                            
+                            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                                <Box
+                                    component="img"
+                                    src="/static/images/clarissa-cheung.jpg"
+                                    alt="Clarissa Cheung"
+                                    sx={{
+                                        width: '100px',
+                                        height: '100px',
+                                        borderRadius: '50%',
+                                        objectFit: 'cover',
+                                        marginBottom: '1.5rem',
+                                        transition: 'all 0.3s ease',
+                                        boxShadow: '0 8px 24px rgba(0, 0, 0, 0.1)'
+                                    }}
+                                />
+                                <Typography 
+                                    sx={{
+                                        fontSize: '1.3rem',
+                                        fontWeight: 700,
+                                        color: '#1e293b',
+                                        marginBottom: '0.5rem',
+                                        fontFamily: 'Satoshi Bold, sans-serif'
+                                    }}
+                                >
+                                    Clarissa Cheung
+                                </Typography>
+                            </Box>
+                            
+                            <Typography 
+                                sx={{
+                                    color: '#64748b',
+                                    fontSize: '0.9rem',
+                                    lineHeight: 1.4,
+                                    fontFamily: 'DM Sans Medium, sans-serif',
+                                    textAlign: 'center'
+                                }}
+                            >
+                                Computer Science & Economics @ UF
+                            </Typography>
+                        </motion.div>
+                    </Link>
+                </motion.div>
+
+                {/* Chelsea */}
+                <motion.div variants={itemVariants} style={{ height: '100%' }}>
+                    <Link
+                        component="a"
+                        href="https://www.linkedin.com/in/chelseaqnguyen/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        sx={{ textDecoration: 'none', height: '100%', display: 'block' }}
+                    >
+                        <motion.div
+                            whileHover={{ 
+                                scale: 1.03, 
+                                y: -8,
+                                boxShadow: '0 20px 40px rgba(40, 80, 217, 0.2)'
+                            }}
+                            style={{
+                                background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)',
+                                borderRadius: '24px',
+                                padding: '2rem 1.5rem',
+                                textAlign: 'center',
+                                backdropFilter: 'blur(20px)',
+                                border: '1px solid rgba(255, 255, 255, 0.4)',
+                                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.08)',
+                                transition: 'all 0.15s cubic-bezier(0.4, 0, 0.2, 1)',
+                                cursor: 'pointer',
+                                position: 'relative',
+                                overflow: 'hidden',
+                                height: '100%',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                alignItems: 'center',
+                                justifyContent: 'space-between'
+                            }}
+                        >
+                            <Box
+                                sx={{
+                                    position: 'absolute',
+                                    top: 0,
+                                    left: 0,
+                                    right: 0,
+                                    height: '4px',
+                                    background: 'linear-gradient(135deg, #ff6b6b, #feca57)',
+                                    borderRadius: '24px 24px 0 0'
+                                }}
+                            />
+                            
+                            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                                <Box
+                                    component="img"
+                                    src="/static/images/chelsea nguyen image.png"
+                                    alt="Chelsea Nguyen"
+                                    sx={{
+                                        width: '100px',
+                                        height: '100px',
+                                        borderRadius: '50%',
+                                        objectFit: 'cover',
+                                        marginBottom: '1.5rem',
+                                        transition: 'all 0.3s ease',
+                                        boxShadow: '0 8px 24px rgba(0, 0, 0, 0.1)'
+                                    }}
+                                />
+                                <Typography 
+                                    sx={{
+                                        fontSize: '1.3rem',
+                                        fontWeight: 700,
+                                        color: '#1e293b',
+                                        marginBottom: '0.5rem',
+                                        fontFamily: 'Satoshi Bold, sans-serif'
+                                    }}
+                                >
+                                    Chelsea Nguyen
+                                </Typography>
+                            </Box>
+                            
+                            <Typography 
+                                sx={{
+                                    color: '#64748b',
+                                    fontSize: '0.9rem',
+                                    lineHeight: 1.4,
+                                    fontFamily: 'DM Sans Medium, sans-serif',
+                                    textAlign: 'center'
+                                }}
+                            >
+                                Computer Science & Digital Arts Sciences @ UF
+                            </Typography>
+                        </motion.div>
+                    </Link>
+                </motion.div>
             </Box>
+
+            {/* Acknowledgment */}
+            <motion.div variants={itemVariants}>
+                <Box 
+                    sx={{
+                        background: 'rgba(255, 255, 255, 0.8)',
+                        borderRadius: '20px',
+                        padding: '2rem',
+                        textAlign: 'center',
+                        backdropFilter: 'blur(10px)',
+                        border: '1px solid rgba(255, 255, 255, 0.3)',
+                        marginTop: '3rem',
+                        boxShadow: '0 8px 24px rgba(0, 0, 0, 0.05)'
+                    }}
+                >
+                    <Typography 
+                        sx={{
+                            color: '#64748b',
+                            fontSize: '1rem',
+                            marginBottom: '0.5rem',
+                            fontFamily: 'DM Sans, sans-serif'
+                        }}
+                    >
+                        Special thanks to our original WiNGHacks team members:
+                    </Typography>
+                    <Typography 
+                        sx={{
+                            fontFamily: 'DM Sans Bold, sans-serif',
+                            fontSize: '1.3rem',
+                            color: '#2850d9',
+                            fontWeight: 600,
+                            letterSpacing: '-0.01px'
+                        }}
+                    >
+                        Xiaguo Jia and Sara Smith
+                    </Typography>
+                </Box>
+            </motion.div>
+        </motion.div>
+    </Box>
+</Box>
 
             {/* ---------- getting started section ---------- */}
             <Box id="getting-started" className="getting-started-section-container">
