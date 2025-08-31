@@ -532,7 +532,7 @@
 }
 
 /* ------ getting started section ------ */
-.getting-started-section-container{
+.getting-started-section-container {
     min-height: 100vh;
     width: 100%;
     background: linear-gradient(135deg, #2850d9 0%, #667eea 50%, #764ba2 100%);
@@ -556,28 +556,97 @@
     pointer-events: none;
 }
 
+/* Background animated components */
+.background-animations {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.floating-shape {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.shape-1 {
+    width: 120px;
+    height: 120px;
+    top: 15%;
+    left: 10%;
+    background: linear-gradient(45deg, rgba(255, 255, 255, 0.1), rgba(139, 92, 246, 0.2));
+}
+
+.shape-2 {
+    width: 80px;
+    height: 80px;
+    top: 70%;
+    right: 15%;
+    background: linear-gradient(45deg, rgba(59, 130, 246, 0.2), rgba(255, 255, 255, 0.1));
+}
+
+.shape-3 {
+    width: 60px;
+    height: 60px;
+    top: 40%;
+    right: 25%;
+    background: linear-gradient(45deg, rgba(168, 85, 247, 0.2), rgba(255, 255, 255, 0.1));
+}
+
+/* Floating particles */
+.particle {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 50%;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+
+.particle-1 {
+    left: 20%;
+    bottom: 0;
+}
+
+.particle-2 {
+    left: 60%;
+    bottom: 0;
+}
+
+.particle-3 {
+    left: 80%;
+    bottom: 0;
+}
+
 .getting-started-content {
     z-index: 2;
     text-align: center;
+    position: relative;
 }
 
-.get-started-title{
+.get-started-title {
     font-family: 'Satoshi Black', sans-serif !important;
     color: white;
     font-size: clamp(2.5rem, 5vw, 4rem) !important;
     letter-spacing: -0.02em;
     user-select: none;
-    margin-bottom: 1rem !important;
+    margin-bottom: 0.5rem !important;
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
-.get-started-subtitle{
+.get-started-subtitle {
     font-family: 'DM Sans', sans-serif !important;
     color: rgba(255, 255, 255, 0.9) !important;
     font-size: clamp(1.1rem, 2vw, 1.3rem) !important;
     letter-spacing: -0.01em;
     user-select: none;
-    margin-bottom: 3rem !important;
+    margin-bottom: 1rem !important;
     max-width: 600px;
     margin-left: auto;
     margin-right: auto;
@@ -590,28 +659,62 @@
     gap: 1.5rem;
 }
 
-.final-cta-button{
-    font-size: 1.3rem !important;
+/* Enhanced button with glow effect */
+.final-cta-button-glow {
+    font-size: 1.5rem !important;
     font-family: 'Satoshi Bold', sans-serif !important;
-    background: rgba(255, 255, 255, 0.95) !important;
+    background: rgba(255, 255, 255, 0.98) !important;
     color: #2850d9 !important;
-    padding: 18px 40px !important;
+    padding: 22px 55px !important;
     border-radius: 50px !important;
     letter-spacing: -0.01em !important;
     text-transform: none !important;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2) !important;
-    backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    transition: 
+        transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+        background 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+        border 0.6s cubic-bezier(0.4, 0, 0.2, 1),
+        box-shadow 0.6s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    box-shadow: 
+        0 12px 40px rgba(0, 0, 0, 0.25),
+        0 0 0 1px rgba(255, 255, 255, 0.5) !important;
     display: flex !important;
     align-items: center !important;
-    gap: 12px !important;
+    gap: 15px !important;
+    font-weight: 700 !important;
+    position: relative;
+    border: 2px solid transparent !important;
+    overflow: hidden;
 }
 
-.final-cta-button:hover{
-    transform: translateY(-3px);
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3) !important;
-    background: white !important;
+/* Subtle pulse animation when not hovered */
+.final-cta-button-glow::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, transparent 40%, rgba(255, 255, 255, 0.3) 50%, transparent 60%);
+    transform: translateX(-100%);
+    animation: shimmer 3s ease-in-out infinite;
+    transition: 
+        background 0.6s cubic-bezier(0.4, 0, 0.2, 1),
+        opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 0;
+}
+
+@keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
+.final-cta-button-glow > * {
+    position: relative;
+    z-index: 1;
+}
+
+.final-cta-button-glow:active {
+    transform: translateY(-3px) scale(1.03);
 }
 
 .cta-subtext {
@@ -624,59 +727,44 @@
     text-align: center;
 }
 
+.final-cta-button-glow:hover {
+    animation: glow-pulse 2s ease-in-out infinite;
+}
+
 /* Responsive adjustments */
 @media (max-width: 900px) {
-    .main-home-page-card{
-        padding: 1.3rem !important;
-        min-height: 200px;
+    .floating-shape {
+        display: none; /* Hide floating shapes on smaller screens for performance */
     }
-
-    .cta-buttons-container {
-        flex-direction: column;
-        gap: 1rem;
+    
+    .final-cta-button-glow {
+        font-size: 1.3rem !important;
+        padding: 20px 45px !important;
+        gap: 12px !important;
     }
-
-    .stats-container {
-        gap: 2rem;
-    }
-
-    .stat-number {
-        font-size: 2rem;
-    }
-
-    .floating-element {
-        font-size: 1.5rem;
-    }
-
-    .trust-indicators {
-        padding: 2rem 1rem;
-        margin: 0 1rem;
+    
+    .shape-1, .shape-2, .shape-3 {
+        width: 60px;
+        height: 60px;
     }
 }
 
 @media (max-width: 600px) {
-    .main-home-page-container {
-        padding: 10% 5% 8% 5%;
-    }
-    
-    .why-wing-it-section-container, 
-    .about-us-section-container, 
     .getting-started-section-container {
         padding: 12% 5% 8% 5%;
     }
-
-    .story-card, .achievement-card, .mission-card {
-        padding: 1.5rem;
-        margin: 0 1rem;
+    
+    .background-animations {
+        display: none; /* Hide all animations on very small screens */
     }
-
-    .developer-image {
-        width: 120px;
-        height: 120px;
+    
+    .final-cta-button-glow {
+        font-size: 1.2rem !important;
+        padding: 18px 35px !important;
+        gap: 10px !important;
     }
-
-    .stats-container {
-        flex-direction: column;
-        gap: 1.5rem;
+    
+    .final-cta-button-glow:hover {
+        animation: none; /* Disable complex animations on mobile */
     }
 }
