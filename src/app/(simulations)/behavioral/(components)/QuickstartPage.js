@@ -1,305 +1,316 @@
 "use client";
 import "./QuickstartPage.css";
 import Toolbar from "@mui/material/Toolbar";
-import React, {useRef, useState, useEffect} from "react";
+import React, { useState } from "react";
 import Box from "@mui/material/Box";
-import {Autocomplete, Button, FormControlLabel, FormLabel, Radio, RadioGroup, Switch, Typography} from "@mui/material";
-import InstructionsStepComponent from "../../(components)/InstructionsStepComponent.jsx";
-import {motion} from "framer-motion";
-import TextField from "@mui/material/TextField";
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-import FormControl from '@mui/material/FormControl';
-import Select from '@mui/material/Select';
-import {createTheme, ThemeProvider} from '@mui/material/styles';
-import KeyboardVoiceIcon from '@mui/icons-material/KeyboardVoice';
-import VideocamIcon from '@mui/icons-material/Videocam';
-import {useRouter} from "next/navigation";
+import { Button, Typography, Switch, FormControlLabel } from "@mui/material";
+import { motion } from "framer-motion";
+import { useRouter } from "next/navigation";
 
-
-function CursorGrowIcon(props) {
-    return (
-        <svg
-            width="26"
-            height="14"
-            viewBox="0 0 24 14"
-            fill="black"
-            stroke="white"
-            xmlns="http://www.w3.org/2000/svg"
-            {...props}
-        >
-            <path d="M19.5 5.5L6.49737 5.51844V2L1 6.9999L6.5 12L6.49737 8.5L19.5 8.5V12L25 6.9999L19.5 2V5.5Z"/>
-        </svg>
-    );
-}
-
-function PlusIcon(props) {
-    return (
-        <svg
-            width="10"
-            height="10"
-            viewBox="0 0 10 10"
-            fill="none"
-            stroke="currentcolor"
-            strokeWidth="1.6"
-            xmlns="http://www.w3.org/2000/svg"
-            {...props}
-        >
-            <path d="M0 5H5M10 5H5M5 5V0M5 5V10"/>
-        </svg>
-    );
-}
-
-function MinusIcon(props) {
-    return (
-        <svg
-            width="10"
-            height="10"
-            viewBox="0 0 10 10"
-            fill="none"
-            stroke="currentcolor"
-            strokeWidth="1.6"
-            xmlns="http://www.w3.org/2000/svg"
-            {...props}
-        >
-            <path d="M0 5H10"/>
-        </svg>
-    );
-}
+// Material-UI Icons
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import WarningIcon from '@mui/icons-material/Warning';
+import MicIcon from '@mui/icons-material/Mic';
+import GpsFixedIcon from '@mui/icons-material/GpsFixed';
+import GroupIcon from '@mui/icons-material/Group';
+import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
+import FlashOnIcon from '@mui/icons-material/FlashOn';
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import PlayArrowIcon from '@mui/icons-material/PlayArrow';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import SettingsIcon from '@mui/icons-material/Settings';
+import PsychologyIcon from '@mui/icons-material/Psychology';
+import BusinessCenterIcon from '@mui/icons-material/BusinessCenter';
+import BuildIcon from '@mui/icons-material/Build';
 
 const QuickstartPage = ({
-                            jobRole,
-                            numQuestions,
-                            showTimer,
-                            questionTypes,
-                            interviewerDifficulty,
-                            handleQuestionsChange,
-                            handleJobRoleChange,
-                            handleQuestionTypesChange,
-                            handleGetStarted,
-                            handleInterviewerDifficultyChange,
-                            handleTimerChange,
-
-                        }) => {
-
-    const id = React.useId();
+    jobRole,
+    numQuestions,
+    showTimer,
+    questionTypes,
+    interviewerDifficulty,
+    handleQuestionsChange,
+    handleJobRoleChange,
+    handleQuestionTypesChange,
+    handleGetStarted,
+    handleInterviewerDifficultyChange,
+    handleTimerChange,
+}) => {
     const router = useRouter();
-    const [loading, setLoading] = useState(false);
 
     const itemVariants = {
-        hidden: {opacity: 0, y: 5},
-        visible: {opacity: 1, y: 0},
-        transition: {type: "spring"},
+        hidden: { opacity: 0, y: 5 },
+        visible: { opacity: 1, y: 0 },
+        transition: { type: "spring" },
     };
 
-    // Removed all microphone-related state and functions
+    const questionTypeOptions = [
+        { id: 'situational', label: 'Situational', icon: BusinessCenterIcon },
+        { id: 'problem-solving', label: 'Problem-solving', icon: PsychologyIcon },
+        { id: 'technical', label: 'Technical', icon: FlashOnIcon },
+        { id: 'leadership', label: 'Leadership', icon: AutoAwesomeIcon },
+        { id: 'teamwork', label: 'Teamwork', icon: GroupIcon }
+    ];
 
-    const theme = createTheme({
-        typography: {
-            fontFamily: 'DM Sans, sans-serif',
+    const difficultyLevels = [
+        { id: 'easy-going-personality', label: 'Easy-going', description: 'Friendly and relaxed interviewer' },
+        { id: 'professional-personality', label: 'Professional', description: 'Standard corporate interview style' },
+        { id: 'intense-personality', label: 'Intense', description: 'Challenging and demanding interviewer' },
+        { id: 'randomize-personality', label: 'Randomize', description: 'Mix of different interviewer styles' }
+    ];
+
+    const steps = [
+        {
+            title: "Practice Tool",
+            description: "This is a simulation, not a real interview assessment",
+            icon: BuildIcon,
+            color: "blue"
         },
-    });
+        {
+            title: "No Skipping",
+            description: "Like real interviews, you must answer all questions",
+            icon: WarningIcon,
+            color: "amber"
+        },
+        {
+            title: "Voice Recording",
+            description: "Microphone access required for voice responses",
+            icon: MicIcon,
+            color: "green"
+        },
+        {
+            title: "Stay Focused",
+            description: "Exiting will reset your progress and results",
+            icon: GpsFixedIcon,
+            color: "purple"
+        }
+    ];
+
+    const handleQuestionTypeToggle = (typeId) => {
+        const currentTypes = questionTypes || [];
+        const newTypes = currentTypes.includes(typeId) 
+            ? currentTypes.filter(id => id !== typeId)
+            : [...currentTypes, typeId];
+        handleQuestionTypesChange({ target: { value: newTypes } });
+    };
+
     return (
-// {/* --------- main content --------- */}
-            <Box
-                component="main"
-                className="quickstart-main"
+        <Box component="main" className="quickstart-main-modern">
+            <Toolbar />
+
+            {/* Header */}
+            <motion.div 
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+                transition={{ delay: 0.1 }}
+                variants={itemVariants}
+                className="quickstart-header"
             >
-                <Toolbar/>
+                <Typography className="quickstart-title-modern">
+                    Interview Practice
+                </Typography>
+                <Typography className="quickstart-description-modern">
+                    Master your behavioral interview skills with personalized AI feedback. 
+                    Practice like it&apos;s the real thing and boost your confidence.
+                </Typography>
+            </motion.div>
 
-                {/* title and description */}
-                <motion.div
+            <div className="quickstart-content-grid">
+                {/* Instructions Panel */}
+                <motion.div 
                     initial="hidden"
-                    whileInView='visible'
-                    viewport={{once: true}}
-                    transition={{delay: 0.2}}
-                    variants={itemVariants}>
+                    whileInView="visible"
+                    viewport={{ once: true }}
+                    transition={{ delay: 0.2 }}
+                    variants={itemVariants}
+                    className="quickstart-instructions-panel"
+                >
+                    <div className="panel-header">
+                        <div className="panel-header-icon blue">
+                            <CheckCircleIcon />
+                        </div>
+                        <Typography className="panel-title">How It Works</Typography>
+                    </div>
+                    
+                    <div className="steps-container">
+                        {steps.map((step, index) => {
+                            const Icon = step.icon;
+                            return (
+                                <motion.div 
+                                    key={index}
+                                    initial="hidden"
+                                    whileInView="visible"
+                                    viewport={{ once: true }}
+                                    transition={{ delay: 0.4 + index * 0.1 }}
+                                    variants={itemVariants}
+                                    className="step-item"
+                                >
+                                    <div className={`step-icon ${step.color}`}>
+                                        <Icon />
+                                    </div>
+                                    <div className="step-content">
+                                        <Typography className="step-title">{step.title}</Typography>
+                                        <Typography className="step-description">{step.description}</Typography>
+                                    </div>
+                                </motion.div>
+                            );
+                        })}
+                    </div>
 
-                    <Box>
-                        <Typography className="quickstart-title">
-                            Quick Start Guide
+                    <motion.div 
+                        initial="hidden"
+                        whileInView="visible"
+                        viewport={{ once: true }}
+                        transition={{ delay: 0.8 }}
+                        variants={itemVariants}
+                        className="pro-tip"
+                    >
+                        <div className="pro-tip-header">
+                            <AutoAwesomeIcon />
+                            <span>Pro Tip</span>
+                        </div>
+                        <Typography className="pro-tip-text">
+                            Treat this as a real interview for maximum benefit. Practice your STAR method responses!
                         </Typography>
-                        <Typography className="quickstart-description">
-                            Practice behavioral interviews with this simulation.
-                            Choose from answering 1–5 questions, type in the role you want to practice for, and receive
-                            personalized feedback.
-                            Have fun practicing!
-                        </Typography>
-                    </Box>
+                    </motion.div>
                 </motion.div>
 
-                {/*  div box of both instructions + options to choose  */}
-                <motion.div
+                {/* Configuration Panel */}
+                <motion.div 
                     initial="hidden"
-                    whileInView='visible'
-                    className="quickstart-content-container"
-                    viewport={{once: true}}
-                    transition={{delay: 0.4}}
-                    variants={itemVariants}>
+                    whileInView="visible"
+                    viewport={{ once: true }}
+                    transition={{ delay: 0.3 }}
+                    variants={itemVariants}
+                    className="quickstart-config-panel"
+                >
+                    <div className="panel-header">
+                        <div className="panel-header-icon purple">
+                            <SettingsIcon />
+                        </div>
+                        <Typography className="panel-title">Customize Your Interview</Typography>
+                    </div>
 
-                    {/*  instructions box  */}
-                    <Box className="quickstart-instructions-box">
-                        {
-                            /*  step components  */}
-                        <InstructionsStepComponent
-                            stepNumber={1}
-                            stepTitle="This is a practice tool"
-                            stepDescription="This is a simulation and not a real representation of how you will do during a real interview!"
-                        />
-                        <InstructionsStepComponent
-                            stepNumber={2}
-                            stepTitle="No skipping"
-                            stepDescription="Like a real interview, you can't skip questions."
-                        />
-                        <InstructionsStepComponent
-                            stepNumber={3}
-                            stepTitle="Caution leaving the simulation"
-                            stepDescription="Exiting will result in loss of progress and results."
-                        />
-                        <InstructionsStepComponent
-                            stepNumber={4}
-                            stepTitle={"Voice recording required"}
-                            stepDescription={"This simulation requires microphone access for voice recording during the interview."}
-                        />
-                        <InstructionsStepComponent
-                            stepNumber={5}
-                            stepTitle={"Make the most of it"}
-                            stepDescription={"Treat this tool as a real interview to maximize its benefits!"}
-                        />
+                    <div className="config-form">
+                        {/* Job Role Input */}
+                        <div className="form-group">
+                            <label className="form-label">Target Role</label>
+                            <input
+                                type="text"
+                                value={jobRole}
+                                onChange={handleJobRoleChange}
+                                placeholder="e.g. Software Engineer, Product Manager"
+                                className="form-input"
+                            />
+                        </div>
 
-                    </Box>
+                        {/* Number of Questions */}
+                        <div className="form-group">
+                            <label className="form-label">Number of Questions</label>
+                            <div className="number-selector">
+                                {[1, 2, 3, 4, 5].map((num) => (
+                                    <button
+                                        key={num}
+                                        onClick={() => handleQuestionsChange({ target: { value: num } })}
+                                        className={`number-btn ${numQuestions === num ? 'active' : ''}`}
+                                    >
+                                        {num}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
 
-                    {/*  options box  */}
-                    <ThemeProvider theme={theme}>
-                        <Box className="quickstart-options-box">
-                            <FormLabel
-                                className="quickstart-form-label"
-                            >Interview Customizations</FormLabel>
-
-                            {/*  where the main options can be picked for user  */}
-                            <Box className="quickstart-options-content">
-                                {/* description */}
-                                <Typography className="quickstart-options-description">
-                                    Customize your interview experience by filling out the following fields. Leaving the
-                                    fields blank will give you a general experience.
-                                </Typography>
-
-                                {/*  typing in role + num questions */}
-                                <Box className="quickstart-horizontal-inputs">
-                                    {/* job role text input */}
-                                    <TextField id="outlined-basic" value={jobRole} onChange={handleJobRoleChange}
-                                               fullWidth label="Enter Job Role" placeholder="e.g. Software Engineer"
-                                               variant="outlined" InputLabelProps={{style: {fontFamily: 'DM Sans'}}}
-                                               InputProps={{style: {fontFamily: 'DM Sans'}}}/>
-
-                                    {/* number of questions */}
-                                    <FormControl className="quickstart-select-width">
-                                        <InputLabel id="demo-simple-select-label">Number of Questions</InputLabel>
-                                        <Select
-                                            value={numQuestions}
-                                            label="Number of Questions"
-                                            onChange={handleQuestionsChange}>
-                                            <MenuItem value={1}>1</MenuItem>
-                                            <MenuItem value={2}>2</MenuItem>
-                                            <MenuItem value={3}>3</MenuItem>
-                                            <MenuItem value={4}>4</MenuItem>
-                                            <MenuItem value={5}>5</MenuItem>
-                                        </Select>
-                                    </FormControl>
-                                </Box>
-
-                                {/* multiple input autocomplete for question types */}
-
-                                <Autocomplete
-                                    multiple
-                                    fullWidth
-                                    id="tags-outlined"
-                                    options={['Situational', 'Problem-solving', 'Technical', 'Leadership', 'Teamwork']}
-                                    getOptionLabel={(option) => option}
-                                    onChange={handleQuestionTypesChange}
-                                    filterSelectedOptions
-                                    renderInput={(params) => (
-                                        <TextField
-                                            {...params}
-                                            label="Types of Behavioral Questions"
-                                            placeholder={params.InputProps.startAdornment ? '' : 'Select question types to practice'}
-                                        />
-                                    )}
-                                />
-
-                                {/*  difficulty  */}
-                                <Box className="quickstart-difficulty-container">
-                                    {/* difficulty */}
-                                    <FormControl>
-                                        <FormLabel
-                                            className="quickstart-form-label"
-                                        >Interviewer Difficulty</FormLabel>
-                                        <Typography className="quickstart-difficulty-description">
-                                            Choose a difficulty level to match the style you want to
-                                            practice. </Typography>
-                                        <RadioGroup
-                                            row
-                                            value={interviewerDifficulty}
-                                            onChange={e => handleInterviewerDifficultyChange(e.target.value)}
-                                            name="row-radio-buttons-group"
+                        {/* Question Types */}
+                        <div className="form-group">
+                            <label className="form-label">Question Types</label>
+                            <div className="question-types">
+                                {questionTypeOptions.map((type) => {
+                                    const Icon = type.icon;
+                                    const currentTypes = Array.isArray(questionTypes) ? questionTypes : [];
+                                    const isSelected = currentTypes.includes(type.id);
+                                    
+                                    return (
+                                        <button
+                                            key={type.id}
+                                            onClick={() => handleQuestionTypeToggle(type.id)}
+                                            className={`type-btn ${isSelected ? 'selected' : ''}`}
                                         >
-                                            <FormControlLabel value="easy-going-personality" control={<Radio/>}
-                                                              label="Easy-going"/>
-                                            <FormControlLabel value="professional-personality" control={<Radio/>}
-                                                              label="Professional"/>
-                                            <FormControlLabel value="intense-personality" control={<Radio/>}
-                                                              label="Intense"/>
-                                            <FormControlLabel value="randomize-personality" control={<Radio/>}
-                                                              label="Randomize"/>
-                                        </RadioGroup>
-                                    </FormControl>
+                                            <Icon />
+                                            <span>{type.label}</span>
+                                        </button>
+                                    );
+                                })}
+                            </div>
+                            {(!questionTypes || (Array.isArray(questionTypes) && questionTypes.length === 0)) && (
+                                <Typography className="helper-text">Leave empty for random selection</Typography>
+                            )}
+                        </div>
 
-                                </Box>
+                        {/* Interviewer Difficulty */}
+                        <div className="form-group">
+                            <label className="form-label">Interviewer Style</label>
+                            <div className="difficulty-options">
+                                {difficultyLevels.map((level) => (
+                                    <button
+                                        key={level.id}
+                                        onClick={() => handleInterviewerDifficultyChange(level.id)}
+                                        className={`difficulty-btn ${interviewerDifficulty === level.id ? 'active' : ''}`}
+                                    >
+                                        <div className="difficulty-label">{level.label}</div>
+                                        <div className="difficulty-description">{level.description}</div>
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
 
-                                <Box>
-                                    <FormControl>
-                                        <FormLabel className="quickstart-form-label">
-                                            Other options
-                                        </FormLabel>
-                                        <FormControlLabel 
-                                            control={
-                                                <Switch 
-                                                    checked={showTimer} 
-                                                    onChange={(e) => handleTimerChange(e.target.checked)} 
-                                                />
-                                            } 
-                                            label="Timer Visible" 
+                        {/* Timer Option */}
+                        <div className="form-group">
+                            <div className="timer-option">
+                                <div className="timer-label">
+                                    <AccessTimeIcon />
+                                    <span>Show Timer</span>
+                                </div>
+                                <FormControlLabel
+                                    control={
+                                        <Switch
+                                            checked={showTimer}
+                                            onChange={(e) => handleTimerChange(e.target.checked)}
+                                            className="custom-switch"
                                         />
-                                    </FormControl>
-                                </Box>
-                            </Box>
-
-                            {/* Removed the microphone toggle section */}
-
-                        </Box>
-
-                    </ThemeProvider>
+                                    }
+                                    label=""
+                                />
+                            </div>
+                        </div>
+                    </div>
                 </motion.div>
+            </div>
 
-
-                {/* get started button */}
-                <motion.div
-                    initial="hidden"
-                    whileInView='visible'
-                    viewport={{once: true}}
-                    transition={{delay: 0.8}}
-                    variants={itemVariants}>
-
-                    <Button color='inherit' onClick={handleGetStarted} className="quickstart-get-started-btn">
-                        Get Started!
-                        <svg className="quickstart-btn-icon" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24"
-                             xmlns="http://www.w3.org/2000/svg">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h12M12 5l7 7-7 7"/>
-                        </svg>
-                    </Button>
-                </motion.div>
-            </Box>
+            {/* Start Button */}
+            <motion.div 
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+                transition={{ delay: 0.5 }}
+                variants={itemVariants}
+                className="start-button-container"
+            >
+                <Button
+                    onClick={handleGetStarted}
+                    className="start-button"
+                >
+                    <PlayArrowIcon />
+                    Start Your Interview
+                    <ArrowForwardIcon />
+                </Button>
+                
+                <Typography className="start-button-subtitle">
+                    Ready when you are! Good luck!
+                </Typography>
+            </motion.div>
+        </Box>
     );
-}
+};
 
 export default QuickstartPage;
