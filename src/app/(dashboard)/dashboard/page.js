@@ -1,98 +1,104 @@
+// Replace your current dashboard page.js content with this:
+
 "use client";
 import React from 'react';
 import Box from '@mui/material/Box';
 import CssBaseline from '@mui/material/CssBaseline';
 import Grid from '@mui/material/Grid2';
-import DashboardCard from '../dashboard/(components)/DashboardCard';
+import { Typography, Paper } from '@mui/material';
 
 import DefaultAppLayout from "../../DefaultAppLayout";
-import "./Dashboard.css";
+import DashboardCard from '../dashboard/(components)/DashboardCard';
 
 export default function Dashboard() {
     return (
-            <Box sx={{ display: 'flex'}} bgcolor={
-                            '#F3F1EA'
-                        }>
-                <CssBaseline />
-                <DefaultAppLayout title="Dashboard" color="#2850d9">
-                    {/* --------- main content --------- */}
-                    <Box
-                        component="main"
-                        className="main-dashboard-container"
+        <Box sx={{ display: 'flex' }} bgcolor={'#F3F1EA'}>
+            <CssBaseline />
+            <DefaultAppLayout title="Dashboard" color="#2850d9">
+                {/* Main Content */}
+                <Box
+                    component="main"
+                    sx={{
+                        flexGrow: 1,
+                        p: 4,
+                        marginTop: '5%',
+                        background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)',
+                        minHeight: '100vh'
+                    }}
+                >
+                    
+                    {/* Tools Grid */}
+                    <Grid 
+                        container 
+                        spacing={3} 
+                        sx={{ maxWidth: "1400px", width: "100%" }}
+                        columns={{ xs: 1, sm: 1, md: 2, lg: 3 }}
                     >
-                    {/*  --------- grid ---------  */}
-                        <Box sx={{ flexGrow: 1 }}>
-                            {/* <Grid container spacing={{ xs: 2, md: 3 }} columns={{ xs: 1, sm: 1, md: 2, lg: 3}}> */}
-                            <Grid container spacing={{ xs: 2, md: 3 }}  sx={{ maxWidth: "1200px", width: "100%" }} columns={{ xs: 1, sm: 1, md: 2, lg: 2}}>
-                                {/* behavioral interview simulator  */}
-                                 <Grid size={{ xs: 1, sm: 1, md: 1 }}>
-                                    <DashboardCard
-                                        title="Behavioral Interview"
-                                        link={"/behavioral"}
-                                        description="This mode lets you practice behavioral interviews, customize your questions, and receive personalized improvement advice at the end."
-                                        image="../static/images/testExample.png"
-                                        buttons={[
-                                            { type: 'Simulation' },
-                                            { type: 'Microphone' },
-                                        ]}
-                                    />
-                                </Grid>
-                                {/* <Grid size={{ xs: 1, sm: 1, md: 1 }}>
-                                    <DashboardCard
-                                        title="Behavioral Interview"
-                                        link={"/behavioral"}
-                                        description="This mode lets you practice behavioral interviews, customize your questions, and receive personalized improvement advice at the end."
-                                        image="static/images/testExample.png"
-                                        buttons={[
-                                            { type: 'Simulation' },
-                                            { type: 'Microphone' },
-                                        ]}
-                                    />
-                                </Grid> */}
+                        {/* Behavioral Interview - Active */}
+                        <Grid size={{ xs: 1, sm: 1, md: 1 }}>
+                            <DashboardCard
+                                title="Behavioral Interview"
+                                link="/behavioral"
+                                description="Practice behavioral interviews with AI-powered feedback. Customize your questions and receive personalized improvement advice."
+                                status="active"
+                                icon="🎯"
+                                gradient="linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
+                                buttons={[
+                                    { type: 'Simulation' },
+                                    { type: 'Microphone' },
+                                ]}
+                            />
+                        </Grid>
 
-                            {/*  recruiter networking simulator  */}
-                                {/* <Grid size={{ xs: 1, sm: 1, md: 1 }}>
-                                    <DashboardCard
-                                        title="Recruiter Networking"
-                                        link={"/recruiter"}
-                                        description={"This is an example description for the recruiter networking simulator. This is an example description for the recruiter networking simulator."}
-                                        image="static/images/testExample.png"
-                                        buttons={[
-                                            { type: 'Simulation' },
-                                            { type: 'Microphone' },
-                                        ]}
-                                    />
-                                </Grid> */}
+                        {/* Recruiter Simulator - Coming Soon */}
+                        <Grid size={{ xs: 1, sm: 1, md: 1 }}>
+                            <DashboardCard
+                                title="Recruiter Simulator"
+                                link="#"
+                                description="Engage in realistic recruiter conversations. Practice salary negotiations and learn what recruiters really look for."
+                                status="coming-soon"
+                                icon="👤"
+                                gradient="linear-gradient(135deg, #f093fb 0%, #f5576c 100%)"
+                                buttons={[
+                                    { type: 'Simulation' },
+                                    { type: 'Tool' },
+                                ]}
+                            />
+                        </Grid>
 
-                            {/* webscraping tool */}
-                                {/* <Grid size={{ xs: 1, sm: 1, md: 1 }}>
-                                    <DashboardCard
-                                        title="Webscraping Tool"
-                                        link={"/recruiter"}
-                                        description={"This mode lets you practice networking with recruiters, customize your questions, and receive personalized improvement advice at the end."}
-                                        image="static/images/testExample.png"
-                                        buttons={[
-                                            { type: 'Tool'},
-                                        ]}
-                                    />
-                                </Grid> */}
+                        {/* Smart Job Scraper - Coming Soon */}
+                        <Grid size={{ xs: 1, sm: 1, md: 1 }}>
+                            <DashboardCard
+                                title="Smart Job Scraper"
+                                link="#"
+                                description="Automatically find and analyze job postings that match your skills. Extract key requirements and get preparation tips."
+                                status="coming-soon"
+                                icon="🔍"
+                                gradient="linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)"
+                                buttons={[
+                                    { type: 'Tool' },
+                                ]}
+                            />
+                        </Grid>
 
-                            {/*  resume review tool  */}
-                                {/* <Grid size={{ xs: 1, sm: 1, md: 1 }}>
-                                    <DashboardCard
-                                        title="Webscraping Tool"
-                                        link={"/recruiter"}
-                                        description={"This mode lets you practice networking with recruiters, customize your questions, and receive personalized improvement advice at the end."}
-                                        image="static/images/testExample.png"
-                                        buttons={[
-                                            { type: 'Tool'},
-                                        ]}
-                                    />
-                                </Grid> */}
-                            </Grid>
-                        </Box>
-                    </Box>
-                </DefaultAppLayout>
-            </Box>
+                        {/* Resume Builder - Coming Soon */}
+                        <Grid size={{ xs: 1, sm: 1, md: 1 }}>
+                            <DashboardCard
+                                title="AI Resume Builder"
+                                link="#"
+                                description="Create ATS-optimized resumes with AI assistance. Get suggestions for keywords and formatting tailored to your roles."
+                                status="coming-soon"
+                                icon="📄"
+                                gradient="linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)"
+                                buttons={[
+                                    { type: 'Tool' },
+                                ]}
+                            />
+                        </Grid>
+
+                    </Grid>
+                </Box>
+            </DefaultAppLayout>
+        </Box>
     );
 }
