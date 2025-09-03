@@ -24,8 +24,8 @@ const collapsedWidth = 72; // width when only icons are shown
 
 const navItems = [
 { text: 'Dashboard', icon: <MdSpaceDashboard style={{ fontSize: '1.5rem' }} />, href: '/dashboard' },
-{ text: 'Saves', icon: <HiDocumentText style={{ fontSize: '1.5rem' }} />, href: '/saves' },
-{ text: 'Settings', icon: <IoSettings style={{ fontSize: '1.5rem' }} />, href: '/settings' },
+// { text: 'Saves', icon: <HiDocumentText style={{ fontSize: '1.5rem' }} />, href: '/saves' },
+// { text: 'Settings', icon: <IoSettings style={{ fontSize: '1.5rem' }} />, href: '/settings' },
 ];
 
 const LeftNavbar = () => {
