@@ -107,18 +107,47 @@ export default function BehavioralInterviewSimulation() {
                           {/* question box component */}
                           <Box component="main" sx={{ height: "90vh", overflow: "auto", textAlign: "center"}}>
 
-                          {questions.length > 0 ? (
-                                  <BehavioralSimulationPage questions={questions} showTimer={showTimer}/>
-                              ) : (
-                                  <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%', flexDirection: 'column', gap: 2}}>
-
-                                      {/* loading */}
-                                      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '50%', width: '40%', flexDirection: 'column', gap: 2, borderRadius: 1, backgroundImage: 'url(/static/images/Loading.png)', backgroundSize: 'contain', backgroundPosition: 'center', backgroundRepeat: 'no-repeat' }}>
-                                          <CircularProgress />
-                                          <Typography sx={{ fontFamily: 'DM Sans', color: '#F3F1EC'}}>Generating your simulation experience...</Typography>
-                                      </Box>
-                                  </Box>
-                              )}
+                          {questions && questions.length > 0 ? (
+                            <BehavioralSimulationPage questions={questions} showTimer={showTimer}/>
+                                ) : (
+                                    <Box sx={{ 
+                                        position: 'absolute',
+                                        top: 0,
+                                        left: 0,
+                                        right: -200,
+                                        bottom: 0,
+                                        display: 'flex', 
+                                        justifyContent: 'center', 
+                                        alignItems: 'center', 
+                                        backgroundColor: '#000000', // Black background
+                                        zIndex: 1000
+                                    }}>
+                                        {/* Loading content container */}
+                                        <Box sx={{ 
+                                            display: 'flex', 
+                                            justifyContent: 'center', 
+                                            alignItems: 'center', 
+                                            flexDirection: 'column', 
+                                            gap: 3,
+                                            textAlign: 'center'
+                                        }}>
+                                            <CircularProgress 
+                                                size={60}
+                                                sx={{ 
+                                                    color: '#F3F1EC'
+                                                }} 
+                                            />
+                                            <Typography sx={{ 
+                                                fontFamily: 'DM Sans', 
+                                                color: '#F3F1EC',
+                                                fontSize: '1.2rem',
+                                                fontWeight: 500
+                                            }}>
+                                                Generating your simulation experience...
+                                            </Typography>
+                                        </Box>
+                                    </Box>
+                                )}
                           </Box>
                       </Box>
                   )}
