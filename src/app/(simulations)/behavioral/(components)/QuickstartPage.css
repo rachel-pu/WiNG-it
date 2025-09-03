@@ -1,6 +1,4 @@
-/* Modern QuickstartPage CSS */
-
-/* Main container - FIXED: Remove white space issues */
+/* Main container */
 .quickstart-main-modern {
     flex-grow: 1;
     background: linear-gradient(135deg, #f1f5f9 0%, #dbeafe 50%, #e0e7ff 100%);
@@ -8,7 +6,7 @@
     min-height: 100vh;
     width: 100%;
     max-width: 100%;
-    overflow-x: hidden; /* Prevent horizontal overflow */
+    overflow-x: hidden; 
     box-sizing: border-box;
 }
 
