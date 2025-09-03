@@ -188,7 +188,7 @@ def generate_questions():
         if not check_rate_limit(user_ip):
             return jsonify({
                 "error": "Rate limit exceeded. Please try again in an hour.",
-                "retry_after": 3600
+                "retry_after": 1
             }), 429
         
         # Daily budget check
