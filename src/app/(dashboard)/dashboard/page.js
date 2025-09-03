@@ -50,22 +50,6 @@ export default function Dashboard() {
                             />
                         </Grid>
 
-                        {/* Recruiter Simulator - Coming Soon */}
-                        <Grid size={{ xs: 1, sm: 1, md: 1 }}>
-                            <DashboardCard
-                                title="Recruiter Simulator"
-                                link="#"
-                                description="Engage in realistic recruiter conversations. Practice salary negotiations and learn what recruiters really look for."
-                                status="coming-soon"
-                                icon="👤"
-                                gradient="linear-gradient(135deg, #f093fb 0%, #f5576c 100%)"
-                                buttons={[
-                                    { type: 'Simulation' },
-                                    { type: 'Tool' },
-                                ]}
-                            />
-                        </Grid>
-
                         {/* Smart Job Scraper - Coming Soon */}
                         <Grid size={{ xs: 1, sm: 1, md: 1 }}>
                             <DashboardCard
