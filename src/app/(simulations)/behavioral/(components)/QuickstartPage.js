@@ -112,7 +112,7 @@ const QuickstartPage = ({
                 </Typography>
                 <Typography className="quickstart-description-modern">
                     Master your behavioral interview skills with personalized AI feedback. 
-                    Practice like it's the real thing and boost your confidence.
+                    Practice like it&apos;s the real thing and boost your confidence.
                 </Typography>
             </motion.div>
 
