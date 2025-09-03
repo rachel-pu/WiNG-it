@@ -50,7 +50,7 @@ export default function Dashboard() {
                             />
                         </Grid>
 
-                        {/* Smart Job Scraper - Coming Soon */}
+                        {/* Smart Job Scraper */}
                         <Grid size={{ xs: 1, sm: 1, md: 1 }}>
                             <DashboardCard
                                 title="Smart Job Scraper"
@@ -65,7 +65,7 @@ export default function Dashboard() {
                             />
                         </Grid>
 
-                        {/* Resume Builder - Coming Soon */}
+                        {/* Resume Builder */}
                         <Grid size={{ xs: 1, sm: 1, md: 1 }}>
                             <DashboardCard
                                 title="AI Resume Builder"
