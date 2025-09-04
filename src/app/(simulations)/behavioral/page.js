@@ -107,7 +107,7 @@ export default function BehavioralInterviewSimulation() {
                           {/* question box component */}
                           <Box component="main" sx={{ height: "90vh", overflow: "auto", textAlign: "center"}}>
 
-                          {questions.length > 0 ? (
+                           {questions && questions.length > 0 ? (
                                   <BehavioralSimulationPage questions={questions} showTimer={showTimer}/>
                               ) : (
                                   <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%', flexDirection: 'column', gap: 2}}>
