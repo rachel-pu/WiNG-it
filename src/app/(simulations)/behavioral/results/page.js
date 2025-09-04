@@ -49,33 +49,81 @@ export default function InterviewResults() {
 
     // Fetch interview results from backend
     const fetchInterviewResults = async () => {
-        try {
-            if (!sessionId) throw new Error('No session ID provided');
-            console.log("Fetching results for session:", sessionId);
-
-            const response = await fetch(
-                `https://wing-it-un4w.onrender.com/get-all-responses/${sessionId}`
-            );
-            const data = await response.json();
-            console.log("fetched data:", data); // Debugging
-
-            if (!response.ok) throw new Error('Failed to fetch results');
-            return data;
-        } catch (err) {
-            console.error("Fetch error:", err);
-            setError(err.message);
-            return null;
+        const data = {
+            "complete": false,
+            "count": 3,
+            "responses": {
+                "1": {
+                    "file_path": "/tmp/user_speech_q1_20250904_145347.wav",
+                    "filler_words": [],
+                    "question_number": "1",
+                    "question_text": "Hi, I'm Winnie. It's nice to meet you. Let's get started with the interview.  Imagine you're working on a critical software update with a tight deadline, and you discover a significant bug in a core component that's not your area of expertise. How would you handle this situation?",
+                    "timestamp": "20250904_145347",
+                    "transcript": "I would quickly communicate the issue to the team, bringing in the expert for that component while providing all the context I’ve found. At the same time, I’d suggest potential workarounds and help with testing or debugging so progress isn’t blocked."
+                },
+                "2": {
+                    "file_path": "/tmp/user_speech_q2_20250904_145416.wav",
+                    "filler_words": [],
+                    "question_number": "2",
+                    "question_text": "Let's say you're part of a team developing a new feature, and a team member consistently misses deadlines and their code quality is subpar.  How would you address this situation while maintaining a positive and collaborative team environment?",
+                    "timestamp": "20250904_145416",
+                    "transcript": "I would start by having a one-on-one conversation to understand any challenges they’re facing, offering support or pairing sessions to help improve their workflow and code quality."
+                },
+                "3": {
+                    "file_path": "/tmp/user_speech_q3_20250904_145448.wav",
+                    "filler_words": [],
+                    "question_number": "3",
+                    "question_text": "You've just deployed a new feature, and shortly after, you receive reports of a major system outage.  Describe your approach to troubleshooting the problem and coordinating with your team to resolve the issue as quickly and efficiently as possible.",
+                    "timestamp": "20250904_145448",
+                    "transcript": "I would immediately help triage by gathering logs, monitoring alerts, and reproducing the issue to narrow down the root cause, while rolling back the deployment if needed to restore stability. At the same time, I’d coordinate with the team by clearly assigning tasks—such as debugging, communication with stakeholders, and testing fixes—so we can resolve the outage quickly and learn from it afterward."
+                }
+            },
+            "session_id": "session-1756997596198",
+            "success": true
         }
+
+        return data;
+        // try {
+        //     if (!sessionId) throw new Error('No session ID provided');
+        //     console.log("Fetching results for session:", sessionId);
+
+        //     const response = await fetch(
+        //         `https://wing-it-un4w.onrender.com/get-all-responses/${sessionId}`
+        //     );
+        //     const data = await response.json();
+        //     console.log("fetched data:", data); // Debugging
+
+        //     if (!response.ok) throw new Error('Failed to fetch results');
+        //     return data;
+        // } catch (err) {
+        //     console.error("Fetch error:", err);
+        //     setError(err.message);
+        //     return null;
+        // }
     };
 
     // Update transcript tab content
     const updateTranscriptTab = async (specificQuestion = null) => {
         try {
             setIsLoading(true);
-            const result = await getTranscriptContentForQuestion(
-                specificQuestion,
-                sessionId
-            );
+            // const result = await getTranscriptContentForQuestion(
+            //     specificQuestion,
+            //     sessionId
+            // );
+            let result = "";
+            if (specificQuestion == 1){
+                result = 
+                    {html: "<p> I would quickly communicate the issue to the team, bringing in the expert for that component while providing all the context I’ve found. At the same time, I’d suggest potential workarounds and help with testing or debugging so progress isn’t blocked. </p>"};
+            } else if (specificQuestion == 2){
+                result = 
+                   {html: "<p>I would start by having a one-on-one conversation to understand any challenges they’re facing, offering support or pairing sessions to help improve their workflow and code quality.</p>"};
+            } else {
+                result = 
+                    {html: "<p>I would immediately help triage by gathering logs, monitoring alerts, and reproducing the issue to narrow down the root cause, while rolling back the deployment if needed to restore stability. At the same time, I’d coordinate with the team by clearly assigning tasks—such as debugging, communication with stakeholders, and testing fixes—so we can resolve the outage quickly and learn from it afterward.</p>"};
+            }
+
+
+
 
             // Update the transcript tab with new content
             setTabs(currentTabs =>
