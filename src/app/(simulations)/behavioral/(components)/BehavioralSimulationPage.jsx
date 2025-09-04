@@ -257,6 +257,7 @@ const InterviewQuestions = ({questions, showTimer}) => {
             formData.append("question_number", (currentQuestionIndex + 1).toString());
             formData.append("question_text", questions[currentQuestionIndex]);
             formData.append("session_id", sessionId);
+            formData.append("recorded_time", recordTime.toString());
 
             console.log("Sending audio for transcription...");
 
@@ -383,14 +384,6 @@ const InterviewQuestions = ({questions, showTimer}) => {
 
                 {/* Right side - Controls */}
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                    {showTimer && (
-                        <Typography sx={{ color: 'white', fontFamily: 'DM Sans', fontSize: '0.9rem' }}>
-                            {Math.floor(recordTime / 60)
-                                .toString()
-                                .padStart(2, '0')}:
-                            {(recordTime % 60).toString().padStart(2, '0')}
-                        </Typography>
-                    )}
                     <IconButton 
                         size="small" 
                         sx={{ color: 'white', backgroundColor: 'rgba(255,255,255,0.1)' }}
@@ -429,6 +422,29 @@ const InterviewQuestions = ({questions, showTimer}) => {
                     width: '100%',
                     height: '98%'
                 }}>
+
+                    {showTimer && (
+                        <Box
+                            sx={{
+                                position: "absolute",
+                                top: 12,
+                                left: 12,
+                                backgroundColor: "rgba(0, 0, 0, 0.7)",
+                                color: "white",
+                                padding: "4px 10px",
+                                borderRadius: "6px",
+                                fontSize: "1rem",
+                                fontFamily: "DM Sans",
+                                zIndex: 10,
+                            }}
+                        >
+                            {Math.floor(recordTime / 60)
+                                .toString()
+                                .padStart(2, "0")}
+                            :
+                            {(recordTime % 60).toString().padStart(2, "0")}
+                        </Box>
+                    )}
                     {/* Name tag */}
                     <Box sx={{
                         position: 'absolute',
