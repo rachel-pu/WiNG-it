@@ -267,6 +267,7 @@ export default function InterviewResults() {
 
             // Fetch all results
             const result = await fetchInterviewResults();
+            console.log(result);
 
             if (result && result.success && result.responses) {
                 setInterviewData(result);
@@ -274,7 +275,8 @@ export default function InterviewResults() {
                 // Extract questions from the response data
                 const questionsList = Object.entries(result.responses).map(([num, response]) => ({
                     number: num,
-                    text: response.question_text || `Question ${num}`
+                    text: response.question_text || `Question ${num}`,
+                    recorded_time: response.recorded_time || 'N/A'
                 }));
 
                 // Sort questions by number
