@@ -853,50 +853,7 @@ export default function InterviewResults() {
                                                         </Box>
                                                     </Box>
                                                 </Box>
-                                                
-                                                {/* Filler Words */}
-                                                {currentData.fillerWords > 0 && (
-                                                    <Box sx={{ mt: 3 }}>
-                                                        <Typography sx={{ fontSize: '0.9rem', fontWeight: 600, mb: 1, color: '#ef4444' }}>
-                                                            Filler Words Detected ({currentData.fillerWords}):
-                                                        </Typography>
-                                                        <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
-                                                            {currentData.fillerWordsList.map((word, index) => (
-                                                                <Chip
-                                                                    key={index}
-                                                                    label={word}
-                                                                    size="small"
-                                                                    sx={{
-                                                                        backgroundColor: '#fef2f2',
-                                                                        color: '#dc2626',
-                                                                        fontSize: '0.75rem'
-                                                                    }}
-                                                                />
-                                                            ))}
-                                                        </Box>
-                                                    </Box>
-                                                )}
-
-                                                {/* Action Words */}
-                                                <Box sx={{ mt: 3 }}>
-                                                    <Typography sx={{ fontSize: '0.9rem', fontWeight: 600, mb: 1, color: '#10b981' }}>
-                                                        Action Words Used ({currentData.actionWords}):
-                                                    </Typography>
-                                                    <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
-                                                        {currentData.actionWordsList.map((word, index) => (
-                                                            <Chip
-                                                                key={index}
-                                                                label={word}
-                                                                size="small"
-                                                                sx={{
-                                                                    backgroundColor: '#f0fdf4',
-                                                                    color: '#16a34a',
-                                                                    fontSize: '0.75rem'
-                                                                }}
-                                                            />
-                                                        ))}
-                                                    </Box>
-                                                </Box>
+                    
                                             </Card>
 
                                             {/* Analysis & Tips */}
