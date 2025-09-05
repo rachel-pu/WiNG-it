@@ -13,7 +13,6 @@ import BarChartIcon from '@mui/icons-material/BarChart';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import ErrorIcon from '@mui/icons-material/Error';
 import InfoIcon from '@mui/icons-material/Info';
-import StarIcon from '@mui/icons-material/Star';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 
@@ -413,7 +412,7 @@ export default function InterviewResults() {
                                         color: 'white',
                                         position: 'relative',
                                         overflow: 'hidden',
-                                        boxShadow: '0 20px 40px rgba(102, 126, 234, 0.3)',
+                                        boxShadow: '0 5px 10px rgba(102, 126, 234, 0.3)',
                                         transition: 'all 0.3s ease'
                                     }}
                                 >
@@ -445,7 +444,6 @@ export default function InterviewResults() {
                                         position: 'relative', 
                                         zIndex: 2,
                                         cursor: 'pointer',
-                                        borderBottom: bannerExpanded ? '1px solid rgba(255, 255, 255, 0.1)' : 'none'
                                     }}
                                     onClick={() => setBannerExpanded(!bannerExpanded)}
                                     >
@@ -756,10 +754,10 @@ export default function InterviewResults() {
                                                 <Grid item xs={6} sm={3}>
                                                     <MetricCard
                                                         icon={AccessTimeIcon}
-                                                        label="Response Time"
+                                                        label="Time"
                                                         value={`${Math.floor(currentData.responseTime / 60)}:${(currentData.responseTime % 60).toString().padStart(2, '0')}`}
                                                         color="#8b5cf6"
-                                                        subtitle="Minutes:Seconds"
+                        
                                                     />
                                                 </Grid>
                                                 <Grid item xs={6} sm={3}>
@@ -768,7 +766,6 @@ export default function InterviewResults() {
                                                         label="Word Count"
                                                         value={currentData.wordCount}
                                                         color="#06b6d4"
-                                                        subtitle="Total words spoken"
                                                     />
                                                 </Grid>
                                                 <Grid item xs={6} sm={3}>
@@ -777,7 +774,6 @@ export default function InterviewResults() {
                                                         label="Action Words"
                                                         value={currentData.actionWords}
                                                         color="#10b981"
-                                                        subtitle="Impact language"
                                                     />
                                                 </Grid>
                                                 <Grid item xs={6} sm={3}>
@@ -786,7 +782,6 @@ export default function InterviewResults() {
                                                         label="Statistics"
                                                         value={currentData.statsUsed}
                                                         color="#f59e0b"
-                                                        subtitle="Numbers mentioned"
                                                     />
                                                 </Grid>
                                             </Grid>
