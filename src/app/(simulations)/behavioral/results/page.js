@@ -157,6 +157,55 @@ export default function InterviewResults() {
 
     const overallTips = generateOverallTips();
 
+    // Highlight text function
+    const highlightText = (text, fillerWords, actionWords) => {
+        if (!text) return text;
+        
+        // Create a regex pattern for numbers (including percentages, decimals, etc.)
+        const numberPattern = /\b\d+(?:\.\d+)?(?:%|percent|million|billion|thousand|k|m|b)?\b/gi;
+        
+        // Create regex patterns for filler words and action words
+        const fillerPattern = new RegExp(`\\b(${fillerWords.join('|')})\\b`, 'gi');
+        const actionPattern = new RegExp(`\\b(${actionWords.join('|')})\\b`, 'gi');
+        
+        let highlightedText = text;
+        
+        // Replace numbers with highlighted spans
+        highlightedText = highlightedText.replace(numberPattern, (match) => 
+            `<span style="background-color: #c1deffff; color: #275377ff; padding: 2px 4px; border-radius: 4px; font-weight: 600;">${match}</span>`
+        );
+        
+        // Replace action words with highlighted spans (avoid double highlighting)
+        highlightedText = highlightedText.replace(actionPattern, (match) => {
+            // Check if this word is already inside a span (to avoid double highlighting)
+            const beforeMatch = highlightedText.substring(0, highlightedText.indexOf(match));
+            const openSpans = (beforeMatch.match(/<span/g) || []).length;
+            const closeSpans = (beforeMatch.match(/<\/span>/g) || []).length;
+            
+            if (openSpans > closeSpans) {
+                return match; // Already inside a span, don't highlight
+            }
+            
+            return `<span style="background-color: #d1fae5; color: #065f46; padding: 2px 4px; border-radius: 4px; font-weight: 600;">${match}</span>`;
+        });
+        
+        // Replace filler words with highlighted spans (avoid double highlighting)
+        highlightedText = highlightedText.replace(fillerPattern, (match) => {
+            // Check if this word is already inside a span
+            const beforeMatch = highlightedText.substring(0, highlightedText.indexOf(match));
+            const openSpans = (beforeMatch.match(/<span/g) || []).length;
+            const closeSpans = (beforeMatch.match(/<\/span>/g) || []).length;
+            
+            if (openSpans > closeSpans) {
+                return match; // Already inside a span, don't highlight
+            }
+            
+            return `<span style="background-color: #ffd9d9ff; color: #dc2626; padding: 2px 4px; border-radius: 4px; font-weight: 600;">${match}</span>`;
+        });
+        
+        return highlightedText;
+    };
+
     // Animation variants
     const containerVariants = {
         hidden: { opacity: 0 },
@@ -351,24 +400,7 @@ export default function InterviewResults() {
                             animate="visible"
                             variants={containerVariants}
                         >
-                            {/* Header
-                            <motion.div variants={itemVariants}>
-                                <Box sx={{ textAlign: 'center', mb: 4 }}>
-                                    <Typography 
-                                        sx={{
-                                            fontSize: { xs: '2rem', md: '2.5rem' },
-                                            fontWeight: 800,
-                                            color: '#1f2937',
-                                            mb: 1
-                                        }}
-                                    >
-                                        Interview Analysis
-                                    </Typography>
-                                    <Typography sx={{ color: '#6b7280', fontSize: '1.1rem' }}>
-                                        Detailed breakdown of your performance
-                                    </Typography>
-                                </Box>
-                            </motion.div> */}
+
 
                             {/* Overall Performance Banner - Collapsible */}
                             <motion.div variants={itemVariants}>
@@ -770,9 +802,61 @@ export default function InterviewResults() {
                                                     borderRadius: '12px',
                                                     border: '1px solid #e2e8f0'
                                                 }}>
-                                                    <Typography sx={{ lineHeight: 1.6, color: '#374151' }}>
-                                                        {currentData.transcript}
+                                                    <Typography 
+                                                        sx={{ lineHeight: 1.6, color: '#374151' }}
+                                                        dangerouslySetInnerHTML={{
+                                                            __html: highlightText(
+                                                                currentData.transcript, 
+                                                                currentData.fillerWordsList, 
+                                                                currentData.actionWordsList
+                                                            )
+                                                        }}
+                                                    />
+                                                </Box>
+                                                
+                                                {/* Legend */}
+                                                <Box sx={{ mt: 3, p: 2, backgroundColor: '#f9fafb', borderRadius: '8px' }}>
+                                                    <Typography sx={{ fontSize: '0.8rem', fontWeight: 600, mb: 1, color: '#374151' }}>
+                                                        Highlight Legend:
                                                     </Typography>
+                                                    <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
+                                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                                            <Box sx={{ 
+                                                                width: 16, 
+                                                                height: 16, 
+                                                                backgroundColor: '#d1fae5', 
+                                                                borderRadius: '4px',
+                                                                border: '1px solid #a7f3d0'
+                                                            }} />
+                                                            <Typography sx={{ fontSize: '0.75rem', color: '#065f46' }}>
+                                                                Action Words
+                                                            </Typography>
+                                                        </Box>
+                                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                                            <Box sx={{ 
+                                                                width: 16, 
+                                                                height: 16, 
+                                                                backgroundColor: '#C7DDFC', 
+                                                                borderRadius: '4px',
+                                                                border: '1px solid #6ea7e4ff'
+                                                            }} />
+                                                            <Typography sx={{ fontSize: '0.75rem', color: '#325274' }}>
+                                                                Numbers/Stats
+                                                            </Typography>
+                                                        </Box>
+                                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                                            <Box sx={{ 
+                                                                width: 16, 
+                                                                height: 16, 
+                                                                backgroundColor: '#ffd9d9ff', 
+                                                                borderRadius: '4px',
+                                                                border: '1px solid #fca8a8ff'
+                                                            }} />
+                                                            <Typography sx={{ fontSize: '0.75rem', color: '#dc2626' }}>
+                                                                Filler Words
+                                                            </Typography>
+                                                        </Box>
+                                                    </Box>
                                                 </Box>
                                                 
                                                 {/* Filler Words */}
