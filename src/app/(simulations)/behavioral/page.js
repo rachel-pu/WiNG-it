@@ -21,7 +21,7 @@ export default function BehavioralInterviewSimulation() {
     const [jobRole, setJobRole] = useState("");
     const [numQuestions, setNumQuestions] = useState(5);
     const [questionTypes, setQuestionTypes] = useState([]);
-    const [interviewerDifficulty, setInterviewerDifficulty] = useState("easy-going");
+    const [interviewerDifficulty, setInterviewerDifficulty] = useState("easy-going-personality");
     const [showQuickstart, setShowQuickstart] = useState(true);
     const [showTimer, setShowTimer] = useState(false);
 
@@ -58,8 +58,10 @@ export default function BehavioralInterviewSimulation() {
         setJobRole(e.target.value);
     };
 
-    const handleQuestionTypesChange = (event, newValue) => {
-        setQuestionTypes(newValue);
+    // Handles the array of question types
+    const handleQuestionTypesChange = (event) => {
+        setQuestionTypes(event.target.value);
+        console.log('Question types updated:', event.target.value);
     };
 
     const handleGetStarted = () => {
@@ -73,56 +75,84 @@ export default function BehavioralInterviewSimulation() {
         console.log("Timer visibility set to:", checked);
     }
 
-    const handleInterviewerDifficultyChange = (event) => {
-
+    // Handles interviewer difficulty changes
+    const handleInterviewerDifficultyChange = (difficulty) => {
+        setInterviewerDifficulty(difficulty);
+        console.log("Interviewer difficulty set to:", difficulty);
     }
 
-
-  return (
+    return (
         <Box sx={{ display: "flex" }}>
-        <CssBaseline />
-        <DefaultAppLayout title="Behavioral Interview Simulation" color="#2850d9">
-
-
-              {/* --------- main content --------- */}
-                  {showQuickstart ? (
-                      <QuickstartPage
-                          jobRole={jobRole}
-                          showTimer={showTimer}
-                          numQuestions={numQuestions}
-                          questionTypes={questionTypes}
-                          handleJobRoleChange={handleJobRoleChange}
-                          handleQuestionsChange={handleQuestionsChange}
-                          handleQuestionTypesChange={handleQuestionTypesChange}
-                          handleGetStarted={handleGetStarted}
-                          handleInterviewerDifficultyChange={() => {}}
-                          handleTimerChange={handleTimerChange}
-                      />
-                  ) : (
-                      <Box
-                          component="main"
-                          sx={{ flexGrow: 1, bgcolor: "black", height: "100vh", overflow: "auto" }}
-                      >
-                          <Toolbar />
-                          {/* question box component */}
-                          <Box component="main" sx={{ height: "90vh", overflow: "auto", textAlign: "center"}}>
-
-                           {questions && questions.length > 0 ? (
-                                  <BehavioralSimulationPage questions={questions} showTimer={showTimer}/>
-                              ) : (
-                                  <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%', flexDirection: 'column', gap: 2}}>
-
-                                      {/* loading */}
-                                      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '50%', width: '40%', flexDirection: 'column', gap: 2, borderRadius: 1, backgroundImage: 'url(/static/images/Loading.png)', backgroundSize: 'contain', backgroundPosition: 'center', backgroundRepeat: 'no-repeat' }}>
-                                          <CircularProgress />
-                                          <Typography sx={{ fontFamily: 'DM Sans', color: '#F3F1EC'}}>Generating your simulation experience...</Typography>
-                                      </Box>
-                                  </Box>
-                              )}
-                          </Box>
-                      </Box>
-                  )}
+            <CssBaseline />
+            <DefaultAppLayout title="Behavioral Interview Simulation" color="#2850d9">
+                {/* --------- main content --------- */}
+                {showQuickstart ? (
+                    <QuickstartPage
+                        jobRole={jobRole}
+                        showTimer={showTimer}
+                        numQuestions={numQuestions}
+                        questionTypes={questionTypes}
+                        interviewerDifficulty={interviewerDifficulty}
+                        handleJobRoleChange={handleJobRoleChange}
+                        handleQuestionsChange={handleQuestionsChange}
+                        handleQuestionTypesChange={handleQuestionTypesChange}
+                        handleGetStarted={handleGetStarted}
+                        handleInterviewerDifficultyChange={handleInterviewerDifficultyChange}
+                        handleTimerChange={handleTimerChange}
+                    />
+                ) : (
+                    <Box
+                        component="main"
+                        sx={{ flexGrow: 1, bgcolor: "black", height: "100vh", overflow: "auto" }}
+                    >
+                        <Toolbar />
+                        {/* question box component */}
+                        <Box component="main" sx={{ height: "90vh", overflow: "auto", textAlign: "center"}}>
+                            {questions && questions.length > 0 ? (
+                                <BehavioralSimulationPage questions={questions} showTimer={showTimer}/>
+                            ) : (
+                                <Box sx={{ 
+                                    position: 'absolute',
+                                    top: 0,
+                                    left: 0,
+                                    right: -200,
+                                    bottom: 0,
+                                    display: 'flex', 
+                                    justifyContent: 'center', 
+                                    alignItems: 'center', 
+                                    backgroundColor: '#000000', // Black background
+                                    zIndex: 1000
+                                }}>
+                                    {/* Loading content container */}
+                                    <Box sx={{ 
+                                        display: 'flex', 
+                                        justifyContent: 'center', 
+                                        alignItems: 'center', 
+                                        flexDirection: 'column', 
+                                        gap: 3,
+                                        textAlign: 'center'
+                                    }}>
+                                        <CircularProgress 
+                                            size={60}
+                                            sx={{ 
+                                                color: '#F3F1EC'
+                                            }} 
+                                        />
+                                        <Typography sx={{ 
+                                            fontFamily: 'DM Sans', 
+                                            color: '#F3F1EC',
+                                            fontSize: '1.2rem',
+                                            fontWeight: 500
+                                        }}>
+                                            Generating your simulation experience...
+                                        </Typography>
+                                    </Box>
+                                </Box>
+                            )}
+                        </Box>
+                    </Box>
+                )}
             </DefaultAppLayout>  
         </Box>
-  );
+    );
 }
