@@ -1,23 +1,18 @@
 "use client";
 
 import CssBaseline from "@mui/material/CssBaseline";
-import MainAppBar from "../../../../../components/MainAppBar";
-import LeftNavbar from "../../../../../components/LeftNavbar";
 import React, { useEffect, useState } from "react";
 import { Box, Typography, CircularProgress } from "@mui/material";
 import Toolbar from "@mui/material/Toolbar";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
-import { getTranscriptContentForQuestion } from "./FeedbackTabs";
 import DefaultAppLayout from "../../../DefaultAppLayout";
+
 export default function InterviewResults() {
     const [selectedTab, setSelectedTab] = useState(null);
     const [questionNumber, setQuestionNumber] = useState(null);
     const [questions, setQuestions] = useState([]);
-    const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState(null);
-    const [interviewData, setInterviewData] = useState(null);
-    const [sessionId, setSessionId] = useState(null);
+    const [isLoading, setIsLoading] = useState(false); // Changed to false to see content immediately
     const [tabs, setTabs] = useState([
         {
             icon: "📊",
@@ -32,347 +27,46 @@ export default function InterviewResults() {
         {
             icon: "📜",
             label: "Transcript",
-            content: "<div class='text-left'><p>Loading your interview transcript...</p></div>"
+            content: "<div class='text-left'><p>Your interview transcript will appear here</p></div>"
         }
     ]);
 
-    // Get sessionId from URL or sessionStorage on the client side
+    // Simplified mock data for testing
     useEffect(() => {
-        // This only runs on the client side, so it's safe for static export
-        const urlParams = new URLSearchParams(window.location.search);
-        const sessionIdFromUrl = urlParams.get('sessionId');
-        const sessionIdFromStorage = sessionStorage.getItem("interviewSessionId");
+        // Mock questions for display
+        setQuestions([
+            { number: "1", text: "Question 1" },
+            { number: "2", text: "Question 2" }, 
+            { number: "3", text: "Question 3" }
+        ]);
         
-        const finalSessionId = sessionIdFromUrl || sessionIdFromStorage;
-        setSessionId(finalSessionId);
+        // Set default selected tab
+        setSelectedTab(tabs.find(tab => tab.label === "Transcript") || tabs[0]);
     }, []);
 
-    // Fetch interview results from backend
-    const fetchInterviewResults = async () => {
-        const data = {
-            "complete": false,
-            "count": 3,
-            "responses": {
-                "1": {
-                    "file_path": "/tmp/user_speech_q1_20250904_145347.wav",
-                    "filler_words": [],
-                    "question_number": "1",
-                    "question_text": "Hi, I'm Winnie. It's nice to meet you. Let's get started with the interview.  Imagine you're working on a critical software update with a tight deadline, and you discover a significant bug in a core component that's not your area of expertise. How would you handle this situation?",
-                    "timestamp": "20250904_145347",
-                    "transcript": "I would quickly communicate the issue to the team, bringing in the expert for that component while providing all the context I’ve found. At the same time, I’d suggest potential workarounds and help with testing or debugging so progress isn’t blocked."
-                },
-                "2": {
-                    "file_path": "/tmp/user_speech_q2_20250904_145416.wav",
-                    "filler_words": [],
-                    "question_number": "2",
-                    "question_text": "Let's say you're part of a team developing a new feature, and a team member consistently misses deadlines and their code quality is subpar.  How would you address this situation while maintaining a positive and collaborative team environment?",
-                    "timestamp": "20250904_145416",
-                    "transcript": "I would start by having a one-on-one conversation to understand any challenges they’re facing, offering support or pairing sessions to help improve their workflow and code quality."
-                },
-                "3": {
-                    "file_path": "/tmp/user_speech_q3_20250904_145448.wav",
-                    "filler_words": [],
-                    "question_number": "3",
-                    "question_text": "You've just deployed a new feature, and shortly after, you receive reports of a major system outage.  Describe your approach to troubleshooting the problem and coordinating with your team to resolve the issue as quickly and efficiently as possible.",
-                    "timestamp": "20250904_145448",
-                    "transcript": "I would immediately help triage by gathering logs, monitoring alerts, and reproducing the issue to narrow down the root cause, while rolling back the deployment if needed to restore stability. At the same time, I’d coordinate with the team by clearly assigning tasks—such as debugging, communication with stakeholders, and testing fixes—so we can resolve the outage quickly and learn from it afterward."
-                }
-            },
-            "session_id": "session-1756997596198",
-            "success": true
-        }
-
-        return data;
-        // try {
-        //     if (!sessionId) throw new Error('No session ID provided');
-        //     console.log("Fetching results for session:", sessionId);
-
-        //     const response = await fetch(
-        //         `https://wing-it-un4w.onrender.com/get-all-responses/${sessionId}`
-        //     );
-        //     const data = await response.json();
-        //     console.log("fetched data:", data); // Debugging
-
-        //     if (!response.ok) throw new Error('Failed to fetch results');
-        //     return data;
-        // } catch (err) {
-        //     console.error("Fetch error:", err);
-        //     setError(err.message);
-        //     return null;
-        // }
-    };
-
-    // Update transcript tab content
-    const updateTranscriptTab = async (specificQuestion = null) => {
-        try {
-            setIsLoading(true);
-            // const result = await getTranscriptContentForQuestion(
-            //     specificQuestion,
-            //     sessionId
-            // );
-            let result = "";
-            if (specificQuestion == 1){
-                result = 
-                    {html: "<p> I would quickly communicate the issue to the team, bringing in the expert for that component while providing all the context I’ve found. At the same time, I’d suggest potential workarounds and help with testing or debugging so progress isn’t blocked. </p>"};
-            } else if (specificQuestion == 2){
-                result = 
-                   {html: "<p>I would start by having a one-on-one conversation to understand any challenges they’re facing, offering support or pairing sessions to help improve their workflow and code quality.</p>"};
-            } else {
-                result = 
-                    {html: "<p>I would immediately help triage by gathering logs, monitoring alerts, and reproducing the issue to narrow down the root cause, while rolling back the deployment if needed to restore stability. At the same time, I’d coordinate with the team by clearly assigning tasks—such as debugging, communication with stakeholders, and testing fixes—so we can resolve the outage quickly and learn from it afterward.</p>"};
-            }
-
-
-
-
-            // Update the transcript tab with new content
-            setTabs(currentTabs =>
-                currentTabs.map(tab =>
-                    tab.label === "Transcript"
-                        ? { ...tab, content: result.html }
-                        : tab
-                )
-            );
-
-            setIsLoading(false);
-            return result;
-        } catch (err) {
-            console.error("Error updating transcript tab:", err);
-            setIsLoading(false);
-            return { html: "<p>Error loading transcript data</p>", data: null };
-        }
-    };
-
-    // Update statistics tab with filler word analytics
-    const updateStatisticsTab = (responses) => {
-        if (!responses || Object.keys(responses).length === 0) {
-            return;
-        }
-
-        // Collect all filler words
-        let allFillerWords = [];
-        let fillerWordsPerQuestion = {};
-        let totalWords = 0;
-        let totalResponseLength = 0;
-
-        Object.entries(responses).forEach(([questionNum, response]) => {
-            const fillerWords = response.filler_words || [];
-            allFillerWords = [...allFillerWords, ...fillerWords];
-
-            // Count words in transcript
-            const wordCount = response.transcript ? response.transcript.split(/\s+/).length : 0;
-            totalWords += wordCount;
-            totalResponseLength += response.transcript ? response.transcript.length : 0;
-
-            fillerWordsPerQuestion[questionNum] = fillerWords.length;
-        });
-
-        // Calculate statistics
-        const totalFillerWords = allFillerWords.length;
-        const fillerWordPercentage = totalWords ? ((totalFillerWords / totalWords) * 100).toFixed(1) : 0;
-        const averageResponseLength = Object.keys(responses).length ? 
-            Math.round(totalResponseLength / Object.keys(responses).length) : 0;
-
-        // Generate statistics HTML
-        const statisticsContent = `
-            <div class='text-left'>
-                <h3 class='text-2xl font-bold mb-6'>Interview Statistics</h3>
-                <div class='grid grid-cols-1 md:grid-cols-2 gap-6'>
-                    <div class='bg-white p-6 rounded-lg shadow-sm'>
-                        <h4 class='text-lg font-semibold mb-3'>Filler Words Analysis</h4>
-                        <p class='text-3xl font-bold text-blue-600 mb-2'>${totalFillerWords}</p>
-                        <p class='text-sm text-gray-600'>Total filler words used</p>
-                        <p class='text-lg font-semibold mt-4'>${fillerWordPercentage}%</p>
-                        <p class='text-sm text-gray-600'>Of all words spoken</p>
-                    </div>
-                    <div class='bg-white p-6 rounded-lg shadow-sm'>
-                        <h4 class='text-lg font-semibold mb-3'>Response Length</h4>
-                        <p class='text-3xl font-bold text-green-600 mb-2'>${totalWords}</p>
-                        <p class='text-sm text-gray-600'>Total words spoken</p>
-                        <p class='text-lg font-semibold mt-4'>${averageResponseLength}</p>
-                        <p class='text-sm text-gray-600'>Average response length (characters)</p>
-                    </div>
-                </div>
-                <div class='mt-6'>
-                    <h4 class='text-lg font-semibold mb-3'>Filler Words per Question</h4>
-                    <div class='bg-white p-4 rounded-lg shadow-sm'>
-                        ${Object.entries(fillerWordsPerQuestion).map(([qNum, count]) => 
-                            `<div class='flex justify-between items-center py-2 border-b border-gray-100 last:border-b-0'>
-                                <span>Question ${qNum}</span>
-                                <span class='font-semibold ${count === 0 ? 'text-green-600' : count <= 3 ? 'text-yellow-600' : 'text-red-600'}'>${count} filler words</span>
-                            </div>`
-                        ).join('')}
-                    </div>
-                </div>
-            </div>
-        `;
-
-        setTabs(currentTabs =>
-            currentTabs.map(tab =>
-                tab.label === "Statistics"
-                    ? { ...tab, content: statisticsContent }
-                    : tab
-            )
-        );
-    };
-
-    // Generate advice based on interview performance
-    const generateAdviceTab = (responses) => {
-        if (!responses || Object.keys(responses).length === 0) {
-            return;
-        }
-
-        // Analyze performance
-        let totalFillerWords = 0;
-        let totalWords = 0;
-        let shortResponses = 0;
-        const questionsCount = Object.keys(responses).length;
-
-        Object.values(responses).forEach(response => {
-            const fillerWords = response.filler_words || [];
-            const wordCount = response.transcript ? response.transcript.split(/\s+/).length : 0;
-            
-            totalFillerWords += fillerWords.length;
-            totalWords += wordCount;
-            
-            if (wordCount < 50) shortResponses++;
-        });
-
-        const fillerWordRate = totalWords ? (totalFillerWords / totalWords) * 100 : 0;
-        
-        // Generate personalized advice
-        let adviceContent = `
-            <div class='text-left'>
-                <h3 class='text-2xl font-bold mb-6'>Personalized Feedback & Advice</h3>
-        `;
-
-        // Filler words advice
-        if (fillerWordRate < 2) {
-            adviceContent += `
-                <div class='bg-green-50 border-l-4 border-green-500 p-4 mb-4'>
-                    <h4 class='text-lg font-semibold text-green-800 mb-2'>✅ Excellent Speech Clarity</h4>
-                    <p class='text-green-700'>You maintained excellent speech clarity with very few filler words (${fillerWordRate.toFixed(1)}%). Keep up this professional communication style!</p>
-                </div>
-            `;
-        } else if (fillerWordRate < 5) {
-            adviceContent += `
-                <div class='bg-yellow-50 border-l-4 border-yellow-500 p-4 mb-4'>
-                    <h4 class='text-lg font-semibold text-yellow-800 mb-2'>⚠️ Moderate Filler Word Usage</h4>
-                    <p class='text-yellow-700'>You used filler words ${fillerWordRate.toFixed(1)}% of the time. Try pausing briefly instead of using "um" or "uh" to collect your thoughts.</p>
-                </div>
-            `;
-        } else {
-            adviceContent += `
-                <div class='bg-red-50 border-l-4 border-red-500 p-4 mb-4'>
-                    <h4 class='text-lg font-semibold text-red-800 mb-2'>🎯 Focus on Speech Clarity</h4>
-                    <p class='text-red-700'>High filler word usage (${fillerWordRate.toFixed(1)}%) detected. Practice speaking slower and taking brief pauses to gather your thoughts before responding.</p>
-                </div>
-            `;
-        }
-
-        // Response length advice
-        if (shortResponses > questionsCount / 2) {
-            adviceContent += `
-                <div class='bg-blue-50 border-l-4 border-blue-500 p-4 mb-4'>
-                    <h4 class='text-lg font-semibold text-blue-800 mb-2'>💡 Expand Your Responses</h4>
-                    <p class='text-blue-700'>Several of your responses were quite brief. Try using the STAR method (Situation, Task, Action, Result) to provide more detailed examples.</p>
-                </div>
-            `;
-        }
-
-        // General improvement tips
-        adviceContent += `
-            <div class='bg-gray-50 p-4 rounded-lg mt-6'>
-                <h4 class='text-lg font-semibold mb-3'>💪 Tips for Improvement</h4>
-                <ul class='list-disc pl-5 space-y-2'>
-                    <li>Practice the STAR method for behavioral questions</li>
-                    <li>Record yourself answering common questions to identify speech patterns</li>
-                    <li>Take a brief pause before answering to collect your thoughts</li>
-                    <li>Prepare specific examples from your experience beforehand</li>
-                    <li>Focus on speaking at a moderate pace - don't rush</li>
-                </ul>
-            </div>
-            </div>
-        `;
-
-        setTabs(currentTabs =>
-            currentTabs.map(tab =>
-                tab.label === "Advice"
-                    ? { ...tab, content: adviceContent }
-                    : tab
-            )
-        );
-    };
-
-    // Load data when sessionId is available
-    useEffect(() => {
-        if (!sessionId) return;
-
-        const loadResults = async () => {
-            setIsLoading(true);
-
-            console.log("Using session ID for results:", sessionId);
-
-            // Fetch all results
-            const result = await fetchInterviewResults();
-            console.log(result);
-
-            if (result && result.success && result.responses) {
-                setInterviewData(result);
-
-                // Extract questions from the response data
-                const questionsList = Object.entries(result.responses).map(([num, response]) => ({
-                    number: num,
-                    text: response.question_text || `Question ${num}`,
-                    recorded_time: response.recorded_time || 'N/A'
-                }));
-
-                // Sort questions by number
-                questionsList.sort((a, b) => parseInt(a.number) - parseInt(b.number));
-                setQuestions(questionsList);
-
-                console.log("Found questions:", questionsList.map(q => q.number));
-
-                // Update all tabs with data
-                const transcriptResult = await updateTranscriptTab();
-                updateStatisticsTab(result.responses);
-                generateAdviceTab(result.responses);
-
-                // Select transcript tab by default
-                setSelectedTab(tabs.find(tab => tab.label === "Transcript"));
-                setIsLoading(false);
-            } else {
-                setError("No interview data found or error retrieving data");
-                setIsLoading(false);
-            }
-        };
-
-        loadResults();
-    }, [sessionId]);
-
-    // Effect to initialize selectedTab after tabs are updated
-    useEffect(() => {
-        if (!selectedTab && tabs.length > 0) {
-            setSelectedTab(tabs.find(tab => tab.label === "Transcript") || tabs[0]);
-        }
-    }, [tabs, selectedTab]);
-
     // Handle question selection
-    const handleQuestionSelect = async (number) => {
-        setIsLoading(true);
+    const handleQuestionSelect = (number) => {
         setQuestionNumber(number);
-
-        await updateTranscriptTab(number);
-
-        setIsLoading(false);
+        // Simple content update for testing
+        const updatedTabs = tabs.map(tab =>
+            tab.label === "Transcript"
+                ? { ...tab, content: `<div class='text-left'><p>Transcript for Question ${number}</p></div>` }
+                : tab
+        );
+        setTabs(updatedTabs);
+        setSelectedTab(updatedTabs.find(tab => tab.label === "Transcript"));
     };
 
     // Handle "All Questions" button
-    const handleViewAllQuestions = async () => {
-        setIsLoading(true);
+    const handleViewAllQuestions = () => {
         setQuestionNumber(null);
-        await updateTranscriptTab();
-        setIsLoading(false);
+        const updatedTabs = tabs.map(tab =>
+            tab.label === "Transcript"
+                ? { ...tab, content: "<div class='text-left'><p>All questions transcript</p></div>" }
+                : tab
+        );
+        setTabs(updatedTabs);
+        setSelectedTab(updatedTabs.find(tab => tab.label === "Transcript"));
     };
 
     // Question button component
@@ -394,52 +88,6 @@ export default function InterviewResults() {
             Q{number}
         </button>
     );
-
-    if (!sessionId) {
-        return (
-            <Box sx={{ display: "flex" }}>
-                <CssBaseline />
-                <DefaultAppLayout title="Behavioral Interview Simulation" color="#2850d9">
-                    <Box component="main" sx={{ flexGrow: 1, bgcolor: "background.default", p: 3 }}>
-                        <Toolbar />
-                        <Box sx={{ textAlign: "center", mt: 4 }}>
-                            <Typography variant="h6" color="error">
-                                No session ID found. Please complete an interview first.
-                            </Typography>
-                            <Link href="/behavioral" style={{ textDecoration: 'none' }}>
-                                <Typography variant="body1" sx={{ mt: 2, color: 'primary.main' }}>
-                                    Start a new interview
-                                </Typography>
-                            </Link>
-                        </Box>
-                    </Box>
-                </DefaultAppLayout>
-            </Box>
-        );
-    }
-
-    if (error) {
-        return (
-            <Box sx={{ display: "flex" }}>
-                <CssBaseline />
-                <DefaultAppLayout title="Behavioral Interview Simulation" color="#2850d9">
-                    <Box component="main" sx={{ flexGrow: 1, bgcolor: "background.default", p: 3 }}>
-                        <Toolbar />
-                        <Box sx={{ textAlign: "center", mt: 4 }}>
-                            <Typography variant="h6" color="error">
-                                {error}
-                            </Typography>
-                            <Link href="/behavioral" style={{ textDecoration: 'none' }}>
-                                <Typography variant="body1" sx={{ mt: 2, color: 'primary.main' }}>
-                                    Try again
-                                </Typography>
-                            </Link>
-                        </Box>
-                    </Box>
-                </DefaultAppLayout>
-            </Box>
-        );
-    }
 
     return (
         <Box sx={{ display: "flex" }}>
