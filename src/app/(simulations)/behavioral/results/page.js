@@ -810,7 +810,7 @@ export default function InterviewResults() {
                                                 </Box>
                                                 
                                                 {/* Legend */}
-                                                <Box sx={{ mt: 3, p: 2, backgroundColor: '#f9fafb', borderRadius: '8px' }}>
+                                                <Box sx={{ mt: 3, p: 2, borderRadius: '8px' }}>
                                                     <Typography sx={{ fontSize: '0.8rem', fontWeight: 600, mb: 1, color: '#374151' }}>
                                                         Highlight Legend:
                                                     </Typography>
