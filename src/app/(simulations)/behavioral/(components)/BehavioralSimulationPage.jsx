@@ -174,7 +174,25 @@ const InterviewQuestions = ({questions, showTimer}) => {
         const setupRecording = async () => {
             try {
                 const stream = await navigator.mediaDevices.getUserMedia({audio: true});
-                mediaRecorder.current = new MediaRecorder(stream);
+                
+                // Check what audio formats are supported
+                const supportedTypes = [
+                    'audio/webm;codecs=opus',
+                    'audio/webm',
+                    'audio/ogg;codecs=opus',
+                    'audio/wav'
+                ];
+                
+                let selectedType = 'audio/webm'; // fallback
+                for (const type of supportedTypes) {
+                    if (MediaRecorder.isTypeSupported(type)) {
+                        selectedType = type;
+                        console.log('Using audio format:', type);
+                        break;
+                    }
+                }
+                
+                mediaRecorder.current = new MediaRecorder(stream, { mimeType: selectedType });
 
                 mediaRecorder.current.ondataavailable = (event) => {
                     if (event.data.size > 0) {
@@ -183,9 +201,9 @@ const InterviewQuestions = ({questions, showTimer}) => {
                 };
 
                 mediaRecorder.current.onstop = async () => {
-                    const audioBlob = new Blob(audioChunks.current, {type: 'audio/wav'});
+                    const audioBlob = new Blob(audioChunks.current, {type: selectedType});
                     audioChunks.current = [];
-                    await processAudioBlob(audioBlob);
+                    await processAudioBlob(audioBlob, questionIndexAtRecordingStart);
                 };
 
                 console.log("Audio recording initialized successfully");
