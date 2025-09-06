@@ -1,11 +1,11 @@
 "use client";
 
-import React, { useState } from "react";
-import { Box, Typography, Card, Grid, Chip, CssBaseline, Toolbar, Avatar, LinearProgress } from "@mui/material";
+import React, { useState, useEffect} from "react";
+import { Box, Typography, CircularProgress, Card, Grid, Chip, CssBaseline, Toolbar, Avatar, LinearProgress } from "@mui/material";
 import { motion, AnimatePresence } from "framer-motion";
 import DefaultAppLayout from "../../../DefaultAppLayout";
-
-// Icons
+import Link from "next/link";
+import Toolbar from "@mui/material/Toolbar";
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import RecordVoiceOverIcon from '@mui/icons-material/RecordVoiceOver';
 import TrendingUpIcon from '@mui/icons-material/TrendingUp';
@@ -14,7 +14,8 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import ErrorIcon from '@mui/icons-material/Error';
 import InfoIcon from '@mui/icons-material/Info';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import ExpandLessIcon from '@mui/icons-material/ExpandLess';
+import { getTranscriptContentForQuestion } from "./FeedbackTabs";
+
 
 export default function InterviewResults() {
     const [selectedQuestion, setSelectedQuestion] = useState(1);

@@ -1,19 +1,17 @@
 "use client"
 // import InterviewQuestions from "../../../../components/InterviewQuestions";
+import interviewService from '@/lib/interviewService';
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import CssBaseline from "@mui/material/CssBaseline";
-import MainAppBar from "../../../../components/MainAppBar";
-import LeftNavbar from "../../../../components/LeftNavbar";
 import React, {useState} from "react";
-import {useEffect} from "react";
-import Image from "next/image";
 import {useRouter} from "next/navigation";
 import Typography from "@mui/material/Typography";
 import QuickstartPage from "@/app/(simulations)/behavioral/(components)/QuickstartPage";
 import BehavioralSimulationPage from "@/app/(simulations)/behavioral/(components)/BehavioralSimulationPage";
 import {CircularProgress} from "@mui/material";
 import DefaultAppLayout from "../../DefaultAppLayout";
+import { getFunctions, httpsCallable } from "firebase/functions";
 
 export default function BehavioralInterviewSimulation() {
     const [questions, setQuestions] = useState([]);
@@ -24,29 +22,35 @@ export default function BehavioralInterviewSimulation() {
     const [interviewerDifficulty, setInterviewerDifficulty] = useState("easy-going-personality");
     const [showQuickstart, setShowQuickstart] = useState(true);
     const [showTimer, setShowTimer] = useState(false);
+    const firebaseConfig = {};
+    const functions = getFunctions(undefined, "us-central1");
+    const generateQuestionsFn = httpsCallable(functions, "generateQuestions");
+    
 
     const fetchQuestions = async () => {
-        try {
-            const response = await fetch('https://wing-it-un4w.onrender.com/generate_questions', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    job_role: jobRole,
-                    numQuestions: numQuestions,
-                    questionTypes: questionTypes,
-                    interviewerDifficulty: interviewerDifficulty,
-                })
-            });
+    try {
+        const response = await fetch('https://us-central1-wing-it-e6a3a.cloudfunctions.net/generateQuestions', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            job_role: jobRole,
+            numQuestions,
+            questionTypes
+        }),
+        });
 
-            const data = await response.json();
-            console.log("API Response:", data); // Debugging
-            setQuestions(data.questions);
-            console.log('Questions generated:', data.questions);
-        } catch (error) {
-            console.error('Error generating questions:', error);
+        if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
         }
+
+        const data = await response.json();
+        setQuestions(data.questions);
+
+    } catch (error) {
+        console.error('Error generating questions:', error);
+    }
     };
 
     const handleQuestionsChange = (event) => {
