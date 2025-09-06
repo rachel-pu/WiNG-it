@@ -150,6 +150,7 @@ exports.textToSpeech = functions.https.onRequest((req, res) => {
 });
 
 
+// saveReponse function
 exports.saveResponse = functions.https.onRequest((req, res) => {
   return cors(req, res, async () => {
     try {
@@ -159,7 +160,7 @@ exports.saveResponse = functions.https.onRequest((req, res) => {
       }
 
       // Extract and validate required fields
-      const { sessionId, questionNumber, questionText, recordedTime, audioData } = req.body;
+      const { sessionId, questionNumber, questionText, recordedTime, audioData, mimetype } = req.body;
       
       if (!sessionId || questionNumber === undefined || !audioData) {
         return res.status(400).json({ 
@@ -190,14 +191,17 @@ try {
   return res.status(400).json({ error: "Invalid base64 audioData" });
 }
 
-
       const audioStream = new Readable({
         read() {
         }
       });
       audioStream.push(audioBuffer);
       audioStream.push(null); // Signal end of stream
-      console.log('Processing audio for transcription, buffer size:', audioBuffer.length);
+      console.log('Processing audio for transcription:');
+      console.log('- Buffer size:', audioBuffer.length);
+      console.log('- MIME type:', mimetype || 'not provided');
+      console.log('- Session ID:', sessionId);
+      console.log('- Question:', questionNumber);
 
       // Deepgram transcription
       let result;
@@ -211,7 +215,7 @@ try {
             filler_words: true,
             punctuate: true,
             diarize: false,
-            mimetype: "audio/webm"
+            mimetype: mimetype || "audio/webm"
           }
         );
 
@@ -230,6 +234,17 @@ try {
       const transcript = result?.channels?.[0]?.alternatives?.[0]?.transcript || "";
       const words = result?.channels?.[0]?.alternatives?.[0]?.words || [];
       const confidence = result?.channels?.[0]?.alternatives?.[0]?.confidence || 0;
+
+      console.log('=== TRANSCRIPT EXTRACTION ===');
+    console.log('- Transcript length:', transcript.length);
+      console.log('- Transcript content:', transcript.substring(0, 100) + '...');
+    console.log('- Words count:', words.length);
+    console.log('- Confidence:', confidence);
+
+    if (!transcript || transcript.trim() === "") {
+      console.warn('⚠️ EMPTY TRANSCRIPT DETECTED');
+    console.log('Raw result structure:', JSON.stringify(result, null, 2));
+    }
       
       // Analyze filler words
       const fillerWordsList = [
