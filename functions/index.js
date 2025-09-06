@@ -5,6 +5,7 @@ const cors = require('cors')({ origin: true });
 const OpenAI = require('openai')
 require("dotenv").config();
 const { createClient } = require("@deepgram/sdk");
+const { Readable } = require("stream");
 
 
 // Initialize Firebase Admin
@@ -150,85 +151,167 @@ exports.textToSpeech = functions.https.onRequest((req, res) => {
 
 
 exports.saveResponse = functions.https.onRequest((req, res) => {
-  cors(req, res, async () => {
+  return cors(req, res, async () => {
     try {
+      // Method validation
       if (req.method !== "POST") {
         return res.status(405).json({ error: "Method not allowed" });
       }
 
+      // Extract and validate required fields
       const { sessionId, questionNumber, questionText, recordedTime, audioData } = req.body;
-
-      if (!sessionId || !questionNumber || !audioData) {
-        return res.status(400).json({ error: "Missing required fields" });
+      
+      if (!sessionId || questionNumber === undefined || !audioData) {
+        return res.status(400).json({ 
+          error: "Missing required fields",
+          required: ["sessionId", "questionNumber", "audioData"]
+        });
       }
 
-      // Convert base64 audio to Buffer
-      const audioBuffer = Buffer.from(audioData, "base64");
+      // Validate and decode audioData
+      // let audioBuffer;
+      // try {
+      //   audioBuffer = Buffer.from(audioData, "base64");
+      // } catch (error) {
+      //   return res.status(400).json({ error: "Invalid base64 audioData" });
+      // }
 
-      // Transcribe with Deepgram v3
-      let transcript = "";
-      let fillerWords = [];
+      // Validate and decode audioData
+let audioBuffer;
+try {
+  audioBuffer = Buffer.from(audioData, "base64");
 
+  console.log("=== AUDIO BUFFER DEBUG ===");
+  console.log("Buffer length (bytes):", audioBuffer.length);
+  console.log("First 20 bytes:", audioBuffer.subarray(0, 20));
+  console.log("Last 20 bytes:", audioBuffer.subarray(audioBuffer.length - 20));
+} catch (error) {
+  console.error("Base64 decoding failed:", error);
+  return res.status(400).json({ error: "Invalid base64 audioData" });
+}
+
+
+      const audioStream = new Readable({
+        read() {
+        }
+      });
+      audioStream.push(audioBuffer);
+      audioStream.push(null); // Signal end of stream
+      console.log('Processing audio for transcription, buffer size:', audioBuffer.length);
+
+      // Deepgram transcription
+      let result;
       try {
-        const dgResponse = await dgClient.audio.transcription.create(
+        const response = await dgClient.listen.prerecorded.transcribeFile(
+          audioStream,
           {
-            buffer: audioBuffer,
-            mimetype: "audio/wav",
-          },
-          {
-            model: "nova",
+            model: "nova-2",
             language: "en-US",
             smart_format: true,
+            filler_words: true,
+            punctuate: true,
+            diarize: false,
+            mimetype: "audio/webm"
           }
         );
 
-        transcript = dgResponse.results.channels[0].alternatives[0].transcript || "";
-        const words = dgResponse.results.channels[0].alternatives[0].words || [];
-        fillerWords = words
-          .filter(w =>
-            ["um", "uh", "hmm", "like", "you know", "actually", "basically", "literally", "so", "well"].includes(w.word.toLowerCase())
-          )
-          .map(w => w.word);
-
-      } catch (dgError) {
-        console.error("Deepgram transcription error:", dgError);
-        return res.status(500).json({ error: "Failed to transcribe audio" });
+        console.log("=== DEEPGRAM RAW RESPONSE ===");
+        console.log(JSON.stringify(response, null, 2));
+        result = response.result;
+      } catch (transcriptionError) {
+        console.error("Deepgram transcription error:", transcriptionError);
+        return res.status(500).json({ 
+          error: "Transcription failed", 
+          details: transcriptionError.message 
+        });
       }
 
-      // Prepare response data
+      // Extract transcript and analysis data
+      const transcript = result?.channels?.[0]?.alternatives?.[0]?.transcript || "";
+      const words = result?.channels?.[0]?.alternatives?.[0]?.words || [];
+      const confidence = result?.channels?.[0]?.alternatives?.[0]?.confidence || 0;
+      
+      // Analyze filler words
+      const fillerWordsList = [
+        "um", "uh", "uhm", "hmm", "like", "you know", "actually", 
+        "basically", "literally", "so", "well", "kind of", "sort of"
+      ];
+      
+      const fillerWords = words
+        .filter(w => w.word && fillerWordsList.includes(w.word.toLowerCase().trim()))
+        .map(w => ({
+          word: w.word,
+          start: w.start,
+          end: w.end,
+          confidence: w.confidence
+        }));
+
+      // Calculate speech metrics
+      const totalWords = words.length;
+      const fillerWordCount = fillerWords.length;
+      const fillerWordPercentage = totalWords > 0 ? (fillerWordCount / totalWords * 100).toFixed(2) : 0;
+      
+      // Calculate speaking pace (words per minute)
+      const durationSeconds = recordedTime / 1000;
+      const wordsPerMinute = durationSeconds > 0 ? Math.round((totalWords / durationSeconds) * 60) : 0;
+
+      // Prepare response data (no audio storage)
       const responseData = {
-        questionNumber,
-        questionText,
+        questionNumber: parseInt(questionNumber),
+        questionText: questionText || "",
         transcript,
-        fillerWords,
+        analysis: {
+          totalWords,
+          fillerWords,
+          fillerWordCount,
+          fillerWordPercentage: parseFloat(fillerWordPercentage),
+          transcriptionConfidence: confidence,
+          wordsPerMinute,
+          durationSeconds: Math.round(durationSeconds)
+        },
         recordedTime: recordedTime || 0,
-        timestamp: Date.now(),
-        audioData: audioData
+        timestamp: admin.database.ServerValue.TIMESTAMP,
       };
 
-      // Save to Firebase Realtime Database
-      await db.ref(`interviews/${sessionId}/responses/${questionNumber}`).set(responseData);
+      // Save to Firebase
+      try {
+        await db.ref(`interviews/${sessionId}/responses/${questionNumber}`).set(responseData);
+        
+        // Update session metadata
+        const snapshot = await db.ref(`interviews/${sessionId}/responses`).once("value");
+        const questionsCompleted = snapshot.numChildren();
 
-      // Update session metadata
-      const snapshot = await db.ref(`interviews/${sessionId}/responses`).once("value");
-      const questionsCompleted = snapshot.numChildren();
+        await db.ref(`interviews/${sessionId}/metadata`).update({
+          lastUpdated: admin.database.ServerValue.TIMESTAMP,
+          questionsCompleted,
+        });
 
-      await db.ref(`interviews/${sessionId}/metadata`).update({
-        lastUpdated: Date.now(),
-        questionsCompleted
-      });
+        console.log(`Successfully processed response for session ${sessionId}, question ${questionNumber}`);
+        
+        // Return useful data without the audio
+        return res.status(200).json({ 
+          success: true, 
+          sessionId, 
+          questionNumber: parseInt(questionNumber),
+          transcript,
+          analysis: responseData.analysis,
+          questionsCompleted
+        });
 
-      return res.json({
-        success: true,
-        sessionId,
-        questionNumber,
-        responseData,
-        questionsCompleted
-      });
+      } catch (dbError) {
+        console.error("Database error:", dbError);
+        return res.status(500).json({ 
+          error: "Failed to save to database", 
+          details: dbError.message 
+        });
+      }
 
     } catch (error) {
-      console.error("Error saving response:", error);
-      return res.status(500).json({ error: "Failed to save response" });
+      console.error("Unexpected error in saveResponse:", error);
+      return res.status(500).json({ 
+        error: "Internal server error", 
+        details: process.env.NODE_ENV === 'development' ? error.message : undefined
+      });
     }
   });
 });

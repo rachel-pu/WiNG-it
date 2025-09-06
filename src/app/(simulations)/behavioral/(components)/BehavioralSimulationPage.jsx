@@ -171,7 +171,7 @@ const InterviewQuestions = ({questions, showTimer}) => {
                 };
 
                 mediaRecorder.current.onstop = async () => {
-                    const audioBlob = new Blob(audioChunks.current, {type: 'audio/wav'});
+                    const audioBlob = new Blob(audioChunks.current, {type: 'audio/webm'});
                     audioChunks.current = [];
                     await processAudioBlob(audioBlob);
                 };
@@ -197,7 +197,7 @@ const InterviewQuestions = ({questions, showTimer}) => {
             console.log("Recording started");
 
             mediaRecorder.current.onstop = async () => {
-                const audioBlob = new Blob(audioChunks.current, {type: 'audio/wav'});
+                const audioBlob = new Blob(audioChunks.current, {type: 'audio/webm'});
                 audioChunks.current = [];
                 await processAudioBlob(audioBlob, questionIndexAtRecordingStart);
             };
@@ -252,7 +252,8 @@ const InterviewQuestions = ({questions, showTimer}) => {
             questionNumber: currentQuestionIndex + 1,
             questionText: questions[currentQuestionIndex],
             recordedTime: recordTime,
-            audioData: base64Audio
+            audioData: base64Audio,
+            mimetype: "audio/webm"
         };
 
         console.log("Sending audio for transcription...");
