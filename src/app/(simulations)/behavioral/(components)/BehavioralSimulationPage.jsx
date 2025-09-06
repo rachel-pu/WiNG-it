@@ -16,6 +16,7 @@ import FullscreenIcon from "@mui/icons-material/Fullscreen";
 import FullscreenExitIcon from "@mui/icons-material/FullscreenExit";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import PinDropIcon from "@mui/icons-material/PinDrop";
+import { getFunctions, httpsCallable } from "firebase/functions";
 
 const InterviewQuestions = ({questions, showTimer}) => {
     const router = useRouter();
@@ -100,11 +101,8 @@ const InterviewQuestions = ({questions, showTimer}) => {
     // Fetch TTS audio for the current question
     const fetchAndPlayQuestionAudio = async (text) => {
         try {
-            // setAlertMessage("Fetching question audio...");
-            // setAlertSeverity("info");
-            // setShowAlert(true);
 
-            const response = await fetch("https://wing-it-un4w.onrender.com/text-to-speech", {
+            const response = await fetch("https://us-central1-wing-it-e6a3a.cloudfunctions.net/textToSpeech", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
@@ -114,25 +112,15 @@ const InterviewQuestions = ({questions, showTimer}) => {
 
             if (!response.ok) {
                 console.error("Error fetching audio:", response.status);
-                // setAlertMessage("Failed to load question audio");
-                // setAlertSeverity("error");
-                // setShowAlert(true);
                 return;
             }
 
             const blob = await response.blob();
             const url = URL.createObjectURL(blob);
             setAudioUrl(url);
-
-            // setAlertMessage("Question audio loaded successfully");
-            // setAlertSeverity("success");
-            // setShowAlert(true);
             setTimeout(() => setShowAlert(false), 2000);
         } catch (error) {
             console.error("Error in text-to-speech fetch:", error);
-            // setAlertMessage("Error loading question audio");
-            // setAlertSeverity("error");
-            // setShowAlert(true);
         }
     };
 
@@ -251,50 +239,65 @@ const InterviewQuestions = ({questions, showTimer}) => {
     };
 
     const processAudioBlob = async (audioBlob, questionIndexAtRecordingStart) => {
-        try {
-            const formData = new FormData();
-            formData.append("audio", audioBlob, "recording.wav");
-            formData.append("question_number", (currentQuestionIndex + 1).toString());
-            formData.append("question_text", questions[currentQuestionIndex]);
-            formData.append("session_id", sessionId);
-            formData.append("recorded_time", recordTime.toString());
+    try {
+        // Convert audio blob to base64
+        const arrayBuffer = await audioBlob.arrayBuffer();
+        const base64Audio = btoa(
+            String.fromCharCode(...new Uint8Array(arrayBuffer))
+        );
 
-            console.log("Sending audio for transcription...");
+        // Prepare JSON payload
+        const payload = {
+            sessionId,
+            questionNumber: currentQuestionIndex + 1,
+            questionText: questions[currentQuestionIndex],
+            recordedTime: recordTime,
+            audioData: base64Audio
+        };
 
-            const response = await fetch("https://wing-it-un4w.onrender.com/save-and-transcribe", {
+        console.log("Sending audio for transcription...");
+
+        const response = await fetch(
+            "https://us-central1-wing-it-e6a3a.cloudfunctions.net/saveResponse",
+            {
                 method: "POST",
-                body: formData
-            });
-
-            if (!response.ok) {
-                throw new Error(`Server responded with ${response.status}`);
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(payload)
             }
+        );
 
-            const data = await response.json();
-            console.log("Transcription response:", data);
+        if (!response.ok) {
+            throw new Error(`Server responded with ${response.status}`);
+        }
 
-            if (data.success) {
-                setTranscript(data.response_data?.transcript || "");
-                setHasRecorded(true);
-                setIsProcessing(false);
+        const data = await response.json();
+        console.log("Transcription response:", data);
 
-                setAlertMessage("Answer recorded successfully!");
-                setAlertSeverity("success");
-                setShowAlert(true);
-                setTimeout(() => setShowAlert(false), 2000);
-            } else {
-                throw new Error(data.error || "Unknown error");
-            }
-
-        } catch (error) {
-            console.error("Error processing audio:", error);
+        if (data.success) {
+            setTranscript(data.responseData?.transcript || "");
+            setHasRecorded(true);
             setIsProcessing(false);
 
-            setAlertMessage(`Error: ${error.message}`);
-            setAlertSeverity("error");
+            setAlertMessage("Answer recorded successfully!");
+            setAlertSeverity("success");
             setShowAlert(true);
+            setTimeout(() => setShowAlert(false), 2000);
+        } else {
+            throw new Error(data.error || "Unknown error");
         }
-    };
+
+    } catch (error) {
+        console.error("Error processing audio:", error);
+        setIsProcessing(false);
+
+        setAlertMessage(`Error: ${error.message}`);
+        setAlertSeverity("error");
+        setShowAlert(true);
+    }
+};
+
 
     const handleNextQuestion = () => {
         if (recordInterval) {

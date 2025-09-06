@@ -24,8 +24,7 @@ export default function BehavioralInterviewSimulation() {
     const [showTimer, setShowTimer] = useState(false);
     const firebaseConfig = {};
     const functions = getFunctions(undefined, "us-central1");
-    const generateQuestionsFn = httpsCallable(functions, "generateQuestions");
-    
+
 
     const fetchQuestions = async () => {
     try {

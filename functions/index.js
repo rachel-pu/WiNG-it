@@ -4,6 +4,8 @@ const admin = require('firebase-admin');
 const cors = require('cors')({ origin: true });
 const OpenAI = require('openai')
 require("dotenv").config();
+const { createClient } = require("@deepgram/sdk");
+
 
 // Initialize Firebase Admin
 admin.initializeApp();
@@ -13,6 +15,7 @@ const db = admin.database();
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY
 });
+const dgClient = createClient(process.env.DEEPGRAM_API_KEY);
 
 // Rate limiting helper
 const checkRateLimit = async (userId) => {
@@ -99,88 +102,142 @@ exports.generateQuestions = functions.https.onRequest((req, res) => {
   });
 });
 
-
 // Text to Speech using Google Cloud Speech
 exports.textToSpeech = functions.https.onRequest((req, res) => {
-  return cors(req, res, async () => {
+  console.log("Converting text to speech");
+  cors(req, res, async () => {
     try {
-      if (req.method !== 'POST') {
-        return res.status(405).json({ error: 'Method not allowed' });
+      if (req.method !== "POST") {
+        return res.status(405).json({ error: "Method not allowed" });
       }
 
       const { text } = req.body;
-      if (!text) {
-        return res.status(400).json({ error: 'No text provided' });
+      if (!text || text.trim() === "") {
+        return res.status(400).json({ error: "No text provided" });
       }
 
-      // For now, return a placeholder response
-      // You'll need to implement Google Cloud Text-to-Speech here
-      res.json({ 
-        success: true, 
-        message: 'Text-to-speech would be implemented here',
-        audioUrl: null
-      });
+      console.log(`Converting to speech: ${text.substring(0, 50)}...`);
 
+      // Call Deepgram TTS (v3 syntax)
+      const response = await dgClient.speak.request(
+        { text },
+        { model: "aura-asteria-en", encoding: "mp3" }
+      );
+
+      console.log("✅ Text-to-speech successful");
+
+      // Convert the ReadableStream to a Buffer
+      const stream = await response.getStream();
+      const chunks = [];
+      for await (const chunk of stream) {
+        chunks.push(chunk);
+      }
+      const audioBuffer = Buffer.concat(chunks);
+
+      // Set headers for audio stream
+      res.setHeader("Content-Type", "audio/mpeg");
+      res.setHeader("Content-Disposition", "inline");
+      res.setHeader("Cache-Control", "no-cache");
+
+      // Send the audio buffer
+      res.send(audioBuffer);
     } catch (error) {
-      console.error('Error in text-to-speech:', error);
-      res.status(500).json({ error: 'Text-to-speech failed' });
+      console.error("Error in text-to-speech:", error);
+      res.status(500).json({ error: "Text-to-speech failed", details: error.message });
     }
   });
 });
 
-// Save Interview Response
+
 exports.saveResponse = functions.https.onRequest((req, res) => {
-  return cors(req, res, async () => {
+  cors(req, res, async () => {
     try {
-      if (req.method !== 'POST') {
-        return res.status(405).json({ error: 'Method not allowed' });
+      if (req.method !== "POST") {
+        return res.status(405).json({ error: "Method not allowed" });
       }
 
-      const {
-        sessionId,
-        questionNumber,
-        questionText,
-        transcript,
-        fillerWords = [],
-        audioData
-      } = req.body;
+      const { sessionId, questionNumber, questionText, recordedTime, audioData } = req.body;
 
-      if (!sessionId || !questionNumber) {
-        return res.status(400).json({ error: 'Missing required fields' });
+      if (!sessionId || !questionNumber || !audioData) {
+        return res.status(400).json({ error: "Missing required fields" });
       }
 
+      // Convert base64 audio to Buffer
+      const audioBuffer = Buffer.from(audioData, "base64");
+
+      // Transcribe with Deepgram v3
+      let transcript = "";
+      let fillerWords = [];
+
+      try {
+        const dgResponse = await dgClient.audio.transcription.create(
+          {
+            buffer: audioBuffer,
+            mimetype: "audio/wav",
+          },
+          {
+            model: "nova",
+            language: "en-US",
+            smart_format: true,
+          }
+        );
+
+        transcript = dgResponse.results.channels[0].alternatives[0].transcript || "";
+        const words = dgResponse.results.channels[0].alternatives[0].words || [];
+        fillerWords = words
+          .filter(w =>
+            ["um", "uh", "hmm", "like", "you know", "actually", "basically", "literally", "so", "well"].includes(w.word.toLowerCase())
+          )
+          .map(w => w.word);
+
+      } catch (dgError) {
+        console.error("Deepgram transcription error:", dgError);
+        return res.status(500).json({ error: "Failed to transcribe audio" });
+      }
+
+      // Prepare response data
       const responseData = {
         questionNumber,
         questionText,
         transcript,
         fillerWords,
+        recordedTime: recordedTime || 0,
         timestamp: Date.now(),
-        audioData: audioData || null
+        audioData: audioData
       };
 
       // Save to Firebase Realtime Database
-      await db.ref(`interviews/${sessionId}/responses/${questionNumber}`)
-        .set(responseData);
+      await db.ref(`interviews/${sessionId}/responses/${questionNumber}`).set(responseData);
 
       // Update session metadata
+      const snapshot = await db.ref(`interviews/${sessionId}/responses`).once("value");
+      const questionsCompleted = snapshot.numChildren();
+
       await db.ref(`interviews/${sessionId}/metadata`).update({
         lastUpdated: Date.now(),
-        questionsCompleted: await getCompletedQuestionsCount(sessionId)
+        questionsCompleted
       });
 
-      res.json({
+      return res.json({
         success: true,
         sessionId,
         questionNumber,
-        responseData
+        responseData,
+        questionsCompleted
       });
 
     } catch (error) {
-      console.error('Error saving response:', error);
-      res.status(500).json({ error: 'Failed to save response' });
+      console.error("Error saving response:", error);
+      return res.status(500).json({ error: "Failed to save response" });
     }
   });
 });
+
+// Helper to count completed questions
+async function getCompletedQuestionsCount(sessionId) {
+  const snapshot = await db.ref(`interviews/${sessionId}/responses`).once("value");
+  return snapshot.exists() ? Object.keys(snapshot.val()).length : 0;
+}
 
 // Get Interview Results
 exports.getInterviewResults = functions.https.onRequest((req, res) => {

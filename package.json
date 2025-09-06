@@ -8,11 +8,13 @@
   },
   "dependencies": {
     "@base-ui-components/react": "^1.0.0-alpha.6",
+    "@deepgram/sdk": "^4.11.2",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
     "@mui/icons-material": "^6.3.1",
     "@mui/material": "^6.3.1",
     "@types/react": "^19.1.12",
+    "cors": "^2.8.5",
     "firebase": "^12.2.1",
     "firebase-admin": "^13.5.0",
     "firebase-functions": "^6.4.0",
