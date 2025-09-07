@@ -61,6 +61,18 @@ exports.generateQuestions = functions.https.onRequest((req, res) => {
         temperature: 0.7
       });
 
+      // Calculate OpenAI cost (GPT-4o-mini: ~$0.0001/1K tokens)
+      const inputTokens = completion.usage.prompt_tokens;
+      const outputTokens = completion.usage.completion_tokens;
+      const totalTokens = completion.usage.total_tokens;
+      const estimatedCost = (totalTokens / 1000) * 0.0001;
+      
+      console.log(`🔢 OpenAI API Call Cost:`);
+      console.log(`   Input tokens: ${inputTokens}`);
+      console.log(`   Output tokens: ${outputTokens}`);
+      console.log(`   Total tokens: ${totalTokens}`);
+      console.log(`   Estimated cost: $${estimatedCost.toFixed(6)}`);
+
       const responseText = completion.choices[0].message.content;
       const questions = extractQuestions(responseText);
 
@@ -72,7 +84,8 @@ exports.generateQuestions = functions.https.onRequest((req, res) => {
         questions,
         metadata: {
           provider: 'openai',
-          tokens: completion.usage.total_tokens
+          tokens: completion.usage.total_tokens,
+          estimatedCost: estimatedCost
         }
       });
 
@@ -133,8 +146,15 @@ exports.textToSpeech = functions.https.onRequest((req, res) => {
         throw new Error("No audio content received from Google Cloud TTS");
       }
 
+      // Calculate Google TTS cost (~$4.00 per 1M characters for Wavenet voices)
+      const characterCount = text.length;
+      const estimatedCost = (characterCount / 1000000) * 4.00;
+      
       console.log("✅ Text-to-speech successful");
       console.log(`Audio content size: ${response.audioContent.length} bytes`);
+      console.log(`💰 Google TTS API Call Cost:`);
+      console.log(`   Characters processed: ${characterCount}`);
+      console.log(`   Estimated cost: $${estimatedCost.toFixed(6)}`);
 
       // Set headers for audio stream
       res.setHeader("Content-Type", "audio/mpeg");
@@ -240,6 +260,15 @@ exports.saveResponse = functions.https.onRequest((req, res) => {
         }
         
         result = transcriptionResult;
+        
+        // Calculate Deepgram cost (~$0.0043 per minute for Nova-2 model)
+        const durationMinutes = (recordedTime / 1000) / 60;
+        const estimatedCost = durationMinutes * 0.0043;
+        
+        console.log(`🎙️ Deepgram API Call Cost:`);
+        console.log(`   Audio duration: ${durationMinutes.toFixed(2)} minutes`);
+        console.log(`   Model: Nova-2`);
+        console.log(`   Estimated cost: $${estimatedCost.toFixed(6)}`);
       } catch (transcriptionError) {
         console.error("Deepgram transcription error:", transcriptionError);
         return res.status(500).json({ 
@@ -337,7 +366,7 @@ exports.getInterviewResults = functions.https.onRequest((req, res) => {
         return res.status(204).send("");
       }
 
-      const sessionId = req.params[0] || req.query.sessionId;
+      const { sessionId } = req.body.data || {};
       
       if (!sessionId) {
         return res.status(400).json({ error: 'Session ID required' });
@@ -354,17 +383,25 @@ exports.getInterviewResults = functions.https.onRequest((req, res) => {
       const questionsCompleted = Object.keys(responses).length;
 
       return res.json({
-        success: true,
-        sessionId,
-        responses,
-        metadata: interviewData.metadata || {},
-        complete: questionsCompleted >= 5,
-        count: questionsCompleted
+        data: {
+          success: true,
+          sessionId,
+          responses,
+          metadata: interviewData.metadata || {},
+          complete: questionsCompleted >= 5,
+          count: questionsCompleted
+        }
       });
 
     } catch (error) {
       console.error('Error fetching results:', error);
-      return res.status(500).json({ error: 'Failed to fetch results' });
+      return res.status(500).json({ 
+        data: {
+          success: false,
+          error: 'Failed to fetch results',
+          details: error.message
+        }
+      });
     }
   });
 });
