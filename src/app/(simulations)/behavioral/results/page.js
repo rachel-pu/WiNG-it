@@ -26,6 +26,58 @@ export default function InterviewResults() {
     const searchParams = useSearchParams();
     const sessionId = searchParams.get("sessionId");
     const [totalAverageRecordedTime, setTotalAverageRecordedTime] = useState();
+
+    function calculatePerformanceScoreDiminishing({responseTime, wordCount, fillerWords, actionWords, statsUsed}) {
+        let score = 100;
+
+        // 1. Response time penalty
+        if (responseTime < 60) {
+            const deduction = Math.min((60 - responseTime) * 0.2, 12);
+            score -= deduction;
+        }
+
+        // 2. Word count penalty
+        if (wordCount < 100) {
+            const deduction = Math.min((100 - wordCount) * 0.07, 7);
+            score -= deduction;
+        }
+
+        // 3. Filler words ratio penalty
+        if (wordCount > 0) {
+            const ratio = fillerWords / wordCount;
+            if (ratio > 0.05) {
+                const deduction = Math.min((ratio - 0.05) * 200, 10);
+                score -= deduction;
+            }
+        }
+
+        // 4. Action words points with diminishing returns
+        score += harmonicPoints(actionWords);
+
+        // 5. Stats used points with diminishing returns
+        score += harmonicPoints(statsUsed);
+
+        // 6. Time efficiency bonus
+        if (responseTime >= 60 && responseTime <= 180) {
+            // scale linearly from 0 to 5 points
+            const bonus = ((responseTime - 60) / (180 - 60)) * 5;
+            score += bonus;
+        }
+
+        // 7. Cap score between 0 and 100
+        score = Math.max(0, Math.min(100, score));
+
+        return Math.round(score);
+    }
+
+    function harmonicPoints(count) {
+        let points = 0;
+        for (let i = 1; i <= count; i++) {
+            points += 1 / i;
+        }
+        return points;
+    }
+
     
     useEffect(() => {
   const fetchData = async () => {
