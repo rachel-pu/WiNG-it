@@ -15,7 +15,7 @@ import ErrorIcon from '@mui/icons-material/Error';
 import InfoIcon from '@mui/icons-material/Info';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { getTranscriptContentForQuestion } from "./FeedbackTabs";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import { database, getInterviewResults } from "../../../../lib/firebase.js";
 import { ref, get, child } from "firebase/database";
 
@@ -29,6 +29,7 @@ export default function InterviewResults() {
     const searchParams = useSearchParams();
     const sessionId = searchParams.get("sessionId");
     const [totalAverageRecordedTime, setTotalAverageRecordedTime] = useState();
+    const router = useRouter();
 
     function calculatePerformanceScoreDiminishing({responseTime, wordCount, fillerWords, actionWords, statsUsed}) {
         let score = 100;
@@ -1263,6 +1264,7 @@ export default function InterviewResults() {
                                     <motion.button
                                         whileHover={{ scale: 1.05, y: -2 }}
                                         whileTap={{ scale: 0.98 }}
+                                        onClick={() => router.push('/behavioral')}
                                         style={{
                                             padding: '16px 32px',
                                             borderRadius: '50px',
@@ -1282,6 +1284,7 @@ export default function InterviewResults() {
                                     <motion.button
                                         whileHover={{ scale: 1.05, y: -2 }}
                                         whileTap={{ scale: 0.98 }}
+                                        onClick={() => router.push('/dashboard')}
                                         style={{
                                             padding: '16px 32px',
                                             borderRadius: '50px',
