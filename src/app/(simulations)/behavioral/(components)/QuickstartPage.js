@@ -34,7 +34,6 @@ const QuickstartPage = ({
     handleQuestionTypesChange,
     handleGetStarted,
     handleInterviewerDifficultyChange,
-    handleTimerChange,
 }) => {
     const router = useRouter();
 
@@ -261,26 +260,6 @@ const QuickstartPage = ({
                                         <div className="difficulty-description">{level.description}</div>
                                     </button>
                                 ))}
-                            </div>
-                        </div>
-
-                        {/* Timer Option */}
-                        <div className="form-group">
-                            <div className="timer-option">
-                                <div className="timer-label">
-                                    <AccessTimeIcon />
-                                    <span>Show Timer</span>
-                                </div>
-                                <FormControlLabel
-                                    control={
-                                        <Switch
-                                            checked={showTimer}
-                                            onChange={(e) => handleTimerChange(e.target.checked)}
-                                            className="custom-switch"
-                                        />
-                                    }
-                                    label=""
-                                />
                             </div>
                         </div>
                     </div>
