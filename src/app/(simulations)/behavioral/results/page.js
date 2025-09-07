@@ -5,7 +5,6 @@ import { Box, Typography, CircularProgress, Card, Grid, Chip, CssBaseline, Toolb
 import { motion, AnimatePresence } from "framer-motion";
 import DefaultAppLayout from "../../../DefaultAppLayout";
 import Link from "next/link";
-
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import RecordVoiceOverIcon from '@mui/icons-material/RecordVoiceOver';
 import TrendingUpIcon from '@mui/icons-material/TrendingUp';
@@ -15,7 +14,7 @@ import ErrorIcon from '@mui/icons-material/Error';
 import InfoIcon from '@mui/icons-material/Info';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { getTranscriptContentForQuestion } from "./FeedbackTabs";
-import { useSearchParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { database, getInterviewResults } from "../../../../lib/firebase.js";
 import { ref, get, child } from "firebase/database";
 
@@ -26,8 +25,6 @@ export default function InterviewResults() {
     const [interviewData, setInterviewData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const searchParams = useSearchParams();
-    const sessionId = searchParams.get("sessionId");
     const [totalAverageRecordedTime, setTotalAverageRecordedTime] = useState();
     const router = useRouter();
 
@@ -87,17 +84,19 @@ export default function InterviewResults() {
         const fetchData = async () => {
             try {
                 setLoading(true);
-                const id = sessionId || sessionStorage.getItem("interviewSessionId");
-                if (!id) {
+
+                // Get the session ID from sessionStorage
+                const sessionId = sessionStorage.getItem("interviewSessionId");
+                if (!sessionId) {
                     setError("No session ID found");
                     setLoading(false);
                     return;
                 }
 
-                console.log("Fetching interview results for session:", id);
+                console.log("Fetching interview results for session:", sessionId);
                 
                 // Call the backend function
-                const result = await getInterviewResults({ sessionId: id });
+                const result = await getInterviewResults({ sessionId});
                 console.log("Backend response:", result);
 
                 if (result.data && result.data.success) {
@@ -139,7 +138,7 @@ export default function InterviewResults() {
         };
 
         fetchData();
-    }, [sessionId]);
+    }, []);
 
     // Process real interview data into the expected format
     const processInterviewData = (data) => {
