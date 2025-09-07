@@ -47,9 +47,12 @@ exports.generateQuestions = functions.https.onRequest((req, res) => {
 
       const prompt = `
         Generate ${numQuestions} behavioral interview questions related to ${questionTypes} for a ${job_role || 'general'} role in tech.
-        - Format strictly as: "1. [Question]", "2. [Question]", etc.
-        - Do NOT include introductory text.
-        - First question must introduce "Winnie" as interviewer.
+         - Format strictly as: "1. [Question]", "2. [Question]", etc.
+        - Do NOT include any introductory text, titles, or explanations.
+        - Each question should only have one question mark max. There should be no multiple questions in one question. Make sure each question will not require the user to talk for over 5 minutes.
+        - Combine this introduction into the first question you write. Introduce yourself before going into the question. Please introduce yourself as "Winnie" and say that you are the
+           interviewer. Then afterwards, say "It's nice to meet you. Let's get started with the interview." before going into the first question.
+           For instance, you should be saying "1. Hi, I'm Winnie. It's nice to meet you. Let's get started with the interview. [Question]".
       `;
 
       console.log(prompt);
