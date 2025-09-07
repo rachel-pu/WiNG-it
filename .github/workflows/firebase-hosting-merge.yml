@@ -23,12 +23,18 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Debug files
+        run: |
+          pwd
+          ls -la
+          ls -la node_modules/.bin | grep next || echo "next not found"
+
       # 4. Build the Next.js app
       - name: Build Next.js app
         # env:
         #   NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY }}
         #   CLERK_SECRET_KEY: ${{ secrets.CLERK_SECRET_KEY }}
-        run: npx next build
+        run: npm run build
 
       # 5. Deploy to Firebase
       - name: Deploy to Firebase Hosting
