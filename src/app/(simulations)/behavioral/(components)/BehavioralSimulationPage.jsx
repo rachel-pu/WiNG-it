@@ -18,7 +18,7 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import PinDropIcon from "@mui/icons-material/PinDrop";
 import { getFunctions, httpsCallable } from "firebase/functions";
 
-const InterviewQuestions = ({questions, showTimer}) => {
+const InterviewQuestions = ({questions}) => {
     const router = useRouter();
     const containerRef = useRef(null);
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -222,13 +222,11 @@ const InterviewQuestions = ({questions, showTimer}) => {
                 await processAudioBlob(audioBlob, questionIndexAtRecordingStart, recordDuration);
             };
 
-            if (showTimer) {
-                setRecordTime(0);
-                const interval = setInterval(() => {
-                    setRecordTime(prev => prev + 1);
-                }, 1000);
-                setRecordInterval(interval);
-            }
+            setRecordTime(0);
+            const interval = setInterval(() => {
+                setRecordTime(prev => prev + 1);
+            }, 1000);
+            setRecordInterval(interval);
 
             setAlertMessage("Recording started");
             setAlertSeverity("info");
@@ -462,29 +460,28 @@ const InterviewQuestions = ({questions, showTimer}) => {
                     width: '100%',
                     height: '98%'
                 }}>
+                
+                    <Box
+                        sx={{
+                            position: "absolute",
+                            top: 12,
+                            left: 12,
+                            backgroundColor: "rgba(0, 0, 0, 0.7)",
+                            color: "white",
+                            padding: "4px 10px",
+                            borderRadius: "6px",
+                            fontSize: "1rem",
+                            fontFamily: "DM Sans",
+                            zIndex: 10,
+                        }}
+                    >
+                        {Math.floor(recordTime / 60)
+                            .toString()
+                            .padStart(2, "0")}
+                        :
+                        {(recordTime % 60).toString().padStart(2, "0")}
+                    </Box>
 
-                    {showTimer && (
-                        <Box
-                            sx={{
-                                position: "absolute",
-                                top: 12,
-                                left: 12,
-                                backgroundColor: "rgba(0, 0, 0, 0.7)",
-                                color: "white",
-                                padding: "4px 10px",
-                                borderRadius: "6px",
-                                fontSize: "1rem",
-                                fontFamily: "DM Sans",
-                                zIndex: 10,
-                            }}
-                        >
-                            {Math.floor(recordTime / 60)
-                                .toString()
-                                .padStart(2, "0")}
-                            :
-                            {(recordTime % 60).toString().padStart(2, "0")}
-                        </Box>
-                    )}
                     {/* Name tag */}
                     <Box sx={{
                         position: 'absolute',

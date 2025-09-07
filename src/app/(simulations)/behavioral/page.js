@@ -21,7 +21,6 @@ export default function BehavioralInterviewSimulation() {
     const [questionTypes, setQuestionTypes] = useState([]);
     const [interviewerDifficulty, setInterviewerDifficulty] = useState("easy-going-personality");
     const [showQuickstart, setShowQuickstart] = useState(true);
-    const [showTimer, setShowTimer] = useState(false);
     const firebaseConfig = {};
     const functions = getFunctions(undefined, "us-central1");
 
@@ -73,11 +72,6 @@ export default function BehavioralInterviewSimulation() {
         fetchQuestions();
     }
 
-    const handleTimerChange = (checked) => {
-        setShowTimer(checked);
-        console.log("Timer visibility set to:", checked);
-    }
-
     // Handles interviewer difficulty changes
     const handleInterviewerDifficultyChange = (difficulty) => {
         setInterviewerDifficulty(difficulty);
@@ -92,7 +86,6 @@ export default function BehavioralInterviewSimulation() {
                 {showQuickstart ? (
                     <QuickstartPage
                         jobRole={jobRole}
-                        showTimer={showTimer}
                         numQuestions={numQuestions}
                         questionTypes={questionTypes}
                         interviewerDifficulty={interviewerDifficulty}
@@ -101,7 +94,6 @@ export default function BehavioralInterviewSimulation() {
                         handleQuestionTypesChange={handleQuestionTypesChange}
                         handleGetStarted={handleGetStarted}
                         handleInterviewerDifficultyChange={handleInterviewerDifficultyChange}
-                        handleTimerChange={handleTimerChange}
                     />
                 ) : (
                     <Box
@@ -112,7 +104,7 @@ export default function BehavioralInterviewSimulation() {
                         {/* question box component */}
                         <Box component="main" sx={{ height: "90vh", overflow: "auto", textAlign: "center"}}>
                             {questions && questions.length > 0 ? (
-                                <BehavioralSimulationPage questions={questions} showTimer={showTimer}/>
+                                <BehavioralSimulationPage questions={questions}/>
                             ) : (
                                 <Box sx={{ 
                                     position: 'absolute',

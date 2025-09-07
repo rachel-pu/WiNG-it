@@ -119,11 +119,12 @@ export default function InterviewResults() {
                     
                     if (times.length > 0) {
                         const timesArray = times.map(t => t.recordedTime || 0);
-                        const sum = timesArray.reduce((acc, curr) => acc + curr, 0);
-                        const avgResponseTime = sum / timesArray.length / 1000; // Convert to seconds
+                        const avgSeconds = timesArray.reduce((acc, curr) => acc + curr, 0) / timesArray.length;
                         
-                        const minutes = Math.floor(avgResponseTime / 60);
-                        const seconds = Math.round(avgResponseTime % 60).toString().padStart(2, '0');
+                        const totalSeconds = Math.round(avgSeconds);
+                        const minutes = Math.floor(totalSeconds / 60);
+                        const seconds = String(totalSeconds % 60).padStart(2, "0");
+
                         setTotalAverageRecordedTime(`${minutes}:${seconds}`);
                     }
                 } else {
@@ -1056,8 +1057,8 @@ export default function InterviewResults() {
                                                 <Grid item xs={6} sm={3}>
                                                     <MetricCard
                                                         icon={AccessTimeIcon}
-                                                        label="Time"
-                                                        value={`${Math.floor(currentData.responseTime / 60)}:${(currentData.responseTime % 60).toString().padStart(2, '0')}`}
+                                                        label="Seconds"
+                                                        value={recordedTimes[selectedQuestion - 1]?.recordedTime}
                                                         color="#8b5cf6"
                         
                                                     />
