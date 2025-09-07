@@ -169,15 +169,6 @@ exports.saveResponse = functions.https.onRequest((req, res) => {
         });
       }
 
-      // Validate and decode audioData
-      // let audioBuffer;
-      // try {
-      //   audioBuffer = Buffer.from(audioData, "base64");
-      // } catch (error) {
-      //   return res.status(400).json({ error: "Invalid base64 audioData" });
-      // }
-
-      // Validate and decode audioData
 let audioBuffer;
 try {
   audioBuffer = Buffer.from(audioData, "base64");

@@ -162,7 +162,6 @@ const InterviewQuestions = ({questions, showTimer}) => {
         const setupRecording = async () => {
             try {
                 const stream = await navigator.mediaDevices.getUserMedia({audio: true});
-                
                 // Check what audio formats are supported
                 const supportedTypes = [
                     'audio/webm;codecs=opus',
@@ -191,7 +190,7 @@ const InterviewQuestions = ({questions, showTimer}) => {
                 mediaRecorder.current.onstop = async () => {
                     const audioBlob = new Blob(audioChunks.current, {type: selectedType});
                     audioChunks.current = [];
-                    await processAudioBlob(audioBlob, questionIndexAtRecordingStart);
+
                 };
 
                 console.log("Audio recording initialized successfully");
@@ -206,18 +205,21 @@ const InterviewQuestions = ({questions, showTimer}) => {
         setupRecording();
     }, []);
 
+    let recordingStartTime;
     const startRecording = () => {
         if (mediaRecorder.current && mediaRecorder.current.state === 'inactive') {
             const questionIndexAtRecordingStart = currentQuestionIndex;
             audioChunks.current = [];
             mediaRecorder.current.start();
+            recordingStartTime = Date.now();
             setIsRecording(true);
             console.log("Recording started");
 
             mediaRecorder.current.onstop = async () => {
                 const audioBlob = new Blob(audioChunks.current, {type: 'audio/webm'});
                 audioChunks.current = [];
-                await processAudioBlob(audioBlob, questionIndexAtRecordingStart);
+                const recordDuration = Math.floor((Date.now() - recordingStartTime) / 1000);
+                await processAudioBlob(audioBlob, questionIndexAtRecordingStart, recordDuration);
             };
 
             if (showTimer) {
@@ -227,7 +229,6 @@ const InterviewQuestions = ({questions, showTimer}) => {
                 }, 1000);
                 setRecordInterval(interval);
             }
-            
 
             setAlertMessage("Recording started");
             setAlertSeverity("info");
@@ -256,7 +257,7 @@ const InterviewQuestions = ({questions, showTimer}) => {
         }
     };
 
-    const processAudioBlob = async (audioBlob, questionIndexAtRecordingStart) => {
+    const processAudioBlob = async (audioBlob, questionIndexAtRecordingStart, recordTime) => {
     try {
         // Convert audio blob to base64
         const arrayBuffer = await audioBlob.arrayBuffer();

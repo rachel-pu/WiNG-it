@@ -15,11 +15,58 @@ import ErrorIcon from '@mui/icons-material/Error';
 import InfoIcon from '@mui/icons-material/Info';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { getTranscriptContentForQuestion } from "./FeedbackTabs";
-
+import { useSearchParams } from "next/navigation";
+import { database } from "../../../../lib/firebase.js";
+import { ref, get, child } from "firebase/database";
 
 export default function InterviewResults() {
     const [selectedQuestion, setSelectedQuestion] = useState(1);
     const [bannerExpanded, setBannerExpanded] = useState(true);
+    const [recordedTimes, setRecordedTimes] = useState([]);
+    const searchParams = useSearchParams();
+    const sessionId = searchParams.get("sessionId");
+    const [totalAverageRecordedTime, setTotalAverageRecordedTime] = useState();
+    
+    useEffect(() => {
+  const fetchData = async () => {
+    try {
+      const id = sessionId || sessionStorage.getItem("interviewSessionId");
+      if (!id) return;
+
+      const dbRef = ref(database);
+      const snapshot = await get(child(dbRef, `interviews/${id}/responses`));
+
+      if (!snapshot.exists()) {
+        console.log("No responses found");
+        return;
+      }
+
+      const responses = snapshot.val();
+      const times = Object.entries(responses).map(([questionNumber, data]) => ({
+        questionNumber,
+        recordedTime: data.recordedTime || null,
+      }));
+
+        console.log("Recorded times:", times);
+        setRecordedTimes(times);
+        const timesArray = times.map(t => t.recordedTime || 0); // array of numbers in seconds
+        const sum = timesArray.reduce((acc, curr) => acc + curr, 0);
+        const avgResponseTime = sum / timesArray.length; // average in seconds
+        console.log(avgResponseTime);
+
+        const minutes = Math.floor(avgResponseTime / 60);
+        const seconds = Math.round(avgResponseTime % 60).toString().padStart(2, '0');
+
+        setTotalAverageRecordedTime(`${minutes}:${seconds}`);
+
+    } catch (err) {
+      console.error("Error fetching recorded times:", err);
+    }
+  };
+
+  fetchData();
+}, [sessionId]);
+
 
     // Mock data for individual questions
     const questionData = {
@@ -555,7 +602,7 @@ export default function InterviewResults() {
                                                                             ⏱️
                                                                         </Box>
                                                                         <Typography sx={{ fontSize: '1.5rem', fontWeight: 700, lineHeight: 1 }}>
-                                                                            {Math.floor(avgResponseTime / 60)}:{(avgResponseTime % 60).toFixed(0).padStart(2, '0')}
+                                                                            {totalAverageRecordedTime}
                                                                         </Typography>
                                                                         <Typography sx={{ fontSize: '0.75rem', opacity: 0.8, fontWeight: 500 }}>
                                                                             Avg Time
