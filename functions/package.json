@@ -10,18 +10,18 @@
     "logs": "firebase functions:log"
   },
   "engines": {
-    "node": "20"
+    "node": "18"
   },
   "main": "index.js",
   "dependencies": {
-    "@deepgram/sdk": "^3.0.0",
-    "@google-cloud/speech": "^6.2.0",
+    "@deepgram/sdk": "^4.11.2",
+    "@google-cloud/speech": "^6.0.0",
+    "@google-cloud/text-to-speech": "^5.0.0",
     "cors": "^2.8.5",
-    "dotenv": "^17.2.2",
-    "firebase-admin": "^13.5.0",
-    "firebase-functions": "^6.4.0",
-    "node-fetch": "^3.3.2",
-    "openai": "^4.104.0"
+    "dotenv": "^16.0.0",
+    "firebase-admin": "^11.8.0",
+    "firebase-functions": "^5.1.1",
+    "openai": "^4.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.28.4",

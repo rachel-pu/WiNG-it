@@ -1,12 +1,13 @@
-const {setGlobalOptions} = require("firebase-functions");
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 const cors = require('cors')({ origin: true });
-const OpenAI = require('openai')
+const OpenAI = require('openai');
 require("dotenv").config();
-const { createClient } = require("@deepgram/sdk");
+const { createClient } = require('@deepgram/sdk');
 const { Readable } = require("stream");
 
+// Initialize Google Cloud Text-to-Speech
+const textToSpeech = require('@google-cloud/text-to-speech');
 
 // Initialize Firebase Admin
 admin.initializeApp();
@@ -16,33 +17,11 @@ const db = admin.database();
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY
 });
-const dgClient = createClient(process.env.DEEPGRAM_API_KEY);
+const deepgramClient = createClient(process.env.DEEPGRAM_API_KEY);
 
-// Rate limiting helper
-const checkRateLimit = async (userId) => {
-  const now = Date.now();
-  const hourAgo = now - 3600000; // 1 hour ago
-  
-  const userRequests = await db.ref(`rate_limits/${userId}`)
-    .orderByChild('timestamp')
-    .startAt(hourAgo)
-    .once('value');
-  
-  const requestCount = userRequests.numChildren();
-  const maxRequests = 10; // requests per hour
-  
-  if (requestCount >= maxRequests) {
-    return false;
-  }
-  
-  // Add current request
-  await db.ref(`rate_limits/${userId}`).push({
-    timestamp: now
-  });
-  
-  return true;
+// Initialize Google Cloud TTS client
+const ttsClient = new textToSpeech.TextToSpeechClient();
 
-};
 // Utility function to extract questions from text
 function extractQuestions(text) {
   return text
@@ -51,29 +30,30 @@ function extractQuestions(text) {
     .map(q => q.trim());
 }
 
+// Generate Questions Function
 exports.generateQuestions = functions.https.onRequest((req, res) => {
-    console.log("Generating questions...");
-  cors(req, res, async () => {
-    if (req.method === "OPTIONS") {
-      return res.status(204).send("");
-    }
-
-    if (req.method !== 'POST') {
-      return res.status(405).json({ error: 'Method Not Allowed' });
-    }
-
-    const { job_role, numQuestions, questionTypes } = req.body;
-
-    const prompt = `
-      Generate ${numQuestions} behavioral interview questions related to ${questionTypes} for a ${job_role || 'general'} role in tech.
-      - Format strictly as: "1. [Question]", "2. [Question]", etc.
-      - Do NOT include introductory text.
-      - First question must introduce "Winnie" as interviewer.
-    `;
-
-    console.log(prompt);
-
+  console.log("Generating questions...");
+  return cors(req, res, async () => {
     try {
+      if (req.method === "OPTIONS") {
+        return res.status(204).send("");
+      }
+
+      if (req.method !== 'POST') {
+        return res.status(405).json({ error: 'Method Not Allowed' });
+      }
+
+      const { job_role, numQuestions, questionTypes } = req.body;
+
+      const prompt = `
+        Generate ${numQuestions} behavioral interview questions related to ${questionTypes} for a ${job_role || 'general'} role in tech.
+        - Format strictly as: "1. [Question]", "2. [Question]", etc.
+        - Do NOT include introductory text.
+        - First question must introduce "Winnie" as interviewer.
+      `;
+
+      console.log(prompt);
+
       const completion = await openai.chat.completions.create({
         model: "gpt-4o-mini",
         messages: [{ role: "user", content: prompt }],
@@ -97,69 +77,119 @@ exports.generateQuestions = functions.https.onRequest((req, res) => {
       });
 
     } catch (err) {
-      console.error(err);
+      console.error('Error in generateQuestions:', err);
       return res.status(500).json({ error: err.message });
     }
   });
 });
 
-// Text to Speech using Google Cloud Speech
+// Text to Speech Function
 exports.textToSpeech = functions.https.onRequest((req, res) => {
   console.log("Converting text to speech");
-  cors(req, res, async () => {
+  return cors(req, res, async () => {
     try {
+      if (req.method === "OPTIONS") {
+        return res.status(204).send("");
+      }
+
       if (req.method !== "POST") {
         return res.status(405).json({ error: "Method not allowed" });
       }
 
-      const { text } = req.body;
+      const { text, voice = 'en-US-Wavenet-C' } = req.body;
+      
       if (!text || text.trim() === "") {
         return res.status(400).json({ error: "No text provided" });
       }
 
       console.log(`Converting to speech: ${text.substring(0, 50)}...`);
+      console.log(`Using voice: ${voice}`);
 
-      // Call Deepgram TTS (v3 syntax)
-      const response = await dgClient.speak.request(
-        { text },
-        { model: "aura-asteria-en", encoding: "mp3" }
-      );
+      // Validate text length
+      if (text.length > 5000) {
+        return res.status(400).json({ 
+          error: "Text too long. Maximum 5000 characters allowed." 
+        });
+      }
+
+      const request = {
+        input: { text: text },
+        voice: {
+          languageCode: 'en-US',
+          name: voice,
+        },
+        audioConfig: { 
+          audioEncoding: 'MP3',
+          speakingRate: 1.0,
+          pitch: 0.0,
+          volumeGainDb: 0.0,
+        },
+      };
+
+      console.log("Sending request to Google Cloud TTS...");
+      const [response] = await ttsClient.synthesizeSpeech(request);
+
+      if (!response.audioContent) {
+        throw new Error("No audio content received from Google Cloud TTS");
+      }
 
       console.log("✅ Text-to-speech successful");
-
-      // Convert the ReadableStream to a Buffer
-      const stream = await response.getStream();
-      const chunks = [];
-      for await (const chunk of stream) {
-        chunks.push(chunk);
-      }
-      const audioBuffer = Buffer.concat(chunks);
+      console.log(`Audio content size: ${response.audioContent.length} bytes`);
 
       // Set headers for audio stream
       res.setHeader("Content-Type", "audio/mpeg");
       res.setHeader("Content-Disposition", "inline");
       res.setHeader("Cache-Control", "no-cache");
+      res.setHeader("Content-Length", response.audioContent.length);
 
       // Send the audio buffer
-      res.send(audioBuffer);
+      return res.send(response.audioContent);
+      
     } catch (error) {
       console.error("Error in text-to-speech:", error);
-      res.status(500).json({ error: "Text-to-speech failed", details: error.message });
+      
+      // More detailed error handling
+      if (error.code === 3) {
+        return res.status(400).json({ 
+          error: "Invalid request parameters", 
+          details: error.message 
+        });
+      } else if (error.code === 7) {
+        return res.status(403).json({ 
+          error: "Permission denied. Check your Google Cloud credentials.", 
+          details: error.message 
+        });
+      } else if (error.code === 8) {
+        return res.status(429).json({ 
+          error: "Quota exceeded", 
+          details: error.message 
+        });
+      }
+      
+      return res.status(500).json({ 
+        error: "Text-to-speech failed", 
+        details: error.message,
+        code: error.code || 'unknown'
+      });
     }
   });
 });
 
-
-// saveReponse function
+// Save Response Function
 exports.saveResponse = functions.https.onRequest((req, res) => {
   return cors(req, res, async () => {
     try {
-      // Method validation
+      if (req.method === "OPTIONS") {
+        res.set('Access-Control-Allow-Origin', '*');
+        res.set('Access-Control-Allow-Methods', 'GET, PUT, POST, OPTIONS');
+        res.set('Access-Control-Allow-Headers', '*');
+        return res.status(204).send("");
+      }
+
       if (req.method !== "POST") {
         return res.status(405).json({ error: "Method not allowed" });
       }
 
-      // Extract and validate required fields
       const { sessionId, questionNumber, questionText, recordedTime, audioData, mimetype } = req.body;
       
       if (!sessionId || questionNumber === undefined || !audioData) {
@@ -169,50 +199,47 @@ exports.saveResponse = functions.https.onRequest((req, res) => {
         });
       }
 
-let audioBuffer;
-try {
-  audioBuffer = Buffer.from(audioData, "base64");
-
-  console.log("=== AUDIO BUFFER DEBUG ===");
-  console.log("Buffer length (bytes):", audioBuffer.length);
-  console.log("First 20 bytes:", audioBuffer.subarray(0, 20));
-  console.log("Last 20 bytes:", audioBuffer.subarray(audioBuffer.length - 20));
-} catch (error) {
-  console.error("Base64 decoding failed:", error);
-  return res.status(400).json({ error: "Invalid base64 audioData" });
-}
+      let audioBuffer;
+      try {
+        audioBuffer = Buffer.from(audioData, "base64");
+        console.log("Audio buffer length:", audioBuffer.length);
+      } catch (error) {
+        console.error("Base64 decoding failed:", error);
+        return res.status(400).json({ error: "Invalid base64 audioData" });
+      }
 
       const audioStream = new Readable({
-        read() {
-        }
+        read() {}
       });
       audioStream.push(audioBuffer);
-      audioStream.push(null); // Signal end of stream
-      console.log('Processing audio for transcription:');
-      console.log('- Buffer size:', audioBuffer.length);
-      console.log('- MIME type:', mimetype || 'not provided');
-      console.log('- Session ID:', sessionId);
-      console.log('- Question:', questionNumber);
+      audioStream.push(null);
+      
+      console.log('Processing audio for transcription...');
 
-      // Deepgram transcription
+      // Deepgram Speech-to-Text transcription
       let result;
       try {
-        const response = await dgClient.listen.prerecorded.transcribeFile(
-          audioStream,
+        const { result: transcriptionResult, error } = await deepgramClient.listen.prerecorded.transcribeFile(
+          audioBuffer,
           {
-            model: "nova-2",
-            language: "en-US",
+            mimetype: 'audio/wav',
+            model: 'nova-2',
+            language: 'en-US',
             smart_format: true,
-            filler_words: true,
             punctuate: true,
             diarize: false,
-            mimetype: mimetype || "audio/webm"
+            utterances: true,
+            utt_split: 0.8,
+            filler_words: true,
+            numerals: true,
           }
         );
-
-        console.log("=== DEEPGRAM RAW RESPONSE ===");
-        console.log(JSON.stringify(response, null, 2));
-        result = response.result;
+        
+        if (error) {
+          throw new Error(`Deepgram API error: ${error.message || error}`);
+        }
+        
+        result = transcriptionResult;
       } catch (transcriptionError) {
         console.error("Deepgram transcription error:", transcriptionError);
         return res.status(500).json({ 
@@ -222,20 +249,11 @@ try {
       }
 
       // Extract transcript and analysis data
-      const transcript = result?.channels?.[0]?.alternatives?.[0]?.transcript || "";
-      const words = result?.channels?.[0]?.alternatives?.[0]?.words || [];
-      const confidence = result?.channels?.[0]?.alternatives?.[0]?.confidence || 0;
+      const transcript = result?.results?.channels?.[0]?.alternatives?.[0]?.transcript || "";
+      const words = result?.results?.channels?.[0]?.alternatives?.[0]?.words || [];
+      const confidence = result?.results?.channels?.[0]?.alternatives?.[0]?.confidence || 0;
 
-      console.log('=== TRANSCRIPT EXTRACTION ===');
-    console.log('- Transcript length:', transcript.length);
-      console.log('- Transcript content:', transcript.substring(0, 100) + '...');
-    console.log('- Words count:', words.length);
-    console.log('- Confidence:', confidence);
-
-    if (!transcript || transcript.trim() === "") {
-      console.warn('⚠️ EMPTY TRANSCRIPT DETECTED');
-    console.log('Raw result structure:', JSON.stringify(result, null, 2));
-    }
+      console.log('Transcript:', transcript.substring(0, 100));
       
       // Analyze filler words
       const fillerWordsList = [
@@ -257,11 +275,10 @@ try {
       const fillerWordCount = fillerWords.length;
       const fillerWordPercentage = totalWords > 0 ? (fillerWordCount / totalWords * 100).toFixed(2) : 0;
       
-      // Calculate speaking pace (words per minute)
       const durationSeconds = recordedTime / 1000;
       const wordsPerMinute = durationSeconds > 0 ? Math.round((totalWords / durationSeconds) * 60) : 0;
 
-      // Prepare response data (no audio storage)
+      // Prepare response data
       const responseData = {
         questionNumber: parseInt(questionNumber),
         questionText: questionText || "",
@@ -280,37 +297,27 @@ try {
       };
 
       // Save to Firebase
-      try {
-        await db.ref(`interviews/${sessionId}/responses/${questionNumber}`).set(responseData);
-        
-        // Update session metadata
-        const snapshot = await db.ref(`interviews/${sessionId}/responses`).once("value");
-        const questionsCompleted = snapshot.numChildren();
+      await db.ref(`interviews/${sessionId}/responses/${questionNumber}`).set(responseData);
+      
+      // Update session metadata
+      const snapshot = await db.ref(`interviews/${sessionId}/responses`).once("value");
+      const questionsCompleted = snapshot.numChildren();
 
-        await db.ref(`interviews/${sessionId}/metadata`).update({
-          lastUpdated: admin.database.ServerValue.TIMESTAMP,
-          questionsCompleted,
-        });
+      await db.ref(`interviews/${sessionId}/metadata`).update({
+        lastUpdated: admin.database.ServerValue.TIMESTAMP,
+        questionsCompleted,
+      });
 
-        console.log(`Successfully processed response for session ${sessionId}, question ${questionNumber}`);
-        
-        // Return useful data without the audio
-        return res.status(200).json({ 
-          success: true, 
-          sessionId, 
-          questionNumber: parseInt(questionNumber),
-          transcript,
-          analysis: responseData.analysis,
-          questionsCompleted
-        });
-
-      } catch (dbError) {
-        console.error("Database error:", dbError);
-        return res.status(500).json({ 
-          error: "Failed to save to database", 
-          details: dbError.message 
-        });
-      }
+      console.log(`Successfully processed response for session ${sessionId}, question ${questionNumber}`);
+      
+      return res.status(200).json({ 
+        success: true, 
+        sessionId, 
+        questionNumber: parseInt(questionNumber),
+        transcript,
+        analysis: responseData.analysis,
+        questionsCompleted
+      });
 
     } catch (error) {
       console.error("Unexpected error in saveResponse:", error);
@@ -322,16 +329,14 @@ try {
   });
 });
 
-// Helper to count completed questions
-async function getCompletedQuestionsCount(sessionId) {
-  const snapshot = await db.ref(`interviews/${sessionId}/responses`).once("value");
-  return snapshot.exists() ? Object.keys(snapshot.val()).length : 0;
-}
-
-// Get Interview Results
+// Get Interview Results Function
 exports.getInterviewResults = functions.https.onRequest((req, res) => {
   return cors(req, res, async () => {
     try {
+      if (req.method === "OPTIONS") {
+        return res.status(204).send("");
+      }
+
       const sessionId = req.params[0] || req.query.sessionId;
       
       if (!sessionId) {
@@ -348,7 +353,7 @@ exports.getInterviewResults = functions.https.onRequest((req, res) => {
       const responses = interviewData.responses || {};
       const questionsCompleted = Object.keys(responses).length;
 
-      res.json({
+      return res.json({
         success: true,
         sessionId,
         responses,
@@ -359,32 +364,7 @@ exports.getInterviewResults = functions.https.onRequest((req, res) => {
 
     } catch (error) {
       console.error('Error fetching results:', error);
-      res.status(500).json({ error: 'Failed to fetch results' });
+      return res.status(500).json({ error: 'Failed to fetch results' });
     }
   });
 });
-
-// Helper Functions
-function extractQuestions(gptResponse) {
-  const questions = [];
-  const lines = gptResponse.split('\n');
-  
-  for (const line of lines) {
-    const trimmed = line.trim();
-    if (/^\d+\./.test(trimmed)) {
-      const cleaned = trimmed.replace(/^\d+\.\s*/, '');
-      if (cleaned) {
-        questions.push(cleaned);
-      }
-    }
-  }
-  
-  return questions;
-}
-
-async function getCompletedQuestionsCount(sessionId) {
-  const snapshot = await db.ref(`interviews/${sessionId}/responses`).once('value');
-  return snapshot.numChildren();
-}
-
-setGlobalOptions({ maxInstances: 10 });

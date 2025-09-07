@@ -259,21 +259,34 @@ const InterviewQuestions = ({questions, showTimer}) => {
 
     const processAudioBlob = async (audioBlob, questionIndexAtRecordingStart, recordTime) => {
     try {
+        console.log('Processing audio blob:', {
+            size: audioBlob.size,
+            type: audioBlob.type,
+            recordTime: recordTime
+        });
+
         // Convert audio blob to base64
         const arrayBuffer = await audioBlob.arrayBuffer();
-        const base64Audio = btoa(
-            String.fromCharCode(...new Uint8Array(arrayBuffer))
-        );
+        const uint8Array = new Uint8Array(arrayBuffer);
+        let binaryString = '';
+        for (let i = 0; i < uint8Array.length; i++) {
+            binaryString += String.fromCharCode(uint8Array[i]);
+        }
+        const base64Audio = btoa(binaryString);
 
-        // Prepare JSON payload
+        console.log('Base64 audio length:', base64Audio.length);
+
+        // Prepare JSON payload with actual blob mimetype
         const payload = {
             sessionId,
             questionNumber: currentQuestionIndex + 1,
             questionText: questions[currentQuestionIndex],
             recordedTime: recordTime,
             audioData: base64Audio,
-            mimetype: "audio/webm"
+            mimetype: audioBlob.type || "audio/webm" // Use actual blob type
         };
+
+        console.log('Payload size:', JSON.stringify(payload).length);
 
         console.log("Sending audio for transcription...");
 
@@ -294,9 +307,13 @@ const InterviewQuestions = ({questions, showTimer}) => {
 
         const data = await response.json();
         console.log("Transcription response:", data);
+        
+        // Debug transcript specifically
+        console.log("Transcript received:", data.transcript);
+        console.log("Transcript length:", data.transcript?.length);
 
         if (data.success) {
-            setTranscript(data.responseData?.transcript || "");
+            setTranscript(data.transcript || "");
             setHasRecorded(true);
             setIsProcessing(false);
 
