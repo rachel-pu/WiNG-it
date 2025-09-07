@@ -16,13 +16,16 @@ import InfoIcon from '@mui/icons-material/Info';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { getTranscriptContentForQuestion } from "./FeedbackTabs";
 import { useSearchParams } from "next/navigation";
-import { database } from "../../../../lib/firebase.js";
+import { database, getInterviewResults } from "../../../../lib/firebase.js";
 import { ref, get, child } from "firebase/database";
 
 export default function InterviewResults() {
     const [selectedQuestion, setSelectedQuestion] = useState(1);
     const [bannerExpanded, setBannerExpanded] = useState(true);
     const [recordedTimes, setRecordedTimes] = useState([]);
+    const [interviewData, setInterviewData] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
     const searchParams = useSearchParams();
     const sessionId = searchParams.get("sessionId");
     const [totalAverageRecordedTime, setTotalAverageRecordedTime] = useState();
@@ -80,48 +83,183 @@ export default function InterviewResults() {
 
     
     useEffect(() => {
-  const fetchData = async () => {
-    try {
-      const id = sessionId || sessionStorage.getItem("interviewSessionId");
-      if (!id) return;
+        const fetchData = async () => {
+            try {
+                setLoading(true);
+                const id = sessionId || sessionStorage.getItem("interviewSessionId");
+                if (!id) {
+                    setError("No session ID found");
+                    setLoading(false);
+                    return;
+                }
 
-      const dbRef = ref(database);
-      const snapshot = await get(child(dbRef, `interviews/${id}/responses`));
+                console.log("Fetching interview results for session:", id);
+                
+                // Call the backend function
+                const result = await getInterviewResults({ sessionId: id });
+                console.log("Backend response:", result);
 
-      if (!snapshot.exists()) {
-        console.log("No responses found");
-        return;
-      }
+                if (result.data && result.data.success) {
+                    setInterviewData(result.data);
+                    
+                    // Calculate recorded times for backward compatibility
+                    const responses = result.data.responses || [];
+                    // Filter out null responses and map to times array
+                    const validResponses = Array.isArray(responses) 
+                        ? responses.filter(response => response !== null && response !== undefined)
+                        : Object.values(responses).filter(response => response !== null && response !== undefined);
+                    
+                    const times = validResponses.map((data, index) => ({
+                        questionNumber: data?.questionNumber || (index + 1),
+                        recordedTime: data?.recordedTime || null,
+                    }));
 
-      const responses = snapshot.val();
-      const times = Object.entries(responses).map(([questionNumber, data]) => ({
-        questionNumber,
-        recordedTime: data.recordedTime || null,
-      }));
+                    setRecordedTimes(times);
+                    
+                    if (times.length > 0) {
+                        const timesArray = times.map(t => t.recordedTime || 0);
+                        const sum = timesArray.reduce((acc, curr) => acc + curr, 0);
+                        const avgResponseTime = sum / timesArray.length / 1000; // Convert to seconds
+                        
+                        const minutes = Math.floor(avgResponseTime / 60);
+                        const seconds = Math.round(avgResponseTime % 60).toString().padStart(2, '0');
+                        setTotalAverageRecordedTime(`${minutes}:${seconds}`);
+                    }
+                } else {
+                    setError("Failed to fetch interview results");
+                }
+            } catch (err) {
+                console.error("Error fetching interview results:", err);
+                setError(err.message || "Failed to fetch interview results");
+            } finally {
+                setLoading(false);
+            }
+        };
 
-        console.log("Recorded times:", times);
-        setRecordedTimes(times);
-        const timesArray = times.map(t => t.recordedTime || 0); // array of numbers in seconds
-        const sum = timesArray.reduce((acc, curr) => acc + curr, 0);
-        const avgResponseTime = sum / timesArray.length; // average in seconds
-        console.log(avgResponseTime);
+        fetchData();
+    }, [sessionId]);
 
-        const minutes = Math.floor(avgResponseTime / 60);
-        const seconds = Math.round(avgResponseTime % 60).toString().padStart(2, '0');
+    // Process real interview data into the expected format
+    const processInterviewData = (data) => {
+        if (!data || !data.responses) return {};
+        
+        const processedData = {};
+        
+        // Filter out null responses and convert array to entries
+        const validResponses = data.responses.filter(response => response !== null && response !== undefined);
+        
+        validResponses.forEach((response, index) => {
+            // Use the response's questionNumber if available, otherwise use 1-based index
+            const questionNumber = response?.questionNumber || (index + 1);
+            const analysis = response?.analysis || {};
+            
+            // Calculate performance score using the existing function
+            const score = calculatePerformanceScoreDiminishing({
+                responseTime: analysis?.durationSeconds || 0,
+                wordCount: analysis?.totalWords || 0,
+                fillerWords: analysis?.fillerWordCount || 0,
+                actionWords: 0, // Will need to be calculated from transcript
+                statsUsed: 0 // Will need to be calculated from transcript
+            });
 
-        setTotalAverageRecordedTime(`${minutes}:${seconds}`);
+            // Extract action words and stats from transcript
+            const transcript = response?.transcript || "";
+            const actionWordsList = extractActionWords(transcript);
+            const statsUsed = extractStats(transcript);
+            
+            processedData[questionNumber] = {
+                question: response?.questionText || `Question ${questionNumber}`,
+                responseTime: analysis?.durationSeconds || 0,
+                wordCount: analysis?.totalWords || 0,
+                fillerWords: analysis?.fillerWordCount || 0,
+                actionWords: actionWordsList.length,
+                statsUsed: statsUsed.length,
+                transcript: transcript,
+                fillerWordsList: analysis?.fillerWords?.map(fw => fw?.word || '') || [],
+                actionWordsList: actionWordsList,
+                score: score,
+                strengths: generateStrengths(analysis, actionWordsList.length, statsUsed.length),
+                improvements: generateImprovements(analysis),
+                tips: generateTips(analysis)
+            };
+        });
+        
+        return processedData;
+    };
 
-    } catch (err) {
-      console.error("Error fetching recorded times:", err);
-    }
-  };
+    // Helper function to extract action words from transcript
+    const extractActionWords = (text) => {
+        const commonActionWords = [
+            "achieved", "analyzed", "built", "collaborated", "created", "delivered", "developed",
+            "directed", "implemented", "improved", "increased", "led", "managed", "organized",
+            "resolved", "worked", "decided", "approach", "helped", "noticed", "took", "mentored"
+        ];
+        
+        const words = text.toLowerCase().match(/\b\w+\b/g) || [];
+        return commonActionWords.filter(actionWord => words.includes(actionWord));
+    };
 
-  fetchData();
-}, [sessionId]);
+    // Helper function to extract statistics/numbers from transcript
+    const extractStats = (text) => {
+        const numberPattern = /\b\d+(?:\.\d+)?(?:%|percent|million|billion|thousand|k|m|b)?\b/gi;
+        return text.match(numberPattern) || [];
+    };
 
+    // Helper function to generate strengths based on analysis
+    const generateStrengths = (analysis, actionWords, statsUsed) => {
+        const strengths = [];
+        
+        if (statsUsed > 0) {
+            strengths.push(`Used specific metrics (${statsUsed} quantified results)`);
+        }
+        if (actionWords >= 5) {
+            strengths.push("Strong use of action words showing impact");
+        }
+        if (analysis?.transcriptionConfidence > 0.8) {
+            strengths.push("Clear and confident speech delivery");
+        }
+        if (analysis?.fillerWordPercentage < 5) {
+            strengths.push("Minimal use of filler words");
+        }
+        
+        return strengths.length > 0 ? strengths : ["Completed the response within time limit"];
+    };
 
-    // Mock data for individual questions
-    const questionData = {
+    // Helper function to generate improvements based on analysis
+    const generateImprovements = (analysis) => {
+        const improvements = [];
+        
+        if (analysis?.fillerWordPercentage > 10) {
+            improvements.push(`Reduce filler words (${analysis?.fillerWordCount || 0} detected)`);
+        }
+        if (analysis?.totalWords < 100) {
+            improvements.push("Provide more detailed examples and context");
+        }
+        if (analysis?.durationSeconds < 60) {
+            improvements.push("Expand your answers with more specific details");
+        }
+        
+        return improvements.length > 0 ? improvements : ["Continue practicing to maintain consistency"];
+    };
+
+    // Helper function to generate tips based on analysis
+    const generateTips = (analysis) => {
+        const tips = [];
+        
+        if (analysis?.fillerWordPercentage > 5) {
+            tips.push("Practice the 'pause and breathe' technique to reduce filler words");
+        }
+        if (analysis?.totalWords < 150) {
+            tips.push("Use the STAR method: Situation, Task, Action, Result");
+        }
+        
+        tips.push("Record yourself practicing to identify speech patterns");
+        
+        return tips.slice(0, 3);
+    };
+
+    // Mock data for fallback (when no real data is available)
+    const mockQuestionData = {
         1: {
             question: "Tell me about a time when you had to work with a difficult team member.",
             responseTime: 120, // seconds
@@ -204,8 +342,80 @@ export default function InterviewResults() {
         }
     };
 
+    // Use processed data or fallback to mock data
+    const questionData = interviewData ? processInterviewData(interviewData) : mockQuestionData;
+
+    // Show loading state
+    if (loading) {
+        return (
+            <Box sx={{ display: "flex" }}>
+                <CssBaseline />
+                <DefaultAppLayout title="Interview Results" color="#2850d9">
+                    <Box sx={{ 
+                        minHeight: '100vh',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)'
+                    }}>
+                        <CircularProgress size={60} />
+                        <Typography sx={{ ml: 2, fontSize: '1.2rem', color: '#374151' }}>
+                            Loading your results...
+                        </Typography>
+                    </Box>
+                </DefaultAppLayout>
+            </Box>
+        );
+    }
+
+    // Show error state
+    if (error) {
+        return (
+            <Box sx={{ display: "flex" }}>
+                <CssBaseline />
+                <DefaultAppLayout title="Interview Results" color="#2850d9">
+                    <Box sx={{ 
+                        minHeight: '100vh',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)'
+                    }}>
+                        <Box sx={{ textAlign: 'center' }}>
+                            <ErrorIcon sx={{ fontSize: 60, color: '#ef4444', mb: 2 }} />
+                            <Typography sx={{ fontSize: '1.5rem', fontWeight: 600, color: '#374151', mb: 1 }}>
+                                Unable to Load Results
+                            </Typography>
+                            <Typography sx={{ color: '#6b7280', mb: 3 }}>
+                                {error}
+                            </Typography>
+                            <Link href="/behavioral">
+                                <button style={{
+                                    padding: '12px 24px',
+                                    borderRadius: '8px',
+                                    background: '#3b82f6',
+                                    color: 'white',
+                                    border: 'none',
+                                    cursor: 'pointer',
+                                    fontSize: '1rem',
+                                    fontWeight: 600
+                                }}>
+                                    Start New Interview
+                                </button>
+                            </Link>
+                        </Box>
+                    </Box>
+                </DefaultAppLayout>
+            </Box>
+        );
+    }
+
     const totalQuestions = Object.keys(questionData).length;
-    const currentData = questionData[selectedQuestion];
+    
+    // Ensure selectedQuestion is valid for the current data
+    const questionKeys = Object.keys(questionData);
+    const validSelectedQuestion = questionKeys.includes(selectedQuestion.toString()) ? selectedQuestion : parseInt(questionKeys[0]) || 1;
+    const currentData = questionData[validSelectedQuestion] || Object.values(questionData)[0];
 
     // Calculate overall performance score
     const overallScore = Math.round(
@@ -260,49 +470,40 @@ export default function InterviewResults() {
     const highlightText = (text, fillerWords, actionWords) => {
         if (!text) return text;
         
-        // Create a regex pattern for numbers (including percentages, decimals, etc.)
-        const numberPattern = /\b\d+(?:\.\d+)?(?:%|percent|million|billion|thousand|k|m|b)?\b/gi;
+        // Create arrays of words to highlight, ensuring they exist and are not empty
+        const safeFillerWords = Array.isArray(fillerWords) ? fillerWords.filter(word => word && word.trim()) : [];
+        const safeActionWords = Array.isArray(actionWords) ? actionWords.filter(word => word && word.trim()) : [];
         
-        // Create regex patterns for filler words and action words
-        const fillerPattern = new RegExp(`\\b(${fillerWords.join('|')})\\b`, 'gi');
-        const actionPattern = new RegExp(`\\b(${actionWords.join('|')})\\b`, 'gi');
+        // Split text into words and spaces to preserve formatting
+        const tokens = text.split(/(\s+)/);
         
-        let highlightedText = text;
-        
-        // Replace numbers with highlighted spans
-        highlightedText = highlightedText.replace(numberPattern, (match) => 
-            `<span style="background-color: #c1deffff; color: #275377ff; padding: 2px 4px; border-radius: 4px; font-weight: 600;">${match}</span>`
-        );
-        
-        // Replace action words with highlighted spans (avoid double highlighting)
-        highlightedText = highlightedText.replace(actionPattern, (match) => {
-            // Check if this word is already inside a span (to avoid double highlighting)
-            const beforeMatch = highlightedText.substring(0, highlightedText.indexOf(match));
-            const openSpans = (beforeMatch.match(/<span/g) || []).length;
-            const closeSpans = (beforeMatch.match(/<\/span>/g) || []).length;
-            
-            if (openSpans > closeSpans) {
-                return match; // Already inside a span, don't highlight
+        return tokens.map(token => {
+            // Skip whitespace
+            if (/^\s+$/.test(token)) {
+                return token;
             }
             
-            return `<span style="background-color: #d1fae5; color: #065f46; padding: 2px 4px; border-radius: 4px; font-weight: 600;">${match}</span>`;
-        });
-        
-        // Replace filler words with highlighted spans (avoid double highlighting)
-        highlightedText = highlightedText.replace(fillerPattern, (match) => {
-            // Check if this word is already inside a span
-            const beforeMatch = highlightedText.substring(0, highlightedText.indexOf(match));
-            const openSpans = (beforeMatch.match(/<span/g) || []).length;
-            const closeSpans = (beforeMatch.match(/<\/span>/g) || []).length;
+            // Clean the word for comparison (remove punctuation)
+            const cleanWord = token.toLowerCase().replace(/[^\w]/g, '');
+            if (!cleanWord) return token;
             
-            if (openSpans > closeSpans) {
-                return match; // Already inside a span, don't highlight
+            // Check for numbers (including percentages, decimals, etc.)
+            if (/^\d+(?:\.\d+)?(?:%|percent|million|billion|thousand|k|m|b)?$/i.test(cleanWord)) {
+                return `<span style="background-color: #c1deffff; color: #275377ff; padding: 2px 4px; border-radius: 4px; font-weight: 600;">${token}</span>`;
             }
             
-            return `<span style="background-color: #ffd9d9ff; color: #dc2626; padding: 2px 4px; border-radius: 4px; font-weight: 600;">${match}</span>`;
-        });
-        
-        return highlightedText;
+            // Check for action words
+            if (safeActionWords.some(actionWord => actionWord.toLowerCase() === cleanWord)) {
+                return `<span style="background-color: #d1fae5; color: #065f46; padding: 2px 4px; border-radius: 4px; font-weight: 600;">${token}</span>`;
+            }
+            
+            // Check for filler words
+            if (safeFillerWords.some(fillerWord => fillerWord.toLowerCase() === cleanWord)) {
+                return `<span style="background-color: #ffd9d9ff; color: #dc2626; padding: 2px 4px; border-radius: 4px; font-weight: 600;">${token}</span>`;
+            }
+            
+            return token;
+        }).join('');
     };
 
     // Animation variants
