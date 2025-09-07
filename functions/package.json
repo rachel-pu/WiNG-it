@@ -14,6 +14,7 @@
   },
   "main": "index.js",
   "dependencies": {
+    "next": "^15.5.2",
     "@deepgram/sdk": "^4.11.2",
     "@google-cloud/speech": "^6.0.0",
     "@google-cloud/text-to-speech": "^5.0.0",
