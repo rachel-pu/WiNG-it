@@ -29,16 +29,32 @@ export default function InterviewResults() {
     const router = useRouter();
 
     function calculatePerformanceScoreDiminishing({responseTime, wordCount, fillerWords, actionWords, statsUsed}) {
+        //input validation
+        if (!responseTime || !wordCount || fillerWords < 0 || actionWords < 0 || statsUsed < 0){
+            console.log(!responseTime)
+            return 0;
+        }
+
+        //hard penalize little to no response
+        if (wordCount < 10){
+            return Math.round(wordCount * 1.5);
+        }
+
         let score = 100;
 
+         //penalize extremely long response
+        if (responseTime > 300) {
+            score -= Math.min((responseTime - 300) * 0.05, 10);
+        }
+
         // 1. Response time penalty
-        if (responseTime < 60) {
+        if (responseTime < 20) {
             const deduction = Math.min((60 - responseTime) * 0.2, 12);
             score -= deduction;
         }
 
         // 2. Word count penalty
-        if (wordCount < 100) {
+        if (wordCount < 50) {
             const deduction = Math.min((100 - wordCount) * 0.07, 7);
             score -= deduction;
         }
@@ -47,13 +63,20 @@ export default function InterviewResults() {
         if (wordCount > 0) {
             const ratio = fillerWords / wordCount;
             if (ratio > 0.05) {
-                const deduction = Math.min((ratio - 0.05) * 200, 10);
+                const excess = ratio - 0.05;
+                const deduction = Math.min(Math.pow(excess * 100, 1.2), 15); // more severe
                 score -= deduction;
             }
         }
 
+        if (wordCount > 300) {
+            const deduction = Math.min((wordCount - 300) * 0.05, 5);
+            score -= deduction;
+        }
+
+
         // 4. Action words points with diminishing returns
-        score += harmonicPoints(actionWords);
+        score += harmonicPoints(actionWords) * 1.2;
 
         // 5. Stats used points with diminishing returns
         score += harmonicPoints(statsUsed);
@@ -65,7 +88,15 @@ export default function InterviewResults() {
             score += bonus;
         }
 
-        // 7. Cap score between 0 and 100
+        // 7. Consistency penalty: words vs time
+        const wordsPerSecond = wordCount / responseTime;
+        if (wordsPerSecond < 1) {
+            score -= Math.min((1 - wordsPerSecond) * 20, 10);
+        } else if (wordsPerSecond > 4) {
+            score -= Math.min((wordsPerSecond - 4) * 10, 10);
+        }
+
+        // 8. Cap score between 0 and 100
         score = Math.max(0, Math.min(100, score));
 
         return Math.round(score);
@@ -156,11 +187,11 @@ export default function InterviewResults() {
             
             // Calculate performance score using the existing function
             const score = calculatePerformanceScoreDiminishing({
-                responseTime: analysis?.durationSeconds || 0,
+                responseTime: response.recordedTime || 0,
                 wordCount: analysis?.totalWords || 0,
                 fillerWords: analysis?.fillerWordCount || 0,
-                actionWords: 0, // Will need to be calculated from transcript
-                statsUsed: 0 // Will need to be calculated from transcript
+                actionWords: 0,
+                statsUsed: 0 
             });
 
             // Extract action words and stats from transcript
@@ -170,7 +201,7 @@ export default function InterviewResults() {
             
             processedData[questionNumber] = {
                 question: response?.questionText || `Question ${questionNumber}`,
-                responseTime: analysis?.durationSeconds || 0,
+                responseTime: analysis?.recordedTime || 0,
                 wordCount: analysis?.totalWords || 0,
                 fillerWords: analysis?.fillerWordCount || 0,
                 actionWords: actionWordsList.length,

@@ -36,6 +36,8 @@ const InterviewQuestions = ({questions}) => {
     const [isFullscreen, setIsFullscreen] = useState(false);
     const [recordTime, setRecordTime] = useState(0); 
     const [recordInterval, setRecordInterval] = useState(null);
+    const [showWinnieCaption, setShowWinnieCaption] = useState(true);
+
 
 
     const videoRef = useRef(null);
@@ -214,6 +216,7 @@ const InterviewQuestions = ({questions}) => {
             recordingStartTime = Date.now();
             setIsRecording(true);
             console.log("Recording started");
+            setShowWinnieCaption(false);
 
             mediaRecorder.current.onstop = async () => {
                 const audioBlob = new Blob(audioChunks.current, {type: 'audio/webm'});
@@ -335,6 +338,7 @@ const InterviewQuestions = ({questions}) => {
 
 
     const handleNextQuestion = () => {
+        setShowWinnieCaption(true)
         if (recordInterval) {
             clearInterval(recordInterval);
             setRecordInterval(null);
@@ -624,6 +628,37 @@ const InterviewQuestions = ({questions}) => {
                     </Box>
                 )}
             </Box>
+
+            {showWinnieCaption && (
+                <Box
+                    sx={{
+                    position: "absolute",
+                    bottom: "calc(80px + 16px)", 
+                    left: "50%",
+                    transform: "translateX(-50%)",
+                    backgroundColor: "rgba(0,0,0,0.7)",
+                    color: "white",
+                    padding: "8px 16px",
+                    borderRadius: "8px",
+                    fontSize: "0.95rem",
+                    fontFamily: "DM Sans",
+                    maxWidth: "80%",
+                    textAlign: "center",
+                    zIndex: 1500,
+                    
+                    // Make long questions readable
+                    height: "auto",
+                    maxHeight: "40vh",
+                    overflowY: "auto",
+                    whiteSpace: "normal",
+                    wordBreak: "break-word",
+                    WebkitOverflowScrolling: "touch",
+                    }}
+                >
+                    {questions[currentQuestionIndex]}
+                </Box>
+                )}
+
 
             {/* Transcript floating window */}
             {transcript && (
