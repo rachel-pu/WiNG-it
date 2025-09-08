@@ -289,9 +289,13 @@ exports.saveResponse = functions.https.onRequest((req, res) => {
       
       // Analyze filler words
       const fillerWordsList = [
-        "um", "uh", "uhm", "hmm", "like", "you know", "actually", 
-        "basically", "literally", "so", "well", "kind of", "sort of"
-      ];
+      "um", "uh", "uhm", "hmm", "like", "you know", "actually", "i think", "guess",
+      "basically", "literally", "so", "well", "kind of", "sort of", "maybe",
+      "er", "ah", "huh", "right", "okay", "alright", "just", "anyway", "I mean",
+      "sorta", "kinda", "like I said", "you see", "as I said", "or something", 
+      "if that makes sense", "you know what I mean", "let’s see", "so yeah", "so basically"
+    ];
+
       
       const fillerWords = words
         .filter(w => w.word && fillerWordsList.includes(w.word.toLowerCase().trim()))
