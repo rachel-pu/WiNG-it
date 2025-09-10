@@ -28,5 +28,11 @@ python3 app.py
 ## Deploying on Firebase
 🎉 Check out our deployment at https://wing-it-e6a3a.web.app/! 🎉
 
-Backend: A Flask web server application containerized with Docker running on https://wing-it-un4w.onrender.com/.
+Backend: Backend powered by Google Cloud Functions (Firebase)
+To update functions in the cloud:
+```bash
+//Note this is an example of updating a cloud function, make sure you are logged in first
+firebase functions:delete saveResponse 
+firebase deploy --only functions:saveResponse
+```
 
