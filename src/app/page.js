@@ -924,7 +924,7 @@ export default function HomePage() {
 
 {/*  ---------- Our Story ----------  */}
 <Box 
-    id="our-story" 
+    id="about-us" 
     sx={{
         minHeight: '100vh',
         background: 'linear-gradient(135deg, #F3F1EA 0%, #E8E6D9 100%)',
