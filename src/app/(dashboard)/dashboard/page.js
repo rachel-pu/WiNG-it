@@ -5,8 +5,7 @@ import React from 'react';
 import Box from '@mui/material/Box';
 import CssBaseline from '@mui/material/CssBaseline';
 import Grid from '@mui/material/Grid2';
-import { Typography, Paper } from '@mui/material';
-
+import HomePageNavbar from "../../../../components/HomePageNavbar";
 import DefaultAppLayout from "../../DefaultAppLayout";
 import DashboardCard from '../dashboard/(components)/DashboardCard';
 
