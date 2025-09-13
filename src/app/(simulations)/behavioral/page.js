@@ -16,6 +16,7 @@ import { getFunctions, httpsCallable } from "firebase/functions";
 export default function BehavioralInterviewSimulation() {
     const [questions, setQuestions] = useState([]);
     const router = useRouter();
+    const [error, setError] = useState("");
     const [jobRole, setJobRole] = useState("");
     const [numQuestions, setNumQuestions] = useState(5);
     const [questionTypes, setQuestionTypes] = useState([]);
@@ -67,9 +68,29 @@ export default function BehavioralInterviewSimulation() {
     };
 
     const handleGetStarted = () => {
-        setShowQuickstart(false);
-        // getting backend questions
-        fetchQuestions();
+        setError("");
+        if (!jobRole || jobRole.trim() === '') {
+            setError('Please enter a target role');
+            return false;
+        }
+
+        // Check if job role is too short
+        if (jobRole.trim().length < 4) {
+            setError('Target role must be at least 4 characters long');
+            return false;
+        }
+
+        // Check if job role is too long
+        if (jobRole.trim().length > 100) {
+            setError('Target role must be less than 100 characters');
+            return false;
+        }
+
+        if (!error) {
+            setShowQuickstart(false);
+            // getting backend questions
+            fetchQuestions();
+        }
     }
 
     // Handles interviewer difficulty changes
@@ -85,6 +106,7 @@ export default function BehavioralInterviewSimulation() {
                 {/* --------- main content --------- */}
                 {showQuickstart ? (
                     <QuickstartPage
+                        error={error}
                         jobRole={jobRole}
                         numQuestions={numQuestions}
                         questionTypes={questionTypes}

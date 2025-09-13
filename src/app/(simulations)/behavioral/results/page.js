@@ -13,10 +13,9 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import ErrorIcon from '@mui/icons-material/Error';
 import InfoIcon from '@mui/icons-material/Info';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { getTranscriptContentForQuestion } from "./FeedbackTabs";
 import { useRouter } from "next/navigation";
-import { database, getInterviewResults } from "../../../../lib/firebase.js";
-import { ref, get, child } from "firebase/database";
+import { getInterviewResults } from "../../../../lib/firebase.js";
+import "./result.css"
 
 export default function InterviewResults() {
     const [selectedQuestion, setSelectedQuestion] = useState(1);
