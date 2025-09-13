@@ -47,7 +47,8 @@ exports.generateQuestions = functions.https.onRequest((req, res) => {
 
       const prompt = `
         Generate ${numQuestions} behavioral interview questions related to ${questionTypes} for a ${job_role || 'general'} role in tech.
-         - Format strictly as: "1. [Question]", "2. [Question]", etc.
+        - Make sure to come up with different, unique, and creative questions every time this prompt is run.
+        - Format strictly as: "1. [Question]", "2. [Question]", etc.
         - Do NOT include any introductory text, titles, or explanations.
         - Each question should only have one question mark max. There should be no multiple questions in one question. Make sure each question will not require the user to talk for over 5 minutes.
         - Combine this introduction into the first question you write. Introduce yourself before going into the question. Please introduce yourself as "Winnie" and say that you are the
@@ -61,7 +62,7 @@ exports.generateQuestions = functions.https.onRequest((req, res) => {
         model: "gpt-4o-mini",
         messages: [{ role: "user", content: prompt }],
         max_tokens: 500,
-        temperature: 0.7
+        temperature: 1.0
       });
 
       // Calculate OpenAI cost (GPT-4o-mini: ~$0.0001/1K tokens)
