@@ -1,26 +1,16 @@
 "use client";
 import React from "react";
-import Image from "next/image";
 import {motion, inView, animate} from "framer-motion";
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid2';
 import {Typography} from "@mui/material";
 import Stack from '@mui/material/Stack';
-import {AppBar} from "@mui/material";
-import Toolbar from '@mui/material/Toolbar';
 import {Button} from "@mui/material";
-import { GiFluffyWing } from "react-icons/gi";
 import Card from '@mui/material/Card';
 import { FaPencilRuler } from "react-icons/fa";
 import { IoDocumentText } from "react-icons/io5";
 import { BiSolidMessageCheck } from "react-icons/bi";
-import { useEffect, useState } from 'react';
-import { Link } from 'react-scroll';
-import Menu from '@mui/material/Menu';
-import MenuIcon from '@mui/icons-material/Menu';
-import Container from '@mui/material/Container';
-import {IconButton, Paper} from "@mui/material";
-
+import HomePageNavbar from "../../components/HomePageNavbar";
 import "./HomePage.css";
 
 const pages = ['Why WiNG.it', 'Our Story', 'Get Started'];
@@ -41,208 +31,9 @@ export default function HomePage() {
             }
         }
     };
-
-    const [anchorElNav, setAnchorElNav] = React.useState(null);
-
-    const handleOpenNavMenu = (event) => {
-        setAnchorElNav(event.currentTarget);
-    };
-
-    const handleCloseNavMenu = () => {
-        setAnchorElNav(null);
-    };
-
     return (
         <Box>
-            {/* ---------- nav bar ---------- */}
-            <AppBar position="static" className="navigation-bar">
-                <Container maxWidth="xl">
-                    <Toolbar disableGutters>
-                        {/* desktop logo / big viewport */}
-                        <Box sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }}>
-                            <GiFluffyWing color="#324FD1" size={25} />
-                        </Box>
-                        <Typography component='div' sx={{ fontSize: '1.75rem', flexGrow: 1, display:{xs:'none', md:'flex', fontFamily: 'Satoshi Black'}, color: 'black'}}>WiNG.it</Typography>
-
-                        {/* smaller viewport: hamburger icon */}
-                        <Box sx={{ display: { xs: 'flex', md: 'none' }, ml: 'auto' }}>
-                            <IconButton
-                                size="large"
-                                aria-label="open navigation menu"
-                                onClick={handleOpenNavMenu}
-                                color="black"
-                            >
-                                <MenuIcon />
-                            </IconButton>
-                            <Menu
-                                id="menu-appbar"
-                                anchorEl={anchorElNav}
-                                anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
-                                keepMounted
-                                transformOrigin={{ vertical: 'top', horizontal: 'left' }}
-                                open={Boolean(anchorElNav)}
-                                onClose={handleCloseNavMenu}
-                                sx={{ display: { xs: 'block', md: 'none' } }}
-                            >
-                                {/* navigation bar drop down */}
-                                <Box
-                                    sx={{
-                                        display: 'flex',
-                                        flexDirection: 'column',
-                                        rowGap: 1,
-                                        p: 1
-                                    }}
-                                >
-                                    <Button
-                                        color="inherit"
-                                        sx={{
-                                            fontSize: '1.05rem',
-                                            fontFamily: 'Satoshi Bold',
-                                            textTransform: 'none',
-                                            color: 'black',
-                                            letterSpacing: '-0.01px',
-                                            px: 2,
-                                        }}
-                                    >
-                                        <Link
-                                            activeClass="active"
-                                            to="why-wing-it"
-                                            offset={-50}
-                                            duration={500}
-                                            style={{
-                                                fontSize: '1.05rem',
-                                                fontFamily: 'Satoshi Medium',
-                                                textTransform: 'none',
-                                                color: 'black',
-                                                letterSpacing: '-0.01px',
-                                            }}
-                                        >
-                                            Why WiNG.it
-                                        </Link>
-                                    </Button>
-
-                                    <Button
-                                        color="inherit"
-                                        sx={{
-                                            fontSize: '1.05rem',
-                                            fontFamily: 'Satoshi Medium',
-                                            textTransform: 'none',
-                                            color: 'black',
-                                            letterSpacing: '-0.01px',
-                                            px: 2,
-                                        }}
-                                    >
-                                        <Link
-                                            activeClass="active"
-                                            to="about-us"
-                                            offset={-50}
-                                            duration={500}
-                                            style={{
-                                                fontSize: '1.05rem',
-                                                fontFamily: 'Satoshi Medium',
-                                                textTransform: 'none',
-                                                color: 'black',
-                                                letterSpacing: '-0.01px',
-                                            }}
-                                        >
-                                            Our Story
-                                        </Link>
-                                    </Button>
-
-                                    <Button
-                                        color="inherit"
-                                        href="/dashboard"
-                                        sx={{
-                                            fontSize: '1.05rem',
-                                            fontFamily: 'Satoshi Medium',
-                                            textTransform: 'none',
-                                            background: 'linear-gradient(135deg, #2850d9 0%, #667eea 100%)',
-                                            px: 2.5,
-                                            borderRadius: '12px',
-                                            color: 'white',
-                                            letterSpacing: '-0.01px',
-                                            transition: 'transform 0.3s',
-                                        }}
-                                    >
-                                        Get Started
-                                    </Button>
-                                </Box>
-                            </Menu>
-                        </Box>
-
-                        {/* mobile logo / small viewport */}
-                        <Box sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }}>
-                            <GiFluffyWing color="#324FD1" size={25} />
-                        </Box>
-                        <Typography
-                            variant="h5"
-                            noWrap
-                            component="a"
-                            href="#app-bar-with-responsive-menu"
-                            sx={{
-                                mr: 2,
-                                display: { xs: 'flex', md: 'none' },
-                                flexGrow: 1,
-                                fontFamily: 'Satoshi Black',
-                                color: '#000000',
-                                fontSize: '1.75rem',
-                                textDecoration: 'none',
-                            }}
-                        >
-                            WiNG.it
-                        </Typography>
-
-                        {/* desktop navigation on the right */}
-                        <Box sx={{ display: { xs: 'none', md: 'flex' }, gap:1.5}}>
-                            <Button color='inherit' sx={{fontSize: '1.05rem', fontFamily: 'Satoshi Bold', textTransform: 'none', color:  'black', letterSpacing: '-0.01px', borderRadius: '12px', paddingX: 2, '&:hover': { backgroundColor: 'rgba(40, 80, 217, 0.08)' }}}>
-                                <Link
-                                    activeClass="active"
-                                    to="why-wing-it"
-                                    offset={-50}
-                                    duration={500}
-                                    style={{fontSize: '1.05rem', fontFamily: 'Satoshi Bold', textTransform: 'none', color: 'black', letterSpacing: '-0.01px', borderRadius: '12px', paddingX: 2 }}
-                                >
-                                    Why WiNG.it
-                                </Link>
-                            </Button>
-                            <Button color='inherit' sx={{fontSize: '1.05rem', fontFamily: 'Satoshi Bold', textTransform: 'none', color: 'black', letterSpacing: '-0.01px',borderRadius: '12px',paddingX: 2, '&:hover': { backgroundColor: 'rgba(40, 80, 217, 0.08)' }}}>
-                                <Link
-                                    activeClass="active"
-                                    to="about-us"
-                                    offset={-50}
-                                    duration={500}
-                                    style={{ fontSize: '1.05rem', fontFamily: 'Satoshi Bold', textTransform: 'none', color: 'black', letterSpacing: '-0.01px', borderRadius: '12px', paddingX: 2 }}
-                                >
-                                    Our Story
-                                </Link>
-                            </Button>
-                            <Button 
-                                color='inherit' 
-                                // href='/sign-up' 
-                                href = '/dashboard'
-                                sx={{
-                                    fontSize: '1.05rem', 
-                                    fontFamily: 'Satoshi Bold', 
-                                    textTransform: 'none', 
-                                    background: 'linear-gradient(135deg, #2850d9 0%, #667eea 100%)',
-                                    paddingX: 2.5,
-                                    borderRadius: '12px', 
-                                    color: 'white', 
-                                    letterSpacing: '-0.01px', 
-                                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)', 
-                                    boxShadow: '0 4px 14px 0 rgba(40, 80, 217, 0.3)',
-                                    '&:hover': { 
-                                        transform: 'translateY(-2px)',
-                                        boxShadow: '0 8px 25px 0 rgba(40, 80, 217, 0.4)'
-                                    }
-                                }}
-                            >
-                                Get Started
-                            </Button>
-                        </Box>
-                    </Toolbar>
-                </Container>
-            </AppBar>
+        <HomePageNavbar/>
 
         {/* container*/}
         <Box sx={{ minHeight: '100dvh' }}>
@@ -828,93 +619,6 @@ export default function HomePage() {
                                     <span>Always Improving</span>
                                 </div>
                             </motion.div>
-
-                            {/* Compact success stats
-                            <motion.div
-                                variants={itemVariants}
-                                style={{
-                                    display: 'flex',
-                                    justifyContent: 'center',
-                                    gap: '2.5rem',
-                                    marginTop: '0.8rem',
-                                    flexWrap: 'wrap'
-                                }}
-                            >
-                                <div style={{ textAlign: 'center', minWidth: '100px' }}>
-                                    <Typography 
-                                        variant="h4" 
-                                        style={{
-                                            fontSize: '1.8rem',
-                                            fontWeight: '800',
-                                            color: 'white',
-                                            marginBottom: '0.2rem',
-                                            textShadow: '0 2px 8px rgba(0, 0, 0, 0.2)'
-                                        }}
-                                    >
-                                        10K+
-                                    </Typography>
-                                    <Typography 
-                                        variant="body2" 
-                                        style={{
-                                            color: 'rgba(255, 255, 255, 0.85)',
-                                            fontWeight: '500',
-                                            fontSize: '0.85rem'
-                                        }}
-                                    >
-                                        Students
-                                    </Typography>
-                                </div>
-                                <div style={{ textAlign: 'center', minWidth: '100px' }}>
-                                    <Typography 
-                                        variant="h4" 
-                                        style={{
-                                            fontSize: '1.8rem',
-                                            fontWeight: '800',
-                                            color: 'white',
-                                            marginBottom: '0.2rem',
-                                            textShadow: '0 2px 8px rgba(0, 0, 0, 0.2)'
-                                        }}
-                                    >
-                                        95%
-                                    </Typography>
-                                    <Typography 
-                                        variant="body2" 
-                                        style={{
-                                            color: 'rgba(255, 255, 255, 0.85)',
-                                            fontWeight: '500',
-                                            fontSize: '0.85rem'
-                                        }}
-                                    >
-                                        Success
-                                    </Typography>
-                                </div>
-                                <div style={{ textAlign: 'center', minWidth: '100px' }}>
-                                    <Typography 
-                                        variant="h4" 
-                                        style={{
-                                            fontSize: '1.8rem',
-                                            fontWeight: '800',
-                                            color: 'white',
-                                            marginBottom: '0.2rem',
-                                            textShadow: '0 2px 8px rgba(0, 0, 0, 0.2)'
-                                        }}
-                                    >
-                                        Free
-                                    </Typography>
-                                    <Typography 
-                                        variant="body2" 
-                                        style={{
-                                            color: 'rgba(255, 255, 255, 0.85)',
-                                            fontWeight: '500',
-                                            fontSize: '0.85rem'
-                                        }}
-                                    >
-                                        Core Tools
-                                    </Typography>
-                                </div>
-                            </motion.div> */}
-
-                            {/* Subtext under CTA */}
                         </motion.div>
                     </Stack>
                 </motion.div>
