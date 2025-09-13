@@ -15,7 +15,6 @@ import GpsFixedIcon from '@mui/icons-material/GpsFixed';
 import GroupIcon from '@mui/icons-material/Group';
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import FlashOnIcon from '@mui/icons-material/FlashOn';
-import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import SettingsIcon from '@mui/icons-material/Settings';
@@ -24,9 +23,9 @@ import BusinessCenterIcon from '@mui/icons-material/BusinessCenter';
 import BuildIcon from '@mui/icons-material/Build';
 
 const QuickstartPage = ({
+    error,
     jobRole,
     numQuestions,
-    showTimer,
     questionTypes,
     interviewerDifficulty,
     handleQuestionsChange,
@@ -35,7 +34,6 @@ const QuickstartPage = ({
     handleGetStarted,
     handleInterviewerDifficultyChange,
 }) => {
-    const router = useRouter();
 
     const itemVariants = {
         hidden: { opacity: 0, y: 5 },
@@ -195,6 +193,7 @@ const QuickstartPage = ({
                         {/* Job Role Input */}
                         <div className="form-group">
                             <label className="form-label">Target Role</label>
+                            {error && <p className="error-text">{error}</p>}
                             <input
                                 type="text"
                                 value={jobRole}
