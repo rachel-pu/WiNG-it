@@ -394,7 +394,7 @@ export default function InterviewResults() {
                 <CssBaseline />
                 <DefaultAppLayout title="Interview Results" color="#2850d9">
                     <Box sx={{ 
-                        position: fixed,
+                        position: 'fixed',
                         width: '100%',
                         minHeight: '100vh',
                         display: 'flex',

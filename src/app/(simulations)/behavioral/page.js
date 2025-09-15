@@ -11,6 +11,7 @@ import BehavioralSimulationPage from "@/app/(simulations)/behavioral/(components
 import {CircularProgress} from "@mui/material";
 import DefaultAppLayout from "../../DefaultAppLayout";
 import { getFunctions, httpsCallable } from "firebase/functions";
+import app from "@/lib/firebase";
 
 export default function BehavioralInterviewSimulation() {
     const [questions, setQuestions] = useState([]);

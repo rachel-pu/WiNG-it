@@ -32,7 +32,7 @@ function extractQuestions(text) {
 
 // Generate Questions Function
 exports.generateQuestions = functions.https.onRequest((req, res) => {
-  console.log("Generating questions...");
+  
   return cors(req, res, async () => {
     try {
       if (req.method === "OPTIONS") {
@@ -44,9 +44,10 @@ exports.generateQuestions = functions.https.onRequest((req, res) => {
       }
 
       const { job_role, numQuestions, questionTypes } = req.body;
-
+      console.log("Generating ", numQuestions, " questions...");
       const prompt = `
-        Generate ${numQuestions} behavioral interview questions related to ${questionTypes} for a ${job_role || 'general'} role in tech.
+        Generate exactly ${numQuestions} behavioral interview questions related to ${questionTypes} for a ${job_role || 'general'} role in tech.
+        Generate only the number of questions requested. Do not generate more than ${numQuestions} questions.
         - Make sure to come up with different, unique, and creative questions every time this prompt is run.
         - Format strictly as: "1. [Question]", "2. [Question]", etc.
         - Do NOT include any introductory text, titles, or explanations.
@@ -79,6 +80,7 @@ exports.generateQuestions = functions.https.onRequest((req, res) => {
 
       const responseText = completion.choices[0].message.content;
       const questions = extractQuestions(responseText);
+      console.log("Questions: ", questions);
 
       if (!questions || questions.length === 0) {
         return res.status(500).json({ error: 'No valid questions generated' });
