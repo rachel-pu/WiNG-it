@@ -14,7 +14,6 @@ import ErrorIcon from '@mui/icons-material/Error';
 import InfoIcon from '@mui/icons-material/Info';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { useRouter } from "next/navigation";
-import { getInterviewResults } from "../../../../lib/firebase.js";
 import "./result.css"
 
 export default function InterviewResults() {
@@ -114,19 +113,31 @@ export default function InterviewResults() {
         const fetchData = async () => {
             try {
                 setLoading(true);
+                const params = new URLSearchParams(window.location.search);
+                const sessionId = params.get("sessionId");
 
-                // Get the session ID from sessionStorage
-                const sessionId = sessionStorage.getItem("interviewSessionId");
                 if (!sessionId) {
-                    setError("No session ID found");
-                    setLoading(false);
-                    return;
+                throw new Error("No sessionId found in URL");
                 }
 
                 console.log("Fetching interview results for session:", sessionId);
                 
                 // Call the backend function
-                const result = await getInterviewResults({ sessionId});
+                 const res = await fetch(
+                "https://us-central1-wing-it-e6a3a.cloudfunctions.net/getInterviewResults",
+                {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ sessionId }),
+                }
+                );
+                
+
+                if (!res.ok) {
+                throw new Error(`Server error: ${res.status}`);
+                }
+
+                const result = await res.json();;
                 console.log("Backend response:", result);
 
                 if (result.data && result.data.success) {
@@ -383,6 +394,8 @@ export default function InterviewResults() {
                 <CssBaseline />
                 <DefaultAppLayout title="Interview Results" color="#2850d9">
                     <Box sx={{ 
+                        position: 'fixed',
+                        width: '100%',
                         minHeight: '100vh',
                         display: 'flex',
                         alignItems: 'center',
@@ -406,6 +419,8 @@ export default function InterviewResults() {
                 <CssBaseline />
                 <DefaultAppLayout title="Interview Results" color="#2850d9">
                     <Box sx={{ 
+                        position: 'fixed',
+                        width: '100%',
                         minHeight: '100vh',
                         display: 'flex',
                         alignItems: 'center',

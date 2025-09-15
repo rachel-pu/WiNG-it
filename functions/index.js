@@ -32,7 +32,7 @@ function extractQuestions(text) {
 
 // Generate Questions Function
 exports.generateQuestions = functions.https.onRequest((req, res) => {
-  console.log("Generating questions...");
+  
   return cors(req, res, async () => {
     try {
       if (req.method === "OPTIONS") {
@@ -42,7 +42,7 @@ exports.generateQuestions = functions.https.onRequest((req, res) => {
       if (req.method !== 'POST') {
         return res.status(405).json({ error: 'Method Not Allowed' });
       }
-
+      
       const { job_role, numQuestions, questionTypes, interviewerDifficulty } = req.body;
 
       // Define interviewer personality based on difficulty
@@ -83,9 +83,11 @@ exports.generateQuestions = functions.https.onRequest((req, res) => {
 
       const personality = getInterviewerPersonality(interviewerDifficulty);
 
+      console.log("Generating ", numQuestions, " questions...");
       const prompt = `
-        Generate ${numQuestions} behavioral interview questions related to ${questionTypes} for a ${job_role || 'general'} role in tech.
-
+        Generate exactly ${numQuestions} behavioral interview questions related to ${questionTypes} for a ${job_role || 'general'} role in tech.
+        Generate only the number of questions requested. Do not generate more than ${numQuestions} questions.
+        
         INTERVIEW DIFFICULTY LEVEL: ${interviewerDifficulty} (${personality.tone})
         INTERVIEWER PERSONALITY: You are Winnie, an interviewer with a ${personality.tone} personality.
         STYLE GUIDELINES: ${personality.style}
@@ -115,6 +117,7 @@ exports.generateQuestions = functions.https.onRequest((req, res) => {
         - Use standard interview approach`}
 
         FORMATTING REQUIREMENTS:
+
         - Make sure to come up with different, unique, and creative questions every time this prompt is run.
         - Format strictly as: "1. [Question]", "2. [Question]", etc.
         - Do NOT include any introductory text, titles, or explanations.
@@ -153,6 +156,7 @@ exports.generateQuestions = functions.https.onRequest((req, res) => {
 
       const responseText = completion.choices[0].message.content;
       const questions = extractQuestions(responseText);
+      console.log("Questions: ", questions);
 
       if (!questions || questions.length === 0) {
         return res.status(500).json({ error: 'No valid questions generated' });
@@ -448,12 +452,23 @@ exports.getInterviewResults = functions.https.onRequest((req, res) => {
         return res.status(204).send("");
       }
 
-      const { sessionId } = req.body.data || {};
+      let body = req.body;
+      if (typeof body === "string") {
+        try {
+          body = JSON.parse(body);
+        } catch (err) {
+          return res.status(400).json({ error: "Invalid JSON" });
+        }
+      }
+
+      const { sessionId } = body || {};
+
+
       
       if (!sessionId) {
         return res.status(400).json({ error: 'Session ID required' });
       }
-
+      console.log("SessionID", sessionId);
       const snapshot = await db.ref(`interviews/${sessionId}`).once('value');
       const interviewData = snapshot.val();
 
