@@ -18,7 +18,7 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import PinDropIcon from "@mui/icons-material/PinDrop";
 import { getFunctions, httpsCallable } from "firebase/functions";
 
-const InterviewQuestions = ({questions}) => {
+const InterviewQuestions = ({questions, sessionId: propSessionId}) => {
     const router = useRouter();
     const containerRef = useRef(null);
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -29,7 +29,7 @@ const InterviewQuestions = ({questions}) => {
     const [isSpeaking, setIsSpeaking] = useState(false);
     const [hasRecorded, setHasRecorded] = useState(false);
     const [isProcessing, setIsProcessing] = useState(false);
-    const [sessionId, setSessionId] = useState("");
+    const [sessionId, setSessionId] = useState(propSessionId || "");
     const [alertMessage, setAlertMessage] = useState("");
     const [alertSeverity, setAlertSeverity] = useState("info");
     const [showAlert, setShowAlert] = useState(false);
@@ -48,12 +48,17 @@ const InterviewQuestions = ({questions}) => {
     const mediaRecorder = useRef(null);
     const audioChunks = useRef([]);
 
-    // Generate a session ID when the component mounts
+    // Use the provided session ID or generate one when the component mounts
     useEffect(() => {
-        const newSessionId = `session-${Date.now()}`;
-        setSessionId(newSessionId);
-        console.log("Interview session ID:", newSessionId);
-    }, []);
+        if (propSessionId) {
+            setSessionId(propSessionId);
+            console.log("Using provided session ID:", propSessionId);
+        } else {
+            const newSessionId = `session-${Date.now()}`;
+            setSessionId(newSessionId);
+            console.log("Generated new session ID:", newSessionId);
+        }
+    }, [propSessionId]);
 
     // Auto-hide alert after 5 seconds
     useEffect(() => {
