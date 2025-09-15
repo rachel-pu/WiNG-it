@@ -16,9 +16,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { useRouter } from "next/navigation";
 import "./result.css"
 
-
 export default function InterviewResults() {
-    const [questionData, setQuestionData] = useState(null);
     const [selectedQuestion, setSelectedQuestion] = useState(1);
     const [bannerExpanded, setBannerExpanded] = useState(true);
     const [recordedTimes, setRecordedTimes] = useState([]);
@@ -27,7 +25,6 @@ export default function InterviewResults() {
     const [error, setError] = useState(null);
     const [totalAverageRecordedTime, setTotalAverageRecordedTime] = useState();
     const router = useRouter();
-    const sessionId = useState("");
 
     function calculatePerformanceScoreDiminishing({responseTime, wordCount, fillerWords, actionWords, statsUsed}) {
         //input validation
@@ -116,8 +113,6 @@ export default function InterviewResults() {
         const fetchData = async () => {
             try {
                 setLoading(true);
-
-                // Get the session ID from sessionStorage
                 const params = new URLSearchParams(window.location.search);
                 const sessionId = params.get("sessionId");
 
@@ -128,7 +123,7 @@ export default function InterviewResults() {
                 console.log("Fetching interview results for session:", sessionId);
                 
                 // Call the backend function
-                const res = await fetch(
+                 const res = await fetch(
                 "https://us-central1-wing-it-e6a3a.cloudfunctions.net/getInterviewResults",
                 {
                     method: "POST",
@@ -142,8 +137,7 @@ export default function InterviewResults() {
                 throw new Error(`Server error: ${res.status}`);
                 }
 
-                const result = await res.json();
-                setQuestionData(result.data.responses); 
+                const result = await res.json();;
                 console.log("Backend response:", result);
 
                 if (result.data && result.data.success) {
@@ -188,57 +182,35 @@ export default function InterviewResults() {
     }, []);
 
     // Process real interview data into the expected format
-    const processInterviewData = async (data) => {
+    const processInterviewData = (data) => {
         if (!data || !data.responses) return {};
-
+        
         const processedData = {};
-
-        // Filter out null responses
-        const validResponses = data.responses.filter(r => r !== null && r !== undefined);
-
-        // Use for...of to allow awaiting inside loop
-        for (let index = 0; index < validResponses.length; index++) {
-            const response = validResponses[index];
-
+        
+        // Filter out null responses and convert array to entries
+        const validResponses = data.responses.filter(response => response !== null && response !== undefined);
+        
+        validResponses.forEach((response, index) => {
             // Use the response's questionNumber if available, otherwise use 1-based index
             const questionNumber = response?.questionNumber || (index + 1);
-
             const analysis = response?.analysis || {};
-            const transcript = response?.transcript || "";
-            const actionWordsList = extractActionWords(transcript);
-            const statsUsed = extractStats(transcript);
-
-            // Call API to extract AI analysis
-            // let aiAnalysis = {};
-            // try {
-            //     const res = await fetch("https://us-central1-wing-it-e6a3a.cloudfunctions.net/analyzeResults", {
-            //         method: "POST",
-            //         headers: {
-            //         "Content-Type": "application/json"
-            //         },
-            //         body: JSON.stringify({
-            //         transcript: transcript,
-            //         questionText: response?.questionText 
-            //         })
-            // });
-
-            //     aiAnalysis = await res.json(); // contains fillerWords, questionTypes, tips, contentScore, etc.
-            //     console.log(aiAnalysis)
-            // } catch (err) {
-            //     console.error(`Error fetching AI analysis for question ${questionNumber}:`, err);
-            // }
-
+            
             // Calculate performance score using the existing function
             const score = calculatePerformanceScoreDiminishing({
-                responseTime: response?.recordedTime || 0,
+                responseTime: response.recordedTime || 0,
                 wordCount: analysis?.totalWords || 0,
                 fillerWords: analysis?.fillerWordCount || 0,
                 actionWords: 0,
-                statsUsed: 0
+                statsUsed: 0 
             });
 
+            // Extract action words and stats from transcript
+            const transcript = response?.transcript || "";
+            const actionWordsList = extractActionWords(transcript);
+            const statsUsed = extractStats(transcript);
+            
             processedData[questionNumber] = {
-                question: response?.questionText  || `Question ${questionNumber}`,
+                question: response?.questionText || `Question ${questionNumber}`,
                 responseTime: analysis?.recordedTime || 0,
                 wordCount: analysis?.totalWords || 0,
                 fillerWords: analysis?.fillerWordCount || 0,
@@ -250,16 +222,12 @@ export default function InterviewResults() {
                 score: score,
                 strengths: generateStrengths(analysis, actionWordsList.length, statsUsed.length),
                 improvements: generateImprovements(analysis),
-                // tips: aiAnalysis?.tips || generateTips(analysis),
-                // aiFillerWords: aiAnalysis?.fillerWords || [],
-                // aiQuestionTypes: aiAnalysis?.questionTypes || [],
-                // aiContentScore: aiAnalysis?.contentScore || null
+                tips: generateTips(analysis)
             };
-        }
-
+        });
+        
         return processedData;
     };
-
 
     // Helper function to extract action words from transcript
     const extractActionWords = (text) => {
@@ -275,7 +243,7 @@ export default function InterviewResults() {
 
     // Helper function to extract statistics/numbers from transcript
     const extractStats = (text) => {
-        const numberPattern = /\b\d+(?:\.\d+)?(?:%|percent|million|billion|thousand|k|m|b)?\b/;
+        const numberPattern = /\b\d+(?:\.\d+)?(?:%|percent|million|billion|thousand|k|m|b)?\b/gi;
         return text.match(numberPattern) || [];
     };
 
@@ -416,6 +384,9 @@ export default function InterviewResults() {
         }
     };
 
+    // Use processed data or fallback to mock data
+    const questionData = interviewData ? processInterviewData(interviewData) : mockQuestionData;
+
     // Show loading state
     if (loading) {
         return (
@@ -423,6 +394,8 @@ export default function InterviewResults() {
                 <CssBaseline />
                 <DefaultAppLayout title="Interview Results" color="#2850d9">
                     <Box sx={{ 
+                        position: fixed,
+                        width: '100%',
                         minHeight: '100vh',
                         display: 'flex',
                         alignItems: 'center',
@@ -430,7 +403,7 @@ export default function InterviewResults() {
                         background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)'
                     }}>
                         <CircularProgress size={60} />
-                        <Typography sx={{ ml: 2, fontSize: '1.2rem', color: '#374151' }}>
+                        <Typography sx={{ ml: 2, fontSize: '1.2rem', color: '#374151', fontFamily: 'DM Sans' }}>
                             Loading your results...
                         </Typography>
                     </Box>
@@ -446,6 +419,8 @@ export default function InterviewResults() {
                 <CssBaseline />
                 <DefaultAppLayout title="Interview Results" color="#2850d9">
                     <Box sx={{ 
+                        position: 'fixed',
+                        width: '100%',
                         minHeight: '100vh',
                         display: 'flex',
                         alignItems: 'center',
@@ -454,10 +429,10 @@ export default function InterviewResults() {
                     }}>
                         <Box sx={{ textAlign: 'center' }}>
                             <ErrorIcon sx={{ fontSize: 60, color: '#ef4444', mb: 2 }} />
-                            <Typography sx={{ fontSize: '1.5rem', fontWeight: 600, color: '#374151', mb: 1 }}>
+                            <Typography sx={{ fontSize: '1.5rem', fontWeight: 600, color: '#374151', mb: 1, fontFamily: 'Satoshi Bold' }}>
                                 Unable to Load Results
                             </Typography>
-                            <Typography sx={{ color: '#6b7280', mb: 3 }}>
+                            <Typography sx={{ color: '#6b7280', mb: 3, fontFamily: 'DM Sans' }}>
                                 {error}
                             </Typography>
                             <Link href="/behavioral">
@@ -487,22 +462,20 @@ export default function InterviewResults() {
     const questionKeys = Object.keys(questionData);
     const validSelectedQuestion = questionKeys.includes(selectedQuestion.toString()) ? selectedQuestion : parseInt(questionKeys[0]) || 1;
     const currentData = questionData[validSelectedQuestion] || Object.values(questionData)[0];
-    console.log("Current Data", currentData);
-    const validQuestions = Object.values(questionData || {}).filter(q => q && typeof q.score === "number");
 
     // Calculate overall performance score
-    const overallScore = validQuestions.length > 0
-    ? Math.round(validQuestions.reduce((sum, q) => sum + q.score, 0) / validQuestions.length)
-    : 0;
+    const overallScore = Math.round(
+        Object.values(questionData).reduce((sum, q) => sum + q.score, 0) / totalQuestions
+    );
 
     // Calculate overall statistics for tips
-    const avgFillerWords = validQuestions.length > 0 ? Math.round(
+    const avgFillerWords = Math.round(
         Object.values(questionData).reduce((sum, q) => sum + q.fillerWords, 0) / totalQuestions
-    ) : 0;
-    const avgActionWords = validQuestions.length > 0 ? Math.round(
+    );
+    const avgActionWords = Math.round(
         Object.values(questionData).reduce((sum, q) => sum + q.actionWords, 0) / totalQuestions
-    ): 0;
-    const avgResponseTime = validQuestions.length > 0 ? Object.values(questionData).reduce((sum, q) => sum + q.responseTime, 0) / totalQuestions : 0;
+    );
+    const avgResponseTime = Object.values(questionData).reduce((sum, q) => sum + q.responseTime, 0) / totalQuestions;
 
     // Generate overall tips based on performance
     const generateOverallTips = () => {
@@ -643,10 +616,10 @@ export default function InterviewResults() {
                     </Box>
                 </Box>
                 <Box>
-                    <Typography sx={{ fontWeight: 600, color: getColor(score) }}>
+                    <Typography sx={{ fontWeight: 600, color: getColor(score), fontFamily: 'Satoshi Bold' }}>
                         {getLabel(score)}
                     </Typography>
-                    <Typography sx={{ fontSize: '0.8rem', color: '#6b7280' }}>
+                    <Typography sx={{ fontSize: '0.8rem', color: '#6b7280', fontFamily: 'DM Sans' }}>
                         Performance Score
                     </Typography>
                 </Box>
@@ -685,16 +658,16 @@ export default function InterviewResults() {
                     <Icon sx={{ fontSize: 20 }} />
                 </Box>
                 <Box>
-                    <Typography sx={{ fontSize: '1.5rem', fontWeight: 700, color: '#1f2937' }}>
+                    <Typography sx={{ fontSize: '1.5rem', fontWeight: 700, color: '#1f2937', fontFamily: 'Satoshi Bold' }}>
                         {value}
                     </Typography>
-                    <Typography sx={{ fontSize: '0.8rem', color: '#6b7280' }}>
+                    <Typography sx={{ fontSize: '0.8rem', color: '#6b7280', fontFamily: 'DM Sans' }}>
                         {label}
                     </Typography>
                 </Box>
             </Box>
             {subtitle && (
-                <Typography sx={{ fontSize: '0.75rem', color: '#9ca3af' }}>
+                <Typography sx={{ fontSize: '0.75rem', color: '#9ca3af', fontFamily: 'DM Sans' }}>
                     {subtitle}
                 </Typography>
             )}
@@ -736,24 +709,18 @@ export default function InterviewResults() {
                         >
                             Q{questionNum}
                         </Avatar>
-                        <Typography sx={{ fontWeight: 500, color: '#374151', fontSize: '0.9rem' }}>
+                        <Typography sx={{ fontWeight: 500, color: '#374151', fontSize: '0.9rem', fontFamily: 'DM Sans' }}>
                             Question {questionNum}
                         </Typography>
                     </Box>
                     <Chip
-                        label={questionData[questionNum]?.score ?? 'N/A'}
+                        label={questionData[questionNum].score}
                         size="small"
                         sx={{
-                            backgroundColor: questionData[questionNum]?.score >= 85
-                            ? '#d1fae5'
-                            : questionData[questionNum]?.score >= 70
-                            ? '#fef3c7'
-                            : '#fee2e2',
-                            color: questionData[questionNum]?.score >= 85
-                            ? '#065f46'
-                            : questionData[questionNum]?.score >= 70
-                            ? '#92400e'
-                            : '#991b1b',
+                            backgroundColor: questionData[questionNum].score >= 85 ? '#d1fae5' : 
+                                           questionData[questionNum].score >= 70 ? '#fef3c7' : '#fee2e2',
+                            color: questionData[questionNum].score >= 85 ? '#065f46' : 
+                                   questionData[questionNum].score >= 70 ? '#92400e' : '#991b1b',
                             fontWeight: 600
                         }}
                     />
@@ -842,10 +809,10 @@ export default function InterviewResults() {
                                                     🎉
                                                 </Box>
                                                 <Box>
-                                                    <Typography sx={{ fontSize: '1.75rem', fontWeight: 700, lineHeight: 1.2 }}>
+                                                    <Typography sx={{ fontSize: '1.75rem', fontWeight: 700, lineHeight: 1.2, fontFamily: 'Satoshi Bold' }}>
                                                         Interview Complete!
                                                     </Typography>
-                                                    <Typography sx={{ fontSize: '1rem', opacity: 0.85 }}>
+                                                    <Typography sx={{ fontSize: '1rem', opacity: 0.85, fontFamily: 'DM Sans' }}>
                                                         You answered {totalQuestions} behavioral interview questions • {overallScore}% overall score
                                                     </Typography>
                                                 </Box>
@@ -881,11 +848,11 @@ export default function InterviewResults() {
                                                                 mb: 3,
                                                                 border: '1px solid rgba(255, 255, 255, 0.2)'
                                                             }}>
-                                                                <Typography sx={{ fontSize: '0.9rem', opacity: 0.8, mb: 1 }}>
+                                                                <Typography sx={{ fontSize: '0.9rem', opacity: 0.8, mb: 1, fontFamily: 'DM Sans' }}>
                                                                     Overall Performance
                                                                 </Typography>
                                                                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 3 }}>
-                                                                    <Typography sx={{ fontSize: '3rem', fontWeight: 800, lineHeight: 1 }}>
+                                                                    <Typography sx={{ fontSize: '3rem', fontWeight: 800, lineHeight: 1, fontFamily: 'Satoshi Black' }}>
                                                                         {overallScore}%
                                                                     </Typography>
                                                                     <Box sx={{ flex: 1 }}>
@@ -902,9 +869,9 @@ export default function InterviewResults() {
                                                                                 }
                                                                             }}
                                                                         />
-                                                                        <Typography sx={{ fontSize: '0.8rem', opacity: 0.7, mt: 0.5 }}>
-                                                                            {overallScore >= 85 ? 'Excellent Performance!' : 
-                                                                             overallScore >= 70 ? 'Good Performance!' : 
+                                                                        <Typography sx={{ fontSize: '0.8rem', opacity: 0.7, mt: 0.5, fontFamily: 'DM Sans' }}>
+                                                                            {overallScore >= 85 ? 'Excellent Performance!' :
+                                                                             overallScore >= 70 ? 'Good Performance!' :
                                                                              'Room for Improvement'}
                                                                         </Typography>
                                                                     </Box>
@@ -933,10 +900,10 @@ export default function InterviewResults() {
                                                                         }}>
                                                                             ⏱️
                                                                         </Box>
-                                                                        <Typography sx={{ fontSize: '1.5rem', fontWeight: 700, lineHeight: 1 }}>
+                                                                        <Typography sx={{ fontSize: '1.5rem', fontWeight: 700, lineHeight: 1, fontFamily: 'Satoshi Bold' }}>
                                                                             {totalAverageRecordedTime}
                                                                         </Typography>
-                                                                        <Typography sx={{ fontSize: '0.75rem', opacity: 0.8, fontWeight: 500 }}>
+                                                                        <Typography sx={{ fontSize: '0.75rem', opacity: 0.8, fontWeight: 500, fontFamily: 'DM Sans' }}>
                                                                             Avg Time
                                                                         </Typography>
                                                                     </Box>
@@ -961,12 +928,12 @@ export default function InterviewResults() {
                                                                         }}>
                                                                             📝
                                                                         </Box>
-                                                                        <Typography sx={{ fontSize: '1.5rem', fontWeight: 700, lineHeight: 1 }}>
-                                                                            {validQuestions.length > 0 ? Math.round(
+                                                                        <Typography sx={{ fontSize: '1.5rem', fontWeight: 700, lineHeight: 1, fontFamily: 'Satoshi Bold' }}>
+                                                                            {Math.round(
                                                                                 Object.values(questionData).reduce((sum, q) => sum + q.wordCount, 0) / totalQuestions
-                                                                            ): 0}
+                                                                            )}
                                                                         </Typography>
-                                                                        <Typography sx={{ fontSize: '0.75rem', opacity: 0.8, fontWeight: 500 }}>
+                                                                        <Typography sx={{ fontSize: '0.75rem', opacity: 0.8, fontWeight: 500, fontFamily: 'DM Sans' }}>
                                                                             Avg Words
                                                                         </Typography>
                                                                     </Box>
@@ -991,10 +958,10 @@ export default function InterviewResults() {
                                                                         }}>
                                                                             🚫
                                                                         </Box>
-                                                                        <Typography sx={{ fontSize: '1.5rem', fontWeight: 700, lineHeight: 1 }}>
+                                                                        <Typography sx={{ fontSize: '1.5rem', fontWeight: 700, lineHeight: 1, fontFamily: 'Satoshi Bold' }}>
                                                                             {avgFillerWords}
                                                                         </Typography>
-                                                                        <Typography sx={{ fontSize: '0.75rem', opacity: 0.8, fontWeight: 500 }}>
+                                                                        <Typography sx={{ fontSize: '0.75rem', opacity: 0.8, fontWeight: 500, fontFamily: 'DM Sans' }}>
                                                                             Avg Fillers
                                                                         </Typography>
                                                                     </Box>
@@ -1019,10 +986,10 @@ export default function InterviewResults() {
                                                                         }}>
                                                                             💪
                                                                         </Box>
-                                                                        <Typography sx={{ fontSize: '1.5rem', fontWeight: 700, lineHeight: 1 }}>
+                                                                        <Typography sx={{ fontSize: '1.5rem', fontWeight: 700, lineHeight: 1, fontFamily: 'Satoshi Bold' }}>
                                                                             {avgActionWords}
                                                                         </Typography>
-                                                                        <Typography sx={{ fontSize: '0.75rem', opacity: 0.8, fontWeight: 500 }}>
+                                                                        <Typography sx={{ fontSize: '0.75rem', opacity: 0.8, fontWeight: 500, fontFamily: 'DM Sans' }}>
                                                                             Avg Actions
                                                                         </Typography>
                                                                     </Box>
@@ -1043,7 +1010,7 @@ export default function InterviewResults() {
                                                             }}>
                                                                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
                                                                     <Box sx={{ fontSize: '1.5rem' }}>💡</Box>
-                                                                    <Typography sx={{ fontSize: '1.1rem', fontWeight: 600 }}>
+                                                                    <Typography sx={{ fontSize: '1.1rem', fontWeight: 600, fontFamily: 'Satoshi Bold' }}>
                                                                         Key Takeaways
                                                                     </Typography>
                                                                 </Box>
@@ -1066,11 +1033,12 @@ export default function InterviewResults() {
                                                                                 mt: 0.75,
                                                                                 flexShrink: 0
                                                                             }} />
-                                                                            <Typography sx={{ 
-                                                                                fontSize: '0.9rem', 
-                                                                                opacity: 0.9, 
+                                                                            <Typography sx={{
+                                                                                fontSize: '0.9rem',
+                                                                                opacity: 0.9,
                                                                                 lineHeight: 1.4,
-                                                                                fontWeight: 500
+                                                                                fontWeight: 500,
+                                                                                fontFamily: 'DM Sans'
                                                                             }}>
                                                                                 {tip}
                                                                             </Typography>
@@ -1092,7 +1060,7 @@ export default function InterviewResults() {
                                 <Grid item xs={12} md={4}>
                                     <motion.div variants={itemVariants}>
                                         <Card sx={{ p: 3, borderRadius: '16px', height: 'fit-content' }}>
-                                            <Typography sx={{ fontSize: '1.2rem', fontWeight: 600, mb: 3, color: '#1f2937' }}>
+                                            <Typography sx={{ fontSize: '1.2rem', fontWeight: 600, mb: 3, color: '#1f2937', fontFamily: 'Satoshi Bold' }}>
                                                 Select Question
                                             </Typography>
                                             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
@@ -1122,20 +1090,12 @@ export default function InterviewResults() {
                                             {/* Question Header */}
                                             <Card sx={{ p: 3, mb: 3, borderRadius: '16px' }}>
                                                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
-                                                {currentData ? (
-                                                    <Typography
-                                                        sx={{ fontSize: '1.1rem', fontWeight: 600, color: '#1f2937', flex: 1, mr: 2 }}
-                                                    >
+                                                    <Typography sx={{ fontSize: '1.1rem', fontWeight: 600, color: '#1f2937', flex: 1, mr: 2, fontFamily: 'Satoshi Bold' }}>
                                                         {currentData.question}
                                                     </Typography>
-                                                    ) : (
-                                                    <Typography>Loading question...</Typography>
-                                                    )}
-
-                                                <PerformanceIndicator score={currentData.score} />
+                                                    <PerformanceIndicator score={currentData.score} />
                                                 </Box>
                                             </Card>
-
 
                                             {/* Metrics Grid */}
                                             <Grid container spacing={2} sx={{ mb: 3 }}>
@@ -1176,7 +1136,7 @@ export default function InterviewResults() {
 
                                             {/* Transcript */}
                                             <Card sx={{ p: 3, mb: 3, borderRadius: '16px' }}>
-                                                <Typography sx={{ fontSize: '1.1rem', fontWeight: 600, mb: 2, color: '#1f2937' }}>
+                                                <Typography sx={{ fontSize: '1.1rem', fontWeight: 600, mb: 2, color: '#1f2937', fontFamily: 'Satoshi Bold' }}>
                                                     📝 Your Response
                                                 </Typography>
                                                 <Box sx={{ 
@@ -1185,12 +1145,12 @@ export default function InterviewResults() {
                                                     borderRadius: '12px',
                                                     border: '1px solid #e2e8f0'
                                                 }}>
-                                                    <Typography 
-                                                        sx={{ lineHeight: 1.6, color: '#374151' }}
+                                                    <Typography
+                                                        sx={{ lineHeight: 1.6, color: '#374151', fontFamily: 'DM Sans' }}
                                                         dangerouslySetInnerHTML={{
                                                             __html: highlightText(
-                                                                currentData.transcript, 
-                                                                currentData.fillerWordsList, 
+                                                                currentData.transcript,
+                                                                currentData.fillerWordsList,
                                                                 currentData.actionWordsList
                                                             )
                                                         }}
@@ -1199,7 +1159,7 @@ export default function InterviewResults() {
                                                 
                                                 {/* Legend */}
                                                 <Box sx={{ mt: 3, p: 2, borderRadius: '8px' }}>
-                                                    <Typography sx={{ fontSize: '0.8rem', fontWeight: 600, mb: 1, color: '#374151' }}>
+                                                    <Typography sx={{ fontSize: '0.8rem', fontWeight: 600, mb: 1, color: '#374151', fontFamily: 'Satoshi Medium' }}>
                                                         Highlight Legend:
                                                     </Typography>
                                                     <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
@@ -1211,7 +1171,7 @@ export default function InterviewResults() {
                                                                 borderRadius: '4px',
                                                                 border: '1px solid #a7f3d0'
                                                             }} />
-                                                            <Typography sx={{ fontSize: '0.75rem', color: '#065f46' }}>
+                                                            <Typography sx={{ fontSize: '0.75rem', color: '#065f46', fontFamily: 'DM Sans' }}>
                                                                 Action Words
                                                             </Typography>
                                                         </Box>
@@ -1223,7 +1183,7 @@ export default function InterviewResults() {
                                                                 borderRadius: '4px',
                                                                 border: '1px solid #6ea7e4ff'
                                                             }} />
-                                                            <Typography sx={{ fontSize: '0.75rem', color: '#325274' }}>
+                                                            <Typography sx={{ fontSize: '0.75rem', color: '#325274', fontFamily: 'DM Sans' }}>
                                                                 Numbers/Stats
                                                             </Typography>
                                                         </Box>
@@ -1235,7 +1195,7 @@ export default function InterviewResults() {
                                                                 borderRadius: '4px',
                                                                 border: '1px solid #fca8a8ff'
                                                             }} />
-                                                            <Typography sx={{ fontSize: '0.75rem', color: '#dc2626' }}>
+                                                            <Typography sx={{ fontSize: '0.75rem', color: '#dc2626', fontFamily: 'DM Sans' }}>
                                                                 Filler Words
                                                             </Typography>
                                                         </Box>
@@ -1251,30 +1211,27 @@ export default function InterviewResults() {
                                                     <Card sx={{ p: 3, borderRadius: '16px', height: '100%' }}>
                                                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
                                                             <CheckCircleIcon sx={{ color: '#10b981' }} />
-                                                            <Typography sx={{ fontSize: '1rem', fontWeight: 600, color: '#1f2937' }}>
+                                                            <Typography sx={{ fontSize: '1rem', fontWeight: 600, color: '#1f2937', fontFamily: 'Satoshi Medium' }}>
                                                                 Strengths
                                                             </Typography>
                                                         </Box>
                                                         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-                                                        {currentData?.strengths?.map((strength, index) => (
-                                                            <Box key={index} sx={{ display: 'flex', alignItems: 'flex-start', gap: 1 }}>
-                                                            <Box
-                                                                sx={{
-                                                                width: 6,
-                                                                height: 6,
-                                                                borderRadius: '50%',
-                                                                backgroundColor: '#10b981',
-                                                                mt: 0.75,
-                                                                flexShrink: 0
-                                                                }}
-                                                            />
-                                                            <Typography sx={{ fontSize: '0.85rem', color: '#374151', lineHeight: 1.4 }}>
-                                                                {strength}
-                                                            </Typography>
-                                                            </Box>
-                                                        )) || null}
+                                                            {currentData.strengths.map((strength, index) => (
+                                                                <Box key={index} sx={{ display: 'flex', alignItems: 'flex-start', gap: 1 }}>
+                                                                    <Box sx={{ 
+                                                                        width: 6, 
+                                                                        height: 6, 
+                                                                        borderRadius: '50%', 
+                                                                        backgroundColor: '#10b981',
+                                                                        mt: 0.75,
+                                                                        flexShrink: 0
+                                                                    }} />
+                                                                    <Typography sx={{ fontSize: '0.85rem', color: '#374151', lineHeight: 1.4, fontFamily: 'DM Sans' }}>
+                                                                        {strength}
+                                                                    </Typography>
+                                                                </Box>
+                                                            ))}
                                                         </Box>
-
                                                     </Card>
                                                 </Grid>
 
@@ -1283,12 +1240,12 @@ export default function InterviewResults() {
                                                     <Card sx={{ p: 3, borderRadius: '16px', height: '100%' }}>
                                                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
                                                             <ErrorIcon sx={{ color: '#f59e0b' }} />
-                                                            <Typography sx={{ fontSize: '1rem', fontWeight: 600, color: '#1f2937' }}>
+                                                            <Typography sx={{ fontSize: '1rem', fontWeight: 600, color: '#1f2937', fontFamily: 'Satoshi Medium' }}>
                                                                 Improvements
                                                             </Typography>
                                                         </Box>
                                                         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-                                                            {currentData?.improvements?.map((improvement, index) => (
+                                                            {currentData.improvements.map((improvement, index) => (
                                                                 <Box key={index} sx={{ display: 'flex', alignItems: 'flex-start', gap: 1 }}>
                                                                     <Box sx={{ 
                                                                         width: 6, 
@@ -1298,11 +1255,11 @@ export default function InterviewResults() {
                                                                         mt: 0.75,
                                                                         flexShrink: 0
                                                                     }} />
-                                                                    <Typography sx={{ fontSize: '0.85rem', color: '#374151', lineHeight: 1.4 }}>
+                                                                    <Typography sx={{ fontSize: '0.85rem', color: '#374151', lineHeight: 1.4, fontFamily: 'DM Sans' }}>
                                                                         {improvement}
                                                                     </Typography>
                                                                 </Box>
-                                                            )) || null}
+                                                            ))}
                                                         </Box>
                                                     </Card>
                                                 </Grid>
@@ -1312,12 +1269,12 @@ export default function InterviewResults() {
                                                     <Card sx={{ p: 3, borderRadius: '16px', height: '100%' }}>
                                                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
                                                             <InfoIcon sx={{ color: '#3b82f6' }} />
-                                                            <Typography sx={{ fontSize: '1rem', fontWeight: 600, color: '#1f2937' }}>
+                                                            <Typography sx={{ fontSize: '1rem', fontWeight: 600, color: '#1f2937', fontFamily: 'Satoshi Medium' }}>
                                                                 Tips
                                                             </Typography>
                                                         </Box>
                                                         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-                                                            {currentData?.tips?.map((tip, index) => (
+                                                            {currentData.tips.map((tip, index) => (
                                                                 <Box key={index} sx={{ display: 'flex', alignItems: 'flex-start', gap: 1 }}>
                                                                     <Box sx={{ 
                                                                         width: 6, 
@@ -1327,11 +1284,11 @@ export default function InterviewResults() {
                                                                         mt: 0.75,
                                                                         flexShrink: 0
                                                                     }} />
-                                                                    <Typography sx={{ fontSize: '0.85rem', color: '#374151', lineHeight: 1.4 }}>
+                                                                    <Typography sx={{ fontSize: '0.85rem', color: '#374151', lineHeight: 1.4, fontFamily: 'DM Sans' }}>
                                                                         {tip}
                                                                     </Typography>
                                                                 </Box>
-                                                            )) || null}
+                                                            ))}
                                                         </Box>
                                                     </Card>
                                                 </Grid>
@@ -1359,6 +1316,7 @@ export default function InterviewResults() {
                                             borderRadius: '50px',
                                             fontWeight: 600,
                                             fontSize: '1rem',
+                                            fontFamily: 'Satoshi Medium',
                                             background: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
                                             color: 'white',
                                             border: 'none',
@@ -1379,6 +1337,7 @@ export default function InterviewResults() {
                                             borderRadius: '50px',
                                             fontWeight: 600,
                                             fontSize: '1rem',
+                                            fontFamily: 'Satoshi Medium',
                                             background: 'white',
                                             color: '#374151',
                                             border: '2px solid #d1d5db',
