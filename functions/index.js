@@ -158,38 +158,12 @@ exports.generateQuestions = functions.https.onRequest((req, res) => {
         return res.status(500).json({ error: 'No valid questions generated' });
       }
 
-      // Generate a unique session ID
-      const sessionId = `interview_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-
-      // Store session metadata in Firebase
-      const sessionMetadata = {
-        sessionId,
-        jobRole: job_role || 'general',
-        numQuestions,
-        questionTypes: questionTypes || [],
-        interviewerDifficulty: interviewerDifficulty || 'professional-personality',
-        questionsGenerated: questions.length,
-        createdAt: admin.database.ServerValue.TIMESTAMP,
-        lastUpdated: admin.database.ServerValue.TIMESTAMP,
-        questionsCompleted: 0,
-        status: 'in_progress'
-      };
-
-      await db.ref(`interviews/${sessionId}/metadata`).set(sessionMetadata);
-
       return res.json({
-        sessionId,
         questions,
         metadata: {
           provider: 'openai',
           tokens: completion.usage.total_tokens,
-          estimatedCost: estimatedCost,
-          interviewConfig: {
-            jobRole: job_role,
-            numQuestions,
-            questionTypes,
-            interviewerDifficulty
-          }
+          estimatedCost: estimatedCost
         }
       });
 

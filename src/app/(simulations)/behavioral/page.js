@@ -15,7 +15,6 @@ import { getFunctions, httpsCallable } from "firebase/functions";
 
 export default function BehavioralInterviewSimulation() {
     const [questions, setQuestions] = useState([]);
-    const [sessionId, setSessionId] = useState("");
     const router = useRouter();
     const [error, setError] = useState("");
     const [jobRole, setJobRole] = useState("");
@@ -48,13 +47,6 @@ export default function BehavioralInterviewSimulation() {
 
         const data = await response.json();
         setQuestions(data.questions);
-
-        // Store the sessionId for use in the interview
-        if (data.sessionId) {
-            setSessionId(data.sessionId);
-            // Also store in sessionStorage for persistence
-            sessionStorage.setItem("interviewSessionId", data.sessionId);
-        }
 
     } catch (error) {
         console.error('Error generating questions:', error);
@@ -135,7 +127,7 @@ export default function BehavioralInterviewSimulation() {
                         {/* question box component */}
                         <Box component="main" sx={{ height: "90vh", overflow: "auto", textAlign: "center"}}>
                             {questions && questions.length > 0 ? (
-                                <BehavioralSimulationPage questions={questions} sessionId={sessionId}/>
+                                <BehavioralSimulationPage questions={questions}/>
                             ) : (
                                 <Box sx={{ 
                                     position: 'absolute',
