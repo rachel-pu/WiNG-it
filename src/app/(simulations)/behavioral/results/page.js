@@ -171,35 +171,57 @@ export default function InterviewResults() {
     }, []);
 
     // Process real interview data into the expected format
-    const processInterviewData = (data) => {
+    const processInterviewData = async (data) => {
         if (!data || !data.responses) return {};
-        
+
         const processedData = {};
-        
-        // Filter out null responses and convert array to entries
-        const validResponses = data.responses.filter(response => response !== null && response !== undefined);
-        
-        validResponses.forEach((response, index) => {
+
+        // Filter out null responses
+        const validResponses = data.responses.filter(r => r !== null && r !== undefined);
+
+        // Use for...of to allow awaiting inside loop
+        for (let index = 0; index < validResponses.length; index++) {
+            const response = validResponses[index];
+
             // Use the response's questionNumber if available, otherwise use 1-based index
             const questionNumber = response?.questionNumber || (index + 1);
-            const analysis = response?.analysis || {};
-            
-            // Calculate performance score using the existing function
-            const score = calculatePerformanceScoreDiminishing({
-                responseTime: response.recordedTime || 0,
-                wordCount: analysis?.totalWords || 0,
-                fillerWords: analysis?.fillerWordCount || 0,
-                actionWords: 0,
-                statsUsed: 0 
-            });
 
-            // Extract action words and stats from transcript
+            const analysis = response?.analysis || {};
             const transcript = response?.transcript || "";
             const actionWordsList = extractActionWords(transcript);
             const statsUsed = extractStats(transcript);
-            
+
+            // Call API to extract AI analysis
+            let aiAnalysis = {};
+            try {
+                const res = await fetch("https://us-central1-wing-it-e6a3a.cloudfunctions.net/analyzeResults", {
+                    method: "POST",
+                    headers: {
+                    "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                    transcript: transcript,
+                    questionText: response?.questionText 
+                    })
+            });
+
+                aiAnalysis = await res.json(); // contains fillerWords, questionTypes, tips, contentScore, etc.
+                console.log(aiAnalysis)
+            } catch (err) {
+                console.error(`Error fetching AI analysis for question ${questionNumber}:`, err);
+            }
+
+            // Calculate performance score using the existing function
+            const score = calculatePerformanceScoreDiminishing({
+                responseTime: response?.recordedTime || 0,
+                wordCount: analysis?.totalWords || 0,
+                fillerWords: analysis?.fillerWordCount || 0,
+                actionWords: 0,
+                statsUsed: 0
+            });
+
             processedData[questionNumber] = {
-                question: response?.questionText || `Question ${questionNumber}`,
+                question: response?.questionText  || `Question ${questionNumber}`,
                 responseTime: analysis?.recordedTime || 0,
                 wordCount: analysis?.totalWords || 0,
                 fillerWords: analysis?.fillerWordCount || 0,
@@ -211,12 +233,16 @@ export default function InterviewResults() {
                 score: score,
                 strengths: generateStrengths(analysis, actionWordsList.length, statsUsed.length),
                 improvements: generateImprovements(analysis),
-                tips: generateTips(analysis)
+                tips: aiAnalysis?.tips || generateTips(analysis),
+                aiFillerWords: aiAnalysis?.fillerWords || [],
+                aiQuestionTypes: aiAnalysis?.questionTypes || [],
+                aiContentScore: aiAnalysis?.contentScore || null
             };
-        });
-        
+        }
+
         return processedData;
     };
+
 
     // Helper function to extract action words from transcript
     const extractActionWords = (text) => {
@@ -232,7 +258,7 @@ export default function InterviewResults() {
 
     // Helper function to extract statistics/numbers from transcript
     const extractStats = (text) => {
-        const numberPattern = /\b\d+(?:\.\d+)?(?:%|percent|million|billion|thousand|k|m|b)?\b/gi;
+        const numberPattern = /\b\d+(?:\.\d+)?(?:%|percent|million|billion|thousand|k|m|b)?\b/;
         return text.match(numberPattern) || [];
     };
 
@@ -1074,12 +1100,13 @@ export default function InterviewResults() {
                                             {/* Question Header */}
                                             <Card sx={{ p: 3, mb: 3, borderRadius: '16px' }}>
                                                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
-                                                    <Typography sx={{ fontSize: '1.1rem', fontWeight: 600, color: '#1f2937', flex: 1, mr: 2 }}>
-                                                        {currentData.question}
-                                                    </Typography>
-                                                    <PerformanceIndicator score={currentData.score} />
+                                                <Typography sx={{ fontSize: '1.1rem', fontWeight: 600, color: '#1f2937', flex: 1, mr: 2 }}>
+                                                    {currentData.question}
+                                                </Typography>
+                                                <PerformanceIndicator score={currentData.score} />
                                                 </Box>
                                             </Card>
+
 
                                             {/* Metrics Grid */}
                                             <Grid container spacing={2} sx={{ mb: 3 }}>

@@ -366,6 +366,75 @@ exports.saveResponse = functions.https.onRequest((req, res) => {
   });
 });
 
+// Analyze Results Function
+exports.analyzeResults = functions.https.onRequest((req, res) => {
+  return cors(req, res, async () => {
+    try {
+      if (req.method === "OPTIONS") return res.status(204).send("");
+      if (req.method !== "POST")
+        return res.status(405).json({ error: "Method Not Allowed" });
+
+      const { transcript, questionText } = req.body;
+      if (!questionText)
+        return res.status(400).json({ error: "Missing questionText" });
+
+      const prompt = `
+        Generate a JSON object with the keys: fillerWords, questionTypes, tips, and contentScore.
+        Using the following:
+
+        Transcript: ${transcript}
+        Question: ${questionText}
+
+        Instructions:
+        - Count how many filler words (um, uh, like, so, etc.) exist in the transcript.
+        - Categorize the question as any of: Situational, Problem-solving, Technical, Leadership, Teamwork (can be multiple).
+        - Provide a few sentences of tips to improve the answer.
+        - Give a contentScore (0 to 60) based on how strong the answer is for an interview.
+
+        Respond ONLY with valid JSON. Do NOT include any explanation or text outside the JSON.
+      `;
+
+      const completion = await openai.chat.completions.create({
+        model: "gpt-4o-mini",
+        messages: [{ role: "user", content: prompt }],
+        max_tokens: 500,
+        temperature: 0
+      });
+
+      const responseText = completion.choices[0].message.content;
+
+      // Extract JSON safely using regex
+      let result;
+      try {
+        const match = responseText.match(/\{[\s\S]*\}/); // get the first {...} block
+        if (!match) throw new Error("No JSON found in AI response");
+        result = JSON.parse(match[0]);
+      } catch (err) {
+        console.error("Failed to parse AI response as JSON:", responseText);
+        return res.status(500).json({ error: "Invalid JSON from AI" });
+      }
+
+      const usage = completion.usage || {};
+      const totalTokens = usage.total_tokens || 0;
+      const estimatedCost = (totalTokens / 1000) * 0.0001;
+
+      return res.json({
+        ...result,
+        metadata: {
+          provider: "openai",
+          tokens: totalTokens,
+          estimatedCost
+        }
+      });
+
+    } catch (err) {
+      console.error("Error in analyzing results:", err);
+      return res.status(500).json({ error: err.message });
+    }
+  });
+});
+
+
 // Get Interview Results Function
 exports.getInterviewResults = functions.https.onRequest((req, res) => {
   return cors(req, res, async () => {
