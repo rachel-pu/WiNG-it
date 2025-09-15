@@ -14,10 +14,11 @@ import ErrorIcon from '@mui/icons-material/Error';
 import InfoIcon from '@mui/icons-material/Info';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { useRouter } from "next/navigation";
-import { getInterviewResults } from "../../../../lib/firebase.js";
 import "./result.css"
 
+
 export default function InterviewResults() {
+    const [questionData, setQuestionData] = useState(null);
     const [selectedQuestion, setSelectedQuestion] = useState(1);
     const [bannerExpanded, setBannerExpanded] = useState(true);
     const [recordedTimes, setRecordedTimes] = useState([]);
@@ -26,6 +27,7 @@ export default function InterviewResults() {
     const [error, setError] = useState(null);
     const [totalAverageRecordedTime, setTotalAverageRecordedTime] = useState();
     const router = useRouter();
+    const sessionId = useState("");
 
     function calculatePerformanceScoreDiminishing({responseTime, wordCount, fillerWords, actionWords, statsUsed}) {
         //input validation
@@ -116,17 +118,32 @@ export default function InterviewResults() {
                 setLoading(true);
 
                 // Get the session ID from sessionStorage
-                const sessionId = sessionStorage.getItem("interviewSessionId");
+                const params = new URLSearchParams(window.location.search);
+                const sessionId = params.get("sessionId");
+
                 if (!sessionId) {
-                    setError("No session ID found");
-                    setLoading(false);
-                    return;
+                throw new Error("No sessionId found in URL");
                 }
 
                 console.log("Fetching interview results for session:", sessionId);
                 
                 // Call the backend function
-                const result = await getInterviewResults({ sessionId});
+                const res = await fetch(
+                "https://us-central1-wing-it-e6a3a.cloudfunctions.net/getInterviewResults",
+                {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ sessionId }),
+                }
+                );
+                
+
+                if (!res.ok) {
+                throw new Error(`Server error: ${res.status}`);
+                }
+
+                const result = await res.json();
+                setQuestionData(result.data.responses); 
                 console.log("Backend response:", result);
 
                 if (result.data && result.data.success) {
@@ -192,24 +209,24 @@ export default function InterviewResults() {
             const statsUsed = extractStats(transcript);
 
             // Call API to extract AI analysis
-            let aiAnalysis = {};
-            try {
-                const res = await fetch("https://us-central1-wing-it-e6a3a.cloudfunctions.net/analyzeResults", {
-                    method: "POST",
-                    headers: {
-                    "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({
-                    transcript: transcript,
-                    questionText: response?.questionText 
-                    })
-            });
+            // let aiAnalysis = {};
+            // try {
+            //     const res = await fetch("https://us-central1-wing-it-e6a3a.cloudfunctions.net/analyzeResults", {
+            //         method: "POST",
+            //         headers: {
+            //         "Content-Type": "application/json"
+            //         },
+            //         body: JSON.stringify({
+            //         transcript: transcript,
+            //         questionText: response?.questionText 
+            //         })
+            // });
 
-                aiAnalysis = await res.json(); // contains fillerWords, questionTypes, tips, contentScore, etc.
-                console.log(aiAnalysis)
-            } catch (err) {
-                console.error(`Error fetching AI analysis for question ${questionNumber}:`, err);
-            }
+            //     aiAnalysis = await res.json(); // contains fillerWords, questionTypes, tips, contentScore, etc.
+            //     console.log(aiAnalysis)
+            // } catch (err) {
+            //     console.error(`Error fetching AI analysis for question ${questionNumber}:`, err);
+            // }
 
             // Calculate performance score using the existing function
             const score = calculatePerformanceScoreDiminishing({
@@ -233,10 +250,10 @@ export default function InterviewResults() {
                 score: score,
                 strengths: generateStrengths(analysis, actionWordsList.length, statsUsed.length),
                 improvements: generateImprovements(analysis),
-                tips: aiAnalysis?.tips || generateTips(analysis),
-                aiFillerWords: aiAnalysis?.fillerWords || [],
-                aiQuestionTypes: aiAnalysis?.questionTypes || [],
-                aiContentScore: aiAnalysis?.contentScore || null
+                // tips: aiAnalysis?.tips || generateTips(analysis),
+                // aiFillerWords: aiAnalysis?.fillerWords || [],
+                // aiQuestionTypes: aiAnalysis?.questionTypes || [],
+                // aiContentScore: aiAnalysis?.contentScore || null
             };
         }
 
@@ -399,9 +416,6 @@ export default function InterviewResults() {
         }
     };
 
-    // Use processed data or fallback to mock data
-    const questionData = interviewData ? processInterviewData(interviewData) : mockQuestionData;
-
     // Show loading state
     if (loading) {
         return (
@@ -473,20 +487,22 @@ export default function InterviewResults() {
     const questionKeys = Object.keys(questionData);
     const validSelectedQuestion = questionKeys.includes(selectedQuestion.toString()) ? selectedQuestion : parseInt(questionKeys[0]) || 1;
     const currentData = questionData[validSelectedQuestion] || Object.values(questionData)[0];
+    console.log("Current Data", currentData);
+    const validQuestions = Object.values(questionData || {}).filter(q => q && typeof q.score === "number");
 
     // Calculate overall performance score
-    const overallScore = Math.round(
-        Object.values(questionData).reduce((sum, q) => sum + q.score, 0) / totalQuestions
-    );
+    const overallScore = validQuestions.length > 0
+    ? Math.round(validQuestions.reduce((sum, q) => sum + q.score, 0) / validQuestions.length)
+    : 0;
 
     // Calculate overall statistics for tips
-    const avgFillerWords = Math.round(
+    const avgFillerWords = validQuestions.length > 0 ? Math.round(
         Object.values(questionData).reduce((sum, q) => sum + q.fillerWords, 0) / totalQuestions
-    );
-    const avgActionWords = Math.round(
+    ) : 0;
+    const avgActionWords = validQuestions.length > 0 ? Math.round(
         Object.values(questionData).reduce((sum, q) => sum + q.actionWords, 0) / totalQuestions
-    );
-    const avgResponseTime = Object.values(questionData).reduce((sum, q) => sum + q.responseTime, 0) / totalQuestions;
+    ): 0;
+    const avgResponseTime = validQuestions.length > 0 ? Object.values(questionData).reduce((sum, q) => sum + q.responseTime, 0) / totalQuestions : 0;
 
     // Generate overall tips based on performance
     const generateOverallTips = () => {
@@ -725,13 +741,19 @@ export default function InterviewResults() {
                         </Typography>
                     </Box>
                     <Chip
-                        label={questionData[questionNum].score}
+                        label={questionData[questionNum]?.score ?? 'N/A'}
                         size="small"
                         sx={{
-                            backgroundColor: questionData[questionNum].score >= 85 ? '#d1fae5' : 
-                                           questionData[questionNum].score >= 70 ? '#fef3c7' : '#fee2e2',
-                            color: questionData[questionNum].score >= 85 ? '#065f46' : 
-                                   questionData[questionNum].score >= 70 ? '#92400e' : '#991b1b',
+                            backgroundColor: questionData[questionNum]?.score >= 85
+                            ? '#d1fae5'
+                            : questionData[questionNum]?.score >= 70
+                            ? '#fef3c7'
+                            : '#fee2e2',
+                            color: questionData[questionNum]?.score >= 85
+                            ? '#065f46'
+                            : questionData[questionNum]?.score >= 70
+                            ? '#92400e'
+                            : '#991b1b',
                             fontWeight: 600
                         }}
                     />
@@ -940,9 +962,9 @@ export default function InterviewResults() {
                                                                             📝
                                                                         </Box>
                                                                         <Typography sx={{ fontSize: '1.5rem', fontWeight: 700, lineHeight: 1 }}>
-                                                                            {Math.round(
+                                                                            {validQuestions.length > 0 ? Math.round(
                                                                                 Object.values(questionData).reduce((sum, q) => sum + q.wordCount, 0) / totalQuestions
-                                                                            )}
+                                                                            ): 0}
                                                                         </Typography>
                                                                         <Typography sx={{ fontSize: '0.75rem', opacity: 0.8, fontWeight: 500 }}>
                                                                             Avg Words
@@ -1100,9 +1122,16 @@ export default function InterviewResults() {
                                             {/* Question Header */}
                                             <Card sx={{ p: 3, mb: 3, borderRadius: '16px' }}>
                                                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
-                                                <Typography sx={{ fontSize: '1.1rem', fontWeight: 600, color: '#1f2937', flex: 1, mr: 2 }}>
-                                                    {currentData.question}
-                                                </Typography>
+                                                {currentData ? (
+                                                    <Typography
+                                                        sx={{ fontSize: '1.1rem', fontWeight: 600, color: '#1f2937', flex: 1, mr: 2 }}
+                                                    >
+                                                        {currentData.question}
+                                                    </Typography>
+                                                    ) : (
+                                                    <Typography>Loading question...</Typography>
+                                                    )}
+
                                                 <PerformanceIndicator score={currentData.score} />
                                                 </Box>
                                             </Card>
@@ -1227,22 +1256,25 @@ export default function InterviewResults() {
                                                             </Typography>
                                                         </Box>
                                                         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-                                                            {currentData.strengths.map((strength, index) => (
-                                                                <Box key={index} sx={{ display: 'flex', alignItems: 'flex-start', gap: 1 }}>
-                                                                    <Box sx={{ 
-                                                                        width: 6, 
-                                                                        height: 6, 
-                                                                        borderRadius: '50%', 
-                                                                        backgroundColor: '#10b981',
-                                                                        mt: 0.75,
-                                                                        flexShrink: 0
-                                                                    }} />
-                                                                    <Typography sx={{ fontSize: '0.85rem', color: '#374151', lineHeight: 1.4 }}>
-                                                                        {strength}
-                                                                    </Typography>
-                                                                </Box>
-                                                            ))}
+                                                        {currentData?.strengths?.map((strength, index) => (
+                                                            <Box key={index} sx={{ display: 'flex', alignItems: 'flex-start', gap: 1 }}>
+                                                            <Box
+                                                                sx={{
+                                                                width: 6,
+                                                                height: 6,
+                                                                borderRadius: '50%',
+                                                                backgroundColor: '#10b981',
+                                                                mt: 0.75,
+                                                                flexShrink: 0
+                                                                }}
+                                                            />
+                                                            <Typography sx={{ fontSize: '0.85rem', color: '#374151', lineHeight: 1.4 }}>
+                                                                {strength}
+                                                            </Typography>
+                                                            </Box>
+                                                        )) || null}
                                                         </Box>
+
                                                     </Card>
                                                 </Grid>
 
@@ -1256,7 +1288,7 @@ export default function InterviewResults() {
                                                             </Typography>
                                                         </Box>
                                                         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-                                                            {currentData.improvements.map((improvement, index) => (
+                                                            {currentData?.improvements?.map((improvement, index) => (
                                                                 <Box key={index} sx={{ display: 'flex', alignItems: 'flex-start', gap: 1 }}>
                                                                     <Box sx={{ 
                                                                         width: 6, 
@@ -1270,7 +1302,7 @@ export default function InterviewResults() {
                                                                         {improvement}
                                                                     </Typography>
                                                                 </Box>
-                                                            ))}
+                                                            )) || null}
                                                         </Box>
                                                     </Card>
                                                 </Grid>
@@ -1285,7 +1317,7 @@ export default function InterviewResults() {
                                                             </Typography>
                                                         </Box>
                                                         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-                                                            {currentData.tips.map((tip, index) => (
+                                                            {currentData?.tips?.map((tip, index) => (
                                                                 <Box key={index} sx={{ display: 'flex', alignItems: 'flex-start', gap: 1 }}>
                                                                     <Box sx={{ 
                                                                         width: 6, 
@@ -1299,7 +1331,7 @@ export default function InterviewResults() {
                                                                         {tip}
                                                                     </Typography>
                                                                 </Box>
-                                                            ))}
+                                                            )) || null}
                                                         </Box>
                                                     </Card>
                                                 </Grid>

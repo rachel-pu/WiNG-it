@@ -1,6 +1,5 @@
 "use client"
 // import InterviewQuestions from "../../../../components/InterviewQuestions";
-import interviewService from '@/lib/interviewService';
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import CssBaseline from "@mui/material/CssBaseline";
