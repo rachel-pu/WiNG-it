@@ -36,7 +36,8 @@ export default function BehavioralInterviewSimulation() {
         body: JSON.stringify({
             job_role: jobRole,
             numQuestions,
-            questionTypes
+            questionTypes,
+            interviewerDifficulty
         }),
         });
 

@@ -42,19 +42,95 @@ exports.generateQuestions = functions.https.onRequest((req, res) => {
       if (req.method !== 'POST') {
         return res.status(405).json({ error: 'Method Not Allowed' });
       }
+      
+      const { job_role, numQuestions, questionTypes, interviewerDifficulty } = req.body;
 
-      const { job_role, numQuestions, questionTypes } = req.body;
+      // Define interviewer personality based on difficulty
+      const getInterviewerPersonality = (difficulty) => {
+        switch (difficulty) {
+          case 'easy-going-personality':
+            return {
+              tone: 'friendly, warm, and encouraging',
+              style: 'Use a conversational and supportive tone. Be patient and understanding.',
+              questions: 'Ask straightforward questions that build confidence.'
+            };
+          case 'professional-personality':
+            return {
+              tone: 'professional, polite, and businesslike',
+              style: 'Maintain a formal but approachable demeanor. Be thorough but fair.',
+              questions: 'Ask standard behavioral questions with appropriate follow-ups.'
+            };
+          case 'intense-personality':
+            return {
+              tone: 'direct, challenging, and probing',
+              style: 'Be more demanding and ask for specific details. Push for concrete examples.',
+              questions: 'Ask complex, multi-layered questions that require detailed responses.'
+            };
+          case 'randomize-personality':
+            return {
+              tone: 'varied - mix friendly, professional, and challenging approaches',
+              style: 'Vary your approach throughout the interview. Keep the candidate on their toes.',
+              questions: 'Use a mix of question styles from easy to challenging.'
+            };
+          default:
+            return {
+              tone: 'professional and balanced',
+              style: 'Maintain a standard interview approach.',
+              questions: 'Ask standard behavioral interview questions.'
+            };
+        }
+      };
+
+      const personality = getInterviewerPersonality(interviewerDifficulty);
+
       console.log("Generating ", numQuestions, " questions...");
       const prompt = `
         Generate exactly ${numQuestions} behavioral interview questions related to ${questionTypes} for a ${job_role || 'general'} role in tech.
         Generate only the number of questions requested. Do not generate more than ${numQuestions} questions.
+        
+        INTERVIEW DIFFICULTY LEVEL: ${interviewerDifficulty} (${personality.tone})
+        INTERVIEWER PERSONALITY: You are Winnie, an interviewer with a ${personality.tone} personality.
+        STYLE GUIDELINES: ${personality.style}
+        QUESTION APPROACH: ${personality.questions}
+
+        DIFFICULTY-SPECIFIC REQUIREMENTS FOR ${interviewerDifficulty.toUpperCase()}:
+        ${interviewerDifficulty === 'easy-going-personality' ? `
+        - Ask warm, straightforward questions that build confidence
+        - Use encouraging language and be supportive
+        - Focus on basic STAR method scenarios
+        - Avoid overly complex or multi-part questions` :
+        interviewerDifficulty === 'professional-personality' ? `
+        - Ask standard behavioral questions with clear expectations
+        - Maintain professional tone throughout
+        - Include questions about teamwork, leadership, and problem-solving
+        - Balance challenge with fairness` :
+        interviewerDifficulty === 'intense-personality' ? `
+        - Ask challenging, probing questions that require detailed responses
+        - Request specific metrics, outcomes, and concrete examples
+        - Include follow-up scenarios and hypothetical situations
+        - Push for deeper analysis and critical thinking` :
+        interviewerDifficulty === 'randomize-personality' ? `
+        - Mix question styles from easy to challenging randomly
+        - Vary your tone and approach for each question
+        - Include both supportive and demanding questions
+        - Keep the candidate adapting to different interviewer styles` : `
+        - Use standard interview approach`}
+
+        FORMATTING REQUIREMENTS:
+
         - Make sure to come up with different, unique, and creative questions every time this prompt is run.
         - Format strictly as: "1. [Question]", "2. [Question]", etc.
         - Do NOT include any introductory text, titles, or explanations.
-        - Each question should only have one question mark max. There should be no multiple questions in one question. Make sure each question will not require the user to talk for over 5 minutes.
-        - Combine this introduction into the first question you write. Introduce yourself before going into the question. Please introduce yourself as "Winnie" and say that you are the
-           interviewer. Then afterwards, say "It's nice to meet you. Let's get started with the interview." before going into the first question.
-           For instance, you should be saying "1. Hi, I'm Winnie. It's nice to meet you. Let's get started with the interview. [Question]".
+        - Each question should only have one question mark max. There should be no multiple questions in one question.
+        - Make sure each question will not require the user to talk for over 5 minutes.
+        - Combine this introduction into the first question you write. Introduce yourself before going into the question.
+          Please introduce yourself as "Winnie" and say that you are the interviewer. Then afterwards, say "It's nice to meet you. Let's get started with the interview." before going into the first question.
+          For instance, you should be saying "1. Hi, I'm Winnie. It's nice to meet you. Let's get started with the interview. [Question]".
+
+        PERSONALITY-SPECIFIC INSTRUCTIONS:
+        - Fully embody the ${interviewerDifficulty.replace('-personality', '')} difficulty level in your question selection and phrasing.
+        - Questions should reflect the interviewer's personality while remaining professional and appropriate.
+        - Ensure each question matches the specified difficulty level and interviewer style consistently.
       `;
 
       console.log(prompt);
