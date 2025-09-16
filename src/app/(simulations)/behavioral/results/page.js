@@ -277,9 +277,6 @@ export default function InterviewResults() {
         if (analysis?.totalWords < 100) {
             improvements.push("Provide more detailed examples and context");
         }
-        if (analysis?.durationSeconds < 60) {
-            improvements.push("Expand your answers with more specific details");
-        }
         
         return improvements.length > 0 ? improvements : ["Continue practicing to maintain consistency"];
     };
