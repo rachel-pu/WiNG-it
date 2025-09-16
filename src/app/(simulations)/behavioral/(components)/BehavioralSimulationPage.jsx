@@ -381,7 +381,7 @@ const InterviewQuestions = ({questions}) => {
                     md: 'calc(100vw - 240px)'
                 },
                 height: 'calc(100vh - 100px)',
-                backgroundColor: '#1f1f23',
+                backgroundColor: '#2a2a2e',
                 display: 'flex',
                 flexDirection: 'column',
                 overflow: 'hidden'
@@ -394,7 +394,7 @@ const InterviewQuestions = ({questions}) => {
                 left: 0,
                 right: 0,
                 height: '60px',
-                backgroundColor: 'rgba(0,0,0,0.8)',
+                backgroundColor: '#1f1f23',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'space-between',
@@ -711,7 +711,7 @@ const InterviewQuestions = ({questions}) => {
                 left: 0,
                 right: 0,
                 height: '80px',
-                backgroundColor: 'rgba(0,0,0,0.9)',
+                backgroundColor: '#1f1f23',
                 display: 'flex',
                 alignItems: 'flex-start',
                 justifyContent: 'center',
