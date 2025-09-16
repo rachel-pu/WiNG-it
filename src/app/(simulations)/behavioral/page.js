@@ -138,7 +138,7 @@ export default function BehavioralInterviewSimulation() {
                                     display: 'flex', 
                                     justifyContent: 'center', 
                                     alignItems: 'center', 
-                                    backgroundColor: '#000000', // Black background
+                                    backgroundColor: '#2a2a2e', // Black background
                                     zIndex: 1000
                                 }}>
                                     {/* Loading content container */}
