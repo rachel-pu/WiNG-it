@@ -1,29 +1,23 @@
 "use client"
-// import InterviewQuestions from "../../../../components/InterviewQuestions";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import CssBaseline from "@mui/material/CssBaseline";
 import React, {useState} from "react";
-import {useRouter} from "next/navigation";
 import Typography from "@mui/material/Typography";
 import QuickstartPage from "@/app/(simulations)/behavioral/(components)/QuickstartPage";
 import BehavioralSimulationPage from "@/app/(simulations)/behavioral/(components)/BehavioralSimulationPage";
 import {CircularProgress} from "@mui/material";
 import DefaultAppLayout from "../../DefaultAppLayout";
-import { getFunctions, httpsCallable } from "firebase/functions";
 import app from "@/lib/firebase";
 
 export default function BehavioralInterviewSimulation() {
     const [questions, setQuestions] = useState([]);
-    const router = useRouter();
     const [error, setError] = useState("");
     const [jobRole, setJobRole] = useState("");
     const [numQuestions, setNumQuestions] = useState(5);
     const [questionTypes, setQuestionTypes] = useState([]);
     const [interviewerDifficulty, setInterviewerDifficulty] = useState("easy-going-personality");
     const [showQuickstart, setShowQuickstart] = useState(true);
-    const firebaseConfig = {};
-    const functions = getFunctions(undefined, "us-central1");
 
 
     const fetchQuestions = async () => {

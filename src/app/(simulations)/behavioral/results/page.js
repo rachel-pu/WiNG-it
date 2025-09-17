@@ -217,12 +217,13 @@ export default function InterviewResults() {
                 actionWords: actionWordsList.length,
                 statsUsed: statsUsed.length,
                 transcript: transcript,
-                fillerWordsList: analysis?.fillerWords?.map(fw => fw?.word || '') || [],
+                questionTypes: analysis?.questionTypes,
+                fillerWordsList: analysis?.fillerWordsList || [],
                 actionWordsList: actionWordsList,
                 score: score,
-                strengths: generateStrengths(analysis, actionWordsList.length, statsUsed.length),
-                improvements: generateImprovements(analysis),
-                tips: generateTips(analysis)
+                strengths: analysis?.strengths || generateStrengths(analysis, actionWordsList.length, statsUsed.length),
+                improvements:  analysis?.improvements || generateImprovements(analysis),
+                tips: analysis?.tips ||generateTips(analysis)
             };
         });
         
@@ -276,9 +277,6 @@ export default function InterviewResults() {
         }
         if (analysis?.totalWords < 100) {
             improvements.push("Provide more detailed examples and context");
-        }
-        if (analysis?.durationSeconds < 60) {
-            improvements.push("Expand your answers with more specific details");
         }
         
         return improvements.length > 0 ? improvements : ["Continue practicing to maintain consistency"];
@@ -1090,8 +1088,19 @@ export default function InterviewResults() {
                                             {/* Question Header */}
                                             <Card sx={{ p: 3, mb: 3, borderRadius: '16px' }}>
                                                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
+                                                     
                                                     <Typography sx={{ fontSize: '1.1rem', fontWeight: 600, color: '#1f2937', flex: 1, mr: 2, fontFamily: 'Satoshi Bold' }}>
-                                                        {currentData.question}
+                                                       <Typography 
+                                                        sx={{ 
+                                                        fontSize: '0.9rem', 
+                                                        fontWeight: 600, 
+                                                        color: '#2563eb', 
+                                                        fontFamily: 'Satoshi Bold',
+                                                        mb: 0.5
+                                                        }}
+                                                    >
+                                                        {currentData.questionTypes?.join(', ')}
+                                                    </Typography>{currentData.question}
                                                     </Typography>
                                                     <PerformanceIndicator score={currentData.score} />
                                                 </Box>

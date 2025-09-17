@@ -293,7 +293,7 @@ exports.saveResponse = functions.https.onRequest((req, res) => {
       }
 
       const { sessionId, questionNumber, questionText, recordedTime, audioData, mimetype } = req.body;
-      
+      console.log("Recorded Time: ", recordedTime);
       if (!sessionId || questionNumber === undefined || !audioData) {
         return res.status(400).json({ 
           error: "Missing required fields",
@@ -362,34 +362,63 @@ exports.saveResponse = functions.https.onRequest((req, res) => {
       // Extract transcript and analysis data
       const transcript = result?.results?.channels?.[0]?.alternatives?.[0]?.transcript || "";
       const words = result?.results?.channels?.[0]?.alternatives?.[0]?.words || [];
-      const confidence = result?.results?.channels?.[0]?.alternatives?.[0]?.confidence || 0;
-
       console.log('Transcript:', transcript.substring(0, 100));
-      
-      // Analyze filler words
-      const fillerWordsList = [
-      "um", "uh", "uhm", "hmm", "like", "you know", "actually", "i think", "guess",
-      "basically", "literally", "so", "well", "kind of", "sort of", "maybe",
-      "er", "ah", "huh", "right", "okay", "alright", "just", "anyway", "I mean",
-      "sorta", "kinda", "like I said", "you see", "as I said", "or something", 
-      "if that makes sense", "you know what I mean", "let’s see", "so yeah", "so basically"
-    ];
+      const prompt = `
+          Generate a JSON object with the keys: fillerWords, questionTypes, improvements, fillerWordsList, strengths, tips, and contentScore.
+          Using the following:
 
-      
-      const fillerWords = words
-        .filter(w => w.word && fillerWordsList.includes(w.word.toLowerCase().trim()))
-        .map(w => ({
-          word: w.word,
-          start: w.start,
-          end: w.end,
-          confidence: w.confidence
-        }));
+          Transcript: ${transcript}
+          Question: ${questionText}
+
+          Instructions:
+          - Count how many filler words (um, uh, like, so, anyway, kinda, etc.) exist in the transcript, add the count to fillerWords and add the filler words as strings to the array fillerWordsList.
+          - Categorize the question as any of: Situational, Problem-solving, Technical, Leadership, Teamwork (can be multiple).
+          - Provide 1-2 bullet points of tips to improve the answer (provide as an array).
+          - Provide 1-2 bullet points of strengths to improve the answer (provide as an array).
+          - Provide 1-2 bullet points of improvements to improve the answer (provide as an array).
+          - Give a contentScore (0 to 60) based on how strong the answer is for an interview and how relevant the answer is to the question where 0 is a low score and 60 is the best possible score.
+
+          Respond ONLY with valid JSON. Do NOT include any explanation or text outside the JSON.
+      `;
+
+      // After parsing AI response
+      let aiResults;
+      try {
+        const completion = await openai.chat.completions.create({
+          model: "gpt-4o-mini",
+          messages: [{ role: "user", content: prompt }],
+          max_tokens: 500,
+          temperature: 0
+        });
+
+        const responseText = completion.choices[0].message.content;
+
+        // Extract JSON safely
+        const match = responseText.match(/\{[\s\S]*\}/);
+        if (!match) throw new Error("No JSON found in AI response");
+
+        aiResults = JSON.parse(match[0]); // <- store parsed JSON here
+      } catch (err) {
+        console.error("Error analyzing AI response:", err);
+        aiResults = { 
+          fillerWords: [], 
+          contentScore: 0, 
+          questionTypes: [], 
+          tips: "" 
+        };
+      }
+
+      // Extract individual fields
+      const fillerWordCount = aiResults.fillerWords;
+      const contentScore = aiResults.contentScore;
+      const questionTypes = aiResults.questionTypes;
+      const tips = aiResults.tips;
+      const strengths = aiResults.strengths;
+      const improvements = aiResults.improvements;
+      const fillerWordsList = aiResults.fillerWordsList;
 
       // Calculate speech metrics
       const totalWords = words.length;
-      const fillerWordCount = fillerWords.length;
-      const fillerWordPercentage = totalWords > 0 ? (fillerWordCount / totalWords * 100).toFixed(2) : 0;
-      
       const durationSeconds = recordedTime / 1000;
       const wordsPerMinute = durationSeconds > 0 ? Math.round((totalWords / durationSeconds) * 60) : 0;
 
@@ -400,12 +429,14 @@ exports.saveResponse = functions.https.onRequest((req, res) => {
         transcript,
         analysis: {
           totalWords,
-          fillerWords,
           fillerWordCount,
-          fillerWordPercentage: parseFloat(fillerWordPercentage),
-          transcriptionConfidence: confidence,
           wordsPerMinute,
-          durationSeconds: Math.round(durationSeconds)
+          fillerWordsList,
+          contentScore,
+          questionTypes,
+          strengths,
+          improvements,
+          tips
         },
         recordedTime: recordedTime || 0,
         timestamp: admin.database.ServerValue.TIMESTAMP,
