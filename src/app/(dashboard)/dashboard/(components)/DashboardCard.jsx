@@ -25,14 +25,15 @@ const DashboardCard = ({
                 sx={{
                     height: '420px',
                     borderRadius: '24px',
-                    background: 'rgba(255, 255, 255, 0.95)',
+                    background: isComingSoon ? 'rgba(255, 255, 255, 0.6)' : 'rgba(255, 255, 255, 0.95)',
                     backdropFilter: 'blur(20px)',
-                    border: '1px solid rgba(255, 255, 255, 0.3)',
+                    border: isComingSoon ? '1px solid rgba(200, 200, 200, 0.4)' : '1px solid rgba(255, 255, 255, 0.3)',
                     transition: 'all 0.3s ease',
                     cursor: isComingSoon ? 'not-allowed' : 'pointer',
-                    opacity: isComingSoon ? 0.8 : 1,
+                    opacity: isComingSoon ? 0.6 : 1,
                     position: 'relative',
                     overflow: 'hidden',
+                    filter: isComingSoon ? 'grayscale(40%) saturate(0.8)' : 'none',
                     '&:hover': {
                         boxShadow: isComingSoon ? 'none' : '0 25px 50px rgba(0, 0, 0, 0.15)',
                         transform: isComingSoon ? 'none' : 'translateY(-4px)',
@@ -44,7 +45,7 @@ const DashboardCard = ({
                         left: 0,
                         right: 0,
                         height: '6px',
-                        background: gradient,
+                        background: isComingSoon ? 'linear-gradient(90deg, #999999 0%, #cccccc 100%)' : gradient,
                         zIndex: 1
                     }
                 }}
@@ -72,7 +73,7 @@ const DashboardCard = ({
                 <Box
                     sx={{
                         height: '160px',
-                        background: gradient,
+                        background: isComingSoon ? 'linear-gradient(135deg, #b8b8b8 0%, #d4d4d4 100%)' : gradient,
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
