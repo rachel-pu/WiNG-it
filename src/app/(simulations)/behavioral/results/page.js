@@ -26,7 +26,7 @@ export default function InterviewResults() {
     const [totalAverageRecordedTime, setTotalAverageRecordedTime] = useState();
     const router = useRouter();
 
-    function calculatePerformanceScoreDiminishing({responseTime, wordCount, fillerWords, actionWords, statsUsed}) {
+    function calculatePerformanceScoreDiminishing({responseTime, wordCount, fillerWords, actionWords, statsUsed, interviewerDifficulty = 'easy-going-personality'}) {
         //input validation
         if (!responseTime || !wordCount || fillerWords < 0 || actionWords < 0 || statsUsed < 0){
             console.log(!responseTime)
@@ -40,58 +40,88 @@ export default function InterviewResults() {
 
         let score = 100;
 
+        // Difficulty multipliers - higher difficulty = harsher scoring
+        const getDifficultyMultipliers = (difficulty) => {
+            switch (difficulty) {
+                case 'challenging-personality':
+                    return {
+                        penaltyMultiplier: 1.4,  // 40% harsher penalties
+                        bonusMultiplier: 0.8,    // 20% reduced bonuses
+                        baseThreshold: 0.9       // 10% stricter thresholds
+                    };
+                case 'moderate-personality':
+                    return {
+                        penaltyMultiplier: 1.2,  // 20% harsher penalties
+                        bonusMultiplier: 0.9,    // 10% reduced bonuses
+                        baseThreshold: 0.95      // 5% stricter thresholds
+                    };
+                case 'easy-going-personality':
+                default:
+                    return {
+                        penaltyMultiplier: 1.0,  // Standard penalties
+                        bonusMultiplier: 1.0,    // Standard bonuses
+                        baseThreshold: 1.0       // Standard thresholds
+                    };
+            }
+        };
+
+        const { penaltyMultiplier, bonusMultiplier, baseThreshold } = getDifficultyMultipliers(interviewerDifficulty);
+
          //penalize extremely long response
         if (responseTime > 300) {
-            score -= Math.min((responseTime - 300) * 0.05, 10);
+            score -= Math.min((responseTime - 300) * 0.05 * penaltyMultiplier, 10 * penaltyMultiplier);
         }
 
-        // 1. Response time penalty
-        if (responseTime < 20) {
-            const deduction = Math.min((60 - responseTime) * 0.2, 12);
+        // 1. Response time penalty (adjusted for difficulty)
+        const minResponseTime = 20 * baseThreshold;
+        if (responseTime < minResponseTime) {
+            const deduction = Math.min((60 - responseTime) * 0.2 * penaltyMultiplier, 12 * penaltyMultiplier);
             score -= deduction;
         }
 
-        // 2. Word count penalty
-        if (wordCount < 50) {
-            const deduction = Math.min((100 - wordCount) * 0.07, 7);
+        // 2. Word count penalty (adjusted for difficulty)
+        const minWordCount = 50 * baseThreshold;
+        if (wordCount < minWordCount) {
+            const deduction = Math.min((100 - wordCount) * 0.07 * penaltyMultiplier, 7 * penaltyMultiplier);
             score -= deduction;
         }
 
-        // 3. Filler words ratio penalty
+        // 3. Filler words ratio penalty (stricter thresholds for higher difficulty)
         if (wordCount > 0) {
             const ratio = fillerWords / wordCount;
-            if (ratio > 0.05) {
-                const excess = ratio - 0.05;
-                const deduction = Math.min(Math.pow(excess * 100, 1.2), 15); // more severe
+            const fillerThreshold = 0.05 * baseThreshold; // Stricter filler word tolerance for harder difficulties
+            if (ratio > fillerThreshold) {
+                const excess = ratio - fillerThreshold;
+                const deduction = Math.min(Math.pow(excess * 100, 1.2) * penaltyMultiplier, 15 * penaltyMultiplier);
                 score -= deduction;
             }
         }
 
+        // Long response penalty (adjusted for difficulty)
         if (wordCount > 300) {
-            const deduction = Math.min((wordCount - 300) * 0.05, 5);
+            const deduction = Math.min((wordCount - 300) * 0.05 * penaltyMultiplier, 5 * penaltyMultiplier);
             score -= deduction;
         }
 
+        // 4. Action words points with diminishing returns (reduced bonus for harder difficulties)
+        score += harmonicPoints(actionWords) * 1.2 * bonusMultiplier;
 
-        // 4. Action words points with diminishing returns
-        score += harmonicPoints(actionWords) * 1.2;
+        // 5. Stats used points with diminishing returns (reduced bonus for harder difficulties)
+        score += harmonicPoints(statsUsed) * bonusMultiplier;
 
-        // 5. Stats used points with diminishing returns
-        score += harmonicPoints(statsUsed);
-
-        // 6. Time efficiency bonus
+        // 6. Time efficiency bonus (reduced bonus for harder difficulties)
         if (responseTime >= 60 && responseTime <= 180) {
             // scale linearly from 0 to 5 points
-            const bonus = ((responseTime - 60) / (180 - 60)) * 5;
+            const bonus = ((responseTime - 60) / (180 - 60)) * 5 * bonusMultiplier;
             score += bonus;
         }
 
-        // 7. Consistency penalty: words vs time
+        // 7. Consistency penalty: words vs time (adjusted for difficulty)
         const wordsPerSecond = wordCount / responseTime;
         if (wordsPerSecond < 1) {
-            score -= Math.min((1 - wordsPerSecond) * 20, 10);
+            score -= Math.min((1 - wordsPerSecond) * 20 * penaltyMultiplier, 10 * penaltyMultiplier);
         } else if (wordsPerSecond > 4) {
-            score -= Math.min((wordsPerSecond - 4) * 10, 10);
+            score -= Math.min((wordsPerSecond - 4) * 10 * penaltyMultiplier, 10 * penaltyMultiplier);
         }
 
         // 8. Cap score between 0 and 100
@@ -201,7 +231,8 @@ export default function InterviewResults() {
                 wordCount: analysis?.totalWords || 0,
                 fillerWords: analysis?.fillerWordCount || 0,
                 actionWords: 0,
-                statsUsed: 0 
+                statsUsed: 0,
+                interviewerDifficulty: data?.interviewerDifficulty || response?.interviewerDifficulty || 'easy-going-personality'
             });
 
             // Extract action words and stats from transcript
