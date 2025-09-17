@@ -1174,17 +1174,36 @@ export default function InterviewResults() {
                                                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
                                                      
                                                     <Typography sx={{ fontSize: '1.1rem', fontWeight: 600, color: '#1f2937', flex: 1, mr: 2, fontFamily: 'Satoshi Bold' }}>
-                                                       <Typography 
-                                                        sx={{ 
-                                                        fontSize: '0.9rem', 
-                                                        fontWeight: 600, 
-                                                        color: '#2563eb', 
-                                                        fontFamily: 'Satoshi Bold',
-                                                        mb: 0.5
-                                                        }}
-                                                    >
-                                                        {currentData.questionTypes?.join(', ')}
-                                                    </Typography>{currentData.question}
+                                                       <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mb: 1 }}>
+                                                        {currentData.questionTypes?.map((type, index) => {
+                                                            const colors = [
+                                                                { bg: '#e0f2fe', text: '#0277bd', border: '#81d4fa' }, // Blue
+                                                                { bg: '#f3e8ff', text: '#7c3aed', border: '#c4b5fd' }, // Purple
+                                                                { bg: '#dcfce7', text: '#16a34a', border: '#86efac' }, // Green
+                                                                { bg: '#fef3c7', text: '#d97706', border: '#fcd34d' }, // Yellow
+                                                                { bg: '#fee2e2', text: '#dc2626', border: '#fca5a5' }, // Red
+                                                                { bg: '#f0f9ff', text: '#0284c7', border: '#7dd3fc' }, // Sky
+                                                                { bg: '#fdf4ff', text: '#c026d3', border: '#f0abfc' }, // Fuchsia
+                                                                { bg: '#ecfdf5', text: '#059669', border: '#6ee7b7' }  // Emerald
+                                                            ];
+                                                            const colorSet = colors[index % colors.length];
+                                                            return (
+                                                                <Chip
+                                                                    key={index}
+                                                                    label={type}
+                                                                    size="small"
+                                                                    sx={{
+                                                                        backgroundColor: colorSet.bg,
+                                                                        color: colorSet.text,
+                                                                        fontWeight: 600,
+                                                                        fontSize: '0.75rem',
+                                                                        fontFamily: 'Satoshi Medium',
+                                                                        border: `1px solid ${colorSet.border}`
+                                                                    }}
+                                                                />
+                                                            );
+                                                        }) || []}
+                                                    </Box>{currentData.question}
                                                     </Typography>
                                                     <PerformanceIndicator score={currentData.score} />
                                                 </Box>
