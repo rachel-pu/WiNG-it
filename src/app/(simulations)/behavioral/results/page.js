@@ -630,45 +630,98 @@ export default function InterviewResults() {
         <Card
             sx={{
                 p: 3,
-                borderRadius: '16px',
-                border: '1px solid #e5e7eb',
-                background: 'linear-gradient(135deg, #ffffff 0%, #f9fafb 100%)',
-                transition: 'all 0.2s ease',
-                '&:hover': {
-                    transform: 'translateY(-2px)',
-                    boxShadow: '0 8px 25px rgba(0,0,0,0.1)'
+                borderRadius: '20px',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                background: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.8) 100%)',
+                backdropFilter: 'blur(20px)',
+                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.08)',
+                height: '100%',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
+                position: 'relative',
+                overflow: 'hidden',
+                '&::before': {
+                    content: '""',
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    height: '3px',
+                    background: `linear-gradient(90deg, ${color} 0%, ${color}88 100%)`,
+                    borderRadius: '20px 20px 0 0'
                 }
             }}
         >
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 1 }}>
+            <Box sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                textAlign: 'center',
+                gap: 2
+            }}>
                 <Box
                     sx={{
-                        width: 40,
-                        height: 40,
-                        borderRadius: '10px',
-                        backgroundColor: `${color}15`,
+                        width: 56,
+                        height: 56,
+                        borderRadius: '16px',
+                        background: `linear-gradient(135deg, ${color}15 0%, ${color}25 100%)`,
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        color: color
+                        color: color,
+                        boxShadow: `0 4px 16px ${color}20`
                     }}
                 >
-                    <Icon sx={{ fontSize: 20 }} />
+                    <Icon sx={{ fontSize: 28 }} />
                 </Box>
+
                 <Box>
-                    <Typography sx={{ fontSize: '1.5rem', fontWeight: 700, color: '#1f2937', fontFamily: 'Satoshi Bold' }}>
+                    <Typography sx={{
+                        fontSize: '2rem',
+                        fontWeight: 800,
+                        color: '#1f2937',
+                        fontFamily: 'Satoshi Black',
+                        lineHeight: 1,
+                        mb: 0.5
+                    }}>
                         {value}
                     </Typography>
-                    <Typography sx={{ fontSize: '0.8rem', color: '#6b7280', fontFamily: 'DM Sans' }}>
+                    <Typography sx={{
+                        fontSize: '0.9rem',
+                        color: '#6b7280',
+                        fontFamily: 'DM Sans Medium',
+                        fontWeight: 500,
+                        letterSpacing: '0.025em'
+                    }}>
                         {label}
                     </Typography>
                 </Box>
             </Box>
+
             {subtitle && (
-                <Typography sx={{ fontSize: '0.75rem', color: '#9ca3af', fontFamily: 'DM Sans' }}>
+                <Typography sx={{
+                    fontSize: '0.75rem',
+                    color: '#9ca3af',
+                    fontFamily: 'DM Sans',
+                    textAlign: 'center',
+                    mt: 1
+                }}>
                     {subtitle}
                 </Typography>
             )}
+
+            {/* Subtle background decoration */}
+            <Box sx={{
+                position: 'absolute',
+                bottom: -20,
+                right: -20,
+                width: 60,
+                height: 60,
+                borderRadius: '50%',
+                background: `linear-gradient(135deg, ${color}08 0%, ${color}15 100%)`,
+                zIndex: 0
+            }} />
         </Card>
     );
 
@@ -1106,42 +1159,41 @@ export default function InterviewResults() {
                                                 </Box>
                                             </Card>
 
-                                            {/* Metrics Grid */}
-                                            <Grid container spacing={2} sx={{ mb: 3 }}>
-                                                <Grid item xs={6} sm={3}>
-                                                    <MetricCard
-                                                        icon={AccessTimeIcon}
-                                                        label="Seconds"
-                                                        value={recordedTimes[selectedQuestion - 1]?.recordedTime}
-                                                        color="#8b5cf6"
-                        
-                                                    />
+                                            {/* Metrics Grid - Fixed version */}
+                                                <Grid container spacing={2} sx={{ mb: 3, alignItems: 'stretch' }}>
+                                                    <Grid item xs={6} sm={3}>
+                                                        <MetricCard
+                                                            icon={AccessTimeIcon}
+                                                            label="Seconds"
+                                                            value={recordedTimes[selectedQuestion - 1]?.recordedTime}
+                                                            color="#8b5cf6"
+                                                        />
+                                                    </Grid>
+                                                    <Grid item xs={6} sm={3}>
+                                                        <MetricCard
+                                                            icon={RecordVoiceOverIcon}
+                                                            label="Word Count"
+                                                            value={currentData.wordCount}
+                                                            color="#06b6d4"
+                                                        />
+                                                    </Grid>
+                                                    <Grid item xs={6} sm={3}>
+                                                        <MetricCard
+                                                            icon={TrendingUpIcon}
+                                                            label="Action Words"
+                                                            value={currentData.actionWords}
+                                                            color="#10b981"
+                                                        />
+                                                    </Grid>
+                                                    <Grid item xs={6} sm={3}>
+                                                        <MetricCard
+                                                            icon={BarChartIcon}
+                                                            label="Statistics"
+                                                            value={currentData.statsUsed}
+                                                            color="#f59e0b"
+                                                        />
+                                                    </Grid>
                                                 </Grid>
-                                                <Grid item xs={6} sm={3}>
-                                                    <MetricCard
-                                                        icon={RecordVoiceOverIcon}
-                                                        label="Word Count"
-                                                        value={currentData.wordCount}
-                                                        color="#06b6d4"
-                                                    />
-                                                </Grid>
-                                                <Grid item xs={6} sm={3}>
-                                                    <MetricCard
-                                                        icon={TrendingUpIcon}
-                                                        label="Action Words"
-                                                        value={currentData.actionWords}
-                                                        color="#10b981"
-                                                    />
-                                                </Grid>
-                                                <Grid item xs={6} sm={3}>
-                                                    <MetricCard
-                                                        icon={BarChartIcon}
-                                                        label="Statistics"
-                                                        value={currentData.statsUsed}
-                                                        color="#f59e0b"
-                                                    />
-                                                </Grid>
-                                            </Grid>
 
                                             {/* Transcript */}
                                             <Card sx={{ p: 3, mb: 3, borderRadius: '16px' }}>
