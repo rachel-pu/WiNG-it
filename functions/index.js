@@ -364,19 +364,19 @@ exports.saveResponse = functions.https.onRequest((req, res) => {
       const words = result?.results?.channels?.[0]?.alternatives?.[0]?.words || [];
       console.log('Transcript:', transcript.substring(0, 100));
       const prompt = `
-          Generate a JSON object with the keys: fillerWords, questionTypes, improvements, strengths, tips, and contentScore.
+          Generate a JSON object with the keys: fillerWords, questionTypes, improvements, fillerWordsList, strengths, tips, and contentScore.
           Using the following:
 
           Transcript: ${transcript}
           Question: ${questionText}
 
           Instructions:
-          - Count how many filler words (um, uh, like, so, anyway, kinda, etc.) exist in the transcript.
+          - Count how many filler words (um, uh, like, so, anyway, kinda, etc.) exist in the transcript, add the count to fillerWords and add the filler words as strings to the array fillerWordsList.
           - Categorize the question as any of: Situational, Problem-solving, Technical, Leadership, Teamwork (can be multiple).
           - Provide 1-2 bullet points of tips to improve the answer (provide as an array).
           - Provide 1-2 bullet points of strengths to improve the answer (provide as an array).
           - Provide 1-2 bullet points of improvements to improve the answer (provide as an array).
-          - Give a contentScore (0 to 60) based on how strong the answer is for an interview and how relevant the answer is to the question
+          - Give a contentScore (0 to 60) based on how strong the answer is for an interview and how relevant the answer is to the question where 0 is a low score and 60 is the best possible score.
 
           Respond ONLY with valid JSON. Do NOT include any explanation or text outside the JSON.
       `;
@@ -415,6 +415,7 @@ exports.saveResponse = functions.https.onRequest((req, res) => {
       const tips = aiResults.tips;
       const strengths = aiResults.strengths;
       const improvements = aiResults.improvements;
+      const fillerWordsList = aiResults.fillerWordsList;
 
       // Calculate speech metrics
       const totalWords = words.length;
@@ -430,6 +431,7 @@ exports.saveResponse = functions.https.onRequest((req, res) => {
           totalWords,
           fillerWordCount,
           wordsPerMinute,
+          fillerWordsList,
           contentScore,
           questionTypes,
           strengths,
