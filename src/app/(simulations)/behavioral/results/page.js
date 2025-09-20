@@ -25,6 +25,8 @@ export default function InterviewResults() {
     const [error, setError] = useState(null);
     const [totalAverageRecordedTime, setTotalAverageRecordedTime] = useState();
     const router = useRouter();
+    const [activeTab, setActiveTab] = useState(0);
+
 
     function calculatePerformanceScoreDiminishing({starAnswerParsed, responseTime, wordCount, fillerWords, actionWords, statsUsed, interviewerDifficulty = 'easy-going-personality'}) {
         // Input validation
@@ -159,6 +161,52 @@ export default function InterviewResults() {
         return points;
     }
 
+    const tabStyle = (isActive) => ({
+        padding: '12px 16px',
+        fontSize: '1.1rem',
+        fontWeight: '600',
+        fontFamily: 'system-ui, -apple-system, sans-serif',
+        color: isActive ? '#1f2937' : '#6B7280',
+        backgroundColor: 'transparent',
+        border: 'none',
+        borderBottom: isActive ? '3px solid #3B82F6' : '3px solid transparent',
+        cursor: 'pointer',
+        transition: 'all 0.2s ease-in-out',
+        borderRadius: '4px 4px 0 0'
+    });
+
+    const contentBoxStyle = {
+        padding: '24px',
+        backgroundColor: '#f8fafc',
+        borderRadius: '12px',
+        border: '1px solid #e2e8f0'
+    };
+
+    const textStyle = {
+        lineHeight: '1.6',
+        color: '#374151',
+        fontFamily: 'system-ui, -apple-system, sans-serif'
+    };
+
+    const legendStyle = {
+        marginTop: '24px',
+        padding: '16px',
+        borderRadius: '8px'
+    };
+
+    const legendItemStyle = {
+        display: 'flex',
+        alignItems: 'center',
+        gap: '8px'
+    };
+
+    const colorBoxStyle = (bgColor, borderColor) => ({
+        width: '16px',
+        height: '16px',
+        backgroundColor: bgColor,
+        borderRadius: '4px',
+        border: `1px solid ${borderColor}`
+    });
     
     useEffect(() => {
         const fetchData = async () => {
@@ -1309,83 +1357,87 @@ function escapeRegExp(s) {
                                                         />
                                                     </Grid>
                                                 </Grid>
+                                                
 
                                             {/* Transcript */}
                                             <Card sx={{ p: 3, mb: 3, borderRadius: '16px' }}>
-                                                <Typography sx={{ fontSize: '1.1rem', fontWeight: 600, mb: 2, color: '#1f2937', fontFamily: 'Satoshi Bold' }}>
+                                                <div className="tabContainerStyle">
+                                                    <button 
+                                                    style={tabStyle(activeTab === 0)}
+                                                    onClick={() => setActiveTab(0)}
+                                                    >
                                                     📝 Your Response
-                                                </Typography>
-                                                <Box sx={{ 
-                                                    p: 3, 
-                                                    backgroundColor: '#f8fafc', 
-                                                    borderRadius: '12px',
-                                                    border: '1px solid #e2e8f0'
-                                                }}>
-                                                    <Typography
-                                                        sx={{ lineHeight: 1.6, color: '#374151', fontFamily: 'DM Sans' }}
+                                                    </button>
+                                                    <button 
+                                                    style={tabStyle(activeTab === 1)}
+                                                    onClick={() => setActiveTab(1)}
+                                                    >
+                                                    ✨ Improved Response
+                                                    </button>
+                                                </div>
+                                                {/* Tab Content */}
+                                                {activeTab === 0 && (
+                                                    <div>
+                                                    <div style={contentBoxStyle}>
+                                                        <div
+                                                        style={textStyle}
                                                         dangerouslySetInnerHTML={{
                                                             __html: highlightText(
-                                                                currentData.transcript,
-                                                                currentData.fillerWordsList,
-                                                                currentData.actionWordsList,
-                                                                currentData.starAnswerParsed
+                                                            currentData.transcript,
+                                                            currentData.fillerWordsList,
+                                                            currentData.actionWordsList,
+                                                            currentData.starAnswerParsed
                                                             )
                                                         }}
-                                                    />
-                                                </Box>
-                                                
-                                                {/* Legend */}
-                                                <Box sx={{ mt: 3, p: 2, borderRadius: '8px' }}>
-                                                    <Typography sx={{ fontSize: '0.8rem', fontWeight: 600, mb: 1, color: '#374151', fontFamily: 'Satoshi Medium' }}>
+                                                        />
+                                                    </div>
+                                                    
+                                                    {/* Legend */}
+                                                    <div style={legendStyle}>
+                                                        <div style={{ fontSize: '0.8rem', fontWeight: '600', marginBottom: '8px', color: '#374151', fontFamily: 'system-ui, -apple-system, sans-serif' }}>
                                                         Highlight Legend:
-                                                    </Typography>
-                                                    <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
-                                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                                            <Box sx={{ 
-                                                                width: 16, 
-                                                                height: 16, 
-                                                                backgroundColor: '#d1fae5', 
-                                                                borderRadius: '4px',
-                                                                border: '1px solid #a7f3d0'
-                                                            }} />
-                                                            <Typography sx={{ fontSize: '0.75rem', color: '#065f46', fontFamily: 'DM Sans' }}>
-                                                                Action Words
-                                                            </Typography>
-                                                        </Box>
-                                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                                            <Box sx={{ 
-                                                                width: 16, 
-                                                                height: 16, 
-                                                                backgroundColor: '#C7DDFC', 
-                                                                borderRadius: '4px',
-                                                                border: '1px solid #6ea7e4ff'
-                                                            }} />
-                                                            <Typography sx={{ fontSize: '0.75rem', color: '#325274', fontFamily: 'DM Sans' }}>
-                                                                Numbers/Stats
-                                                            </Typography>
-                                                        </Box>
-                                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                                            <Box sx={{ 
-                                                                width: 16, 
-                                                                height: 16, 
-                                                                backgroundColor: '#ffd9d9ff', 
-                                                                borderRadius: '4px',
-                                                                border: '1px solid #fca8a8ff'
-                                                            }} />
-                                                            <Typography sx={{ fontSize: '0.75rem', color: '#dc2626', fontFamily: 'DM Sans' }}>
-                                                                Filler Words
-                                                            </Typography>
-                                                        </Box>
+                                                        </div>
+                                                        <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap', alignItems: 'center' }}>
+                                                        <div style={legendItemStyle}>
+                                                            <div style={colorBoxStyle('#d1fae5', '#a7f3d0')} />
+                                                            <span style={{ fontSize: '0.75rem', color: '#065f46', fontFamily: 'system-ui, -apple-system, sans-serif' }}>
+                                                            Action Words
+                                                            </span>
+                                                        </div>
+                                                        <div style={legendItemStyle}>
+                                                            <div style={colorBoxStyle('#C7DDFC', '#6ea7e4ff')} />
+                                                            <span style={{ fontSize: '0.75rem', color: '#325274', fontFamily: 'system-ui, -apple-system, sans-serif' }}>
+                                                            Numbers/Stats
+                                                            </span>
+                                                        </div>
+                                                        <div style={legendItemStyle}>
+                                                            <div style={colorBoxStyle('#ffd9d9ff', '#fca8a8ff')} />
+                                                            <span style={{ fontSize: '0.75rem', color: '#dc2626', fontFamily: 'system-ui, -apple-system, sans-serif' }}>
+                                                            Filler Words
+                                                            </span>
+                                                        </div>
 
-                                                        <Typography sx={{ fontSize: '1rem', fontFamily: 'DM Sans Bold', fontWeight: 600 }}>
-                                                            <span style={{ color: '#FBBF24', borderBottom: '3px solid #FBBF24' }}>S </span>
-                                                            <span style={{ color: '#3B82F6', borderBottom: '3px solid #3B82F6' }}>T </span>
-                                                            <span style={{ color: '#FB923C', borderBottom: '3px solid #FB923C' }}>A </span>
-                                                            <span style={{ color: '#8B5CF6', borderBottom: '3px solid #8B5CF6' }}>R </span>
-                                                        </Typography>
-                                                    </Box>
-                                                </Box>
-                    
+                                                        <div style={{ fontSize: '0.8rem', fontFamily: 'system-ui, -apple-system, sans-serif', fontWeight: '600' }}>
+                                                            <span style={{ color: 'black', borderBottom: '3px solid #FBBF24' }}>Situation </span>
+                                                            <span style={{ color: 'black', borderBottom: '3px solid #3B82F6' }}>Task </span>
+                                                            <span style={{ color: 'black', borderBottom: '3px solid #FB923C' }}>Action </span>
+                                                            <span style={{ color: 'black', borderBottom: '3px solid #8B5CF6' }}>Result </span>
+                                                        </div>
+                                                        </div>
+                                                    </div>
+                                                    </div>
+                                                )}
+
+                                                {activeTab === 1 && (
+                                                    <div style={contentBoxStyle}>
+                                                    <div
+                                                        style={textStyle}
+                                                        dangerouslySetInnerHTML={{
+                                                        __html: currentData.improvedResponse
+                                                        }}
+                                                    />
+                                                    </div>
+                                                )}
                                             </Card>
 
                                             {/* Analysis & Tips */}
@@ -1477,26 +1529,6 @@ function escapeRegExp(s) {
                                                     </Card>
                                                 </Grid>
                                             </Grid>
-                                            {/* Improved Response */}
-                                            <Card sx={{ p: 3, mb: 3, borderRadius: '16px', marginTop: "30px"}}>
-                                                <Typography sx={{ fontSize: '1.1rem', fontWeight: 600, mb: 2, color: '#1f2937', fontFamily: 'Satoshi Bold' }}>
-                                                    📝 Improved Response
-                                                </Typography>
-                                                <Box sx={{ 
-                                                    p: 3, 
-                                                    backgroundColor: '#f8fafc', 
-                                                    borderRadius: '12px',
-                                                    border: '1px solid #e2e8f0'
-                                                }}>
-                                                    <Typography
-                                                        sx={{ lineHeight: 1.6, color: '#374151', fontFamily: 'DM Sans' }}
-                                                        dangerouslySetInnerHTML={{
-                                                            __html:
-                                                                currentData.improvedResponse
-                                                        }}
-                                                    />
-                                                </Box>
-                                                </Card>
                                         </motion.div>
                                     </AnimatePresence>
                                 </Grid>
