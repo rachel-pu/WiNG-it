@@ -223,7 +223,9 @@ export default function InterviewResults() {
                 score: score,
                 strengths: analysis?.strengths || generateStrengths(analysis, actionWordsList.length, statsUsed.length),
                 improvements:  analysis?.improvements || generateImprovements(analysis),
-                tips: analysis?.tips ||generateTips(analysis)
+                tips: analysis?.tips ||generateTips(analysis),
+                improvedResponse: analysis?.improvedResponse,
+                starAnswerParsed: analysis?.starAnswerParsed,
             };
         });
         
@@ -510,45 +512,86 @@ export default function InterviewResults() {
 
     const overallTips = generateOverallTips();
 
-    // Highlight text function
-    const highlightText = (text, fillerWords, actionWords) => {
-        if (!text) return text;
-        
-        // Create arrays of words to highlight, ensuring they exist and are not empty
-        const safeFillerWords = Array.isArray(fillerWords) ? fillerWords.filter(word => word && word.trim()) : [];
-        const safeActionWords = Array.isArray(actionWords) ? actionWords.filter(word => word && word.trim()) : [];
-        
-        // Split text into words and spaces to preserve formatting
-        const tokens = text.split(/(\s+)/);
-        
-        return tokens.map(token => {
-            // Skip whitespace
-            if (/^\s+$/.test(token)) {
-                return token;
-            }
-            
-            // Clean the word for comparison (remove punctuation)
-            const cleanWord = token.toLowerCase().replace(/[^\w]/g, '');
-            if (!cleanWord) return token;
-            
-            // Check for numbers (including percentages, decimals, etc.)
-            if (/^\d+(?:\.\d+)?(?:%|percent|million|billion|thousand|k|m|b)?$/i.test(cleanWord)) {
-                return `<span style="background-color: #c1deffff; color: #275377ff; padding: 2px 4px; border-radius: 4px; font-weight: 600;">${token}</span>`;
-            }
-            
-            // Check for action words
-            if (safeActionWords.some(actionWord => actionWord.toLowerCase() === cleanWord)) {
-                return `<span style="background-color: #d1fae5; color: #065f46; padding: 2px 4px; border-radius: 4px; font-weight: 600;">${token}</span>`;
-            }
-            
-            // Check for filler words
-            if (safeFillerWords.some(fillerWord => fillerWord.toLowerCase() === cleanWord)) {
-                return `<span style="background-color: #ffd9d9ff; color: #dc2626; padding: 2px 4px; border-radius: 4px; font-weight: 600;">${token}</span>`;
-            }
-            
-            return token;
-        }).join('');
-    };
+const highlightText = (text, fillerWords, actionWords, starAnswerParsed) => {
+  if (!text) return text;
+
+  const safeFillerWords = Array.isArray(fillerWords) ? fillerWords.filter(w => w?.trim()) : [];
+  const safeActionWords = Array.isArray(actionWords) ? actionWords.filter(w => w?.trim()) : [];
+
+  // STAR underline colors (hex ensures visibility)
+  const starColors = {
+    situation: '#FBBF24', // yellow-400, visible
+    task:      '#3B82F6', // blue
+    action:    '#8B5CF6', // purple
+    result:    '#FB923C'  // orange
+  };
+
+  // Build STAR phrases longest-first
+  const starEntries = Object.entries(starAnswerParsed || {})
+    .map(([key, val]) => ({ key, phrase: (val || '').trim() }))
+    .filter(e => e.phrase)
+    .sort((a, b) => b.phrase.length - a.phrase.length);
+
+  if (!starEntries.length) return processNormalSegment(text, safeFillerWords, safeActionWords);
+
+  // Wrap STAR phrases first so outer span holds underline
+  let processedText = text;
+  starEntries.forEach(({ key, phrase }) => {
+    const color = starColors[key] || 'black';
+    const regex = new RegExp(escapeRegExp(phrase), 'gi');
+    processedText = processedText.replace(regex, match => 
+      `<span class="star-phrase" data-color="${color}">${match}</span>`
+    );
+  });
+
+  // Split by STAR spans to preserve them
+  const finalSegments = [];
+  const starSpanRegex = /<span class="star-phrase" data-color="(.+?)">([\s\S]*?)<\/span>/g;
+  let lastIndex = 0, match;
+  while ((match = starSpanRegex.exec(processedText)) !== null) {
+    if (match.index > lastIndex) {
+      finalSegments.push({ type: 'normal', text: processedText.slice(lastIndex, match.index) });
+    }
+    finalSegments.push({ type: 'star', text: match[2], color: match[1] });
+    lastIndex = starSpanRegex.lastIndex;
+  }
+  if (lastIndex < processedText.length) {
+    finalSegments.push({ type: 'normal', text: processedText.slice(lastIndex) });
+  }
+
+  return finalSegments.map(seg => {
+    if (seg.type === 'normal') return processNormalSegment(seg.text, safeFillerWords, safeActionWords);
+    // Outer span for STAR phrase, inner highlighting applied
+    const inner = processNormalSegment(seg.text, safeFillerWords, safeActionWords);
+    return `<span style="border-bottom: 3px solid ${seg.color};">${inner}</span>`;
+  }).join('');
+};
+
+function processNormalSegment(segmentText, safeFillerWords, safeActionWords) {
+  const tokens = segmentText.split(/(\s+)/);
+  return tokens.map(token => {
+    if (/^\s+$/.test(token)) return token;
+    const cleanWord = token.toLowerCase().replace(/[^\w]/g, '');
+    if (!cleanWord) return token;
+
+    if (/^\d+(?:\.\d+)?(?:%|percent|million|billion|thousand|k|m|b)?$/i.test(cleanWord)) {
+      return `<span style="background-color:#c1deff;color:#275377;padding:2px 4px;border-radius:4px;font-weight:600;">${token}</span>`;
+    }
+    if (safeActionWords.some(w => w.toLowerCase() === cleanWord)) {
+      return `<span style="background-color:#d1fae5;color:#065f46;padding:2px 4px;border-radius:4px;font-weight:600;">${token}</span>`;
+    }
+    if (safeFillerWords.some(w => w.toLowerCase() === cleanWord)) {
+      return `<span style="background-color:#ffd9d9;color:#dc2626;padding:2px 4px;border-radius:4px;font-weight:600;">${token}</span>`;
+    }
+    return token;
+  }).join('');
+}
+
+function escapeRegExp(s) {
+  return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+
 
     // Animation variants
     const containerVariants = {
@@ -1160,7 +1203,8 @@ export default function InterviewResults() {
                                                             __html: highlightText(
                                                                 currentData.transcript,
                                                                 currentData.fillerWordsList,
-                                                                currentData.actionWordsList
+                                                                currentData.actionWordsList,
+                                                                currentData.starAnswerParsed
                                                             )
                                                         }}
                                                     />
@@ -1302,6 +1346,26 @@ export default function InterviewResults() {
                                                     </Card>
                                                 </Grid>
                                             </Grid>
+                                            {/* Improved Response */}
+                                            <Card sx={{ p: 3, mb: 3, borderRadius: '16px' }}>
+                                                <Typography sx={{ fontSize: '1.1rem', fontWeight: 600, mb: 2, color: '#1f2937', fontFamily: 'Satoshi Bold' }}>
+                                                    📝 Improved Response
+                                                </Typography>
+                                                <Box sx={{ 
+                                                    p: 3, 
+                                                    backgroundColor: '#f8fafc', 
+                                                    borderRadius: '12px',
+                                                    border: '1px solid #e2e8f0'
+                                                }}>
+                                                    <Typography
+                                                        sx={{ lineHeight: 1.6, color: '#374151', fontFamily: 'DM Sans' }}
+                                                        dangerouslySetInnerHTML={{
+                                                            __html:
+                                                                currentData.improvedResponse
+                                                        }}
+                                                    />
+                                                </Box>
+                                                </Card>
                                         </motion.div>
                                     </AnimatePresence>
                                 </Grid>

@@ -376,7 +376,7 @@ exports.saveResponse = functions.https.onRequest((req, res) => {
           - Provide 1-2 bullet points of tips to improve the answer, at least one should be how to improve according to star method (provide as an array).
           - Provide 1-2 bullet points of strengths to improve the answer (provide as an array).
           - Provide 1-2 bullet points of improvements to improve the answer (provide as an array).
-          - For the starAnswerParsed variable, this should be a hashmap that extracts out each part of the answer in the transcript according to the star interview method. I should have 4 keys in the map matching to situation, task, action, result. Some of the values may be blank if the answer doesn't cover them.
+          - For the starAnswerParsed variable, this should be a hashmap that extracts out each part of the answer in the transcript according to the star interview method. I should have 4 keys in the map matching to situation, task, action, result. Some of the values may be blank if the answer doesn't cover them. do NOT end the values with periods
           - For the improvedResponse variable, according to everything analyzed, rewrite the response to be a better answer to the question provided.
           Respond ONLY with valid JSON. Do NOT include any explanation or text outside the JSON.
       `;
