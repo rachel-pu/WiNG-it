@@ -26,70 +26,57 @@ export default function InterviewResults() {
     const [totalAverageRecordedTime, setTotalAverageRecordedTime] = useState();
     const router = useRouter();
 
-    function calculatePerformanceScoreDiminishing({responseTime, wordCount, fillerWords, actionWords, statsUsed, interviewerDifficulty = 'easy-going-personality'}) {
-        //input validation
-        if (!responseTime || !wordCount || fillerWords < 0 || actionWords < 0 || statsUsed < 0){
-            console.log(!responseTime)
+    function calculatePerformanceScoreDiminishing({starAnswerParsed, responseTime, wordCount, fillerWords, actionWords, statsUsed, interviewerDifficulty = 'easy-going-personality'}) {
+        // Input validation
+        if (!starAnswerParsed || !responseTime || !wordCount || fillerWords < 0 || actionWords < 0 || statsUsed < 0){
             return 0;
         }
 
-        //hard penalize little to no response
+        // Hard penalize little to no response
         if (wordCount < 10){
-            return Math.round(wordCount * 1.5);
+            return Math.round((wordCount * 1.5) * 0.6); // scale proportionally
         }
 
-        let score = 100;
+        let score = 100; // Keep calculation out of 100 for logic simplicity
 
-        // Difficulty multipliers - higher difficulty = harsher scoring
+        // Difficulty multipliers
         const getDifficultyMultipliers = (difficulty) => {
             switch (difficulty) {
                 case 'challenging-personality':
-                    return {
-                        penaltyMultiplier: 1.4,  // 40% harsher penalties
-                        bonusMultiplier: 0.8,    // 20% reduced bonuses
-                        baseThreshold: 0.9       // 10% stricter thresholds
-                    };
+                    return { penaltyMultiplier: 1.4, bonusMultiplier: 0.8, baseThreshold: 0.9 };
                 case 'moderate-personality':
-                    return {
-                        penaltyMultiplier: 1.2,  // 20% harsher penalties
-                        bonusMultiplier: 0.9,    // 10% reduced bonuses
-                        baseThreshold: 0.95      // 5% stricter thresholds
-                    };
+                    return { penaltyMultiplier: 1.2, bonusMultiplier: 0.9, baseThreshold: 0.95 };
                 case 'easy-going-personality':
                 default:
-                    return {
-                        penaltyMultiplier: 1.0,  // Standard penalties
-                        bonusMultiplier: 1.0,    // Standard bonuses
-                        baseThreshold: 1.0       // Standard thresholds
-                    };
+                    return { penaltyMultiplier: 1.0, bonusMultiplier: 1.0, baseThreshold: 1.0 };
             }
         };
 
         const { penaltyMultiplier, bonusMultiplier, baseThreshold } = getDifficultyMultipliers(interviewerDifficulty);
 
-         //penalize extremely long response
+        // Penalize extremely long response
         if (responseTime > 300) {
             score -= Math.min((responseTime - 300) * 0.05 * penaltyMultiplier, 10 * penaltyMultiplier);
         }
 
-        // 1. Response time penalty (adjusted for difficulty)
+        // Response time penalty
         const minResponseTime = 20 * baseThreshold;
         if (responseTime < minResponseTime) {
             const deduction = Math.min((60 - responseTime) * 0.2 * penaltyMultiplier, 12 * penaltyMultiplier);
             score -= deduction;
         }
 
-        // 2. Word count penalty (adjusted for difficulty)
+        // Word count penalty
         const minWordCount = 50 * baseThreshold;
         if (wordCount < minWordCount) {
             const deduction = Math.min((100 - wordCount) * 0.07 * penaltyMultiplier, 7 * penaltyMultiplier);
             score -= deduction;
         }
 
-        // 3. Filler words ratio penalty (stricter thresholds for higher difficulty)
+        // Filler words penalty
         if (wordCount > 0) {
             const ratio = fillerWords / wordCount;
-            const fillerThreshold = 0.05 * baseThreshold; // Stricter filler word tolerance for harder difficulties
+            const fillerThreshold = 0.05 * baseThreshold;
             if (ratio > fillerThreshold) {
                 const excess = ratio - fillerThreshold;
                 const deduction = Math.min(Math.pow(excess * 100, 1.2) * penaltyMultiplier, 15 * penaltyMultiplier);
@@ -97,26 +84,25 @@ export default function InterviewResults() {
             }
         }
 
-        // Long response penalty (adjusted for difficulty)
+        // Long response penalty
         if (wordCount > 300) {
             const deduction = Math.min((wordCount - 300) * 0.05 * penaltyMultiplier, 5 * penaltyMultiplier);
             score -= deduction;
         }
 
-        // 4. Action words points with diminishing returns (reduced bonus for harder difficulties)
+        // Action words points
         score += harmonicPoints(actionWords) * 1.2 * bonusMultiplier;
 
-        // 5. Stats used points with diminishing returns (reduced bonus for harder difficulties)
+        // Stats used points
         score += harmonicPoints(statsUsed) * bonusMultiplier;
 
-        // 6. Time efficiency bonus (reduced bonus for harder difficulties)
+        // Time efficiency bonus
         if (responseTime >= 60 && responseTime <= 180) {
-            // scale linearly from 0 to 5 points
             const bonus = ((responseTime - 60) / (180 - 60)) * 5 * bonusMultiplier;
             score += bonus;
         }
 
-        // 7. Consistency penalty: words vs time (adjusted for difficulty)
+        // Words per second consistency penalty
         const wordsPerSecond = wordCount / responseTime;
         if (wordsPerSecond < 1) {
             score -= Math.min((1 - wordsPerSecond) * 20 * penaltyMultiplier, 10 * penaltyMultiplier);
@@ -124,10 +110,45 @@ export default function InterviewResults() {
             score -= Math.min((wordsPerSecond - 4) * 10 * penaltyMultiplier, 10 * penaltyMultiplier);
         }
 
-        // 8. Cap score between 0 and 100
+        // Cap score between 0 and 100
         score = Math.max(0, Math.min(100, score));
 
-        return Math.round(score);
+        // ✅ Scale score to be out of 60
+        score = Math.round(score * 0.6);
+        let situationScore = starAnswerParsed.situation ? 10 : 0;
+        if (starAnswerParsed.situation) {
+            const wordCount = starAnswerParsed.situation.trim().split(/\s+/).length;
+            if (wordCount < 20) {
+                situationScore -= (20 - wordCount);
+                situationScore = Math.max(situationScore, 0);
+            }
+        }
+        let taskScore  = starAnswerParsed.task ? 10 : 0;
+        if (starAnswerParsed.task) {
+            const wordCount = starAnswerParsed.task.trim().split(/\s+/).length;
+            if (wordCount < 20) {
+                taskScore -= (20 - wordCount);
+                taskScore = Math.max(taskScore, 0);
+            }
+        }
+        let actionScore = starAnswerParsed.action ? 10 : 0;
+        if (starAnswerParsed.action) {
+            const wordCount = starAnswerParsed.action.trim().split(/\s+/).length;
+            if (wordCount < 20) {
+                actionScore -= (20 - wordCount);
+                actionScore = Math.max(actionScore, 0);
+            }
+        }
+        let resultScore = starAnswerParsed.result ? 10 : 0;
+        if (starAnswerParsed.result) {
+            const wordCount = starAnswerParsed.result.trim().split(/\s+/).length;
+            if (wordCount < 20) {
+                resultScore -= (20 - wordCount);
+                resultScore = Math.max(resultScore, 0);
+            }
+        }
+
+        return score + situationScore + taskScore + actionScore + resultScore;
     }
 
     function harmonicPoints(count) {
@@ -227,6 +248,7 @@ export default function InterviewResults() {
             
             // Calculate performance score using the existing function
             const score = calculatePerformanceScoreDiminishing({
+                starAnswerParsed: analysis?.starAnswerParsed,
                 responseTime: response.recordedTime || 0,
                 wordCount: analysis?.totalWords || 0,
                 fillerWords: analysis?.fillerWordCount || 0,
@@ -553,8 +575,8 @@ const highlightText = (text, fillerWords, actionWords, starAnswerParsed) => {
   const starColors = {
     situation: '#FBBF24', // yellow-400, visible
     task:      '#3B82F6', // blue
-    action:    '#8B5CF6', // purple
-    result:    '#FB923C'  // orange
+    action:    '#FB923C', // purple
+    result:    '#8B5CF6'  // orange
   };
 
   // Build STAR phrases longest-first
@@ -1267,7 +1289,7 @@ function escapeRegExp(s) {
                                                             icon={RecordVoiceOverIcon}
                                                             label="Word Count"
                                                             value={currentData.wordCount}
-                                                            color="#06b6d4"
+                                                            color="#f59e0b"
                                                         />
                                                     </Grid>
                                                     <Grid item xs={6} sm={3}>
@@ -1283,7 +1305,7 @@ function escapeRegExp(s) {
                                                             icon={BarChartIcon}
                                                             label="Statistics"
                                                             value={currentData.statsUsed}
-                                                            color="#f59e0b"
+                                                            color="#06b6d4"
                                                         />
                                                     </Grid>
                                                 </Grid>
@@ -1354,6 +1376,13 @@ function escapeRegExp(s) {
                                                                 Filler Words
                                                             </Typography>
                                                         </Box>
+
+                                                        <Typography sx={{ fontSize: '1rem', fontFamily: 'DM Sans Bold', fontWeight: 600 }}>
+                                                            <span style={{ color: '#FBBF24', borderBottom: '3px solid #FBBF24' }}>S </span>
+                                                            <span style={{ color: '#3B82F6', borderBottom: '3px solid #3B82F6' }}>T </span>
+                                                            <span style={{ color: '#FB923C', borderBottom: '3px solid #FB923C' }}>A </span>
+                                                            <span style={{ color: '#8B5CF6', borderBottom: '3px solid #8B5CF6' }}>R </span>
+                                                        </Typography>
                                                     </Box>
                                                 </Box>
                     
@@ -1449,7 +1478,7 @@ function escapeRegExp(s) {
                                                 </Grid>
                                             </Grid>
                                             {/* Improved Response */}
-                                            <Card sx={{ p: 3, mb: 3, borderRadius: '16px' }}>
+                                            <Card sx={{ p: 3, mb: 3, borderRadius: '16px', marginTop: "30px"}}>
                                                 <Typography sx={{ fontSize: '1.1rem', fontWeight: 600, mb: 2, color: '#1f2937', fontFamily: 'Satoshi Bold' }}>
                                                     📝 Improved Response
                                                 </Typography>
