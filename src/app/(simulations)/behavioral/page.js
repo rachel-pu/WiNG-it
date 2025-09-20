@@ -9,6 +9,7 @@ import BehavioralSimulationPage from "@/app/(simulations)/behavioral/(components
 import {CircularProgress} from "@mui/material";
 import DefaultAppLayout from "../../DefaultAppLayout";
 import app from "@/lib/firebase";
+import "./(components)/BehavioralSimulationPage.css";
 
 export default function BehavioralInterviewSimulation() {
     const [questions, setQuestions] = useState([]);
@@ -95,7 +96,7 @@ export default function BehavioralInterviewSimulation() {
     }
 
     return (
-        <Box sx={{ display: "flex" }}>
+        <Box className="behavioral-container">
             <CssBaseline />
             <DefaultAppLayout title="Behavioral Interview Simulation" color="#2850d9">
                 {/* --------- main content --------- */}
@@ -115,47 +116,22 @@ export default function BehavioralInterviewSimulation() {
                 ) : (
                     <Box
                         component="main"
-                        sx={{ flexGrow: 1, bgcolor: "black", height: "100vh", overflow: "auto" }}
+                        className="behavioral-main-content"
                     >
                         <Toolbar />
                         {/* question box component */}
-                        <Box component="main" sx={{ height: "90vh", overflow: "auto", textAlign: "center"}}>
+                        <Box component="main" className="behavioral-question-box">
                             {questions && questions.length > 0 ? (
                                 <BehavioralSimulationPage questions={questions}/>
                             ) : (
-                                <Box sx={{ 
-                                    position: 'absolute',
-                                    top: 0,
-                                    left: 0,
-                                    right: -200,
-                                    bottom: 0,
-                                    display: 'flex', 
-                                    justifyContent: 'center', 
-                                    alignItems: 'center', 
-                                    backgroundColor: '#000000', // Black background
-                                    zIndex: 1000
-                                }}>
+                                <Box className="behavioral-loading-overlay">
                                     {/* Loading content container */}
-                                    <Box sx={{ 
-                                        display: 'flex', 
-                                        justifyContent: 'center', 
-                                        alignItems: 'center', 
-                                        flexDirection: 'column', 
-                                        gap: 3,
-                                        textAlign: 'center'
-                                    }}>
-                                        <CircularProgress 
+                                    <Box className="behavioral-loading-container">
+                                        <CircularProgress
                                             size={60}
-                                            sx={{ 
-                                                color: '#F3F1EC'
-                                            }} 
+                                            className="behavioral-loading-spinner"
                                         />
-                                        <Typography sx={{ 
-                                            fontFamily: 'DM Sans', 
-                                            color: '#F3F1EC',
-                                            fontSize: '1.2rem',
-                                            fontWeight: 500
-                                        }}>
+                                        <Typography className="behavioral-loading-text">
                                             Generating your simulation experience...
                                         </Typography>
                                     </Box>

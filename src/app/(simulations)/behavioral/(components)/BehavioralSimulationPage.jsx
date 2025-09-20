@@ -1,6 +1,7 @@
 "use client";
 
 import React, {useEffect, useRef, useState} from "react";
+import "./BehavioralSimulationPage.css";
 import {useRouter} from "next/navigation";
 import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
@@ -9,7 +10,6 @@ import MicOffIcon from "@mui/icons-material/MicOff";
 import StopIcon from "@mui/icons-material/Stop";
 import Button from "@mui/material/Button";
 import TalkingInterviewer from "./TalkingInterviewer";
-import VideocamIcon from "@mui/icons-material/Videocam";
 import VideocamOffIcon from "@mui/icons-material/VideocamOff";
 import {CircularProgress, Typography, Snackbar, Alert, Avatar, Fade} from "@mui/material";
 import FullscreenIcon from "@mui/icons-material/Fullscreen";
@@ -373,71 +373,34 @@ const InterviewQuestions = ({questions}) => {
     return (
         <Box
             ref={containerRef}
-            sx={{
-                position: 'relative',
-                width: {
-                    xs: 'calc(100vw - 0px)',
-                    sm: 'calc(100vw - 72px)',
-                    md: 'calc(100vw - 240px)'
-                },
-                height: 'calc(100vh - 100px)',
-                backgroundColor: '#1f1f23',
-                display: 'flex',
-                flexDirection: 'column',
-                overflow: 'hidden'
-            }}
+            className="simulation-container"
         >
             {/* Zoom-like Top Bar */}
-            <Box sx={{
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                right: 0,
-                height: '60px',
-                backgroundColor: 'rgba(0,0,0,0.8)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                padding: '0 20px',
-                zIndex: 1000,
-                backdropFilter: 'blur(10px)'
-            }}>
+            <Box className="simulation-top-bar">
                 {/* Left side - Meeting info */}
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                    <Box sx={{
-                        color: 'white',
-                        backgroundColor: 'rgba(255,255,255,0.1)',
-                        padding: '4px 12px',
-                        borderRadius: '12px',
-                        fontSize: '0.85rem',
-                        fontFamily: 'DM Sans',
-                        fontWeight: 'bold'
-                    }}>
+                <Box className="simulation-meeting-info">
+                    <Box className="simulation-meeting-badge">
                         Behavioral Interview
                     </Box>
-                    <Typography sx={{
-                        color: '#ffffff',
-                        fontSize: '0.9rem',
-                        fontFamily: 'DM Sans'
-                    }}>
+                    <Typography className="simulation-question-counter">
                         Question {currentQuestionIndex + 1} of {questions.length}
                     </Typography>
                 </Box>
 
                 {/* Right side - Controls */}
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <IconButton 
-                        size="small" 
-                        sx={{ color: 'white', backgroundColor: 'rgba(255,255,255,0.1)' }}
+                <Box className="simulation-controls">
+                    <IconButton
+                        size="small"
+                        className="simulation-control-btn"
                         onClick={toggleFullscreen}
                     >
                         {isFullscreen ? <FullscreenExitIcon /> : <FullscreenIcon />}
                     </IconButton>
 
-                    
-                    <IconButton 
-                        size="small" 
-                        sx={{ color: 'white', backgroundColor: 'rgba(255,255,255,0.1)' }}
+
+                    <IconButton
+                        size="small"
+                        className="simulation-control-btn"
                     >
                         <MoreVertIcon />
                     </IconButton>
@@ -445,40 +408,11 @@ const InterviewQuestions = ({questions}) => {
             </Box>
 
             {/* Main video area */}
-            <Box sx={{
-                flex: 1,
-                display: 'flex',
-                flexDirection: 'column',
-                padding: '80px 20px 90px 20px',
-                height: '90%',
-                position: 'relative'
-            }}>
+            <Box className="simulation-video-area">
                 {/* Interviewer video - main */}
-                <Box sx={{
-                    position: 'relative',
-                    backgroundColor: '#2d2d30',
-                    borderRadius: '12px',
-                    overflow: 'hidden',
-                    border: isSpeaking ? '3px solid #00ff00' : '1px solid rgba(255,255,255,0.1)',
-                    transition: 'border 0.3s ease',
-                    width: '100%',
-                    height: '98%'
-                }}>
+                <Box className={`simulation-interviewer-video ${isSpeaking ? 'speaking' : ''}`}>
                 
-                    <Box
-                        sx={{
-                            position: "absolute",
-                            top: 12,
-                            left: 12,
-                            backgroundColor: "rgba(0, 0, 0, 0.7)",
-                            color: "white",
-                            padding: "4px 10px",
-                            borderRadius: "6px",
-                            fontSize: "1rem",
-                            fontFamily: "DM Sans",
-                            zIndex: 10,
-                        }}
-                    >
+                    <Box className="simulation-timer">
                         {Math.floor(recordTime / 60)
                             .toString()
                             .padStart(2, "0")}
@@ -487,68 +421,25 @@ const InterviewQuestions = ({questions}) => {
                     </Box>
 
                     {/* Name tag */}
-                    <Box sx={{
-                        position: 'absolute',
-                        bottom: 12,
-                        left: 12,
-                        backgroundColor: 'rgba(0,0,0,0.7)',
-                        color: 'white',
-                        padding: '4px 12px',
-                        borderRadius: '6px',
-                        fontSize: '0.85rem',
-                        fontFamily: 'DM Sans',
-                        zIndex: 10
-                    }}>
+                    <Box className="simulation-name-tag">
                         Winnie (Interviewer) {isSpeaking}
                     </Box>
 
                     {/* Interviewer avatar/video */}
-                    <Box sx={{ 
-                        width: '100%', 
-                        height: '105%',
-                        marginTop: '-10px',
-                        '& > div': {
-                            width: '100% !important',
-                            height: '100% !important'
-                        },
-                        '& video, & img': {
-                            width: '100%',
-                            height: '110%',
-                        
-                        }
-                    }}>
+                    <Box className="simulation-interviewer-content">
                         <TalkingInterviewer isTalking={isSpeaking} />
                     </Box>
                 </Box>
 
                 {/* User video - floating overlay when active */}
                 {videoActive && (
-                    <Box sx={{
-                        position: 'absolute',
-                        top: 95,
-                        right: 35,
-                        width: 200,
-                        height: 150,
-                        backgroundColor: '#2d2d30',
-                        borderRadius: '12px',
-                        overflow: 'hidden',
-                        border: isRecording ? '2px solid #30de30ff' : '1px solid rgba(255,255,255,0.1)',
-                        transition: 'border 0.3s ease',
-                        zIndex: 100
-                    }}>
+                    <Box
+                        className={`simulation-user-video ${isRecording ? 'recording' : ''}`}
+                        onClick={handleToggleVideo}
+                        style={{ cursor: 'pointer' }}
+                    >
                         {/* Name tag */}
-                        <Box sx={{
-                            position: 'absolute',
-                            bottom: 8,
-                            left: 8,
-                            backgroundColor: 'rgba(0,0,0,0.8)',
-                            color: 'white',
-                            padding: '2px 8px',
-                            borderRadius: '4px',
-                            fontSize: '0.7rem',
-                            fontFamily: 'DM Sans',
-                            zIndex: 10
-                        }}>
+                        <Box className="simulation-user-name-tag">
                             You {isRecording}
                         </Box>
 
@@ -558,71 +449,25 @@ const InterviewQuestions = ({questions}) => {
                             autoPlay
                             playsInline
                             muted
-                            style={{ 
-                                width: '100%', 
-                                height: '100%', 
-                                objectFit: 'cover',
-                                transform: 'scaleX(-1)' // Mirror effect
-                            }}
+                            className="simulation-user-video-element"
                         />
 
-                        {/* Video toggle overlay */}
-                        <IconButton
-                            onClick={handleToggleVideo}
-                            sx={{
-                                position: 'absolute',
-                                top: 8,
-                                right: 8,
-                                backgroundColor: 'rgba(0,0,0,0.7)',
-                                color: 'white',
-                                width: 24,
-                                height: 24,
-                                '&:hover': { backgroundColor: 'rgba(0,0,0,0.8)' }
-                            }}
-                        >
-                            <VideocamOffIcon sx={{ fontSize: 14 }} />
-                        </IconButton>
                     </Box>
                 )}
 
                 {/* Floating video toggle (when camera is off) */}
                 {!videoActive && (
-                    <Box sx={{
-                        position: 'absolute',
-                        top: 95,
-                        right: 35,
-                        width: 200,
-                        height: 150,
-                        backgroundColor: '#2d2d30',
-                        borderRadius: '12px',
-                        border: '1px solid rgba(255,255,255,0.1)',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        flexDirection: 'column',
-                        cursor: 'pointer',
-                        zIndex: 100,
-                        '&:hover': { backgroundColor: '#3d3d40' }
-                    }}
-                    onClick={handleToggleVideo}
+                    <Box
+                        className="simulation-video-placeholder"
+                        onClick={handleToggleVideo}
                     >
-                        <VideocamOffIcon sx={{ color: 'white', fontSize: '2rem', mb: 1 }} />
-                        <Typography sx={{ color: 'white', fontSize: '0.8rem', fontFamily: 'DM Sans' }}>
+                        <VideocamOffIcon className="simulation-video-placeholder-icon" />
+                        <Typography className="simulation-video-placeholder-text">
                             Start Video
                         </Typography>
                         
                         {/* Name tag */}
-                        <Box sx={{
-                            position: 'absolute',
-                            bottom: 8,
-                            left: 8,
-                            backgroundColor: 'rgba(0,0,0,0.8)',
-                            color: 'white',
-                            padding: '2px 8px',
-                            borderRadius: '4px',
-                            fontSize: '0.7rem',
-                            fontFamily: 'DM Sans'
-                        }}>
+                        <Box className="simulation-user-name-tag">
                             You
                         </Box>
                     </Box>
@@ -630,31 +475,7 @@ const InterviewQuestions = ({questions}) => {
             </Box>
 
             {showWinnieCaption && (
-                <Box
-                    sx={{
-                    position: "absolute",
-                    bottom: "calc(80px + 16px)", 
-                    left: "50%",
-                    transform: "translateX(-50%)",
-                    backgroundColor: "rgba(0,0,0,0.7)",
-                    color: "white",
-                    padding: "8px 16px",
-                    borderRadius: "8px",
-                    fontSize: "0.95rem",
-                    fontFamily: "DM Sans",
-                    maxWidth: "80%",
-                    textAlign: "center",
-                    zIndex: 1500,
-                    
-                    // Make long questions readable
-                    height: "auto",
-                    maxHeight: "40vh",
-                    overflowY: "auto",
-                    whiteSpace: "normal",
-                    wordBreak: "break-word",
-                    WebkitOverflowScrolling: "touch",
-                    }}
-                >
+                <Box className="simulation-question-caption">
                     {questions[currentQuestionIndex]}
                 </Box>
                 )}
@@ -662,42 +483,16 @@ const InterviewQuestions = ({questions}) => {
 
             {/* Transcript floating window */}
             {transcript && (
-                <Box sx={{
-                    position: 'absolute',
-                    bottom: 110,
-                    left: '50%',
-                    transform: 'translateX(-50%)',
-                    width: '80%',
-                    maxWidth: '600px',
-                    maxHeight: '120px',
-                    overflowY: 'auto',
-                    backgroundColor: 'rgba(0, 0, 0, 0.6)',
-                    color: 'white',
-                    padding: '20px',
-                    borderRadius: '12px',
-                    border: '1px solid rgba(255,255,255,0.2)',
-                    backdropFilter: 'blur(10px)',
-                    zIndex: 1000
-                }}>
+                <Box className="simulation-transcript">
                     <Typography
                         variant="body2"
-                        sx={{ 
-                            fontFamily: 'DM Sans', 
-                            fontWeight: 'bold', 
-                            mb: 1, 
-                            fontSize: '0.8rem',
-                            color: '#adadadff'
-                        }}
+                        className="simulation-transcript-label"
                     >
                         Transcript:
                     </Typography>
-                    <Typography 
-                        variant="body2" 
-                        sx={{ 
-                            fontFamily: 'DM Sans', 
-                            fontSize: '0.9rem',
-                            lineHeight: 1.4
-                        }}
+                    <Typography
+                        variant="body2"
+                        className="simulation-transcript-text"
                     >
                         {transcript}
                     </Typography>
@@ -705,45 +500,18 @@ const InterviewQuestions = ({questions}) => {
             )}
 
             {/* Zoom-like bottom control bar */}
-            <Box sx={{
-                position: 'absolute',
-                bottom: 0,
-                left: 0,
-                right: 0,
-                height: '80px',
-                backgroundColor: 'rgba(0,0,0,0.9)',
-                display: 'flex',
-                alignItems: 'flex-start',
-                justifyContent: 'center',
-                gap: 2,
-                zIndex: 1000,
-                backdropFilter: 'blur(10px)',
-                paddingTop: '22px'
-            }}>
+            <Box className="simulation-bottom-bar">
                 {/* Microphone button */}
                 <IconButton
                     disabled={isProcessing || hasRecorded}
                     onClick={isRecording ? stopRecording : startRecording}
-                    sx={{
-                        width: 56,
-                        height: 56,
-                        backgroundColor: isProcessing ? "#666" :
-                            hasRecorded ? "#4caf50" :
-                                isRecording ? "#ff4444" : "#404040",
-                        color: 'white',
-                        border: isRecording ? '2px solid #ff6666' : '1px solid rgba(255,255,255,0.3)',
-                        "&:hover": {
-                            backgroundColor: isProcessing ? "#666" :
-                                hasRecorded ? "#45a049" :
-                                    isRecording ? "#ff6666" : "#505050",
-                        },
-                        "&:disabled": {
-                            backgroundColor: "#333",
-                            color: "#666"
-                        }
-                    }}
+                    className={`simulation-mic-btn ${
+                        isProcessing ? 'processing' :
+                        hasRecorded ? 'recorded' :
+                        isRecording ? 'recording' : 'idle'
+                    }`}
                 >
-                    {isProcessing ? <CircularProgress size={24} sx={{color: 'white'}}/> :
+                    {isProcessing ? <CircularProgress size={24} className="simulation-loading-spinner"/> :
                         isRecording ? <StopIcon /> :
                             <MicIcon />}
                 </IconButton>                
@@ -753,21 +521,7 @@ const InterviewQuestions = ({questions}) => {
                     <Button
                         variant="contained"
                         onClick={handleNextQuestion}
-                        sx={{
-                            backgroundColor: '#0066cc',
-                            color: 'white',
-                            fontFamily: 'DM Sans',
-                            fontWeight: 'bold',
-                            fontSize: '0.9rem',
-                            padding: '8px 20px',
-                            borderRadius: '6px',
-                            textTransform: 'none',
-                            height: '56px',
-                            marginLeft: 2,
-                            "&:hover": {
-                                backgroundColor: '#0052a3'
-                            }
-                        }}
+                        className="simulation-next-btn"
                     >
                         {currentQuestionIndex < questions.length - 1 ? "Next Question" : "End Interview"}
                     </Button>
@@ -775,32 +529,15 @@ const InterviewQuestions = ({questions}) => {
             </Box>
 
             {/* Hidden audio element */}
-            <audio ref={audioRef} style={{display: "none"}} />
+            <audio ref={audioRef} className="simulation-audio-hidden" />
 
             {/* Status alerts - Fixed positioning within simulation */}
             <Fade in={showAlert} timeout={300}>
-                <Box sx={{
-                    position: 'absolute',
-                    top: 90,
-                    left: '50%',
-                    transform: 'translateX(-50%)',
-                    zIndex: 2000,
-                    width: 'auto',
-                    maxWidth: '90%'
-                }}>
-                    <Alert 
-                        severity={alertSeverity} 
+                <Box className="simulation-alert-container">
+                    <Alert
+                        severity={alertSeverity}
                         onClose={() => setShowAlert(false)}
-                        sx={{
-                            backgroundColor: 'rgba(0, 0, 0, 0.78)',
-                            color: 'white',
-                            border: '1px solid rgba(255,255,255,0.2)',
-                            borderRadius: '8px',
-                            boxShadow: '0 4px 20px rgba(0,0,0,0.5)',
-                            backdropFilter: 'blur(10px)',
-                            '& .MuiAlert-icon': { color: 'white' },
-                            '& .MuiAlert-action': { color: 'white' }
-                        }}
+                        className="simulation-alert"
                     >
                         {alertMessage}
                     </Alert>

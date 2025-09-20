@@ -26,7 +26,7 @@ export default function InterviewResults() {
     const [totalAverageRecordedTime, setTotalAverageRecordedTime] = useState();
     const router = useRouter();
 
-    function calculatePerformanceScoreDiminishing({responseTime, wordCount, fillerWords, actionWords, statsUsed}) {
+    function calculatePerformanceScoreDiminishing({responseTime, wordCount, fillerWords, actionWords, statsUsed, interviewerDifficulty = 'easy-going-personality'}) {
         //input validation
         if (!responseTime || !wordCount || fillerWords < 0 || actionWords < 0 || statsUsed < 0){
             console.log(!responseTime)
@@ -40,58 +40,88 @@ export default function InterviewResults() {
 
         let score = 100;
 
+        // Difficulty multipliers - higher difficulty = harsher scoring
+        const getDifficultyMultipliers = (difficulty) => {
+            switch (difficulty) {
+                case 'challenging-personality':
+                    return {
+                        penaltyMultiplier: 1.4,  // 40% harsher penalties
+                        bonusMultiplier: 0.8,    // 20% reduced bonuses
+                        baseThreshold: 0.9       // 10% stricter thresholds
+                    };
+                case 'moderate-personality':
+                    return {
+                        penaltyMultiplier: 1.2,  // 20% harsher penalties
+                        bonusMultiplier: 0.9,    // 10% reduced bonuses
+                        baseThreshold: 0.95      // 5% stricter thresholds
+                    };
+                case 'easy-going-personality':
+                default:
+                    return {
+                        penaltyMultiplier: 1.0,  // Standard penalties
+                        bonusMultiplier: 1.0,    // Standard bonuses
+                        baseThreshold: 1.0       // Standard thresholds
+                    };
+            }
+        };
+
+        const { penaltyMultiplier, bonusMultiplier, baseThreshold } = getDifficultyMultipliers(interviewerDifficulty);
+
          //penalize extremely long response
         if (responseTime > 300) {
-            score -= Math.min((responseTime - 300) * 0.05, 10);
+            score -= Math.min((responseTime - 300) * 0.05 * penaltyMultiplier, 10 * penaltyMultiplier);
         }
 
-        // 1. Response time penalty
-        if (responseTime < 20) {
-            const deduction = Math.min((60 - responseTime) * 0.2, 12);
+        // 1. Response time penalty (adjusted for difficulty)
+        const minResponseTime = 20 * baseThreshold;
+        if (responseTime < minResponseTime) {
+            const deduction = Math.min((60 - responseTime) * 0.2 * penaltyMultiplier, 12 * penaltyMultiplier);
             score -= deduction;
         }
 
-        // 2. Word count penalty
-        if (wordCount < 50) {
-            const deduction = Math.min((100 - wordCount) * 0.07, 7);
+        // 2. Word count penalty (adjusted for difficulty)
+        const minWordCount = 50 * baseThreshold;
+        if (wordCount < minWordCount) {
+            const deduction = Math.min((100 - wordCount) * 0.07 * penaltyMultiplier, 7 * penaltyMultiplier);
             score -= deduction;
         }
 
-        // 3. Filler words ratio penalty
+        // 3. Filler words ratio penalty (stricter thresholds for higher difficulty)
         if (wordCount > 0) {
             const ratio = fillerWords / wordCount;
-            if (ratio > 0.05) {
-                const excess = ratio - 0.05;
-                const deduction = Math.min(Math.pow(excess * 100, 1.2), 15); // more severe
+            const fillerThreshold = 0.05 * baseThreshold; // Stricter filler word tolerance for harder difficulties
+            if (ratio > fillerThreshold) {
+                const excess = ratio - fillerThreshold;
+                const deduction = Math.min(Math.pow(excess * 100, 1.2) * penaltyMultiplier, 15 * penaltyMultiplier);
                 score -= deduction;
             }
         }
 
+        // Long response penalty (adjusted for difficulty)
         if (wordCount > 300) {
-            const deduction = Math.min((wordCount - 300) * 0.05, 5);
+            const deduction = Math.min((wordCount - 300) * 0.05 * penaltyMultiplier, 5 * penaltyMultiplier);
             score -= deduction;
         }
 
+        // 4. Action words points with diminishing returns (reduced bonus for harder difficulties)
+        score += harmonicPoints(actionWords) * 1.2 * bonusMultiplier;
 
-        // 4. Action words points with diminishing returns
-        score += harmonicPoints(actionWords) * 1.2;
+        // 5. Stats used points with diminishing returns (reduced bonus for harder difficulties)
+        score += harmonicPoints(statsUsed) * bonusMultiplier;
 
-        // 5. Stats used points with diminishing returns
-        score += harmonicPoints(statsUsed);
-
-        // 6. Time efficiency bonus
+        // 6. Time efficiency bonus (reduced bonus for harder difficulties)
         if (responseTime >= 60 && responseTime <= 180) {
             // scale linearly from 0 to 5 points
-            const bonus = ((responseTime - 60) / (180 - 60)) * 5;
+            const bonus = ((responseTime - 60) / (180 - 60)) * 5 * bonusMultiplier;
             score += bonus;
         }
 
-        // 7. Consistency penalty: words vs time
+        // 7. Consistency penalty: words vs time (adjusted for difficulty)
         const wordsPerSecond = wordCount / responseTime;
         if (wordsPerSecond < 1) {
-            score -= Math.min((1 - wordsPerSecond) * 20, 10);
+            score -= Math.min((1 - wordsPerSecond) * 20 * penaltyMultiplier, 10 * penaltyMultiplier);
         } else if (wordsPerSecond > 4) {
-            score -= Math.min((wordsPerSecond - 4) * 10, 10);
+            score -= Math.min((wordsPerSecond - 4) * 10 * penaltyMultiplier, 10 * penaltyMultiplier);
         }
 
         // 8. Cap score between 0 and 100
@@ -201,7 +231,8 @@ export default function InterviewResults() {
                 wordCount: analysis?.totalWords || 0,
                 fillerWords: analysis?.fillerWordCount || 0,
                 actionWords: 0,
-                statsUsed: 0 
+                statsUsed: 0,
+                interviewerDifficulty: data?.interviewerDifficulty || response?.interviewerDifficulty || 'easy-going-personality'
             });
 
             // Extract action words and stats from transcript
@@ -673,45 +704,98 @@ function escapeRegExp(s) {
         <Card
             sx={{
                 p: 3,
-                borderRadius: '16px',
-                border: '1px solid #e5e7eb',
-                background: 'linear-gradient(135deg, #ffffff 0%, #f9fafb 100%)',
-                transition: 'all 0.2s ease',
-                '&:hover': {
-                    transform: 'translateY(-2px)',
-                    boxShadow: '0 8px 25px rgba(0,0,0,0.1)'
+                borderRadius: '20px',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                background: 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.8) 100%)',
+                backdropFilter: 'blur(20px)',
+                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.08)',
+                height: '100%',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
+                position: 'relative',
+                overflow: 'hidden',
+                '&::before': {
+                    content: '""',
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    height: '3px',
+                    background: `linear-gradient(90deg, ${color} 0%, ${color}88 100%)`,
+                    borderRadius: '20px 20px 0 0'
                 }
             }}
         >
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 1 }}>
+            <Box sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                textAlign: 'center',
+                gap: 2
+            }}>
                 <Box
                     sx={{
-                        width: 40,
-                        height: 40,
-                        borderRadius: '10px',
-                        backgroundColor: `${color}15`,
+                        width: 56,
+                        height: 56,
+                        borderRadius: '16px',
+                        background: `linear-gradient(135deg, ${color}15 0%, ${color}25 100%)`,
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        color: color
+                        color: color,
+                        boxShadow: `0 4px 16px ${color}20`
                     }}
                 >
-                    <Icon sx={{ fontSize: 20 }} />
+                    <Icon sx={{ fontSize: 28 }} />
                 </Box>
+
                 <Box>
-                    <Typography sx={{ fontSize: '1.5rem', fontWeight: 700, color: '#1f2937', fontFamily: 'Satoshi Bold' }}>
+                    <Typography sx={{
+                        fontSize: '2rem',
+                        fontWeight: 800,
+                        color: '#1f2937',
+                        fontFamily: 'Satoshi Black',
+                        lineHeight: 1,
+                        mb: 0.5
+                    }}>
                         {value}
                     </Typography>
-                    <Typography sx={{ fontSize: '0.8rem', color: '#6b7280', fontFamily: 'DM Sans' }}>
+                    <Typography sx={{
+                        fontSize: '0.9rem',
+                        color: '#6b7280',
+                        fontFamily: 'DM Sans Medium',
+                        fontWeight: 500,
+                        letterSpacing: '0.025em'
+                    }}>
                         {label}
                     </Typography>
                 </Box>
             </Box>
+
             {subtitle && (
-                <Typography sx={{ fontSize: '0.75rem', color: '#9ca3af', fontFamily: 'DM Sans' }}>
+                <Typography sx={{
+                    fontSize: '0.75rem',
+                    color: '#9ca3af',
+                    fontFamily: 'DM Sans',
+                    textAlign: 'center',
+                    mt: 1
+                }}>
                     {subtitle}
                 </Typography>
             )}
+
+            {/* Subtle background decoration */}
+            <Box sx={{
+                position: 'absolute',
+                bottom: -20,
+                right: -20,
+                width: 60,
+                height: 60,
+                borderRadius: '50%',
+                background: `linear-gradient(135deg, ${color}08 0%, ${color}15 100%)`,
+                zIndex: 0
+            }} />
         </Card>
     );
 
@@ -1133,58 +1217,76 @@ function escapeRegExp(s) {
                                                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
                                                      
                                                     <Typography sx={{ fontSize: '1.1rem', fontWeight: 600, color: '#1f2937', flex: 1, mr: 2, fontFamily: 'Satoshi Bold' }}>
-                                                       <Typography 
-                                                        sx={{ 
-                                                        fontSize: '0.9rem', 
-                                                        fontWeight: 600, 
-                                                        color: '#2563eb', 
-                                                        fontFamily: 'Satoshi Bold',
-                                                        mb: 0.5
-                                                        }}
-                                                    >
-                                                        {currentData.questionTypes?.join(', ')}
-                                                    </Typography>{currentData.question}
+                                                       <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mb: 1 }}>
+                                                        {currentData.questionTypes?.map((type, index) => {
+                                                            const colors = [
+                                                                { bg: '#e0f2fe', text: '#0277bd', border: '#81d4fa' }, // Blue
+                                                                { bg: '#f3e8ff', text: '#7c3aed', border: '#c4b5fd' }, // Purple
+                                                                { bg: '#dcfce7', text: '#16a34a', border: '#86efac' }, // Green
+                                                                { bg: '#fef3c7', text: '#d97706', border: '#fcd34d' }, // Yellow
+                                                                { bg: '#fee2e2', text: '#dc2626', border: '#fca5a5' }, // Red
+                                                                { bg: '#f0f9ff', text: '#0284c7', border: '#7dd3fc' }, // Sky
+                                                                { bg: '#fdf4ff', text: '#c026d3', border: '#f0abfc' }, // Fuchsia
+                                                                { bg: '#ecfdf5', text: '#059669', border: '#6ee7b7' }  // Emerald
+                                                            ];
+                                                            const colorSet = colors[index % colors.length];
+                                                            return (
+                                                                <Chip
+                                                                    key={index}
+                                                                    label={type}
+                                                                    size="small"
+                                                                    sx={{
+                                                                        backgroundColor: colorSet.bg,
+                                                                        color: colorSet.text,
+                                                                        fontWeight: 600,
+                                                                        fontSize: '0.75rem',
+                                                                        fontFamily: 'Satoshi Medium',
+                                                                        border: `1px solid ${colorSet.border}`
+                                                                    }}
+                                                                />
+                                                            );
+                                                        }) || []}
+                                                    </Box>{currentData.question}
                                                     </Typography>
                                                     <PerformanceIndicator score={currentData.score} />
                                                 </Box>
                                             </Card>
 
-                                            {/* Metrics Grid */}
-                                            <Grid container spacing={2} sx={{ mb: 3 }}>
-                                                <Grid item xs={6} sm={3}>
-                                                    <MetricCard
-                                                        icon={AccessTimeIcon}
-                                                        label="Seconds"
-                                                        value={recordedTimes[selectedQuestion - 1]?.recordedTime}
-                                                        color="#8b5cf6"
-                        
-                                                    />
+                                            {/* Metrics Grid - Fixed version */}
+                                                <Grid container spacing={2} sx={{ mb: 3, alignItems: 'stretch' }}>
+                                                    <Grid item xs={6} sm={3}>
+                                                        <MetricCard
+                                                            icon={AccessTimeIcon}
+                                                            label="Seconds"
+                                                            value={recordedTimes[selectedQuestion - 1]?.recordedTime}
+                                                            color="#8b5cf6"
+                                                        />
+                                                    </Grid>
+                                                    <Grid item xs={6} sm={3}>
+                                                        <MetricCard
+                                                            icon={RecordVoiceOverIcon}
+                                                            label="Word Count"
+                                                            value={currentData.wordCount}
+                                                            color="#06b6d4"
+                                                        />
+                                                    </Grid>
+                                                    <Grid item xs={6} sm={3}>
+                                                        <MetricCard
+                                                            icon={TrendingUpIcon}
+                                                            label="Action Words"
+                                                            value={currentData.actionWords}
+                                                            color="#10b981"
+                                                        />
+                                                    </Grid>
+                                                    <Grid item xs={6} sm={3}>
+                                                        <MetricCard
+                                                            icon={BarChartIcon}
+                                                            label="Statistics"
+                                                            value={currentData.statsUsed}
+                                                            color="#f59e0b"
+                                                        />
+                                                    </Grid>
                                                 </Grid>
-                                                <Grid item xs={6} sm={3}>
-                                                    <MetricCard
-                                                        icon={RecordVoiceOverIcon}
-                                                        label="Word Count"
-                                                        value={currentData.wordCount}
-                                                        color="#06b6d4"
-                                                    />
-                                                </Grid>
-                                                <Grid item xs={6} sm={3}>
-                                                    <MetricCard
-                                                        icon={TrendingUpIcon}
-                                                        label="Action Words"
-                                                        value={currentData.actionWords}
-                                                        color="#10b981"
-                                                    />
-                                                </Grid>
-                                                <Grid item xs={6} sm={3}>
-                                                    <MetricCard
-                                                        icon={BarChartIcon}
-                                                        label="Statistics"
-                                                        value={currentData.statsUsed}
-                                                        color="#f59e0b"
-                                                    />
-                                                </Grid>
-                                            </Grid>
 
                                             {/* Transcript */}
                                             <Card sx={{ p: 3, mb: 3, borderRadius: '16px' }}>
