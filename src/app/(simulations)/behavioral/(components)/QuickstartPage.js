@@ -38,12 +38,21 @@ const QuickstartPage = ({
     const [alertMessage, setAlertMessage] = useState("");
     const [alertSeverity, setAlertSeverity] = useState("error");
 
-    // Auto-hide alert after 3 seconds
+    // Show alert when error prop changes
+    useEffect(() => {
+        if (error) {
+            setAlertMessage(error);
+            setAlertSeverity("error");
+            setShowAlert(true);
+        }
+    }, [error]);
+
+    // Auto-hide alert after 1.5 seconds
     useEffect(() => {
         if (showAlert) {
             const timer = setTimeout(() => {
                 setShowAlert(false);
-            }, 3000);
+            }, 1500);
             return () => clearTimeout(timer);
         }
     }, [showAlert]);
@@ -105,13 +114,7 @@ const QuickstartPage = ({
     };
 
     const handleStartButtonClick = () => {
-        if (error) {
-            setAlertMessage(error);
-            setAlertSeverity("error");
-            setShowAlert(true);
-        } else {
-            handleGetStarted();
-        }
+        handleGetStarted();
     };
 
     return (

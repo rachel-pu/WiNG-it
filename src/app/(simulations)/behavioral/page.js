@@ -55,6 +55,7 @@ export default function BehavioralInterviewSimulation() {
 
     const handleJobRoleChange = (e) => {
         setJobRole(e.target.value);
+        setError(""); // Clear error on input change
     };
 
     // Handles the array of question types
