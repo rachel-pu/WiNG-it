@@ -364,7 +364,7 @@ exports.saveResponse = functions.https.onRequest((req, res) => {
       const words = result?.results?.channels?.[0]?.alternatives?.[0]?.words || [];
       console.log('Transcript:', transcript.substring(0, 100));
       const prompt = `
-          Generate a JSON object with the keys: fillerWords, questionTypes, improvements, fillerWordsList, strengths, tips, and contentScore.
+          Generate a JSON object with the keys: fillerWords, questionTypes, fillerWordsList, strengths, tips, starAnswerParsed, improvedResponse.
           Using the following:
 
           Transcript: ${transcript}
@@ -373,11 +373,10 @@ exports.saveResponse = functions.https.onRequest((req, res) => {
           Instructions:
           - Count how many filler words (um, uh, like, so, anyway, kinda, etc.) exist in the transcript, add the count to fillerWords and add the filler words as strings to the array fillerWordsList.
           - Categorize the question as any of: Situational, Problem-solving, Technical, Leadership, Teamwork (can be multiple).
-          - Provide 1-2 bullet points of tips to improve the answer (provide as an array).
+          - Provide 1-2 bullet points of tips to improve the answer, at least one should be how to improve according to star method (provide as an array).
           - Provide 1-2 bullet points of strengths to improve the answer (provide as an array).
-          - Provide 1-2 bullet points of improvements to improve the answer (provide as an array).
-          - Give a contentScore (0 to 60) based on how strong the answer is for an interview and how relevant the answer is to the question where 0 is a low score and 60 is the best possible score.
-
+          - For the starAnswerParsed variable, this should be a hashmap that extracts out each part of the answer in the transcript according to the star interview method. I should have 4 keys in the map matching to situation, task, action, result. Some of the values may be blank if the answer doesn't cover them. do NOT end the values with periods
+          - For the improvedResponse variable, according to everything analyzed, rewrite the response to be a better answer to the question provided.
           Respond ONLY with valid JSON. Do NOT include any explanation or text outside the JSON.
       `;
 
@@ -402,20 +401,20 @@ exports.saveResponse = functions.https.onRequest((req, res) => {
         console.error("Error analyzing AI response:", err);
         aiResults = { 
           fillerWords: [], 
-          contentScore: 0, 
           questionTypes: [], 
-          tips: "" 
+          tips: "" ,
+          strengths: "",
         };
       }
 
       // Extract individual fields
       const fillerWordCount = aiResults.fillerWords;
-      const contentScore = aiResults.contentScore;
       const questionTypes = aiResults.questionTypes;
       const tips = aiResults.tips;
       const strengths = aiResults.strengths;
-      const improvements = aiResults.improvements;
       const fillerWordsList = aiResults.fillerWordsList;
+      const starAnswerParsed = aiResults.starAnswerParsed;
+      const improvedResponse = aiResults.improvedResponse;
 
       // Calculate speech metrics
       const totalWords = words.length;
@@ -432,11 +431,11 @@ exports.saveResponse = functions.https.onRequest((req, res) => {
           fillerWordCount,
           wordsPerMinute,
           fillerWordsList,
-          contentScore,
           questionTypes,
           strengths,
-          improvements,
-          tips
+          tips,
+          starAnswerParsed,
+          improvedResponse
         },
         recordedTime: recordedTime || 0,
         timestamp: admin.database.ServerValue.TIMESTAMP,

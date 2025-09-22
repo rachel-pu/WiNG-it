@@ -25,71 +25,60 @@ export default function InterviewResults() {
     const [error, setError] = useState(null);
     const [totalAverageRecordedTime, setTotalAverageRecordedTime] = useState();
     const router = useRouter();
+    const [activeTab, setActiveTab] = useState(0);
 
-    function calculatePerformanceScoreDiminishing({responseTime, wordCount, fillerWords, actionWords, statsUsed, interviewerDifficulty = 'easy-going-personality'}) {
-        //input validation
-        if (!responseTime || !wordCount || fillerWords < 0 || actionWords < 0 || statsUsed < 0){
-            console.log(!responseTime)
+
+    function calculatePerformanceScoreDiminishing({starAnswerParsed, responseTime, wordCount, fillerWords, actionWords, statsUsed, interviewerDifficulty = 'easy-going-personality'}) {
+        // Input validation
+        if (!starAnswerParsed || !responseTime || !wordCount || fillerWords < 0 || actionWords < 0 || statsUsed < 0){
             return 0;
         }
 
-        //hard penalize little to no response
+        // Hard penalize little to no response
         if (wordCount < 10){
-            return Math.round(wordCount * 1.5);
+            return Math.round((wordCount * 1.5) * 0.6); // scale proportionally
         }
 
-        let score = 100;
+        let score = 100; // Keep calculation out of 100 for logic simplicity
 
-        // Difficulty multipliers - higher difficulty = harsher scoring
+        // Difficulty multipliers
         const getDifficultyMultipliers = (difficulty) => {
             switch (difficulty) {
                 case 'challenging-personality':
-                    return {
-                        penaltyMultiplier: 1.4,  // 40% harsher penalties
-                        bonusMultiplier: 0.8,    // 20% reduced bonuses
-                        baseThreshold: 0.9       // 10% stricter thresholds
-                    };
+                    return { penaltyMultiplier: 1.4, bonusMultiplier: 0.8, baseThreshold: 0.9 };
                 case 'moderate-personality':
-                    return {
-                        penaltyMultiplier: 1.2,  // 20% harsher penalties
-                        bonusMultiplier: 0.9,    // 10% reduced bonuses
-                        baseThreshold: 0.95      // 5% stricter thresholds
-                    };
+                    return { penaltyMultiplier: 1.2, bonusMultiplier: 0.9, baseThreshold: 0.95 };
                 case 'easy-going-personality':
                 default:
-                    return {
-                        penaltyMultiplier: 1.0,  // Standard penalties
-                        bonusMultiplier: 1.0,    // Standard bonuses
-                        baseThreshold: 1.0       // Standard thresholds
-                    };
+                    return { penaltyMultiplier: 1.0, bonusMultiplier: 1.0, baseThreshold: 1.0 };
             }
         };
 
         const { penaltyMultiplier, bonusMultiplier, baseThreshold } = getDifficultyMultipliers(interviewerDifficulty);
 
-         //penalize extremely long response
+        // Penalize extremely long response
         if (responseTime > 300) {
             score -= Math.min((responseTime - 300) * 0.05 * penaltyMultiplier, 10 * penaltyMultiplier);
         }
 
-        // 1. Response time penalty (adjusted for difficulty)
+        // Response time penalty
         const minResponseTime = 20 * baseThreshold;
         if (responseTime < minResponseTime) {
             const deduction = Math.min((60 - responseTime) * 0.2 * penaltyMultiplier, 12 * penaltyMultiplier);
             score -= deduction;
         }
 
-        // 2. Word count penalty (adjusted for difficulty)
+        // Word count penalty
         const minWordCount = 50 * baseThreshold;
         if (wordCount < minWordCount) {
             const deduction = Math.min((100 - wordCount) * 0.07 * penaltyMultiplier, 7 * penaltyMultiplier);
             score -= deduction;
         }
 
-        // 3. Filler words ratio penalty (stricter thresholds for higher difficulty)
+        // Filler words penalty
         if (wordCount > 0) {
             const ratio = fillerWords / wordCount;
-            const fillerThreshold = 0.05 * baseThreshold; // Stricter filler word tolerance for harder difficulties
+            const fillerThreshold = 0.05 * baseThreshold;
             if (ratio > fillerThreshold) {
                 const excess = ratio - fillerThreshold;
                 const deduction = Math.min(Math.pow(excess * 100, 1.2) * penaltyMultiplier, 15 * penaltyMultiplier);
@@ -97,26 +86,25 @@ export default function InterviewResults() {
             }
         }
 
-        // Long response penalty (adjusted for difficulty)
+        // Long response penalty
         if (wordCount > 300) {
             const deduction = Math.min((wordCount - 300) * 0.05 * penaltyMultiplier, 5 * penaltyMultiplier);
             score -= deduction;
         }
 
-        // 4. Action words points with diminishing returns (reduced bonus for harder difficulties)
+        // Action words points
         score += harmonicPoints(actionWords) * 1.2 * bonusMultiplier;
 
-        // 5. Stats used points with diminishing returns (reduced bonus for harder difficulties)
+        // Stats used points
         score += harmonicPoints(statsUsed) * bonusMultiplier;
 
-        // 6. Time efficiency bonus (reduced bonus for harder difficulties)
+        // Time efficiency bonus
         if (responseTime >= 60 && responseTime <= 180) {
-            // scale linearly from 0 to 5 points
             const bonus = ((responseTime - 60) / (180 - 60)) * 5 * bonusMultiplier;
             score += bonus;
         }
 
-        // 7. Consistency penalty: words vs time (adjusted for difficulty)
+        // Words per second consistency penalty
         const wordsPerSecond = wordCount / responseTime;
         if (wordsPerSecond < 1) {
             score -= Math.min((1 - wordsPerSecond) * 20 * penaltyMultiplier, 10 * penaltyMultiplier);
@@ -124,10 +112,45 @@ export default function InterviewResults() {
             score -= Math.min((wordsPerSecond - 4) * 10 * penaltyMultiplier, 10 * penaltyMultiplier);
         }
 
-        // 8. Cap score between 0 and 100
+        // Cap score between 0 and 100
         score = Math.max(0, Math.min(100, score));
 
-        return Math.round(score);
+        // ✅ Scale score to be out of 60
+        score = Math.round(score * 0.6);
+        let situationScore = starAnswerParsed.situation ? 10 : 0;
+        if (starAnswerParsed.situation) {
+            const wordCount = starAnswerParsed.situation.trim().split(/\s+/).length;
+            if (wordCount < 20) {
+                situationScore -= (20 - wordCount);
+                situationScore = Math.max(situationScore, 0);
+            }
+        }
+        let taskScore  = starAnswerParsed.task ? 10 : 0;
+        if (starAnswerParsed.task) {
+            const wordCount = starAnswerParsed.task.trim().split(/\s+/).length;
+            if (wordCount < 20) {
+                taskScore -= (20 - wordCount);
+                taskScore = Math.max(taskScore, 0);
+            }
+        }
+        let actionScore = starAnswerParsed.action ? 10 : 0;
+        if (starAnswerParsed.action) {
+            const wordCount = starAnswerParsed.action.trim().split(/\s+/).length;
+            if (wordCount < 20) {
+                actionScore -= (20 - wordCount);
+                actionScore = Math.max(actionScore, 0);
+            }
+        }
+        let resultScore = starAnswerParsed.result ? 10 : 0;
+        if (starAnswerParsed.result) {
+            const wordCount = starAnswerParsed.result.trim().split(/\s+/).length;
+            if (wordCount < 20) {
+                resultScore -= (20 - wordCount);
+                resultScore = Math.max(resultScore, 0);
+            }
+        }
+
+        return score + situationScore + taskScore + actionScore + resultScore;
     }
 
     function harmonicPoints(count) {
@@ -138,6 +161,52 @@ export default function InterviewResults() {
         return points;
     }
 
+    const tabStyle = (isActive) => ({
+        padding: '12px 16px',
+        fontSize: '1.1rem',
+        fontWeight: '600',
+        fontFamily: 'system-ui, -apple-system, sans-serif',
+        color: isActive ? '#1f2937' : '#6B7280',
+        backgroundColor: 'transparent',
+        border: 'none',
+        borderBottom: isActive ? '3px solid #3B82F6' : '3px solid transparent',
+        cursor: 'pointer',
+        transition: 'all 0.2s ease-in-out',
+        borderRadius: '4px 4px 0 0'
+    });
+
+    const contentBoxStyle = {
+        padding: '24px',
+        backgroundColor: '#f8fafc',
+        borderRadius: '12px',
+        border: '1px solid #e2e8f0'
+    };
+
+    const textStyle = {
+        lineHeight: '1.6',
+        color: '#374151',
+        fontFamily: 'system-ui, -apple-system, sans-serif'
+    };
+
+    const legendStyle = {
+        marginTop: '24px',
+        padding: '16px',
+        borderRadius: '8px'
+    };
+
+    const legendItemStyle = {
+        display: 'flex',
+        alignItems: 'center',
+        gap: '8px'
+    };
+
+    const colorBoxStyle = (bgColor, borderColor) => ({
+        width: '16px',
+        height: '16px',
+        backgroundColor: bgColor,
+        borderRadius: '4px',
+        border: `1px solid ${borderColor}`
+    });
     
     useEffect(() => {
         const fetchData = async () => {
@@ -227,6 +296,7 @@ export default function InterviewResults() {
             
             // Calculate performance score using the existing function
             const score = calculatePerformanceScoreDiminishing({
+                starAnswerParsed: analysis?.starAnswerParsed,
                 responseTime: response.recordedTime || 0,
                 wordCount: analysis?.totalWords || 0,
                 fillerWords: analysis?.fillerWordCount || 0,
@@ -254,7 +324,9 @@ export default function InterviewResults() {
                 score: score,
                 strengths: analysis?.strengths || generateStrengths(analysis, actionWordsList.length, statsUsed.length),
                 improvements:  analysis?.improvements || generateImprovements(analysis),
-                tips: analysis?.tips ||generateTips(analysis)
+                tips: analysis?.tips ||generateTips(analysis),
+                improvedResponse: analysis?.improvedResponse,
+                starAnswerParsed: analysis?.starAnswerParsed,
             };
         });
         
@@ -541,45 +613,86 @@ export default function InterviewResults() {
 
     const overallTips = generateOverallTips();
 
-    // Highlight text function
-    const highlightText = (text, fillerWords, actionWords) => {
-        if (!text) return text;
-        
-        // Create arrays of words to highlight, ensuring they exist and are not empty
-        const safeFillerWords = Array.isArray(fillerWords) ? fillerWords.filter(word => word && word.trim()) : [];
-        const safeActionWords = Array.isArray(actionWords) ? actionWords.filter(word => word && word.trim()) : [];
-        
-        // Split text into words and spaces to preserve formatting
-        const tokens = text.split(/(\s+)/);
-        
-        return tokens.map(token => {
-            // Skip whitespace
-            if (/^\s+$/.test(token)) {
-                return token;
-            }
-            
-            // Clean the word for comparison (remove punctuation)
-            const cleanWord = token.toLowerCase().replace(/[^\w]/g, '');
-            if (!cleanWord) return token;
-            
-            // Check for numbers (including percentages, decimals, etc.)
-            if (/^\d+(?:\.\d+)?(?:%|percent|million|billion|thousand|k|m|b)?$/i.test(cleanWord)) {
-                return `<span style="background-color: #c1deffff; color: #275377ff; padding: 2px 4px; border-radius: 4px; font-weight: 600;">${token}</span>`;
-            }
-            
-            // Check for action words
-            if (safeActionWords.some(actionWord => actionWord.toLowerCase() === cleanWord)) {
-                return `<span style="background-color: #d1fae5; color: #065f46; padding: 2px 4px; border-radius: 4px; font-weight: 600;">${token}</span>`;
-            }
-            
-            // Check for filler words
-            if (safeFillerWords.some(fillerWord => fillerWord.toLowerCase() === cleanWord)) {
-                return `<span style="background-color: #ffd9d9ff; color: #dc2626; padding: 2px 4px; border-radius: 4px; font-weight: 600;">${token}</span>`;
-            }
-            
-            return token;
-        }).join('');
-    };
+const highlightText = (text, fillerWords, actionWords, starAnswerParsed) => {
+  if (!text) return text;
+
+  const safeFillerWords = Array.isArray(fillerWords) ? fillerWords.filter(w => w?.trim()) : [];
+  const safeActionWords = Array.isArray(actionWords) ? actionWords.filter(w => w?.trim()) : [];
+
+  // STAR underline colors (hex ensures visibility)
+  const starColors = {
+    situation: '#FBBF24', // yellow-400, visible
+    task:      '#3B82F6', // blue
+    action:    '#FB923C', // purple
+    result:    '#8B5CF6'  // orange
+  };
+
+  // Build STAR phrases longest-first
+  const starEntries = Object.entries(starAnswerParsed || {})
+    .map(([key, val]) => ({ key, phrase: (val || '').trim() }))
+    .filter(e => e.phrase)
+    .sort((a, b) => b.phrase.length - a.phrase.length);
+
+  if (!starEntries.length) return processNormalSegment(text, safeFillerWords, safeActionWords);
+
+  // Wrap STAR phrases first so outer span holds underline
+  let processedText = text;
+  starEntries.forEach(({ key, phrase }) => {
+    const color = starColors[key] || 'black';
+    const regex = new RegExp(escapeRegExp(phrase), 'gi');
+    processedText = processedText.replace(regex, match => 
+      `<span class="star-phrase" data-color="${color}">${match}</span>`
+    );
+  });
+
+  // Split by STAR spans to preserve them
+  const finalSegments = [];
+  const starSpanRegex = /<span class="star-phrase" data-color="(.+?)">([\s\S]*?)<\/span>/g;
+  let lastIndex = 0, match;
+  while ((match = starSpanRegex.exec(processedText)) !== null) {
+    if (match.index > lastIndex) {
+      finalSegments.push({ type: 'normal', text: processedText.slice(lastIndex, match.index) });
+    }
+    finalSegments.push({ type: 'star', text: match[2], color: match[1] });
+    lastIndex = starSpanRegex.lastIndex;
+  }
+  if (lastIndex < processedText.length) {
+    finalSegments.push({ type: 'normal', text: processedText.slice(lastIndex) });
+  }
+
+  return finalSegments.map(seg => {
+    if (seg.type === 'normal') return processNormalSegment(seg.text, safeFillerWords, safeActionWords);
+    // Outer span for STAR phrase, inner highlighting applied
+    const inner = processNormalSegment(seg.text, safeFillerWords, safeActionWords);
+    return `<span style="border-bottom: 3px solid ${seg.color};">${inner}</span>`;
+  }).join('');
+};
+
+function processNormalSegment(segmentText, safeFillerWords, safeActionWords) {
+  const tokens = segmentText.split(/(\s+)/);
+  return tokens.map(token => {
+    if (/^\s+$/.test(token)) return token;
+    const cleanWord = token.toLowerCase().replace(/[^\w]/g, '');
+    if (!cleanWord) return token;
+
+    if (/^\d+(?:\.\d+)?(?:%|percent|million|billion|thousand|k|m|b)?$/i.test(cleanWord)) {
+      return `<span style="background-color:#c1deff;color:#275377;padding:2px 4px;border-radius:4px;font-weight:600;">${token}</span>`;
+    }
+    if (safeActionWords.some(w => w.toLowerCase() === cleanWord)) {
+      return `<span style="background-color:#d1fae5;color:#065f46;padding:2px 4px;border-radius:4px;font-weight:600;">${token}</span>`;
+    }
+    if (safeFillerWords.some(w => w.toLowerCase() === cleanWord)) {
+      return `<span style="background-color:#ffd9d9;color:#dc2626;padding:2px 4px;border-radius:4px;font-weight:600;">${token}</span>`;
+    }
+    return token;
+  }).join('');
+}
+
+function escapeRegExp(s) {
+  return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+
 
     // Animation variants
     const containerVariants = {
@@ -1224,7 +1337,7 @@ export default function InterviewResults() {
                                                             icon={RecordVoiceOverIcon}
                                                             label="Word Count"
                                                             value={currentData.wordCount}
-                                                            color="#06b6d4"
+                                                            color="#f59e0b"
                                                         />
                                                     </Grid>
                                                     <Grid item xs={6} sm={3}>
@@ -1240,85 +1353,97 @@ export default function InterviewResults() {
                                                             icon={BarChartIcon}
                                                             label="Statistics"
                                                             value={currentData.statsUsed}
-                                                            color="#f59e0b"
+                                                            color="#06b6d4"
                                                         />
                                                     </Grid>
                                                 </Grid>
+                                                
 
                                             {/* Transcript */}
                                             <Card sx={{ p: 3, mb: 3, borderRadius: '16px' }}>
-                                                <Typography sx={{ fontSize: '1.1rem', fontWeight: 600, mb: 2, color: '#1f2937', fontFamily: 'Satoshi Bold' }}>
+                                                <div className="tabContainerStyle">
+                                                    <button 
+                                                    style={tabStyle(activeTab === 0)}
+                                                    onClick={() => setActiveTab(0)}
+                                                    >
                                                     📝 Your Response
-                                                </Typography>
-                                                <Box sx={{ 
-                                                    p: 3, 
-                                                    backgroundColor: '#f8fafc', 
-                                                    borderRadius: '12px',
-                                                    border: '1px solid #e2e8f0'
-                                                }}>
-                                                    <Typography
-                                                        sx={{ lineHeight: 1.6, color: '#374151', fontFamily: 'DM Sans' }}
+                                                    </button>
+                                                    <button 
+                                                    style={tabStyle(activeTab === 1)}
+                                                    onClick={() => setActiveTab(1)}
+                                                    >
+                                                    ✨ Improved Response
+                                                    </button>
+                                                </div>
+                                                {/* Tab Content */}
+                                                {activeTab === 0 && (
+                                                    <div>
+                                                    <div style={contentBoxStyle}>
+                                                        <div
+                                                        style={textStyle}
                                                         dangerouslySetInnerHTML={{
                                                             __html: highlightText(
-                                                                currentData.transcript,
-                                                                currentData.fillerWordsList,
-                                                                currentData.actionWordsList
+                                                            currentData.transcript,
+                                                            currentData.fillerWordsList,
+                                                            currentData.actionWordsList,
+                                                            currentData.starAnswerParsed
                                                             )
                                                         }}
-                                                    />
-                                                </Box>
-                                                
-                                                {/* Legend */}
-                                                <Box sx={{ mt: 3, p: 2, borderRadius: '8px' }}>
-                                                    <Typography sx={{ fontSize: '0.8rem', fontWeight: 600, mb: 1, color: '#374151', fontFamily: 'Satoshi Medium' }}>
+                                                        />
+                                                    </div>
+                                                    
+                                                    {/* Legend */}
+                                                    <div style={legendStyle}>
+                                                        <div style={{ fontSize: '0.8rem', fontWeight: '600', marginBottom: '8px', color: '#374151', fontFamily: 'system-ui, -apple-system, sans-serif' }}>
                                                         Highlight Legend:
-                                                    </Typography>
-                                                    <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
-                                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                                            <Box sx={{ 
-                                                                width: 16, 
-                                                                height: 16, 
-                                                                backgroundColor: '#d1fae5', 
-                                                                borderRadius: '4px',
-                                                                border: '1px solid #a7f3d0'
-                                                            }} />
-                                                            <Typography sx={{ fontSize: '0.75rem', color: '#065f46', fontFamily: 'DM Sans' }}>
-                                                                Action Words
-                                                            </Typography>
-                                                        </Box>
-                                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                                            <Box sx={{ 
-                                                                width: 16, 
-                                                                height: 16, 
-                                                                backgroundColor: '#C7DDFC', 
-                                                                borderRadius: '4px',
-                                                                border: '1px solid #6ea7e4ff'
-                                                            }} />
-                                                            <Typography sx={{ fontSize: '0.75rem', color: '#325274', fontFamily: 'DM Sans' }}>
-                                                                Numbers/Stats
-                                                            </Typography>
-                                                        </Box>
-                                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                                            <Box sx={{ 
-                                                                width: 16, 
-                                                                height: 16, 
-                                                                backgroundColor: '#ffd9d9ff', 
-                                                                borderRadius: '4px',
-                                                                border: '1px solid #fca8a8ff'
-                                                            }} />
-                                                            <Typography sx={{ fontSize: '0.75rem', color: '#dc2626', fontFamily: 'DM Sans' }}>
-                                                                Filler Words
-                                                            </Typography>
-                                                        </Box>
-                                                    </Box>
-                                                </Box>
-                    
+                                                        </div>
+                                                        <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap', alignItems: 'center' }}>
+                                                        <div style={legendItemStyle}>
+                                                            <div style={colorBoxStyle('#d1fae5', '#a7f3d0')} />
+                                                            <span style={{ fontSize: '0.75rem', color: '#065f46', fontFamily: 'system-ui, -apple-system, sans-serif' }}>
+                                                            Action Words
+                                                            </span>
+                                                        </div>
+                                                        <div style={legendItemStyle}>
+                                                            <div style={colorBoxStyle('#C7DDFC', '#6ea7e4ff')} />
+                                                            <span style={{ fontSize: '0.75rem', color: '#325274', fontFamily: 'system-ui, -apple-system, sans-serif' }}>
+                                                            Numbers/Stats
+                                                            </span>
+                                                        </div>
+                                                        <div style={legendItemStyle}>
+                                                            <div style={colorBoxStyle('#ffd9d9ff', '#fca8a8ff')} />
+                                                            <span style={{ fontSize: '0.75rem', color: '#dc2626', fontFamily: 'system-ui, -apple-system, sans-serif' }}>
+                                                            Filler Words
+                                                            </span>
+                                                        </div>
+
+                                                        <div style={{ fontSize: '0.8rem', fontFamily: 'system-ui, -apple-system, sans-serif', fontWeight: '600' }}>
+                                                            <span style={{ color: 'black', borderBottom: '3px solid #FBBF24' }}>Situation </span>
+                                                            <span style={{ color: 'black', borderBottom: '3px solid #3B82F6' }}>Task </span>
+                                                            <span style={{ color: 'black', borderBottom: '3px solid #FB923C' }}>Action </span>
+                                                            <span style={{ color: 'black', borderBottom: '3px solid #8B5CF6' }}>Result </span>
+                                                        </div>
+                                                        </div>
+                                                    </div>
+                                                    </div>
+                                                )}
+
+                                                {activeTab === 1 && (
+                                                    <div style={contentBoxStyle}>
+                                                    <div
+                                                        style={textStyle}
+                                                        dangerouslySetInnerHTML={{
+                                                        __html: currentData.improvedResponse
+                                                        }}
+                                                    />
+                                                    </div>
+                                                )}
                                             </Card>
 
                                             {/* Analysis & Tips */}
                                             <Grid container spacing={3}>
                                                 {/* Strengths */}
-                                                <Grid item xs={12} md={4}>
+                                                <Grid item xs={12} md={6}>
                                                     <Card sx={{ p: 3, borderRadius: '16px', height: '100%' }}>
                                                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
                                                             <CheckCircleIcon sx={{ color: '#10b981' }} />
@@ -1345,38 +1470,8 @@ export default function InterviewResults() {
                                                         </Box>
                                                     </Card>
                                                 </Grid>
-
-                                                {/* Areas for Improvement */}
-                                                <Grid item xs={12} md={4}>
-                                                    <Card sx={{ p: 3, borderRadius: '16px', height: '100%' }}>
-                                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
-                                                            <ErrorIcon sx={{ color: '#f59e0b' }} />
-                                                            <Typography sx={{ fontSize: '1rem', fontWeight: 600, color: '#1f2937', fontFamily: 'Satoshi Medium' }}>
-                                                                Improvements
-                                                            </Typography>
-                                                        </Box>
-                                                        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-                                                            {currentData.improvements.map((improvement, index) => (
-                                                                <Box key={index} sx={{ display: 'flex', alignItems: 'flex-start', gap: 1 }}>
-                                                                    <Box sx={{ 
-                                                                        width: 6, 
-                                                                        height: 6, 
-                                                                        borderRadius: '50%', 
-                                                                        backgroundColor: '#f59e0b',
-                                                                        mt: 0.75,
-                                                                        flexShrink: 0
-                                                                    }} />
-                                                                    <Typography sx={{ fontSize: '0.85rem', color: '#374151', lineHeight: 1.4, fontFamily: 'DM Sans' }}>
-                                                                        {improvement}
-                                                                    </Typography>
-                                                                </Box>
-                                                            ))}
-                                                        </Box>
-                                                    </Card>
-                                                </Grid>
-
-                                                {/* Tips */}
-                                                <Grid item xs={12} md={4}>
+                                               {/* Tips */}
+                                                <Grid item xs={12} md={6}>
                                                     <Card sx={{ p: 3, borderRadius: '16px', height: '100%' }}>
                                                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
                                                             <InfoIcon sx={{ color: '#3b82f6' }} />
