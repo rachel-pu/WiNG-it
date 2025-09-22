@@ -641,5 +641,35 @@
 .error-text {
   color: red;
   font-size: 0.875rem; /* smaller text */
-  margin-top: 4px;
+  font-family: "Satoshi Medium", sans-serif;
+  margin-top: 2px;
+}
+
+/* Top notification alert styles */
+.quickstart-alert-container {
+    position: fixed;
+    top: 90px;
+    left: 50%;
+    transform: translateX(calc(-50% + 120px)); /* Adjust for sidebar width */
+    z-index: 2000;
+    width: auto;
+    max-width: 90%;
+}
+
+.quickstart-alert {
+    background-color: rgba(0, 0, 0, 0.78) !important;
+    color: white !important;
+    border: 1px solid rgba(255,255,255,0.2) !important;
+    border-radius: 0.75rem !important;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5) !important;
+    backdrop-filter: blur(10px) !important;
+    font-family: "Satoshi Medium", sans-serif !important;
+}
+
+.quickstart-alert .MuiAlert-icon {
+    color: white !important;
+}
+
+.quickstart-alert .MuiAlert-action {
+    color: white !important;
 }

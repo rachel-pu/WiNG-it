@@ -1,9 +1,9 @@
 "use client";
 import "./QuickstartPage.css";
 import Toolbar from "@mui/material/Toolbar";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Box from "@mui/material/Box";
-import { Button, Typography, Switch, FormControlLabel } from "@mui/material";
+import { Button, Typography, Switch, FormControlLabel, Alert, Fade } from "@mui/material";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 
@@ -34,6 +34,19 @@ const QuickstartPage = ({
     handleGetStarted,
     handleInterviewerDifficultyChange,
 }) => {
+    const [showAlert, setShowAlert] = useState(false);
+    const [alertMessage, setAlertMessage] = useState("");
+    const [alertSeverity, setAlertSeverity] = useState("error");
+
+    // Auto-hide alert after 3 seconds
+    useEffect(() => {
+        if (showAlert) {
+            const timer = setTimeout(() => {
+                setShowAlert(false);
+            }, 3000);
+            return () => clearTimeout(timer);
+        }
+    }, [showAlert]);
 
     const itemVariants = {
         hidden: { opacity: 0, y: 5 },
@@ -85,10 +98,20 @@ const QuickstartPage = ({
 
     const handleQuestionTypeToggle = (typeId) => {
         const currentTypes = questionTypes || [];
-        const newTypes = currentTypes.includes(typeId) 
+        const newTypes = currentTypes.includes(typeId)
             ? currentTypes.filter(id => id !== typeId)
             : [...currentTypes, typeId];
         handleQuestionTypesChange({ target: { value: newTypes } });
+    };
+
+    const handleStartButtonClick = () => {
+        if (error) {
+            setAlertMessage(error);
+            setAlertSeverity("error");
+            setShowAlert(true);
+        } else {
+            handleGetStarted();
+        }
     };
 
     return (
@@ -175,7 +198,6 @@ const QuickstartPage = ({
                         {/* Job Role Input */}
                         <div className="form-group">
                             <label className="form-label">Target Role</label>
-                            {error && <p className="error-text">{error}</p>}
                             <input
                                 type="text"
                                 value={jobRole}
@@ -257,7 +279,7 @@ const QuickstartPage = ({
                 className="start-button-container"
             >
                 <Button
-                    onClick={handleGetStarted}
+                    onClick={handleStartButtonClick}
                     className="start-button"
                 >
                     <PlayArrowIcon />
@@ -269,6 +291,24 @@ const QuickstartPage = ({
                     Ready when you are! Good luck!
                 </Typography>
             </motion.div>
+
+            {/* Top notification alert */}
+            <Fade in={showAlert} timeout={300}>
+                <Box className="quickstart-alert-container">
+                    <Alert
+                        severity={alertSeverity}
+                        onClose={() => setShowAlert(false)}
+                        className="quickstart-alert"
+                        sx={{
+                            '& .MuiAlert-message': {
+                                fontFamily: '"Satoshi Medium", sans-serif',
+                            }
+                        }}
+                    >
+                        {alertMessage}
+                    </Alert>
+                </Box>
+            </Fade>
         </Box>
     );
 };
