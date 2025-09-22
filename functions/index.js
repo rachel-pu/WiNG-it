@@ -364,7 +364,7 @@ exports.saveResponse = functions.https.onRequest((req, res) => {
       const words = result?.results?.channels?.[0]?.alternatives?.[0]?.words || [];
       console.log('Transcript:', transcript.substring(0, 100));
       const prompt = `
-          Generate a JSON object with the keys: fillerWords, questionTypes, improvements, fillerWordsList, strengths, tips, starAnswerParsed, improvedResponse.
+          Generate a JSON object with the keys: fillerWords, questionTypes, fillerWordsList, strengths, tips, starAnswerParsed, improvedResponse.
           Using the following:
 
           Transcript: ${transcript}
@@ -375,7 +375,6 @@ exports.saveResponse = functions.https.onRequest((req, res) => {
           - Categorize the question as any of: Situational, Problem-solving, Technical, Leadership, Teamwork (can be multiple).
           - Provide 1-2 bullet points of tips to improve the answer, at least one should be how to improve according to star method (provide as an array).
           - Provide 1-2 bullet points of strengths to improve the answer (provide as an array).
-          - Provide 1-2 bullet points of improvements to improve the answer (provide as an array).
           - For the starAnswerParsed variable, this should be a hashmap that extracts out each part of the answer in the transcript according to the star interview method. I should have 4 keys in the map matching to situation, task, action, result. Some of the values may be blank if the answer doesn't cover them. do NOT end the values with periods
           - For the improvedResponse variable, according to everything analyzed, rewrite the response to be a better answer to the question provided.
           Respond ONLY with valid JSON. Do NOT include any explanation or text outside the JSON.
@@ -405,7 +404,6 @@ exports.saveResponse = functions.https.onRequest((req, res) => {
           questionTypes: [], 
           tips: "" ,
           strengths: "",
-          improvements: ""
         };
       }
 
@@ -414,7 +412,6 @@ exports.saveResponse = functions.https.onRequest((req, res) => {
       const questionTypes = aiResults.questionTypes;
       const tips = aiResults.tips;
       const strengths = aiResults.strengths;
-      const improvements = aiResults.improvements;
       const fillerWordsList = aiResults.fillerWordsList;
       const starAnswerParsed = aiResults.starAnswerParsed;
       const improvedResponse = aiResults.improvedResponse;
@@ -436,7 +433,6 @@ exports.saveResponse = functions.https.onRequest((req, res) => {
           fillerWordsList,
           questionTypes,
           strengths,
-          improvements,
           tips,
           starAnswerParsed,
           improvedResponse

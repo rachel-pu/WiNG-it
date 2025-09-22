@@ -1443,7 +1443,7 @@ function escapeRegExp(s) {
                                             {/* Analysis & Tips */}
                                             <Grid container spacing={3}>
                                                 {/* Strengths */}
-                                                <Grid item xs={12} md={4}>
+                                                <Grid item xs={12} md={6}>
                                                     <Card sx={{ p: 3, borderRadius: '16px', height: '100%' }}>
                                                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
                                                             <CheckCircleIcon sx={{ color: '#10b981' }} />
@@ -1470,38 +1470,8 @@ function escapeRegExp(s) {
                                                         </Box>
                                                     </Card>
                                                 </Grid>
-
-                                                {/* Areas for Improvement */}
-                                                <Grid item xs={12} md={4}>
-                                                    <Card sx={{ p: 3, borderRadius: '16px', height: '100%' }}>
-                                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
-                                                            <ErrorIcon sx={{ color: '#f59e0b' }} />
-                                                            <Typography sx={{ fontSize: '1rem', fontWeight: 600, color: '#1f2937', fontFamily: 'Satoshi Medium' }}>
-                                                                Improvements
-                                                            </Typography>
-                                                        </Box>
-                                                        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-                                                            {currentData.improvements.map((improvement, index) => (
-                                                                <Box key={index} sx={{ display: 'flex', alignItems: 'flex-start', gap: 1 }}>
-                                                                    <Box sx={{ 
-                                                                        width: 6, 
-                                                                        height: 6, 
-                                                                        borderRadius: '50%', 
-                                                                        backgroundColor: '#f59e0b',
-                                                                        mt: 0.75,
-                                                                        flexShrink: 0
-                                                                    }} />
-                                                                    <Typography sx={{ fontSize: '0.85rem', color: '#374151', lineHeight: 1.4, fontFamily: 'DM Sans' }}>
-                                                                        {improvement}
-                                                                    </Typography>
-                                                                </Box>
-                                                            ))}
-                                                        </Box>
-                                                    </Card>
-                                                </Grid>
-
-                                                {/* Tips */}
-                                                <Grid item xs={12} md={4}>
+                                               {/* Tips */}
+                                                <Grid item xs={12} md={6}>
                                                     <Card sx={{ p: 3, borderRadius: '16px', height: '100%' }}>
                                                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
                                                             <InfoIcon sx={{ color: '#3b82f6' }} />
