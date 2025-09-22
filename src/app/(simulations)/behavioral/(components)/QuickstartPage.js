@@ -93,25 +93,7 @@ const QuickstartPage = ({
 
     return (
         <Box component="main" className="quickstart-main-modern">
-            <Toolbar />
-
-            {/* Header */}
-            <motion.div 
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true }}
-                transition={{ delay: 0.1 }}
-                variants={itemVariants}
-                className="quickstart-header"
-            >
-                <Typography className="quickstart-title-modern">
-                    Interview Practice
-                </Typography>
-                <Typography className="quickstart-description-modern">
-                    Master your behavioral interview skills with personalized AI feedback. 
-                    Practice like it&apos;s the real thing and boost your confidence.
-                </Typography>
-            </motion.div>
+            <Toolbar />    
 
             <div className="quickstart-content-grid">
                 {/* Instructions Panel */}

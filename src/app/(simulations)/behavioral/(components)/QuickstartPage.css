@@ -2,7 +2,7 @@
 .quickstart-main-modern {
     flex-grow: 1;
     background: linear-gradient(135deg, #f1f5f9 0%, #dbeafe 50%, #e0e7ff 100%);
-    padding: 2rem;
+    padding: 3rem;
     min-height: 100vh;
     width: 100%;
     max-width: 100%;
@@ -41,7 +41,7 @@
 .quickstart-content-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 2rem;
+    gap: 1.75rem;
     margin-bottom: 2rem;
     width: 100%;
     max-width: 100%;
@@ -512,7 +512,7 @@
     }
     
     .quickstart-main-modern {
-        padding: 1.5rem;
+        padding: 2.5rem;
     }
     
     .quickstart-title-modern {
