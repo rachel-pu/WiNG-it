@@ -15,12 +15,10 @@ import {
 } from '@mui/material';
 import { GiFluffyWing } from 'react-icons/gi';
 import { MdSpaceDashboard } from 'react-icons/md';
-import { HiDocumentText } from 'react-icons/hi';
-import { IoSettings } from 'react-icons/io5';
 import { Menu as MenuIcon } from '@mui/icons-material';
 
 const drawerWidth = 240;
-const collapsedWidth = 72; // width when only icons are shown
+const collapsedWidth = 72;
 
 const navItems = [
 { text: 'Dashboard', icon: <MdSpaceDashboard style={{ fontSize: '1.5rem' }} />, href: '/dashboard' },
@@ -100,7 +98,7 @@ const LeftNavbar = () => {
             zIndex: 2000,
             margin:0.8,
             "&:hover": {
-                bgcolor: "#e0e0e0", // darker gray on hover
+                bgcolor: "#e0e0e0",
             },
         }}
       >
@@ -125,7 +123,6 @@ const LeftNavbar = () => {
         {drawerContent(true)}
       </Drawer>
 
-      {/* Permanent drawer for sm+ screens */}
       <Drawer
         variant="permanent"
         sx={{

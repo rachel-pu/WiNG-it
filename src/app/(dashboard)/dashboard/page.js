@@ -5,7 +5,6 @@ import React from 'react';
 import Box from '@mui/material/Box';
 import CssBaseline from '@mui/material/CssBaseline';
 import Grid from '@mui/material/Grid2';
-import HomePageNavbar from "../../../../components/HomePageNavbar";
 import DefaultAppLayout from "../../DefaultAppLayout";
 import DashboardCard from '../dashboard/(components)/DashboardCard';
 
@@ -13,7 +12,7 @@ export default function Dashboard() {
     return (
         <Box sx={{ display: 'flex' }} bgcolor={'#F3F1EA'}>
             <CssBaseline />
-            <DefaultAppLayout title="Dashboard" color="#2850d9">
+            <DefaultAppLayout elevation={1} title="Dashboard" color="rgba(255, 255, 255, 1)" titlecolor="#2850d9">
                 {/* Main Content */}
                 <Box
                     component="main"

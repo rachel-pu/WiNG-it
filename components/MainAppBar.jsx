@@ -3,13 +3,14 @@ import { AppBar, Toolbar, Typography, Box } from '@mui/material';
 
 const drawerWidth = 240;
 const collapsedWidth = 72;
-const MainAppBar = ({ title, color }) => (
+const MainAppBar = ({ title, color, titlecolor, elevation}) => (
     <AppBar
         position="fixed"
+        elevation={elevation}
         sx={{
             zIndex: (theme) => theme.zIndex.drawer + 1,
             bgcolor: color,
-            color: "white",
+            color: titlecolor,
             transition: "margin-left 0.3s ease, width 0.3s ease",
             ml: { xs: 0, sm: `${collapsedWidth}px`, md: `${drawerWidth}px` },
             width: {
