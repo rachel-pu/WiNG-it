@@ -99,7 +99,7 @@ export default function BehavioralInterviewSimulation() {
     return (
         <Box className="behavioral-container">
             <CssBaseline />
-            <DefaultAppLayout title="Behavioral Interview Simulation" color="#2850d9">
+            <DefaultAppLayout elevation={16} title="Behavioral Interview Simulation" color="#2850d9" titlecolor="#FFFFFF">
                 {/* --------- main content --------- */}
                 {showQuickstart ? (
                     <QuickstartPage

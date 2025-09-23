@@ -3,7 +3,7 @@ import MainAppBar from "../../components/MainAppBar";
 import LeftNavbar from "../../components/LeftNavbar";
 import { useTheme, useMediaQuery } from '@mui/material';
 
-const DefaultAppLayout = ({ title, color, children }) => {
+const DefaultAppLayout = ({ title, color, titlecolor, elevation, children }) => {
   const theme = useTheme();
   const isXs = useMediaQuery(theme.breakpoints.down('sm') , { noSsr: true });
   const isSm = useMediaQuery(theme.breakpoints.between('sm', 'md') , { noSsr: true });
@@ -35,7 +35,7 @@ const DefaultAppLayout = ({ title, color, children }) => {
   return (  
     <div className="flex flex-col min-h-screen">
       {/* Top Navbar */}
-      <MainAppBar title={title} color={color} />
+      <MainAppBar title={title} color={color} titlecolor={titlecolor} elevation={elevation}/>
 
       {/* Side Navbar + Content */}
       <div className="flex flex-1">

@@ -493,7 +493,7 @@ export default function InterviewResults() {
         return (
             <Box sx={{ display: "flex" }}>
                 <CssBaseline />
-                <DefaultAppLayout title="Interview Results" color="#2850d9">
+                <DefaultAppLayout  elevation={16} title="Interview Results" color="#2850d9" titlecolor="#FFFFFF">
                     <Box sx={{ 
                         position: 'fixed',
                         width: '100%',
@@ -518,7 +518,7 @@ export default function InterviewResults() {
         return (
             <Box sx={{ display: "flex" }}>
                 <CssBaseline />
-                <DefaultAppLayout title="Interview Results" color="#2850d9">
+                <DefaultAppLayout  elevation={16} title="Interview Results" color="#2850d9" titlecolor="#FFFFFF">
                     <Box sx={{ 
                         position: 'fixed',
                         width: '100%',
@@ -927,7 +927,7 @@ function escapeRegExp(s) {
     return (
         <Box sx={{ display: "flex" }}>
             <CssBaseline />
-            <DefaultAppLayout title="Interview Results" color="#2850d9">
+            <DefaultAppLayout  elevation={16} title="Interview Results" color="#2850d9" titlecolor="#FFFFFF">
                 <Box sx={{ 
                     minHeight: '100vh',
                     background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)',
