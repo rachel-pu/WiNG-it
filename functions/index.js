@@ -6,8 +6,10 @@ require("dotenv").config();
 const { createClient } = require('@deepgram/sdk');
 const { Readable } = require("stream");
 
-// Initialize Google Cloud Text-to-Speech
+// Initialize Google Cloud Text-to-Speech (keeping for fallback)
 const textToSpeech = require('@google-cloud/text-to-speech');
+// Initialize Google Generative AI for Gemini TTS
+const { GoogleGenerativeAI } = require('@google/generative-ai');
 
 // Initialize Firebase Admin
 admin.initializeApp();
@@ -19,8 +21,10 @@ const openai = new OpenAI({
 });
 const deepgramClient = createClient(process.env.DEEPGRAM_API_KEY);
 
-// Initialize Google Cloud TTS client
+// Initialize Google Cloud TTS client (keeping for fallback)
 const ttsClient = new textToSpeech.TextToSpeechClient();
+// Initialize Gemini AI client
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 // Utility function to extract questions from text
 function extractQuestions(text) {
@@ -180,7 +184,7 @@ exports.generateQuestions = functions.https.onRequest((req, res) => {
 
 // Text to Speech Function
 exports.textToSpeech = functions.https.onRequest((req, res) => {
-  console.log("Converting text to speech");
+  console.log("Converting text to speech with Gemini 2.5 Pro TTS");
   return cors(req, res, async () => {
     try {
       if (req.method === "OPTIONS") {
@@ -191,8 +195,8 @@ exports.textToSpeech = functions.https.onRequest((req, res) => {
         return res.status(405).json({ error: "Method not allowed" });
       }
 
-      const { text, voice = 'en-US-Wavenet-C' } = req.body;
-      
+      const { text, voice = 'Kore', style = '', model = 'pro' } = req.body;
+
       if (!text || text.trim() === "") {
         return res.status(400).json({ error: "No text provided" });
       }
@@ -200,79 +204,135 @@ exports.textToSpeech = functions.https.onRequest((req, res) => {
       console.log(`Converting to speech: ${text.substring(0, 50)}...`);
       console.log(`Using voice: ${voice}`);
 
-      // Validate text length
-      if (text.length > 5000) {
-        return res.status(400).json({ 
-          error: "Text too long. Maximum 5000 characters allowed." 
+      // Validate text length (Gemini TTS supports longer text)
+      if (text.length > 50000) {
+        return res.status(400).json({
+          error: "Text too long. Maximum 50000 characters allowed."
         });
       }
 
-      const request = {
-        input: { text: text },
-        voice: {
-          languageCode: 'en-US',
-          name: voice,
-        },
-        audioConfig: { 
-          audioEncoding: 'MP3',
-          speakingRate: 1.0,
-          pitch: 0.0,
-          volumeGainDb: 0.0,
-        },
-      };
+      // Prepare the prompt with optional style guidance
+      const prompt = style ? `Say in a ${style} manner: ${text}` : text;
 
-      console.log("Sending request to Google Cloud TTS...");
-      const [response] = await ttsClient.synthesizeSpeech(request);
+      // Select model based on cost preference
+      const modelName = model === 'flash' ? 'gemini-2.5-flash-preview-tts' : 'gemini-2.5-pro-preview-tts';
+      console.log(`Sending request to ${modelName}...`);
 
-      if (!response.audioContent) {
-        throw new Error("No audio content received from Google Cloud TTS");
+      const geminiModel = genAI.getGenerativeModel({
+        model: modelName
+      });
+
+      const result = await geminiModel.generateContent({
+        contents: [{ parts: [{ text: prompt }] }],
+        generationConfig: {
+          responseModalities: ['AUDIO'],
+          speechConfig: {
+            voiceConfig: {
+              prebuiltVoiceConfig: { voiceName: voice },
+            },
+          },
+        },
+      });
+
+      const audioData = result.response.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
+
+      if (!audioData) {
+        throw new Error("No audio content received from Gemini TTS");
       }
 
-      // Calculate Google TTS cost (~$4.00 per 1M characters for Wavenet voices)
-      const characterCount = text.length;
-      const estimatedCost = (characterCount / 1000000) * 4.00;
-      
-      console.log("✅ Text-to-speech successful");
-      console.log(`Audio content size: ${response.audioContent.length} bytes`);
-      console.log(`💰 Google TTS API Call Cost:`);
-      console.log(`   Characters processed: ${characterCount}`);
-      console.log(`   Estimated cost: $${estimatedCost.toFixed(6)}`);
+      const audioBuffer = Buffer.from(audioData, 'base64');
 
-      // Set headers for audio stream
-      res.setHeader("Content-Type", "audio/mpeg");
+      // Calculate Gemini TTS cost estimates
+      const characterCount = text.length;
+      // Approximate token conversion: ~4 characters per token for English text
+      const estimatedInputTokens = Math.ceil(characterCount / 4);
+      // Audio output tokens are harder to estimate, using conservative estimate
+      const estimatedOutputTokens = Math.ceil(characterCount / 2); // Conservative estimate for audio tokens
+
+      // Pricing based on selected model (Standard Tier)
+      let inputRate, outputRate, modelDisplayName;
+      if (model === 'flash') {
+        inputRate = 0.50; // $0.50 per 1M input tokens for Flash
+        outputRate = 10.00; // $10.00 per 1M output tokens for Flash
+        modelDisplayName = 'Gemini 2.5 Flash TTS';
+      } else {
+        inputRate = 1.00; // $1.00 per 1M input tokens for Pro
+        outputRate = 20.00; // $20.00 per 1M output tokens for Pro
+        modelDisplayName = 'Gemini 2.5 Pro TTS';
+      }
+
+      const inputCost = (estimatedInputTokens / 1000000) * inputRate;
+      const outputCost = (estimatedOutputTokens / 1000000) * outputRate;
+      const totalEstimatedCost = inputCost + outputCost;
+
+      // Compare with Google Cloud TTS cost ($4.00 per 1M characters)
+      const googleTTSCost = (characterCount / 1000000) * 4.00;
+      const costDifference = totalEstimatedCost - googleTTSCost;
+      const costComparison = costDifference > 0 ?
+        `+$${costDifference.toFixed(6)} more than Google Cloud TTS` :
+        `-$${Math.abs(costDifference).toFixed(6)} less than Google Cloud TTS`;
+
+      console.log(`✅ ${modelDisplayName} successful`);
+      console.log(`Audio content size: ${audioBuffer.length} bytes`);
+      console.log(`💰 ${modelDisplayName} API Call Cost:`);
+      console.log(`   Characters processed: ${characterCount}`);
+      console.log(`   Estimated input tokens: ${estimatedInputTokens}`);
+      console.log(`   Estimated output tokens: ${estimatedOutputTokens}`);
+      console.log(`   Input cost: $${inputCost.toFixed(6)} (${inputRate}/1M tokens)`);
+      console.log(`   Output cost: $${outputCost.toFixed(6)} (${outputRate}/1M tokens)`);
+      console.log(`   Total estimated cost: $${totalEstimatedCost.toFixed(6)}`);
+      console.log(`   📊 vs Google Cloud TTS: ${costComparison}`);
+      console.log(`   Voice used: ${voice}`);
+
+      // Set appropriate headers for audio content (Gemini typically returns PCM/WAV)
+      res.setHeader("Content-Type", "audio/wav");
       res.setHeader("Content-Disposition", "inline");
       res.setHeader("Cache-Control", "no-cache");
-      res.setHeader("Content-Length", response.audioContent.length);
+      res.setHeader("Content-Length", audioBuffer.length);
 
-      // Send the audio buffer
-      return res.send(response.audioContent);
-      
+      return res.send(audioBuffer);
+
     } catch (error) {
-      console.error("Error in text-to-speech:", error);
-      
-      // More detailed error handling
-      if (error.code === 3) {
-        return res.status(400).json({ 
-          error: "Invalid request parameters", 
-          details: error.message 
-        });
-      } else if (error.code === 7) {
-        return res.status(403).json({ 
-          error: "Permission denied. Check your Google Cloud credentials.", 
-          details: error.message 
-        });
-      } else if (error.code === 8) {
-        return res.status(429).json({ 
-          error: "Quota exceeded", 
-          details: error.message 
+      console.error("Error in Gemini text-to-speech:", error);
+
+      // Fallback to Google Cloud TTS if Gemini fails
+      console.log("Falling back to Google Cloud TTS...");
+      try {
+        const { text, voice = 'en-US-Wavenet-C' } = req.body;
+
+        const request = {
+          input: { text: text },
+          voice: {
+            languageCode: 'en-US',
+            name: voice,
+          },
+          audioConfig: {
+            audioEncoding: 'MP3',
+            speakingRate: 1.0,
+            pitch: 0.0,
+            volumeGainDb: 0.0,
+          },
+        };
+
+        const [response] = await ttsClient.synthesizeSpeech(request);
+
+        if (!response.audioContent) {
+          throw new Error("Fallback TTS also failed");
+        }
+
+        console.log("✅ Fallback Google Cloud TTS successful");
+        res.setHeader("Content-Type", "audio/mpeg");
+        res.setHeader("Content-Length", response.audioContent.length);
+        return res.send(response.audioContent);
+
+      } catch (fallbackError) {
+        console.error("Both Gemini and Google Cloud TTS failed:", fallbackError);
+        return res.status(500).json({
+          error: "Text-to-speech conversion failed",
+          details: error.message,
+          fallbackError: fallbackError.message
         });
       }
-      
-      return res.status(500).json({ 
-        error: "Text-to-speech failed", 
-        details: error.message,
-        code: error.code || 'unknown'
-      });
     }
   });
 });

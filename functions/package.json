@@ -20,6 +20,7 @@
     "@deepgram/sdk": "^4.11.2",
     "@google-cloud/speech": "^6.0.0",
     "@google-cloud/text-to-speech": "^5.0.0",
+    "@google/generative-ai": "^0.21.0",
     "cors": "^2.8.5",
     "dotenv": "^16.0.0",
     "firebase-admin": "^11.8.0",
