@@ -103,22 +103,26 @@ const InterviewQuestions = ({questions}) => {
     // Fetch TTS audio for the current question
     const fetchAndPlayQuestionAudio = async (text) => {
         try {
-
             const response = await fetch("https://us-central1-wing-it-e6a3a.cloudfunctions.net/textToSpeech", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
                 },
-                body: JSON.stringify({text})
+                body: JSON.stringify({
+                    text,
+                    voice: "sarah", // Use LemonFox.ai voice
+                    speed: 1.0 // Normal speaking speed
+                })
             });
 
             if (!response.ok) {
-                console.error("Error fetching audio:", response.status);
+                console.error("Error fetching audio:", response.status, await response.text());
                 return;
             }
 
-            const blob = await response.blob();
-            const url = URL.createObjectURL(blob);
+            const audioBlob = await response.blob();
+            console.log("Audio blob type:", audioBlob.type);
+            const url = URL.createObjectURL(audioBlob);
             setAudioUrl(url);
             setTimeout(() => setShowAlert(false), 2000);
         } catch (error) {
@@ -139,22 +143,44 @@ const InterviewQuestions = ({questions}) => {
         if (audio && audioUrl) {
             const handlePlay = () => setIsSpeaking(true);
             const handleEnded = () => setIsSpeaking(false);
+            const handleError = (e) => {
+                console.error("Audio playback error:", e);
+                setAlertMessage("Audio format not supported. Please try refreshing.");
+                setAlertSeverity("error");
+                setShowAlert(true);
+            };
+            const handleCanPlay = () => {
+                console.log("Audio ready to play");
+            };
 
             audio.src = audioUrl;
             audio.addEventListener("play", handlePlay);
             audio.addEventListener("ended", handleEnded);
+            audio.addEventListener("error", handleError);
+            audio.addEventListener("canplay", handleCanPlay);
 
             audio.load();
-            audio.play().catch((err) => {
-                console.error("Autoplay failed:", err);
-                setAlertMessage("Failed to play audio automatically. Please click to play.");
-                setAlertSeverity("warning");
-                setShowAlert(true);
-            });
+
+            // Add a small delay before attempting to play
+            setTimeout(() => {
+                audio.play().catch((err) => {
+                    console.error("Autoplay failed:", err);
+                    if (err.name === 'NotSupportedError') {
+                        setAlertMessage("Audio format not supported by browser. Falling back...");
+                        setAlertSeverity("warning");
+                    } else {
+                        setAlertMessage("Failed to play audio automatically. Please click to play.");
+                        setAlertSeverity("info");
+                    }
+                    setShowAlert(true);
+                });
+            }, 100);
 
             return () => {
                 audio.removeEventListener("play", handlePlay);
                 audio.removeEventListener("ended", handleEnded);
+                audio.removeEventListener("error", handleError);
+                audio.removeEventListener("canplay", handleCanPlay);
             };
         }
     }, [audioUrl]);

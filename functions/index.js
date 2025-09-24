@@ -182,9 +182,9 @@ exports.generateQuestions = functions.https.onRequest((req, res) => {
   });
 });
 
-// Text to Speech Function
+// Text to Speech Function using LemonFox.ai
 exports.textToSpeech = functions.https.onRequest((req, res) => {
-  console.log("Converting text to speech with Gemini 2.5 Pro TTS");
+  console.log("Converting text to speech with LemonFox.ai TTS");
   return cors(req, res, async () => {
     try {
       if (req.method === "OPTIONS") {
@@ -195,7 +195,7 @@ exports.textToSpeech = functions.https.onRequest((req, res) => {
         return res.status(405).json({ error: "Method not allowed" });
       }
 
-      const { text, voice = 'Kore', style = '', model = 'pro' } = req.body;
+      const { text, voice = 'sarah', speed = 1.0 } = req.body;
 
       if (!text || text.trim() === "") {
         return res.status(400).json({ error: "No text provided" });
@@ -204,107 +204,80 @@ exports.textToSpeech = functions.https.onRequest((req, res) => {
       console.log(`Converting to speech: ${text.substring(0, 50)}...`);
       console.log(`Using voice: ${voice}`);
 
-      // Validate text length (Gemini TTS supports longer text)
-      if (text.length > 50000) {
+      // Validate text length (LemonFox.ai supports long text)
+      if (text.length > 100000) {
         return res.status(400).json({
-          error: "Text too long. Maximum 50000 characters allowed."
+          error: "Text too long. Maximum 100000 characters allowed."
         });
       }
 
-      // Prepare the prompt with optional style guidance
-      const prompt = style ? `Say in a ${style} manner: ${text}` : text;
+      console.log("Sending request to LemonFox.ai TTS API...");
 
-      // Select model based on cost preference
-      const modelName = model === 'flash' ? 'gemini-2.5-flash-preview-tts' : 'gemini-2.5-pro-preview-tts';
-      console.log(`Sending request to ${modelName}...`);
-
-      const geminiModel = genAI.getGenerativeModel({
-        model: modelName
-      });
-
-      const result = await geminiModel.generateContent({
-        contents: [{ parts: [{ text: prompt }] }],
-        generationConfig: {
-          responseModalities: ['AUDIO'],
-          speechConfig: {
-            voiceConfig: {
-              prebuiltVoiceConfig: { voiceName: voice },
-            },
-          },
+      const response = await fetch("https://api.lemonfox.ai/v1/audio/speech", {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${process.env.LEMONFOX_API_KEY}`,
+          "Content-Type": "application/json"
         },
+        body: JSON.stringify({
+          input: text,
+          voice: voice,
+          response_format: "mp3",
+          speed: speed
+        })
       });
 
-      const audioData = result.response.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
-
-      if (!audioData) {
-        throw new Error("No audio content received from Gemini TTS");
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`LemonFox.ai TTS API error: ${response.status} - ${errorText}`);
       }
 
-      const audioBuffer = Buffer.from(audioData, 'base64');
+      const audioBuffer = await response.arrayBuffer();
+      const audioData = Buffer.from(audioBuffer);
 
-      // Calculate Gemini TTS cost estimates
+      // Calculate LemonFox.ai TTS cost
       const characterCount = text.length;
-      // Approximate token conversion: ~4 characters per token for English text
-      const estimatedInputTokens = Math.ceil(characterCount / 4);
-      // Audio output tokens are harder to estimate, using conservative estimate
-      const estimatedOutputTokens = Math.ceil(characterCount / 2); // Conservative estimate for audio tokens
+      const estimatedCost = (characterCount / 1000000) * 2.50; // $2.50 per 1M characters
 
-      // Pricing based on selected model (Standard Tier)
-      let inputRate, outputRate, modelDisplayName;
-      if (model === 'flash') {
-        inputRate = 0.50; // $0.50 per 1M input tokens for Flash
-        outputRate = 10.00; // $10.00 per 1M output tokens for Flash
-        modelDisplayName = 'Gemini 2.5 Flash TTS';
-      } else {
-        inputRate = 1.00; // $1.00 per 1M input tokens for Pro
-        outputRate = 20.00; // $20.00 per 1M output tokens for Pro
-        modelDisplayName = 'Gemini 2.5 Pro TTS';
-      }
-
-      const inputCost = (estimatedInputTokens / 1000000) * inputRate;
-      const outputCost = (estimatedOutputTokens / 1000000) * outputRate;
-      const totalEstimatedCost = inputCost + outputCost;
-
-      // Compare with Google Cloud TTS cost ($4.00 per 1M characters)
-      const googleTTSCost = (characterCount / 1000000) * 4.00;
-      const costDifference = totalEstimatedCost - googleTTSCost;
-      const costComparison = costDifference > 0 ?
-        `+$${costDifference.toFixed(6)} more than Google Cloud TTS` :
-        `-$${Math.abs(costDifference).toFixed(6)} less than Google Cloud TTS`;
-
-      console.log(`✅ ${modelDisplayName} successful`);
-      console.log(`Audio content size: ${audioBuffer.length} bytes`);
-      console.log(`💰 ${modelDisplayName} API Call Cost:`);
+      console.log("✅ LemonFox.ai TTS successful");
+      console.log(`Audio content size: ${audioData.length} bytes`);
+      console.log(`💰 LemonFox.ai TTS API Call Cost:`);
       console.log(`   Characters processed: ${characterCount}`);
-      console.log(`   Estimated input tokens: ${estimatedInputTokens}`);
-      console.log(`   Estimated output tokens: ${estimatedOutputTokens}`);
-      console.log(`   Input cost: $${inputCost.toFixed(6)} (${inputRate}/1M tokens)`);
-      console.log(`   Output cost: $${outputCost.toFixed(6)} (${outputRate}/1M tokens)`);
-      console.log(`   Total estimated cost: $${totalEstimatedCost.toFixed(6)}`);
-      console.log(`   📊 vs Google Cloud TTS: ${costComparison}`);
+      console.log(`   Estimated cost: $${estimatedCost.toFixed(6)}`);
       console.log(`   Voice used: ${voice}`);
+      console.log(`   Speed: ${speed}`);
 
-      // Set appropriate headers for audio content (Gemini typically returns PCM/WAV)
-      res.setHeader("Content-Type", "audio/wav");
+      // Compare with other TTS costs
+      const googleTTSCost = (characterCount / 1000000) * 4.00;
+      const costSavings = googleTTSCost - estimatedCost;
+      console.log(`   💡 vs Google Cloud TTS: -$${costSavings.toFixed(6)} (${((costSavings / googleTTSCost) * 100).toFixed(1)}% cheaper)`);
+
+      // Set appropriate headers for MP3 audio content
+      res.setHeader("Content-Type", "audio/mpeg");
       res.setHeader("Content-Disposition", "inline");
       res.setHeader("Cache-Control", "no-cache");
-      res.setHeader("Content-Length", audioBuffer.length);
+      res.setHeader("Content-Length", audioData.length);
 
-      return res.send(audioBuffer);
+      // Add CORS headers for browser compatibility
+      res.setHeader("Access-Control-Allow-Origin", "*");
+      res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
+      res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+
+      return res.send(audioData);
 
     } catch (error) {
-      console.error("Error in Gemini text-to-speech:", error);
+      console.error("Error in LemonFox.ai text-to-speech:", error);
 
-      // Fallback to Google Cloud TTS if Gemini fails
+      // Fallback to Google Cloud TTS if LemonFox.ai fails
       console.log("Falling back to Google Cloud TTS...");
       try {
-        const { text, voice = 'en-US-Wavenet-C' } = req.body;
+        const { text } = req.body;
 
         const request = {
           input: { text: text },
           voice: {
             languageCode: 'en-US',
-            name: voice,
+            name: 'en-US-Wavenet-C',
           },
           audioConfig: {
             audioEncoding: 'MP3',
@@ -323,10 +296,11 @@ exports.textToSpeech = functions.https.onRequest((req, res) => {
         console.log("✅ Fallback Google Cloud TTS successful");
         res.setHeader("Content-Type", "audio/mpeg");
         res.setHeader("Content-Length", response.audioContent.length);
+        res.setHeader("Access-Control-Allow-Origin", "*");
         return res.send(response.audioContent);
 
       } catch (fallbackError) {
-        console.error("Both Gemini and Google Cloud TTS failed:", fallbackError);
+        console.error("Both LemonFox.ai and Google Cloud TTS failed:", fallbackError);
         return res.status(500).json({
           error: "Text-to-speech conversion failed",
           details: error.message,
