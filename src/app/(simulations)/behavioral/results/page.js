@@ -1082,11 +1082,6 @@ function escapeRegExp(s) {
                                                                         p: 2,
                                                                         textAlign: 'center',
                                                                         border: '1px solid rgba(255, 255, 255, 0.15)',
-                                                                        transition: 'all 0.2s ease',
-                                                                        '&:hover': {
-                                                                            background: 'rgba(255, 255, 255, 0.15)',
-                                                                            transform: 'translateY(-2px)'
-                                                                        }
                                                                     }}>
                                                                         <Box sx={{ 
                                                                             fontSize: '1.5rem', 
@@ -1110,11 +1105,6 @@ function escapeRegExp(s) {
                                                                         p: 2,
                                                                         textAlign: 'center',
                                                                         border: '1px solid rgba(255, 255, 255, 0.15)',
-                                                                        transition: 'all 0.2s ease',
-                                                                        '&:hover': {
-                                                                            background: 'rgba(255, 255, 255, 0.15)',
-                                                                            transform: 'translateY(-2px)'
-                                                                        }
                                                                     }}>
                                                                         <Box sx={{ 
                                                                             fontSize: '1.5rem', 
@@ -1140,11 +1130,6 @@ function escapeRegExp(s) {
                                                                         p: 2,
                                                                         textAlign: 'center',
                                                                         border: '1px solid rgba(255, 255, 255, 0.15)',
-                                                                        transition: 'all 0.2s ease',
-                                                                        '&:hover': {
-                                                                            background: 'rgba(255, 255, 255, 0.15)',
-                                                                            transform: 'translateY(-2px)'
-                                                                        }
                                                                     }}>
                                                                         <Box sx={{ 
                                                                             fontSize: '1.5rem', 
@@ -1168,11 +1153,6 @@ function escapeRegExp(s) {
                                                                         p: 2,
                                                                         textAlign: 'center',
                                                                         border: '1px solid rgba(255, 255, 255, 0.15)',
-                                                                        transition: 'all 0.2s ease',
-                                                                        '&:hover': {
-                                                                            background: 'rgba(255, 255, 255, 0.15)',
-                                                                            transform: 'translateY(-2px)'
-                                                                        }
                                                                     }}>
                                                                         <Box sx={{ 
                                                                             fontSize: '1.5rem', 
@@ -1322,41 +1302,41 @@ function escapeRegExp(s) {
                                                 </Box>
                                             </Card>
 
-                                            {/* Metrics Grid - Fixed version */}
-                                                <Grid container spacing={2} sx={{ mb: 3, alignItems: 'stretch' }}>
-                                                    <Grid item xs={6} sm={3}>
-                                                        <MetricCard
-                                                            icon={AccessTimeIcon}
-                                                            label="Seconds"
-                                                            value={recordedTimes[selectedQuestion - 1]?.recordedTime}
-                                                            color="#8b5cf6"
-                                                        />
-                                                    </Grid>
-                                                    <Grid item xs={6} sm={3}>
-                                                        <MetricCard
-                                                            icon={RecordVoiceOverIcon}
-                                                            label="Word Count"
-                                                            value={currentData.wordCount}
-                                                            color="#f59e0b"
-                                                        />
-                                                    </Grid>
-                                                    <Grid item xs={6} sm={3}>
-                                                        <MetricCard
-                                                            icon={TrendingUpIcon}
-                                                            label="Action Words"
-                                                            value={currentData.actionWords}
-                                                            color="#10b981"
-                                                        />
-                                                    </Grid>
-                                                    <Grid item xs={6} sm={3}>
-                                                        <MetricCard
-                                                            icon={BarChartIcon}
-                                                            label="Statistics"
-                                                            value={currentData.statsUsed}
-                                                            color="#06b6d4"
-                                                        />
-                                                    </Grid>
+                                            {/* Metrics Grid - Back to original position */}
+                                            <Grid container spacing={2} sx={{ mb: 3, alignItems: 'stretch' }}>
+                                                <Grid item xs={6} sm={3}>
+                                                    <MetricCard
+                                                        icon={AccessTimeIcon}
+                                                        label="Seconds"
+                                                        value={recordedTimes[selectedQuestion - 1]?.recordedTime}
+                                                        color="#8b5cf6"
+                                                    />
                                                 </Grid>
+                                                <Grid item xs={6} sm={3}>
+                                                    <MetricCard
+                                                        icon={RecordVoiceOverIcon}
+                                                        label="Word Count"
+                                                        value={currentData.wordCount}
+                                                        color="#f59e0b"
+                                                    />
+                                                </Grid>
+                                                <Grid item xs={6} sm={3}>
+                                                    <MetricCard
+                                                        icon={TrendingUpIcon}
+                                                        label="Action Words"
+                                                        value={currentData.actionWords}
+                                                        color="#10b981"
+                                                    />
+                                                </Grid>
+                                                <Grid item xs={6} sm={3}>
+                                                    <MetricCard
+                                                        icon={BarChartIcon}
+                                                        label="Statistics"
+                                                        value={currentData.statsUsed}
+                                                        color="#06b6d4"
+                                                    />
+                                                </Grid>
+                                            </Grid>
                                                 
 
                                             {/* Transcript */}
@@ -1440,29 +1420,96 @@ function escapeRegExp(s) {
                                                 )}
                                             </Card>
 
-                                            {/* Analysis & Tips */}
+                                            {/* Enhanced Tips & Advice Section - Moved to bottom, no hover effects */}
                                             <Grid container spacing={3}>
                                                 {/* Strengths */}
                                                 <Grid item xs={12} md={6}>
-                                                    <Card sx={{ p: 3, borderRadius: '16px', height: '100%' }}>
-                                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
-                                                            <CheckCircleIcon sx={{ color: '#10b981' }} />
-                                                            <Typography sx={{ fontSize: '1rem', fontWeight: 600, color: '#1f2937', fontFamily: 'Satoshi Medium' }}>
-                                                                Strengths
+                                                    <Card sx={{
+                                                        p: 3,
+                                                        borderRadius: '20px',
+                                                        background: 'linear-gradient(145deg, #f0f9ff 0%, #e0f2fe 100%)',
+                                                        border: '1px solid #bae6fd',
+                                                        boxShadow: '0 8px 25px rgba(59, 130, 246, 0.1)',
+                                                        height: '100%',
+                                                        position: 'relative',
+                                                        overflow: 'hidden',
+                                                        '&::before': {
+                                                            content: '""',
+                                                            position: 'absolute',
+                                                            top: 0,
+                                                            left: 0,
+                                                            right: 0,
+                                                            height: '4px',
+                                                            background: 'linear-gradient(90deg, #10b981 0%, #34d399 100%)',
+                                                            borderRadius: '20px 20px 0 0'
+                                                        }
+                                                    }}>
+                                                        {/* Background decoration */}
+                                                        <Box sx={{
+                                                            position: 'absolute',
+                                                            top: -20,
+                                                            right: -20,
+                                                            width: 80,
+                                                            height: 80,
+                                                            borderRadius: '50%',
+                                                            background: 'linear-gradient(135deg, #10b98120 0%, #34d39915 100%)',
+                                                            zIndex: 0
+                                                        }} />
+
+                                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3, position: 'relative', zIndex: 1 }}>
+                                                            <Box sx={{
+                                                                width: 48,
+                                                                height: 48,
+                                                                borderRadius: '12px',
+                                                                background: 'linear-gradient(135deg, #10b981 0%, #34d399 100%)',
+                                                                display: 'flex',
+                                                                alignItems: 'center',
+                                                                justifyContent: 'center',
+                                                                boxShadow: '0 4px 15px rgba(16, 185, 129, 0.3)',
+                                                                color: 'white'
+                                                            }}>
+                                                                <CheckCircleIcon sx={{ fontSize: 24 }} />
+                                                            </Box>
+                                                            <Typography sx={{
+                                                                fontSize: '1.25rem',
+                                                                fontWeight: 700,
+                                                                color: '#1f2937',
+                                                                fontFamily: 'Satoshi Bold'
+                                                            }}>
+                                                                What You Did Well
                                                             </Typography>
                                                         </Box>
-                                                        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+                                                        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, position: 'relative', zIndex: 1 }}>
                                                             {currentData.strengths.map((strength, index) => (
-                                                                <Box key={index} sx={{ display: 'flex', alignItems: 'flex-start', gap: 1 }}>
-                                                                    <Box sx={{ 
-                                                                        width: 6, 
-                                                                        height: 6, 
-                                                                        borderRadius: '50%', 
-                                                                        backgroundColor: '#10b981',
-                                                                        mt: 0.75,
+                                                                <Box key={index} sx={{
+                                                                    display: 'flex',
+                                                                    alignItems: 'flex-start',
+                                                                    gap: 2,
+                                                                    p: 2,
+                                                                    background: 'rgba(255, 255, 255, 0.7)',
+                                                                    borderRadius: '12px',
+                                                                    border: '1px solid rgba(16, 185, 129, 0.1)'
+                                                                }}>
+                                                                    <Box sx={{
+                                                                        width: 20,
+                                                                        height: 20,
+                                                                        borderRadius: '50%',
+                                                                        background: 'linear-gradient(135deg, #10b981 0%, #34d399 100%)',
+                                                                        display: 'flex',
+                                                                        alignItems: 'center',
+                                                                        justifyContent: 'center',
+                                                                        mt: 0.25,
                                                                         flexShrink: 0
-                                                                    }} />
-                                                                    <Typography sx={{ fontSize: '0.85rem', color: '#374151', lineHeight: 1.4, fontFamily: 'DM Sans' }}>
+                                                                    }}>
+                                                                        <CheckCircleIcon sx={{ fontSize: 12, color: 'white' }} />
+                                                                    </Box>
+                                                                    <Typography sx={{
+                                                                        fontSize: '0.9rem',
+                                                                        color: '#374151',
+                                                                        lineHeight: 1.5,
+                                                                        fontFamily: 'DM Sans Medium',
+                                                                        fontWeight: 500
+                                                                    }}>
                                                                         {strength}
                                                                     </Typography>
                                                                 </Box>
@@ -1470,27 +1517,96 @@ function escapeRegExp(s) {
                                                         </Box>
                                                     </Card>
                                                 </Grid>
-                                               {/* Tips */}
+                                               {/* Tips & Advice - Enhanced, no hover effects */}
                                                 <Grid item xs={12} md={6}>
-                                                    <Card sx={{ p: 3, borderRadius: '16px', height: '100%' }}>
-                                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
-                                                            <InfoIcon sx={{ color: '#3b82f6' }} />
-                                                            <Typography sx={{ fontSize: '1rem', fontWeight: 600, color: '#1f2937', fontFamily: 'Satoshi Medium' }}>
-                                                                Tips
+                                                    <Card sx={{
+                                                        p: 3,
+                                                        borderRadius: '20px',
+                                                        background: 'linear-gradient(145deg, #fef7ff 0%, #faf5ff 100%)',
+                                                        border: '1px solid #e9d5ff',
+                                                        boxShadow: '0 8px 25px rgba(139, 92, 246, 0.1)',
+                                                        height: '100%',
+                                                        position: 'relative',
+                                                        overflow: 'hidden',
+                                                        '&::before': {
+                                                            content: '""',
+                                                            position: 'absolute',
+                                                            top: 0,
+                                                            left: 0,
+                                                            right: 0,
+                                                            height: '4px',
+                                                            background: 'linear-gradient(90deg, #8b5cf6 0%, #a78bfa 100%)',
+                                                            borderRadius: '20px 20px 0 0'
+                                                        }
+                                                    }}>
+                                                        {/* Background decoration */}
+                                                        <Box sx={{
+                                                            position: 'absolute',
+                                                            top: -20,
+                                                            right: -20,
+                                                            width: 80,
+                                                            height: 80,
+                                                            borderRadius: '50%',
+                                                            background: 'linear-gradient(135deg, #8b5cf620 0%, #a78bfa15 100%)',
+                                                            zIndex: 0
+                                                        }} />
+
+                                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3, position: 'relative', zIndex: 1 }}>
+                                                            <Box sx={{
+                                                                width: 48,
+                                                                height: 48,
+                                                                borderRadius: '12px',
+                                                                background: 'linear-gradient(135deg, #8b5cf6 0%, #a78bfa 100%)',
+                                                                display: 'flex',
+                                                                alignItems: 'center',
+                                                                justifyContent: 'center',
+                                                                boxShadow: '0 4px 15px rgba(139, 92, 246, 0.3)',
+                                                                color: 'white',
+                                                                fontSize: '1.5rem'
+                                                            }}>
+                                                                💡
+                                                            </Box>
+                                                            <Typography sx={{
+                                                                fontSize: '1.25rem',
+                                                                fontWeight: 700,
+                                                                color: '#1f2937',
+                                                                fontFamily: 'Satoshi Bold'
+                                                            }}>
+                                                                Tips & Advice
                                                             </Typography>
                                                         </Box>
-                                                        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+                                                        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, position: 'relative', zIndex: 1 }}>
                                                             {currentData.tips.map((tip, index) => (
-                                                                <Box key={index} sx={{ display: 'flex', alignItems: 'flex-start', gap: 1 }}>
-                                                                    <Box sx={{ 
-                                                                        width: 6, 
-                                                                        height: 6, 
-                                                                        borderRadius: '50%', 
-                                                                        backgroundColor: '#3b82f6',
-                                                                        mt: 0.75,
-                                                                        flexShrink: 0
-                                                                    }} />
-                                                                    <Typography sx={{ fontSize: '0.85rem', color: '#374151', lineHeight: 1.4, fontFamily: 'DM Sans' }}>
+                                                                <Box key={index} sx={{
+                                                                    display: 'flex',
+                                                                    alignItems: 'flex-start',
+                                                                    gap: 2,
+                                                                    p: 3,
+                                                                    background: 'rgba(255, 255, 255, 0.8)',
+                                                                    borderRadius: '12px',
+                                                                    border: '1px solid rgba(139, 92, 246, 0.1)'
+                                                                }}>
+                                                                    <Box sx={{
+                                                                        width: 24,
+                                                                        height: 24,
+                                                                        borderRadius: '50%',
+                                                                        background: 'linear-gradient(135deg, #8b5cf6 0%, #a78bfa 100%)',
+                                                                        display: 'flex',
+                                                                        alignItems: 'center',
+                                                                        justifyContent: 'center',
+                                                                        mt: 0.25,
+                                                                        flexShrink: 0,
+                                                                        fontSize: '0.75rem'
+                                                                    }}>
+                                                                        💡
+                                                                    </Box>
+                                                                    <Typography sx={{
+                                                                        fontSize: '0.9rem',
+                                                                        color: '#374151',
+                                                                        lineHeight: 1.6,
+                                                                        fontFamily: 'DM Sans Medium',
+                                                                        fontWeight: 500
+                                                                    }}>
                                                                         {tip}
                                                                     </Typography>
                                                                 </Box>
