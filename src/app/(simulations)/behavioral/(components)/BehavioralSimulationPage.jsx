@@ -37,6 +37,7 @@ const InterviewQuestions = ({questions}) => {
     const [recordTime, setRecordTime] = useState(0); 
     const [recordInterval, setRecordInterval] = useState(null);
     const [showWinnieCaption, setShowWinnieCaption] = useState(true);
+    const [isLoadingAudio, setIsLoadingAudio] = useState(false);
 
 
 
@@ -102,7 +103,16 @@ const InterviewQuestions = ({questions}) => {
 
     // Fetch TTS audio for the current question
     const fetchAndPlayQuestionAudio = async (text) => {
+        // Prevent multiple simultaneous audio requests
+        if (isLoadingAudio) {
+            console.log("Audio already loading, skipping request");
+            return;
+        }
+
         try {
+            setIsLoadingAudio(true);
+            console.log("Fetching audio for:", text.substring(0, 50));
+
             const response = await fetch("https://us-central1-wing-it-e6a3a.cloudfunctions.net/textToSpeech", {
                 method: "POST",
                 headers: {
@@ -127,12 +137,14 @@ const InterviewQuestions = ({questions}) => {
             setTimeout(() => setShowAlert(false), 2000);
         } catch (error) {
             console.error("Error in text-to-speech fetch:", error);
+        } finally {
+            setIsLoadingAudio(false);
         }
     };
 
     // When a new question loads, fetch its audio
     useEffect(() => {
-        if (questions.length && currentQuestionIndex < questions.length) {
+        if (questions.length && currentQuestionIndex < questions.length && !isLoadingAudio) {
             fetchAndPlayQuestionAudio(questions[currentQuestionIndex]);
         }
     }, [currentQuestionIndex, questions]);
@@ -141,10 +153,23 @@ const InterviewQuestions = ({questions}) => {
     useEffect(() => {
         const audio = audioRef.current;
         if (audio && audioUrl) {
-            const handlePlay = () => setIsSpeaking(true);
-            const handleEnded = () => setIsSpeaking(false);
+            // Stop any currently playing audio before starting new one
+            if (!audio.paused) {
+                audio.pause();
+                audio.currentTime = 0;
+            }
+
+            const handlePlay = () => {
+                console.log("Audio started playing");
+                setIsSpeaking(true);
+            };
+            const handleEnded = () => {
+                console.log("Audio finished playing");
+                setIsSpeaking(false);
+            };
             const handleError = (e) => {
                 console.error("Audio playback error:", e);
+                setIsSpeaking(false);
                 setAlertMessage("Audio format not supported. Please try refreshing.");
                 setAlertSeverity("error");
                 setShowAlert(true);
@@ -163,20 +188,28 @@ const InterviewQuestions = ({questions}) => {
 
             // Add a small delay before attempting to play
             setTimeout(() => {
-                audio.play().catch((err) => {
-                    console.error("Autoplay failed:", err);
-                    if (err.name === 'NotSupportedError') {
-                        setAlertMessage("Audio format not supported by browser. Falling back...");
-                        setAlertSeverity("warning");
-                    } else {
-                        setAlertMessage("Failed to play audio automatically. Please click to play.");
-                        setAlertSeverity("info");
-                    }
-                    setShowAlert(true);
-                });
+                // Double-check audio isn't already playing before starting
+                if (audio.paused) {
+                    audio.play().catch((err) => {
+                        console.error("Autoplay failed:", err);
+                        setIsSpeaking(false);
+                        if (err.name === 'NotSupportedError') {
+                            setAlertMessage("Audio format not supported by browser. Falling back...");
+                            setAlertSeverity("warning");
+                        } else {
+                            setAlertMessage("Failed to play audio automatically. Please click to play.");
+                            setAlertSeverity("info");
+                        }
+                        setShowAlert(true);
+                    });
+                }
             }, 100);
 
             return () => {
+                // Clean up audio when component unmounts or audioUrl changes
+                if (!audio.paused) {
+                    audio.pause();
+                }
                 audio.removeEventListener("play", handlePlay);
                 audio.removeEventListener("ended", handleEnded);
                 audio.removeEventListener("error", handleError);
@@ -365,6 +398,15 @@ const InterviewQuestions = ({questions}) => {
 
     const handleNextQuestion = () => {
         setShowWinnieCaption(true)
+
+        // Clean up audio state
+        if (audioUrl) {
+            URL.revokeObjectURL(audioUrl);
+            setAudioUrl(null);
+        }
+        setIsSpeaking(false);
+        setIsLoadingAudio(false);
+
         if (recordInterval) {
             clearInterval(recordInterval);
             setRecordInterval(null);

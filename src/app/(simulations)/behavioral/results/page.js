@@ -12,13 +12,12 @@ import BarChartIcon from '@mui/icons-material/BarChart';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import ErrorIcon from '@mui/icons-material/Error';
 import InfoIcon from '@mui/icons-material/Info';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { useRouter } from "next/navigation";
 import "./result.css"
+import InterviewCompleteScreen from "./InterviewCompleteScreen";
 
 export default function InterviewResults() {
     const [selectedQuestion, setSelectedQuestion] = useState(1);
-    const [bannerExpanded, setBannerExpanded] = useState(true);
     const [recordedTimes, setRecordedTimes] = useState([]);
     const [interviewData, setInterviewData] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -26,6 +25,7 @@ export default function InterviewResults() {
     const [totalAverageRecordedTime, setTotalAverageRecordedTime] = useState();
     const router = useRouter();
     const [activeTab, setActiveTab] = useState(0);
+    const [showDetailedResults, setShowDetailedResults] = useState(false);
 
 
     function calculatePerformanceScoreDiminishing({starAnswerParsed, responseTime, wordCount, fillerWords, actionWords, statsUsed, interviewerDifficulty = 'easy-going-personality'}) {
@@ -924,11 +924,25 @@ function escapeRegExp(s) {
         </motion.div>
     );
 
+    // If detailed results haven't been shown yet, show the Interview Complete screen
+    if (!showDetailedResults) {
+        return (
+            <InterviewCompleteScreen
+                overallScore={overallScore}
+                totalQuestions={totalQuestions}
+                totalAverageRecordedTime={totalAverageRecordedTime}
+                questionData={questionData}
+                overallTips={overallTips}
+                onViewDetails={() => setShowDetailedResults(true)}
+            />
+        );
+    }
+
     return (
         <Box sx={{ display: "flex" }}>
             <CssBaseline />
             <DefaultAppLayout  elevation={16} title="Interview Results" color="#2850d9" titlecolor="#FFFFFF">
-                <Box sx={{ 
+                <Box sx={{
                     minHeight: '100vh',
                     background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)',
                     position: 'relative'
@@ -943,291 +957,41 @@ function escapeRegExp(s) {
                         >
 
 
-                            {/* Overall Performance Banner - Collapsible */}
+                            {/* Back to Complete Screen Button */}
                             <motion.div variants={itemVariants}>
-                                <Card
-                                    sx={{
-                                        p: 0,
-                                        mb: 4,
-                                        borderRadius: '24px',
-                                        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                                        color: 'white',
-                                        position: 'relative',
-                                        overflow: 'hidden',
-                                        boxShadow: '0 5px 10px rgba(102, 126, 234, 0.3)',
-                                        transition: 'all 0.3s ease'
-                                    }}
-                                >
-                                    {/* Decorative elements */}
-                                    <Box sx={{
-                                        position: 'absolute',
-                                        top: -50,
-                                        right: -50,
-                                        width: 150,
-                                        height: 150,
-                                        borderRadius: '50%',
-                                        background: 'rgba(255, 255, 255, 0.1)',
-                                        zIndex: 1
-                                    }} />
-                                    <Box sx={{
-                                        position: 'absolute',
-                                        bottom: -30,
-                                        left: -30,
-                                        width: 100,
-                                        height: 100,
-                                        borderRadius: '50%',
-                                        background: 'rgba(255, 255, 255, 0.05)',
-                                        zIndex: 1
-                                    }} />
-                                    
-                                    {/* Header - Always Visible */}
-                                    <Box sx={{ 
-                                        p: 3, 
-                                        position: 'relative', 
-                                        zIndex: 2,
-                                        cursor: 'pointer',
-                                    }}
-                                    onClick={() => setBannerExpanded(!bannerExpanded)}
+                                <Box sx={{ mb: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                    <motion.button
+                                        whileHover={{ scale: 1.02 }}
+                                        whileTap={{ scale: 0.98 }}
+                                        onClick={() => setShowDetailedResults(false)}
+                                        style={{
+                                            padding: '12px 24px',
+                                            borderRadius: '50px',
+                                            fontWeight: 600,
+                                            fontSize: '0.9rem',
+                                            fontFamily: 'Satoshi Medium',
+                                            background: 'white',
+                                            color: '#374151',
+                                            border: '2px solid #e5e7eb',
+                                            boxShadow: '0 4px 15px rgba(0, 0, 0, 0.1)',
+                                            cursor: 'pointer',
+                                            transition: 'all 0.2s ease',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            gap: '8px'
+                                        }}
                                     >
-                                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                                                <Box sx={{
-                                                    width: 48,
-                                                    height: 48,
-                                                    borderRadius: '12px',
-                                                    background: 'rgba(255, 255, 255, 0.2)',
-                                                    display: 'flex',
-                                                    alignItems: 'center',
-                                                    justifyContent: 'center',
-                                                    fontSize: '1.5rem'
-                                                }}>
-                                                    🎉
-                                                </Box>
-                                                <Box>
-                                                    <Typography sx={{ fontSize: '1.75rem', fontWeight: 700, lineHeight: 1.2, fontFamily: 'Satoshi Bold' }}>
-                                                        Interview Complete!
-                                                    </Typography>
-                                                    <Typography sx={{ fontSize: '1rem', opacity: 0.85, fontFamily: 'DM Sans' }}>
-                                                        You answered {totalQuestions} behavioral interview questions • {overallScore}% overall score
-                                                    </Typography>
-                                                </Box>
-                                            </Box>
-                                            <motion.div
-                                                animate={{ rotate: bannerExpanded ? 180 : 0 }}
-                                                transition={{ duration: 0.3 }}
-                                            >
-                                                <ExpandMoreIcon sx={{ fontSize: '2rem', opacity: 0.7 }} />
-                                            </motion.div>
-                                        </Box>
-                                    </Box>
-
-                                    {/* Expandable Content */}
-                                    <AnimatePresence>
-                                        {bannerExpanded && (
-                                            <motion.div
-                                                initial={{ height: 0, opacity: 0 }}
-                                                animate={{ height: 'auto', opacity: 1 }}
-                                                exit={{ height: 0, opacity: 0 }}
-                                                transition={{ duration: 0.3 }}
-                                                style={{ overflow: 'hidden' }}
-                                            >
-                                                <Box sx={{ p: 4, pt: 0, position: 'relative', zIndex: 2 }}>
-                                                    <Grid container spacing={4} alignItems="stretch">
-                                                        <Grid item xs={12} lg={7}>
-                                                            {/* Score Section */}
-                                                            <Box sx={{ 
-                                                                background: 'rgba(255, 255, 255, 0.15)',
-                                                                backdropFilter: 'blur(10px)',
-                                                                borderRadius: '16px',
-                                                                p: 3,
-                                                                mb: 3,
-                                                                border: '1px solid rgba(255, 255, 255, 0.2)'
-                                                            }}>
-                                                                <Typography sx={{ fontSize: '0.9rem', opacity: 0.8, mb: 1, fontFamily: 'DM Sans' }}>
-                                                                    Overall Performance
-                                                                </Typography>
-                                                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 3 }}>
-                                                                    <Typography sx={{ fontSize: '3rem', fontWeight: 800, lineHeight: 1, fontFamily: 'Satoshi Black' }}>
-                                                                        {overallScore}%
-                                                                    </Typography>
-                                                                    <Box sx={{ flex: 1 }}>
-                                                                        <LinearProgress
-                                                                            variant="determinate"
-                                                                            value={overallScore}
-                                                                            sx={{
-                                                                                height: 12,
-                                                                                borderRadius: 6,
-                                                                                backgroundColor: 'rgba(255,255,255,0.3)',
-                                                                                '& .MuiLinearProgress-bar': {
-                                                                                    backgroundColor: '#fbbf24',
-                                                                                    borderRadius: 6
-                                                                                }
-                                                                            }}
-                                                                        />
-                                                                        <Typography sx={{ fontSize: '0.8rem', opacity: 0.7, mt: 0.5, fontFamily: 'DM Sans' }}>
-                                                                            {overallScore >= 85 ? 'Excellent Performance!' :
-                                                                             overallScore >= 70 ? 'Good Performance!' :
-                                                                             'Room for Improvement'}
-                                                                        </Typography>
-                                                                    </Box>
-                                                                </Box>
-                                                            </Box>
-
-                                                            {/* Statistics Grid */}
-                                                            <Grid container spacing={2}>
-                                                                <Grid item xs={6} sm={3}>
-                                                                    <Box sx={{ 
-                                                                        background: 'rgba(255, 255, 255, 0.1)',
-                                                                        borderRadius: '12px',
-                                                                        p: 2,
-                                                                        textAlign: 'center',
-                                                                        border: '1px solid rgba(255, 255, 255, 0.15)',
-                                                                    }}>
-                                                                        <Box sx={{ 
-                                                                            fontSize: '1.5rem', 
-                                                                            mb: 0.5,
-                                                                            opacity: 0.7
-                                                                        }}>
-                                                                            ⏱️
-                                                                        </Box>
-                                                                        <Typography sx={{ fontSize: '1.5rem', fontWeight: 700, lineHeight: 1, fontFamily: 'Satoshi Bold' }}>
-                                                                            {totalAverageRecordedTime}
-                                                                        </Typography>
-                                                                        <Typography sx={{ fontSize: '0.75rem', opacity: 0.8, fontWeight: 500, fontFamily: 'DM Sans' }}>
-                                                                            Avg Time
-                                                                        </Typography>
-                                                                    </Box>
-                                                                </Grid>
-                                                                <Grid item xs={6} sm={3}>
-                                                                    <Box sx={{ 
-                                                                        background: 'rgba(255, 255, 255, 0.1)',
-                                                                        borderRadius: '12px',
-                                                                        p: 2,
-                                                                        textAlign: 'center',
-                                                                        border: '1px solid rgba(255, 255, 255, 0.15)',
-                                                                    }}>
-                                                                        <Box sx={{ 
-                                                                            fontSize: '1.5rem', 
-                                                                            mb: 0.5,
-                                                                            opacity: 0.7
-                                                                        }}>
-                                                                            📝
-                                                                        </Box>
-                                                                        <Typography sx={{ fontSize: '1.5rem', fontWeight: 700, lineHeight: 1, fontFamily: 'Satoshi Bold' }}>
-                                                                            {Math.round(
-                                                                                Object.values(questionData).reduce((sum, q) => sum + q.wordCount, 0) / totalQuestions
-                                                                            )}
-                                                                        </Typography>
-                                                                        <Typography sx={{ fontSize: '0.75rem', opacity: 0.8, fontWeight: 500, fontFamily: 'DM Sans' }}>
-                                                                            Avg Words
-                                                                        </Typography>
-                                                                    </Box>
-                                                                </Grid>
-                                                                <Grid item xs={6} sm={3}>
-                                                                    <Box sx={{ 
-                                                                        background: 'rgba(255, 255, 255, 0.1)',
-                                                                        borderRadius: '12px',
-                                                                        p: 2,
-                                                                        textAlign: 'center',
-                                                                        border: '1px solid rgba(255, 255, 255, 0.15)',
-                                                                    }}>
-                                                                        <Box sx={{ 
-                                                                            fontSize: '1.5rem', 
-                                                                            mb: 0.5,
-                                                                            opacity: 0.7
-                                                                        }}>
-                                                                            🚫
-                                                                        </Box>
-                                                                        <Typography sx={{ fontSize: '1.5rem', fontWeight: 700, lineHeight: 1, fontFamily: 'Satoshi Bold' }}>
-                                                                            {avgFillerWords}
-                                                                        </Typography>
-                                                                        <Typography sx={{ fontSize: '0.75rem', opacity: 0.8, fontWeight: 500, fontFamily: 'DM Sans' }}>
-                                                                            Avg Fillers
-                                                                        </Typography>
-                                                                    </Box>
-                                                                </Grid>
-                                                                <Grid item xs={6} sm={3}>
-                                                                    <Box sx={{ 
-                                                                        background: 'rgba(255, 255, 255, 0.1)',
-                                                                        borderRadius: '12px',
-                                                                        p: 2,
-                                                                        textAlign: 'center',
-                                                                        border: '1px solid rgba(255, 255, 255, 0.15)',
-                                                                    }}>
-                                                                        <Box sx={{ 
-                                                                            fontSize: '1.5rem', 
-                                                                            mb: 0.5,
-                                                                            opacity: 0.7
-                                                                        }}>
-                                                                            💪
-                                                                        </Box>
-                                                                        <Typography sx={{ fontSize: '1.5rem', fontWeight: 700, lineHeight: 1, fontFamily: 'Satoshi Bold' }}>
-                                                                            {avgActionWords}
-                                                                        </Typography>
-                                                                        <Typography sx={{ fontSize: '0.75rem', opacity: 0.8, fontWeight: 500, fontFamily: 'DM Sans' }}>
-                                                                            Avg Actions
-                                                                        </Typography>
-                                                                    </Box>
-                                                                </Grid>
-                                                            </Grid>
-                                                        </Grid>
-                                                        
-                                                        <Grid item xs={12} lg={5}>
-                                                            <Box sx={{ 
-                                                                background: 'rgba(255, 255, 255, 0.1)',
-                                                                borderRadius: '20px',
-                                                                p: 3,
-                                                                border: '1px solid rgba(255, 255, 255, 0.15)',
-                                                                backdropFilter: 'blur(10px)',
-                                                                height: '100%',
-                                                                display: 'flex',
-                                                                flexDirection: 'column'
-                                                            }}>
-                                                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
-                                                                    <Box sx={{ fontSize: '1.5rem' }}>💡</Box>
-                                                                    <Typography sx={{ fontSize: '1.1rem', fontWeight: 600, fontFamily: 'Satoshi Bold' }}>
-                                                                        Key Takeaways
-                                                                    </Typography>
-                                                                </Box>
-                                                                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, flex: 1 }}>
-                                                                    {overallTips.map((tip, index) => (
-                                                                        <Box key={index} sx={{ 
-                                                                            display: 'flex', 
-                                                                            alignItems: 'flex-start', 
-                                                                            gap: 2,
-                                                                            p: 2,
-                                                                            background: 'rgba(255, 255, 255, 0.1)',
-                                                                            borderRadius: '12px',
-                                                                            border: '1px solid rgba(255, 255, 255, 0.1)'
-                                                                        }}>
-                                                                            <Box sx={{ 
-                                                                                width: 6, 
-                                                                                height: 6, 
-                                                                                borderRadius: '50%', 
-                                                                                backgroundColor: '#fbbf24',
-                                                                                mt: 0.75,
-                                                                                flexShrink: 0
-                                                                            }} />
-                                                                            <Typography sx={{
-                                                                                fontSize: '0.9rem',
-                                                                                opacity: 0.9,
-                                                                                lineHeight: 1.4,
-                                                                                fontWeight: 500,
-                                                                                fontFamily: 'DM Sans'
-                                                                            }}>
-                                                                                {tip}
-                                                                            </Typography>
-                                                                        </Box>
-                                                                    ))}
-                                                                </Box>
-                                                            </Box>
-                                                        </Grid>
-                                                    </Grid>
-                                                </Box>
-                                            </motion.div>
-                                        )}
-                                    </AnimatePresence>
-                                </Card>
+                                        ← Back to Summary
+                                    </motion.button>
+                                    <Typography sx={{
+                                        fontSize: '1.5rem',
+                                        fontWeight: 700,
+                                        color: '#1f2937',
+                                        fontFamily: 'Satoshi Bold'
+                                    }}>
+                                        Detailed Results
+                                    </Typography>
+                                </Box>
                             </motion.div>
 
                             <Grid container spacing={4}>
