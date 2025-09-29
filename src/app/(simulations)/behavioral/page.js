@@ -19,6 +19,7 @@ export default function BehavioralInterviewSimulation() {
     const [questionTypes, setQuestionTypes] = useState([]);
     const [interviewerDifficulty, setInterviewerDifficulty] = useState("easy-going-personality");
     const [showQuickstart, setShowQuickstart] = useState(true);
+    const [showSimulation, setShowSimulation] = useState(false);
 
 
     const fetchQuestions = async () => {
@@ -42,6 +43,7 @@ export default function BehavioralInterviewSimulation() {
 
         const data = await response.json();
         setQuestions(data.questions);
+        setShowSimulation(true);
 
     } catch (error) {
         console.error('Error generating questions:', error);
@@ -122,7 +124,7 @@ export default function BehavioralInterviewSimulation() {
                         <Toolbar />
                         {/* question box component */}
                         <Box component="main" className="behavioral-question-box">
-                            {questions && questions.length > 0 ? (
+                            {questions && questions.length > 0 && showSimulation ? (
                                 <BehavioralSimulationPage questions={questions}/>
                             ) : (
                                 <Box className="behavioral-loading-overlay">

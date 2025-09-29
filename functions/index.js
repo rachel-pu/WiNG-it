@@ -303,6 +303,13 @@ exports.saveResponse = functions.https.onRequest((req, res) => {
           details: transcriptionError.message 
         });
       }
+      const fillerWordsList = [
+        "um", "uh", "uhm", "hmm", "like", "you know", "actually", "i think", "guess",
+        "basically", "literally", "so", "well", "kind of", "sort of", "maybe",
+        "er", "ah", "huh", "right", "okay", "alright", "just", "anyway", "I mean",
+        "sorta", "kinda", "like I said", "you see", "as I said", "or something", 
+        "if that makes sense", "you know what I mean", "let’s see", "so yeah", "so basically"
+    ];
 
       // Extract transcript and analysis data
       const transcript = result?.results?.channels?.[0]?.alternatives?.[0]?.transcript || "";
@@ -310,13 +317,84 @@ exports.saveResponse = functions.https.onRequest((req, res) => {
       const confidence = result?.results?.channels?.[0]?.alternatives?.[0]?.confidence || 0;
 
       console.log('Transcript:', transcript.substring(0, 100));
-      
-      // Analyze filler words
-      const fillerWordsList = [
-        "um", "uh", "uhm", "hmm", "like", "you know", "actually", 
-        "basically", "literally", "so", "well", "kind of", "sort of"
-      ];
-      
+
+      const prompt = `
+          Generate a JSON object with the keys: fillerWords, technology, questionTypes, strengths, tips, starAnswerParsed, starAnswerParsedImproved, improvedResponse.
+          Using the following:
+
+          Transcript: ${transcript}
+          Question: ${questionText}
+          Filler Words List: ${fillerWordsList.join(", ")}
+
+          Instructions:
+          - Count how many filler words according to the Filler Words List exist in the transcript, add the count to fillerWords.
+          - Identify any technology, programming languages, and tools mentioned in the transcript, add them as an array to technology.
+          - Categorize the question as any of: Situational, Problem-solving, Technical, Leadership, Teamwork (can be multiple).
+          - Provide 1-2 bullet points of specific tips to improve the answer (provide as an array).
+          - Provide 1-2 bullet points of strengths to improve the answer (provide as an array).
+          - For the improvedResponse variable, according to everything analyzed, rewrite the response to be a better answer to the question provided. Respond ONLY with valid JSON. Do NOT include any explanation or text outside the JSON.
+          - For the starAnswerParsed variable, this should be a hashmap that extracts out each part of the answer in the transcript according to the star interview method.
+
+          starAnswerParsed Important rules:
+          - DO NOT summarize, rephrase, or clean the text.
+          - DO NOT add periods at the end of values.
+          - DO NOT make up any information.
+          - Keep filler words, stutters, and unfinished phrases exactly as in the transcript.
+          - Output ONLY valid JSON with exactly 4 keys: situation, task, action, result.
+
+          Example Input Transcript:
+          "Yeah so um I had this project at school where I needed to do a database project and uh I didn't know SQL at first so I had to learn it quickly and uh yeah I figured it out"
+
+          Example Output JSON:
+          {
+            "situation": "Yeah so um I had this project at school where I needed to do a database project",
+            "task": "",
+            "action": "uh I didn't know SQL at first so I had to learn it quickly",
+            "result": "uh yeah I figured it out"
+          }
+            Now analyze the transcript from above (not the example transcript) and fill in the starAnswerParsed variable.
+
+          - Finally, using the improvedResponse, break down the response into the STAR interview method components and fill in the starAnswerParsedImproved variable, this should be formatted the same as the starAnswerParsed variable and follow the same starAnswerParsed Important rules.
+      `;
+
+      // After parsing AI response
+      let aiResults;
+      try {
+        const completion = await openai.chat.completions.create({
+          model: "gpt-4o-mini",
+          messages: [{ role: "user", content: prompt }],
+          max_tokens: 500,
+          temperature: 0
+        });
+
+        const responseText = completion.choices[0].message.content;
+
+        // Extract JSON safely
+        const match = responseText.match(/\{[\s\S]*\}/);
+        if (!match) throw new Error("No JSON found in AI response");
+
+        aiResults = JSON.parse(match[0]); // <- store parsed JSON here
+      } catch (err) {
+        console.error("Error analyzing AI response:", err);
+        aiResults = {
+          fillerWords: [],
+          questionTypes: [],
+          tips: "" ,
+          strengths: "",
+        };
+      }
+
+      // Extract individual fields
+      const fillerWordCount = aiResults.fillerWords;
+      const questionTypes = aiResults.questionTypes;
+      const tips = aiResults.tips;
+      const technology = aiResults.technology;
+      const strengths = aiResults.strengths;
+      const starAnswerParsedImproved = aiResults.starAnswerParsedImproved;
+      const starAnswerParsed = aiResults.starAnswerParsed;
+      const improvedResponse = aiResults.improvedResponse;
+
+      // Analyze filler words for detailed tracking
       const fillerWords = words
         .filter(w => w.word && fillerWordsList.includes(w.word.toLowerCase().trim()))
         .map(w => ({
@@ -330,7 +408,7 @@ exports.saveResponse = functions.https.onRequest((req, res) => {
       const totalWords = words.length;
       const fillerWordCount = fillerWords.length;
       const fillerWordPercentage = totalWords > 0 ? (fillerWordCount / totalWords * 100).toFixed(2) : 0;
-      
+
       const durationSeconds = recordedTime / 1000;
       const wordsPerMinute = durationSeconds > 0 ? Math.round((totalWords / durationSeconds) * 60) : 0;
 
@@ -346,7 +424,14 @@ exports.saveResponse = functions.https.onRequest((req, res) => {
           fillerWordPercentage: parseFloat(fillerWordPercentage),
           transcriptionConfidence: confidence,
           wordsPerMinute,
-          durationSeconds: Math.round(durationSeconds)
+          durationSeconds: Math.round(durationSeconds),
+          technology,
+          questionTypes,
+          strengths,
+          tips,
+          starAnswerParsed,
+          starAnswerParsedImproved,
+          improvedResponse
         },
         recordedTime: recordedTime || 0,
         timestamp: admin.database.ServerValue.TIMESTAMP,
