@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Box, Typography, Grid2 as Grid, LinearProgress, Card, CssBaseline, Toolbar } from "@mui/material";
+import { Box, Typography, Grid2 as Grid, Card, CssBaseline, Toolbar } from "@mui/material";
 import { motion } from "framer-motion";
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import DefaultAppLayout from "../../../DefaultAppLayout";
@@ -79,28 +79,39 @@ const InterviewCompleteScreen = ({
                                 </Typography>
 
                                 <Box className="score-display">
-                                    <Typography className="score-percentage">
-                                        {overallScore}%
-                                    </Typography>
-                                    <Box className="score-progress-container">
-                                        <LinearProgress
-                                            variant="determinate"
-                                            value={overallScore}
-                                            className="score-progress"
-                                            sx={{
-                                                '& .MuiLinearProgress-bar': {
-                                                    backgroundColor: overallScore >= 85 ? '#10b981' :
-                                                                   overallScore >= 70 ? '#f59e0b' : '#ef4444',
-                                                    borderRadius: 6
-                                                }
-                                            }}
-                                        />
-                                        <Typography className="score-status">
-                                            {overallScore >= 85 ? 'Excellent Performance!' :
-                                             overallScore >= 70 ? 'Good Performance!' :
-                                             'Room for Improvement'}
+                                    <Box className="circular-progress-container">
+                                        <svg className="circular-progress" viewBox="0 0 120 120">
+                                            {/* Background circle */}
+                                            <circle
+                                                cx="60"
+                                                cy="60"
+                                                r="50"
+                                                className="progress-bg"
+                                            />
+                                            {/* Progress circle */}
+                                            <circle
+                                                cx="60"
+                                                cy="60"
+                                                r="50"
+                                                className={`progress-fill ${
+                                                    overallScore >= 85 ? 'excellent' :
+                                                    overallScore >= 70 ? 'good' : 'poor'
+                                                }`}
+                                                style={{
+                                                    '--progress': overallScore,
+                                                    '--target-offset': 314.159 - (314.159 * overallScore / 100)
+                                                }}
+                                            />
+                                        </svg>
+                                        <Typography className="score-percentage-circular">
+                                            {overallScore}%
                                         </Typography>
                                     </Box>
+                                    <Typography className="score-status">
+                                        {overallScore >= 85 ? 'Excellent Performance!' :
+                                         overallScore >= 70 ? 'Good Performance!' :
+                                         'Room for Improvement'}
+                                    </Typography>
                                 </Box>
                             </Card>
 
