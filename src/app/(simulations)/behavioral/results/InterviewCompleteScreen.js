@@ -1,9 +1,10 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Box, Typography, Grid2 as Grid, Card, CssBaseline, Toolbar } from "@mui/material";
 import { motion } from "framer-motion";
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import Confetti from 'react-confetti';
 import DefaultAppLayout from "../../../DefaultAppLayout";
 import "./InterviewCompleteScreen.css";
 
@@ -15,6 +16,43 @@ const InterviewCompleteScreen = ({
     overallTips,
     onViewDetails
 }) => {
+    // Confetti state
+    const [windowDimensions, setWindowDimensions] = useState({
+        width: typeof window !== 'undefined' ? window.innerWidth : 1200,
+        height: typeof window !== 'undefined' ? window.innerHeight : 800
+    });
+    const [showConfetti, setShowConfetti] = useState(true);
+
+    // Get window dimensions for confetti
+    useEffect(() => {
+        const updateWindowDimensions = () => {
+            setWindowDimensions({
+                width: window.innerWidth,
+                height: window.innerHeight
+            });
+        };
+
+        updateWindowDimensions();
+        window.addEventListener('resize', updateWindowDimensions);
+
+        // Stop confetti after 5 seconds
+        const timer = setTimeout(() => {
+            console.log('Stopping confetti');
+            setShowConfetti(false);
+        }, 5000);
+
+        console.log('Confetti initialized:', {
+            showConfetti: true,
+            width: windowDimensions.width,
+            height: windowDimensions.height
+        });
+
+        return () => {
+            window.removeEventListener('resize', updateWindowDimensions);
+            clearTimeout(timer);
+        };
+    }, []);
+
     // Calculate averages
     const avgFillerWords = Math.round(
         Object.values(questionData).reduce((sum, q) => sum + q.fillerWords, 0) / totalQuestions
@@ -40,10 +78,31 @@ const InterviewCompleteScreen = ({
         }
     };
 
+    console.log('Render - showConfetti:', showConfetti, 'dimensions:', windowDimensions);
+
     return (
-        <Box sx={{ display: "flex", width: "100%", height: "100vh" }}>
-            <CssBaseline />
-            <DefaultAppLayout elevation={16} title="Interview Results" color="#2850d9" titlecolor="#FFFFFF">
+        <>
+            {showConfetti && (
+                <Confetti
+                    width={windowDimensions.width}
+                    height={windowDimensions.height}
+                    numberOfPieces={500}
+                    recycle={false}
+                    gravity={0.3}
+                    initialVelocityY={40}
+                    colors={['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#ffeaa7', '#dda0dd', '#98d8c8', '#f7dc6f', '#bb8fce']}
+                    style={{
+                        position: 'fixed',
+                        top: 0,
+                        left: 0,
+                        zIndex: 9999,
+                        pointerEvents: 'none'
+                    }}
+                />
+            )}
+            <Box sx={{ display: "flex", width: "100%", height: "100vh" }}>
+                <CssBaseline />
+                <DefaultAppLayout elevation={16} title="Interview Results" color="#2850d9" titlecolor="#FFFFFF">
                 <Box className="interview-complete-container">
             {/* Decorative Background Elements */}
             <Box className="decorative-circle-top" />
@@ -200,7 +259,8 @@ const InterviewCompleteScreen = ({
             </motion.div>
                 </Box>
             </DefaultAppLayout>
-        </Box>
+            </Box>
+        </>
     );
 };
 
