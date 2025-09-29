@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect} from "react";
-import { Box, Typography, CircularProgress, Card, Grid, Chip, CssBaseline, Toolbar, Avatar, LinearProgress } from "@mui/material";
+import { Box, Typography, CircularProgress, Card, Grid, Chip, CssBaseline, Toolbar, Tabs, Tab } from "@mui/material";
 import { motion, AnimatePresence } from "framer-motion";
 import DefaultAppLayout from "../../../DefaultAppLayout";
 import Link from "next/link";
@@ -869,60 +869,6 @@ function escapeRegExp(s) {
         </Card>
     );
 
-    // Question selector component
-    const QuestionSelector = ({ questionNum, isSelected, onClick }) => (
-        <motion.div
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-        >
-            <Card
-                onClick={onClick}
-                sx={{
-                    p: 2,
-                    borderRadius: '12px',
-                    cursor: 'pointer',
-                    border: isSelected ? '2px solid #3b82f6' : '1px solid #e5e7eb',
-                    background: isSelected ? 'linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%)' : '#ffffff',
-                    transition: 'all 0.2s ease',
-                    '&:hover': {
-                        borderColor: '#3b82f6',
-                        transform: 'translateY(-1px)'
-                    }
-                }}
-            >
-                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                        <Avatar
-                            sx={{
-                                width: 32,
-                                height: 32,
-                                backgroundColor: isSelected ? '#3b82f6' : '#e5e7eb',
-                                color: isSelected ? 'white' : '#6b7280',
-                                fontSize: '0.9rem',
-                                fontWeight: 600
-                            }}
-                        >
-                            Q{questionNum}
-                        </Avatar>
-                        <Typography sx={{ fontWeight: 500, color: '#374151', fontSize: '0.9rem', fontFamily: 'DM Sans' }}>
-                            Question {questionNum}
-                        </Typography>
-                    </Box>
-                    <Chip
-                        label={questionData[questionNum].score}
-                        size="small"
-                        sx={{
-                            backgroundColor: questionData[questionNum].score >= 85 ? '#d1fae5' : 
-                                           questionData[questionNum].score >= 70 ? '#fef3c7' : '#fee2e2',
-                            color: questionData[questionNum].score >= 85 ? '#065f46' : 
-                                   questionData[questionNum].score >= 70 ? '#92400e' : '#991b1b',
-                            fontWeight: 600
-                        }}
-                    />
-                </Box>
-            </Card>
-        </motion.div>
-    );
 
     // If detailed results haven't been shown yet, show the Interview Complete screen
     if (!showDetailedResults) {
@@ -994,402 +940,452 @@ function escapeRegExp(s) {
                                 </Box>
                             </motion.div>
 
-                            <Grid container spacing={4}>
-                                {/* Question Selection Sidebar */}
-                                <Grid item xs={12} md={4}>
-                                    <motion.div variants={itemVariants}>
-                                        <Card sx={{ p: 3, borderRadius: '16px', height: 'fit-content' }}>
-                                            <Typography sx={{ fontSize: '1.2rem', fontWeight: 600, mb: 3, color: '#1f2937', fontFamily: 'Satoshi Bold' }}>
-                                                Select Question
-                                            </Typography>
-                                            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                                                {Object.keys(questionData).map((qNum) => (
-                                                    <QuestionSelector
-                                                        key={qNum}
-                                                        questionNum={qNum}
-                                                        isSelected={selectedQuestion == qNum}
-                                                        onClick={() => setSelectedQuestion(parseInt(qNum))}
-                                                    />
-                                                ))}
-                                            </Box>
-                                        </Card>
-                                    </motion.div>
-                                </Grid>
-
-                                {/* Main Content */}
-                                <Grid item xs={12} md={8}>
-                                    <AnimatePresence mode="wait">
-                                        <motion.div
-                                            key={selectedQuestion}
-                                            initial={{ opacity: 0, x: 20 }}
-                                            animate={{ opacity: 1, x: 0 }}
-                                            exit={{ opacity: 0, x: -20 }}
-                                            transition={{ duration: 0.3 }}
-                                        >
-                                            {/* Question Header */}
-                                            <Card sx={{ p: 3, mb: 3, borderRadius: '16px' }}>
-                                                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
-                                                     
-                                                    <Typography sx={{ fontSize: '1.1rem', fontWeight: 600, color: '#1f2937', flex: 1, mr: 2, fontFamily: 'Satoshi Bold' }}>
-                                                       <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mb: 1 }}>
-                                                        {currentData.questionTypes?.map((type, index) => {
-                                                            const colors = [
-                                                                { bg: '#e0f2fe', text: '#0277bd', border: '#81d4fa' }, // Blue
-                                                                { bg: '#f3e8ff', text: '#7c3aed', border: '#c4b5fd' }, // Purple
-                                                                { bg: '#dcfce7', text: '#16a34a', border: '#86efac' }, // Green
-                                                                { bg: '#fef3c7', text: '#d97706', border: '#fcd34d' }, // Yellow
-                                                                { bg: '#fee2e2', text: '#dc2626', border: '#fca5a5' }, // Red
-                                                                { bg: '#f0f9ff', text: '#0284c7', border: '#7dd3fc' }, // Sky
-                                                                { bg: '#fdf4ff', text: '#c026d3', border: '#f0abfc' }, // Fuchsia
-                                                                { bg: '#ecfdf5', text: '#059669', border: '#6ee7b7' }  // Emerald
-                                                            ];
-                                                            const colorSet = colors[index % colors.length];
-                                                            return (
-                                                                <Chip
-                                                                    key={index}
-                                                                    label={type}
-                                                                    size="small"
-                                                                    sx={{
-                                                                        backgroundColor: colorSet.bg,
-                                                                        color: colorSet.text,
-                                                                        fontWeight: 600,
-                                                                        fontSize: '0.75rem',
-                                                                        fontFamily: 'Satoshi Medium',
-                                                                        border: `1px solid ${colorSet.border}`
-                                                                    }}
-                                                                />
-                                                            );
-                                                        }) || []}
-                                                    </Box>{currentData.question}
-                                                    </Typography>
-                                                    <PerformanceIndicator score={currentData.score} />
-                                                </Box>
-                                            </Card>
-
-                                            {/* Metrics Grid - Back to original position */}
-                                            <Grid container spacing={2} sx={{ mb: 3, alignItems: 'stretch' }}>
-                                                <Grid item xs={6} sm={3}>
-                                                    <MetricCard
-                                                        icon={AccessTimeIcon}
-                                                        label="Seconds"
-                                                        value={recordedTimes[selectedQuestion - 1]?.recordedTime}
-                                                        color="#8b5cf6"
-                                                    />
-                                                </Grid>
-                                                <Grid item xs={6} sm={3}>
-                                                    <MetricCard
-                                                        icon={RecordVoiceOverIcon}
-                                                        label="Word Count"
-                                                        value={currentData.wordCount}
-                                                        color="#f59e0b"
-                                                    />
-                                                </Grid>
-                                                <Grid item xs={6} sm={3}>
-                                                    <MetricCard
-                                                        icon={TrendingUpIcon}
-                                                        label="Action Words"
-                                                        value={currentData.actionWords}
-                                                        color="#10b981"
-                                                    />
-                                                </Grid>
-                                                <Grid item xs={6} sm={3}>
-                                                    <MetricCard
-                                                        icon={BarChartIcon}
-                                                        label="Statistics"
-                                                        value={currentData.statsUsed}
-                                                        color="#06b6d4"
-                                                    />
-                                                </Grid>
-                                            </Grid>
-                                                
-
-                                            {/* Transcript */}
-                                            <Card sx={{ p: 3, mb: 3, borderRadius: '16px' }}>
-                                                <div className="tabContainerStyle">
-                                                    <button 
-                                                    style={tabStyle(activeTab === 0)}
-                                                    onClick={() => setActiveTab(0)}
-                                                    >
-                                                    📝 Your Response
-                                                    </button>
-                                                    <button 
-                                                    style={tabStyle(activeTab === 1)}
-                                                    onClick={() => setActiveTab(1)}
-                                                    >
-                                                    ✨ Improved Response
-                                                    </button>
-                                                </div>
-                                                {/* Tab Content */}
-                                                {activeTab === 0 && (
-                                                    <div>
-                                                    <div style={contentBoxStyle}>
-                                                        <div
-                                                        style={textStyle}
-                                                        dangerouslySetInnerHTML={{
-                                                            __html: highlightText(
-                                                            currentData.transcript,
-                                                            currentData.fillerWordsList,
-                                                            currentData.actionWordsList,
-                                                            currentData.starAnswerParsed
-                                                            )
-                                                        }}
+                            {/* Unified Tabs and Content Component */}
+                            <motion.div variants={itemVariants}>
+                                <Card sx={{
+                                    mb: 3,
+                                    borderRadius: '16px',
+                                    overflow: 'hidden',
+                                    boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)'
+                                }}>
+                                    {/* Tabs Header */}
+                                    <Tabs
+                                        value={selectedQuestion - 1}
+                                        onChange={(event, newValue) => setSelectedQuestion(newValue + 1)}
+                                        variant="scrollable"
+                                        scrollButtons="auto"
+                                        sx={{
+                                            borderBottom: '1px solid #e5e7eb',
+                                            '& .MuiTabs-indicator': {
+                                                backgroundColor: '#3b82f6',
+                                                height: 3
+                                            },
+                                            '& .MuiTab-root': {
+                                                minWidth: 120,
+                                                fontFamily: 'Satoshi Medium',
+                                                fontWeight: 600,
+                                                fontSize: '0.9rem',
+                                                textTransform: 'none',
+                                                '&.Mui-selected': {
+                                                    color: '#3b82f6'
+                                                }
+                                            }
+                                        }}
+                                    >
+                                        {Object.keys(questionData).map((qNum) => (
+                                            <Tab
+                                                key={qNum}
+                                                label={
+                                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                                        <span>Question {qNum}</span>
+                                                        <Chip
+                                                            label={questionData[qNum].score}
+                                                            size="small"
+                                                            sx={{
+                                                                height: 20,
+                                                                fontSize: '0.7rem',
+                                                                backgroundColor: questionData[qNum].score >= 85 ? '#d1fae5' :
+                                                                               questionData[qNum].score >= 70 ? '#fef3c7' : '#fee2e2',
+                                                                color: questionData[qNum].score >= 85 ? '#065f46' :
+                                                                       questionData[qNum].score >= 70 ? '#92400e' : '#991b1b',
+                                                                fontWeight: 600
+                                                            }}
                                                         />
-                                                    </div>
-                                                    
-                                                    {/* Legend */}
-                                                    <div style={legendStyle}>
-                                                        <div style={{ fontSize: '0.8rem', fontWeight: '600', marginBottom: '8px', color: '#374151', fontFamily: 'system-ui, -apple-system, sans-serif' }}>
-                                                        Highlight Legend:
-                                                        </div>
-                                                        <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap', alignItems: 'center' }}>
-                                                        <div style={legendItemStyle}>
-                                                            <div style={colorBoxStyle('#d1fae5', '#a7f3d0')} />
-                                                            <span style={{ fontSize: '0.75rem', color: '#065f46', fontFamily: 'system-ui, -apple-system, sans-serif' }}>
-                                                            Action Words
-                                                            </span>
-                                                        </div>
-                                                        <div style={legendItemStyle}>
-                                                            <div style={colorBoxStyle('#C7DDFC', '#6ea7e4ff')} />
-                                                            <span style={{ fontSize: '0.75rem', color: '#325274', fontFamily: 'system-ui, -apple-system, sans-serif' }}>
-                                                            Numbers/Stats
-                                                            </span>
-                                                        </div>
-                                                        <div style={legendItemStyle}>
-                                                            <div style={colorBoxStyle('#ffd9d9ff', '#fca8a8ff')} />
-                                                            <span style={{ fontSize: '0.75rem', color: '#dc2626', fontFamily: 'system-ui, -apple-system, sans-serif' }}>
-                                                            Filler Words
-                                                            </span>
-                                                        </div>
+                                                    </Box>
+                                                }
+                                            />
+                                        ))}
+                                    </Tabs>
 
-                                                        <div style={{ fontSize: '0.8rem', fontFamily: 'system-ui, -apple-system, sans-serif', fontWeight: '600' }}>
-                                                            <span style={{ color: 'black', borderBottom: '3px solid #FBBF24' }}>Situation </span>
-                                                            <span style={{ color: 'black', borderBottom: '3px solid #3B82F6' }}>Task </span>
-                                                            <span style={{ color: 'black', borderBottom: '3px solid #FB923C' }}>Action </span>
-                                                            <span style={{ color: 'black', borderBottom: '3px solid #8B5CF6' }}>Result </span>
-                                                        </div>
-                                                        </div>
-                                                    </div>
-                                                    </div>
-                                                )}
-
-                                                {activeTab === 1 && (
-                                                    <div style={contentBoxStyle}>
-                                                    <div
-                                                        style={textStyle}
-                                                        dangerouslySetInnerHTML={{
-                                                        __html: currentData.improvedResponse
-                                                        }}
-                                                    />
-                                                    </div>
-                                                )}
-                                            </Card>
-
-                                            {/* Enhanced Tips & Advice Section - Moved to bottom, no hover effects */}
-                                            <Grid container spacing={3}>
-                                                {/* Strengths */}
-                                                <Grid item xs={12} md={6}>
-                                                    <Card sx={{
-                                                        p: 3,
-                                                        borderRadius: '20px',
-                                                        background: 'linear-gradient(145deg, #f0f9ff 0%, #e0f2fe 100%)',
-                                                        border: '1px solid #bae6fd',
-                                                        boxShadow: '0 8px 25px rgba(59, 130, 246, 0.1)',
-                                                        height: '100%',
-                                                        position: 'relative',
-                                                        overflow: 'hidden',
-                                                        '&::before': {
-                                                            content: '""',
-                                                            position: 'absolute',
-                                                            top: 0,
-                                                            left: 0,
-                                                            right: 0,
-                                                            height: '4px',
-                                                            background: 'linear-gradient(90deg, #10b981 0%, #34d399 100%)',
-                                                            borderRadius: '20px 20px 0 0'
-                                                        }
-                                                    }}>
-                                                        {/* Background decoration */}
-                                                        <Box sx={{
-                                                            position: 'absolute',
-                                                            top: -20,
-                                                            right: -20,
-                                                            width: 80,
-                                                            height: 80,
-                                                            borderRadius: '50%',
-                                                            background: 'linear-gradient(135deg, #10b98120 0%, #34d39915 100%)',
-                                                            zIndex: 0
-                                                        }} />
-
-                                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3, position: 'relative', zIndex: 1 }}>
-                                                            <Box sx={{
-                                                                width: 48,
-                                                                height: 48,
-                                                                borderRadius: '12px',
-                                                                background: 'linear-gradient(135deg, #10b981 0%, #34d399 100%)',
-                                                                display: 'flex',
-                                                                alignItems: 'center',
-                                                                justifyContent: 'center',
-                                                                boxShadow: '0 4px 15px rgba(16, 185, 129, 0.3)',
-                                                                color: 'white'
-                                                            }}>
-                                                                <CheckCircleIcon sx={{ fontSize: 24 }} />
+                                    {/* Tab Content */}
+                                    <Box sx={{ p: 3 }}>
+                                        <AnimatePresence mode="wait">
+                                            <motion.div
+                                                key={selectedQuestion}
+                                                initial={{ opacity: 0, x: 20 }}
+                                                animate={{ opacity: 1, x: 0 }}
+                                                exit={{ opacity: 0, x: -20 }}
+                                                transition={{ duration: 0.3 }}
+                                            >
+                                                {/* Two Column Layout: Question + Statistics */}
+                                                <Grid container spacing={3} sx={{ mb: 3 }}>
+                                                    {/* Left Column: Question */}
+                                                    <Grid item xs={12} md={8}>
+                                                        <Box>
+                                                            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mb: 2 }}>
+                                                                {currentData.questionTypes?.map((type, index) => {
+                                                                    const colors = [
+                                                                        { bg: '#e0f2fe', text: '#0277bd', border: '#81d4fa' }, // Blue
+                                                                        { bg: '#f3e8ff', text: '#7c3aed', border: '#c4b5fd' }, // Purple
+                                                                        { bg: '#dcfce7', text: '#16a34a', border: '#86efac' }, // Green
+                                                                        { bg: '#fef3c7', text: '#d97706', border: '#fcd34d' }, // Yellow
+                                                                        { bg: '#fee2e2', text: '#dc2626', border: '#fca5a5' }, // Red
+                                                                        { bg: '#f0f9ff', text: '#0284c7', border: '#7dd3fc' }, // Sky
+                                                                        { bg: '#fdf4ff', text: '#c026d3', border: '#f0abfc' }, // Fuchsia
+                                                                        { bg: '#ecfdf5', text: '#059669', border: '#6ee7b7' }  // Emerald
+                                                                    ];
+                                                                    const colorSet = colors[index % colors.length];
+                                                                    return (
+                                                                        <Chip
+                                                                            key={index}
+                                                                            label={type}
+                                                                            size="small"
+                                                                            sx={{
+                                                                                backgroundColor: colorSet.bg,
+                                                                                color: colorSet.text,
+                                                                                fontWeight: 600,
+                                                                                fontSize: '0.75rem',
+                                                                                fontFamily: 'Satoshi Medium',
+                                                                                border: `1px solid ${colorSet.border}`
+                                                                            }}
+                                                                        />
+                                                                    );
+                                                                }) || []}
                                                             </Box>
                                                             <Typography sx={{
-                                                                fontSize: '1.25rem',
-                                                                fontWeight: 700,
+                                                                fontSize: '1.1rem',
+                                                                fontWeight: 600,
                                                                 color: '#1f2937',
-                                                                fontFamily: 'Satoshi Bold'
+                                                                fontFamily: 'Satoshi Bold',
+                                                                lineHeight: 1.4
                                                             }}>
-                                                                What You Did Well
+                                                                {currentData.question}
                                                             </Typography>
                                                         </Box>
-                                                        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, position: 'relative', zIndex: 1 }}>
-                                                            {currentData.strengths.map((strength, index) => (
-                                                                <Box key={index} sx={{
-                                                                    display: 'flex',
-                                                                    alignItems: 'flex-start',
-                                                                    gap: 2,
-                                                                    p: 2,
-                                                                    background: 'rgba(255, 255, 255, 0.7)',
-                                                                    borderRadius: '12px',
-                                                                    border: '1px solid rgba(16, 185, 129, 0.1)'
-                                                                }}>
-                                                                    <Box sx={{
-                                                                        width: 20,
-                                                                        height: 20,
-                                                                        borderRadius: '50%',
-                                                                        background: 'linear-gradient(135deg, #10b981 0%, #34d399 100%)',
-                                                                        display: 'flex',
-                                                                        alignItems: 'center',
-                                                                        justifyContent: 'center',
-                                                                        mt: 0.25,
-                                                                        flexShrink: 0
-                                                                    }}>
-                                                                        <CheckCircleIcon sx={{ fontSize: 12, color: 'white' }} />
-                                                                    </Box>
-                                                                    <Typography sx={{
-                                                                        fontSize: '0.9rem',
-                                                                        color: '#374151',
-                                                                        lineHeight: 1.5,
-                                                                        fontFamily: 'DM Sans Medium',
-                                                                        fontWeight: 500
-                                                                    }}>
-                                                                        {strength}
-                                                                    </Typography>
-                                                                </Box>
-                                                            ))}
-                                                        </Box>
-                                                    </Card>
-                                                </Grid>
-                                               {/* Tips & Advice - Enhanced, no hover effects */}
-                                                <Grid item xs={12} md={6}>
-                                                    <Card sx={{
-                                                        p: 3,
-                                                        borderRadius: '20px',
-                                                        background: 'linear-gradient(145deg, #fef7ff 0%, #faf5ff 100%)',
-                                                        border: '1px solid #e9d5ff',
-                                                        boxShadow: '0 8px 25px rgba(139, 92, 246, 0.1)',
-                                                        height: '100%',
-                                                        position: 'relative',
-                                                        overflow: 'hidden',
-                                                        '&::before': {
-                                                            content: '""',
-                                                            position: 'absolute',
-                                                            top: 0,
-                                                            left: 0,
-                                                            right: 0,
-                                                            height: '4px',
-                                                            background: 'linear-gradient(90deg, #8b5cf6 0%, #a78bfa 100%)',
-                                                            borderRadius: '20px 20px 0 0'
-                                                        }
-                                                    }}>
-                                                        {/* Background decoration */}
-                                                        <Box sx={{
-                                                            position: 'absolute',
-                                                            top: -20,
-                                                            right: -20,
-                                                            width: 80,
-                                                            height: 80,
-                                                            borderRadius: '50%',
-                                                            background: 'linear-gradient(135deg, #8b5cf620 0%, #a78bfa15 100%)',
-                                                            zIndex: 0
-                                                        }} />
+                                                    </Grid>
 
-                                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3, position: 'relative', zIndex: 1 }}>
-                                                            <Box sx={{
-                                                                width: 48,
-                                                                height: 48,
-                                                                borderRadius: '12px',
-                                                                background: 'linear-gradient(135deg, #8b5cf6 0%, #a78bfa 100%)',
-                                                                display: 'flex',
-                                                                alignItems: 'center',
-                                                                justifyContent: 'center',
-                                                                boxShadow: '0 4px 15px rgba(139, 92, 246, 0.3)',
-                                                                color: 'white',
-                                                                fontSize: '1.5rem'
-                                                            }}>
-                                                                💡
-                                                            </Box>
-                                                            <Typography sx={{
-                                                                fontSize: '1.25rem',
-                                                                fontWeight: 700,
-                                                                color: '#1f2937',
-                                                                fontFamily: 'Satoshi Bold'
-                                                            }}>
-                                                                Tips & Advice
-                                                            </Typography>
+                                                    {/* Right Column: Performance Score */}
+                                                    <Grid item xs={12} md={4}>
+                                                        <Box sx={{ display: 'flex', justifyContent: { xs: 'center', md: 'flex-end' } }}>
+                                                            <PerformanceIndicator score={currentData.score} />
                                                         </Box>
-                                                        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, position: 'relative', zIndex: 1 }}>
-                                                            {currentData.tips.map((tip, index) => (
-                                                                <Box key={index} sx={{
-                                                                    display: 'flex',
-                                                                    alignItems: 'flex-start',
-                                                                    gap: 2,
-                                                                    p: 3,
-                                                                    background: 'rgba(255, 255, 255, 0.8)',
-                                                                    borderRadius: '12px',
-                                                                    border: '1px solid rgba(139, 92, 246, 0.1)'
-                                                                }}>
-                                                                    <Box sx={{
-                                                                        width: 24,
-                                                                        height: 24,
-                                                                        borderRadius: '50%',
-                                                                        background: 'linear-gradient(135deg, #8b5cf6 0%, #a78bfa 100%)',
-                                                                        display: 'flex',
-                                                                        alignItems: 'center',
-                                                                        justifyContent: 'center',
-                                                                        mt: 0.25,
-                                                                        flexShrink: 0,
-                                                                        fontSize: '0.75rem'
-                                                                    }}>
-                                                                        💡
-                                                                    </Box>
-                                                                    <Typography sx={{
-                                                                        fontSize: '0.9rem',
-                                                                        color: '#374151',
-                                                                        lineHeight: 1.6,
-                                                                        fontFamily: 'DM Sans Medium',
-                                                                        fontWeight: 500
-                                                                    }}>
-                                                                        {tip}
-                                                                    </Typography>
-                                                                </Box>
-                                                            ))}
-                                                        </Box>
-                                                    </Card>
+                                                    </Grid>
                                                 </Grid>
-                                            </Grid>
-                                        </motion.div>
-                                    </AnimatePresence>
-                                </Grid>
-                            </Grid>
+
+                                                {/* Statistics Grid */}
+                                                <Grid container spacing={2} sx={{ mb: 4 }}>
+                                                    <Grid item xs={6} sm={3}>
+                                                        <MetricCard
+                                                            icon={AccessTimeIcon}
+                                                            label="Seconds"
+                                                            value={recordedTimes[selectedQuestion - 1]?.recordedTime}
+                                                            color="#8b5cf6"
+                                                        />
+                                                    </Grid>
+                                                    <Grid item xs={6} sm={3}>
+                                                        <MetricCard
+                                                            icon={RecordVoiceOverIcon}
+                                                            label="Word Count"
+                                                            value={currentData.wordCount}
+                                                            color="#f59e0b"
+                                                        />
+                                                    </Grid>
+                                                    <Grid item xs={6} sm={3}>
+                                                        <MetricCard
+                                                            icon={TrendingUpIcon}
+                                                            label="Action Words"
+                                                            value={currentData.actionWords}
+                                                            color="#10b981"
+                                                        />
+                                                    </Grid>
+                                                    <Grid item xs={6} sm={3}>
+                                                        <MetricCard
+                                                            icon={BarChartIcon}
+                                                            label="Statistics"
+                                                            value={currentData.statsUsed}
+                                                            color="#06b6d4"
+                                                        />
+                                                    </Grid>
+                                                </Grid>
+
+                                                {/* Response Section */}
+                                                <Box sx={{ mb: 4 }}>
+                                                    <div className="tabContainerStyle">
+                                                        <button
+                                                        style={tabStyle(activeTab === 0)}
+                                                        onClick={() => setActiveTab(0)}
+                                                        >
+                                                        📝 Your Response
+                                                        </button>
+                                                        <button
+                                                        style={tabStyle(activeTab === 1)}
+                                                        onClick={() => setActiveTab(1)}
+                                                        >
+                                                        ✨ Improved Response
+                                                        </button>
+                                                    </div>
+                                                    {/* Tab Content */}
+                                                    {activeTab === 0 && (
+                                                        <div>
+                                                        <div style={contentBoxStyle}>
+                                                            <div
+                                                            style={textStyle}
+                                                            dangerouslySetInnerHTML={{
+                                                                __html: highlightText(
+                                                                currentData.transcript,
+                                                                currentData.fillerWordsList,
+                                                                currentData.actionWordsList,
+                                                                currentData.starAnswerParsed
+                                                                )
+                                                            }}
+                                                            />
+                                                        </div>
+
+                                                        {/* Legend */}
+                                                        <div style={legendStyle}>
+                                                            <div style={{ fontSize: '0.8rem', fontWeight: '600', marginBottom: '8px', color: '#374151', fontFamily: 'system-ui, -apple-system, sans-serif' }}>
+                                                            Highlight Legend:
+                                                            </div>
+                                                            <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap', alignItems: 'center' }}>
+                                                            <div style={legendItemStyle}>
+                                                                <div style={colorBoxStyle('#d1fae5', '#a7f3d0')} />
+                                                                <span style={{ fontSize: '0.75rem', color: '#065f46', fontFamily: 'system-ui, -apple-system, sans-serif' }}>
+                                                                Action Words
+                                                                </span>
+                                                            </div>
+                                                            <div style={legendItemStyle}>
+                                                                <div style={colorBoxStyle('#C7DDFC', '#6ea7e4ff')} />
+                                                                <span style={{ fontSize: '0.75rem', color: '#325274', fontFamily: 'system-ui, -apple-system, sans-serif' }}>
+                                                                Numbers/Stats
+                                                                </span>
+                                                            </div>
+                                                            <div style={legendItemStyle}>
+                                                                <div style={colorBoxStyle('#ffd9d9ff', '#fca8a8ff')} />
+                                                                <span style={{ fontSize: '0.75rem', color: '#dc2626', fontFamily: 'system-ui, -apple-system, sans-serif' }}>
+                                                                Filler Words
+                                                                </span>
+                                                            </div>
+
+                                                            <div style={{ fontSize: '0.8rem', fontFamily: 'system-ui, -apple-system, sans-serif', fontWeight: '600' }}>
+                                                                <span style={{ color: 'black', borderBottom: '3px solid #FBBF24' }}>Situation </span>
+                                                                <span style={{ color: 'black', borderBottom: '3px solid #3B82F6' }}>Task </span>
+                                                                <span style={{ color: 'black', borderBottom: '3px solid #FB923C' }}>Action </span>
+                                                                <span style={{ color: 'black', borderBottom: '3px solid #8B5CF6' }}>Result </span>
+                                                            </div>
+                                                            </div>
+                                                        </div>
+                                                        </div>
+                                                    )}
+
+                                                    {activeTab === 1 && (
+                                                        <div style={contentBoxStyle}>
+                                                        <div
+                                                            style={textStyle}
+                                                            dangerouslySetInnerHTML={{
+                                                            __html: currentData.improvedResponse
+                                                            }}
+                                                        />
+                                                        </div>
+                                                    )}
+                                                </Box>
+
+                                                {/* Advice Section */}
+                                                <Grid container spacing={3}>
+                                                    {/* Strengths */}
+                                                    <Grid item xs={12} md={6}>
+                                                        <Box sx={{
+                                                            p: 3,
+                                                            borderRadius: '20px',
+                                                            background: 'linear-gradient(145deg, #f0f9ff 0%, #e0f2fe 100%)',
+                                                            border: '1px solid #bae6fd',
+                                                            boxShadow: '0 8px 25px rgba(59, 130, 246, 0.1)',
+                                                            height: '100%',
+                                                            position: 'relative',
+                                                            overflow: 'hidden',
+                                                            '&::before': {
+                                                                content: '""',
+                                                                position: 'absolute',
+                                                                top: 0,
+                                                                left: 0,
+                                                                right: 0,
+                                                                height: '4px',
+                                                                background: 'linear-gradient(90deg, #10b981 0%, #34d399 100%)',
+                                                                borderRadius: '20px 20px 0 0'
+                                                            }
+                                                        }}>
+                                                            {/* Background decoration */}
+                                                            <Box sx={{
+                                                                position: 'absolute',
+                                                                top: -20,
+                                                                right: -20,
+                                                                width: 80,
+                                                                height: 80,
+                                                                borderRadius: '50%',
+                                                                background: 'linear-gradient(135deg, #10b98120 0%, #34d39915 100%)',
+                                                                zIndex: 0
+                                                            }} />
+
+                                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3, position: 'relative', zIndex: 1 }}>
+                                                                <Box sx={{
+                                                                    width: 48,
+                                                                    height: 48,
+                                                                    borderRadius: '12px',
+                                                                    background: 'linear-gradient(135deg, #10b981 0%, #34d399 100%)',
+                                                                    display: 'flex',
+                                                                    alignItems: 'center',
+                                                                    justifyContent: 'center',
+                                                                    boxShadow: '0 4px 15px rgba(16, 185, 129, 0.3)',
+                                                                    color: 'white'
+                                                                }}>
+                                                                    <CheckCircleIcon sx={{ fontSize: 24 }} />
+                                                                </Box>
+                                                                <Typography sx={{
+                                                                    fontSize: '1.25rem',
+                                                                    fontWeight: 700,
+                                                                    color: '#1f2937',
+                                                                    fontFamily: 'Satoshi Bold'
+                                                                }}>
+                                                                    What You Did Well
+                                                                </Typography>
+                                                            </Box>
+                                                            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, position: 'relative', zIndex: 1 }}>
+                                                                {currentData.strengths.map((strength, index) => (
+                                                                    <Box key={index} sx={{
+                                                                        display: 'flex',
+                                                                        alignItems: 'flex-start',
+                                                                        gap: 2,
+                                                                        p: 2,
+                                                                        background: 'rgba(255, 255, 255, 0.7)',
+                                                                        borderRadius: '12px',
+                                                                        border: '1px solid rgba(16, 185, 129, 0.1)'
+                                                                    }}>
+                                                                        <Box sx={{
+                                                                            width: 20,
+                                                                            height: 20,
+                                                                            borderRadius: '50%',
+                                                                            background: 'linear-gradient(135deg, #10b981 0%, #34d399 100%)',
+                                                                            display: 'flex',
+                                                                            alignItems: 'center',
+                                                                            justifyContent: 'center',
+                                                                            mt: 0.25,
+                                                                            flexShrink: 0
+                                                                        }}>
+                                                                            <CheckCircleIcon sx={{ fontSize: 12, color: 'white' }} />
+                                                                        </Box>
+                                                                        <Typography sx={{
+                                                                            fontSize: '0.9rem',
+                                                                            color: '#374151',
+                                                                            lineHeight: 1.5,
+                                                                            fontFamily: 'DM Sans Medium',
+                                                                            fontWeight: 500
+                                                                        }}>
+                                                                            {strength}
+                                                                        </Typography>
+                                                                    </Box>
+                                                                ))}
+                                                            </Box>
+                                                        </Box>
+                                                    </Grid>
+                                                   {/* Tips & Advice */}
+                                                    <Grid item xs={12} md={6}>
+                                                        <Box sx={{
+                                                            p: 3,
+                                                            borderRadius: '20px',
+                                                            background: 'linear-gradient(145deg, #fef7ff 0%, #faf5ff 100%)',
+                                                            border: '1px solid #e9d5ff',
+                                                            boxShadow: '0 8px 25px rgba(139, 92, 246, 0.1)',
+                                                            height: '100%',
+                                                            position: 'relative',
+                                                            overflow: 'hidden',
+                                                            '&::before': {
+                                                                content: '""',
+                                                                position: 'absolute',
+                                                                top: 0,
+                                                                left: 0,
+                                                                right: 0,
+                                                                height: '4px',
+                                                                background: 'linear-gradient(90deg, #8b5cf6 0%, #a78bfa 100%)',
+                                                                borderRadius: '20px 20px 0 0'
+                                                            }
+                                                        }}>
+                                                            {/* Background decoration */}
+                                                            <Box sx={{
+                                                                position: 'absolute',
+                                                                top: -20,
+                                                                right: -20,
+                                                                width: 80,
+                                                                height: 80,
+                                                                borderRadius: '50%',
+                                                                background: 'linear-gradient(135deg, #8b5cf620 0%, #a78bfa15 100%)',
+                                                                zIndex: 0
+                                                            }} />
+
+                                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3, position: 'relative', zIndex: 1 }}>
+                                                                <Box sx={{
+                                                                    width: 48,
+                                                                    height: 48,
+                                                                    borderRadius: '12px',
+                                                                    background: 'linear-gradient(135deg, #8b5cf6 0%, #a78bfa 100%)',
+                                                                    display: 'flex',
+                                                                    alignItems: 'center',
+                                                                    justifyContent: 'center',
+                                                                    boxShadow: '0 4px 15px rgba(139, 92, 246, 0.3)',
+                                                                    color: 'white',
+                                                                    fontSize: '1.5rem'
+                                                                }}>
+                                                                    💡
+                                                                </Box>
+                                                                <Typography sx={{
+                                                                    fontSize: '1.25rem',
+                                                                    fontWeight: 700,
+                                                                    color: '#1f2937',
+                                                                    fontFamily: 'Satoshi Bold'
+                                                                }}>
+                                                                    Tips & Advice
+                                                                </Typography>
+                                                            </Box>
+                                                            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, position: 'relative', zIndex: 1 }}>
+                                                                {currentData.tips.map((tip, index) => (
+                                                                    <Box key={index} sx={{
+                                                                        display: 'flex',
+                                                                        alignItems: 'flex-start',
+                                                                        gap: 2,
+                                                                        p: 3,
+                                                                        background: 'rgba(255, 255, 255, 0.8)',
+                                                                        borderRadius: '12px',
+                                                                        border: '1px solid rgba(139, 92, 246, 0.1)'
+                                                                    }}>
+                                                                        <Box sx={{
+                                                                            width: 24,
+                                                                            height: 24,
+                                                                            borderRadius: '50%',
+                                                                            background: 'linear-gradient(135deg, #8b5cf6 0%, #a78bfa 100%)',
+                                                                            display: 'flex',
+                                                                            alignItems: 'center',
+                                                                            justifyContent: 'center',
+                                                                            mt: 0.25,
+                                                                            flexShrink: 0,
+                                                                            fontSize: '0.75rem'
+                                                                        }}>
+                                                                            💡
+                                                                        </Box>
+                                                                        <Typography sx={{
+                                                                            fontSize: '0.9rem',
+                                                                            color: '#374151',
+                                                                            lineHeight: 1.6,
+                                                                            fontFamily: 'DM Sans Medium',
+                                                                            fontWeight: 500
+                                                                        }}>
+                                                                            {tip}
+                                                                        </Typography>
+                                                                    </Box>
+                                                                ))}
+                                                            </Box>
+                                                        </Box>
+                                                    </Grid>
+                                                </Grid>
+                                            </motion.div>
+                                        </AnimatePresence>
+                                    </Box>
+                                </Card>
+                            </motion.div>
 
                             {/* Action Buttons */}
                             <motion.div variants={itemVariants}>
-                                <Box sx={{ 
-                                    display: 'flex', 
-                                    justifyContent: 'center', 
-                                    gap: 3, 
+                                <Box sx={{
+                                    display: 'flex',
+                                    justifyContent: 'center',
+                                    gap: 3,
                                     mt: 6,
                                     flexWrap: 'wrap'
                                 }}>
@@ -1413,7 +1409,7 @@ function escapeRegExp(s) {
                                     >
                                         🎯 Practice Again
                                     </motion.button>
-                                    
+
                                     <motion.button
                                         whileHover={{ scale: 1.05, y: -2 }}
                                         whileTap={{ scale: 0.98 }}

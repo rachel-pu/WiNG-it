@@ -37,15 +37,9 @@ const InterviewCompleteScreen = ({
 
         // Stop confetti after 5 seconds
         const timer = setTimeout(() => {
-            console.log('Stopping confetti');
             setShowConfetti(false);
         }, 5000);
 
-        console.log('Confetti initialized:', {
-            showConfetti: true,
-            width: windowDimensions.width,
-            height: windowDimensions.height
-        });
 
         return () => {
             window.removeEventListener('resize', updateWindowDimensions);
@@ -77,8 +71,6 @@ const InterviewCompleteScreen = ({
             transition: { type: "spring", damping: 20, stiffness: 300 }
         }
     };
-
-    console.log('Render - showConfetti:', showConfetti, 'dimensions:', windowDimensions);
 
     return (
         <>
