@@ -7,6 +7,24 @@
   position: sticky !important;
   top: 0;
   z-index: 1100;
+  will-change: transform;
+}
+
+/* Performance optimizations */
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Optimize motion elements */
+.motion-element,
+[data-framer-motion],
+.floating-element,
+.floating-shape,
+.particle {
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+  transform-style: preserve-3d;
 }
 
 /* // MAIN HOME PAGE CONTAINER STYLING // */
@@ -79,12 +97,15 @@
     right: 0;
     bottom: 0;
     pointer-events: none;
+    will-change: transform;
 }
 
 .floating-element {
     position: absolute;
     font-size: 2rem;
     animation: float 6s ease-in-out infinite;
+    will-change: transform;
+    backface-visibility: hidden;
 }
 
 .element-1 {
@@ -251,11 +272,13 @@
     flex: 1;
     position: relative;
     overflow: hidden;
-    background: rgba(255, 255, 255, 0.8) !important;
-    backdrop-filter: blur(20px);
+    background: rgba(255, 255, 255, 0.85) !important;
+    backdrop-filter: blur(12px);
     border: 1px solid rgba(255, 255, 255, 0.3) !important;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1) !important;
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    will-change: transform, box-shadow;
+    backface-visibility: hidden;
 }
 
 /* Only apply enhanced hover glow to feature cards in the main home section */
@@ -325,8 +348,119 @@
     display: none; /* Remove the bottom line effect since we have the border animation */
 }
 
-/* ---------- why wing it section ---------- */
-.why-wing-it-section-container{
+/* ---------- student section (redesigned) ---------- */
+.student-section-container {
+    min-height: 100vh;
+    width: 100%;
+    position: relative;
+    will-change: transform;
+}
+
+.student-section-container * {
+    will-change: transform, opacity;
+    backface-visibility: hidden;
+}
+
+/* Performance optimization for glassmorphism cards */
+.student-section-container .glass-card {
+    backdrop-filter: blur(20px);
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 24px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    will-change: transform, box-shadow;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.student-section-container .glass-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 48px rgba(0, 0, 0, 0.4);
+}
+
+/* Trust indicators styling */
+.trust-badge {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    padding: 0.5rem 1rem;
+    transition: all 0.3s ease;
+    will-change: transform;
+}
+
+.trust-badge:hover {
+    background: rgba(255, 255, 255, 0.15);
+    transform: translateY(-1px);
+}
+
+/* Mission card gradient */
+.mission-card-gradient {
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.15) 0%, rgba(118, 75, 162, 0.15) 100%);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 32px rgba(102, 126, 234, 0.2);
+    will-change: transform;
+}
+
+/* Goals grid styling */
+.goals-grid-item {
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 1.5rem 1rem;
+    text-align: center;
+    transition: all 0.3s ease;
+    cursor: default;
+    will-change: transform, background;
+}
+
+.goals-grid-item:hover {
+    background: rgba(255, 255, 255, 0.12);
+    transform: translateY(-3px) scale(1.02);
+}
+
+/* Floating shapes performance */
+.student-floating-shape {
+    position: absolute;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    will-change: transform, opacity;
+    backface-visibility: hidden;
+}
+
+/* Background animation */
+@keyframes backgroundShift {
+    0%, 100% {
+        transform: scale(1) rotate(0deg);
+        opacity: 0.8;
+    }
+    50% {
+        transform: scale(1.05) rotate(0.5deg);
+        opacity: 1;
+    }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .student-section-container .glass-card {
+        backdrop-filter: blur(15px);
+        margin-bottom: 1.5rem;
+    }
+
+    .goals-grid-item {
+        padding: 1.2rem 0.8rem;
+    }
+
+    .trust-badge {
+        font-size: 0.8rem;
+        padding: 0.4rem 0.8rem;
+    }
+}
+
+/* Legacy styles for compatibility */
+.why-wing-it-section-container {
+    /* Keeping for any legacy references */
     min-height: 100vh;
     padding: 8% 0;
     width: 100%;
@@ -335,19 +469,6 @@
     justify-content: center;
     align-items: center;
     position: relative;
-}
-
-.why-wing-it-section-container::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: 
-        radial-gradient(circle at 30% 70%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
-        radial-gradient(circle at 70% 30%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
-    pointer-events: none;
 }
 
 .why-wing-it-title{
@@ -420,14 +541,16 @@
 }
 
 .story-card, .achievement-card, .mission-card {
-    background: rgba(255, 255, 255, 0.8);
-    backdrop-filter: blur(20px);
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(12px);
     border-radius: 20px;
     padding: 2rem;
     border: 1px solid rgba(255, 255, 255, 0.3);
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
     position: relative;
     overflow: hidden;
+    will-change: transform;
+    backface-visibility: hidden;
 }
 
 .achievement-badge {
