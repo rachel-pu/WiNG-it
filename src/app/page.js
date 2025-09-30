@@ -1,6 +1,6 @@
 "use client";
-import React from "react";
-import {motion, inView, animate} from "framer-motion";
+import React, { useState, useEffect } from "react";
+import {motion, inView, animate, useReducedMotion} from "framer-motion";
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid2';
 import {Typography} from "@mui/material";
@@ -15,11 +15,37 @@ import "./HomePage.css";
 
 const pages = ['Why WiNG.it', 'Our Story', 'Get Started'];
 export default function HomePage() {
+    const [isScrolling, setIsScrolling] = useState(false);
+    const shouldReduceMotion = useReducedMotion();
+
+    // Scroll detection to pause heavy animations during fast scroll
+    useEffect(() => {
+        let scrollTimer;
+        const handleScroll = () => {
+            setIsScrolling(true);
+            clearTimeout(scrollTimer);
+            scrollTimer = setTimeout(() => setIsScrolling(false), 150);
+        };
+
+        window.addEventListener('scroll', handleScroll, { passive: true });
+        return () => {
+            window.removeEventListener('scroll', handleScroll);
+            clearTimeout(scrollTimer);
+        };
+    }, []);
 
     const itemVariants = {
-        hidden: { opacity: 0, y: 20 },
-        visible: { opacity: 1, y: 0 },
-        transition: { type: "spring", damping: 20, stiffness: 300 },
+        hidden: { opacity: 0, y: shouldReduceMotion ? 0 : 20 },
+        visible: {
+            opacity: 1,
+            y: 0,
+            transition: {
+                type: shouldReduceMotion ? "tween" : "spring",
+                damping: 25,
+                stiffness: 200,
+                duration: shouldReduceMotion ? 0.3 : undefined
+            }
+        }
     };
 
     const staggerContainer = {
@@ -27,7 +53,7 @@ export default function HomePage() {
         visible: {
             opacity: 1,
             transition: {
-                staggerChildren: 0.1
+                staggerChildren: shouldReduceMotion ? 0.05 : 0.1
             }
         }
     };
@@ -55,7 +81,7 @@ export default function HomePage() {
                                 className="main-home-page-title-container"
                                 initial="hidden"
                                 whileInView="visible"
-                                viewport={{ once: true }}
+                                viewport={{ once: true, margin: "-10%" }}
                                 variants={staggerContainer}
                             >
                                 <motion.h1 variants={itemVariants} className="main-home-page-title-text">
@@ -74,11 +100,11 @@ export default function HomePage() {
                             </motion.div>
 
                             {/* description */}
-                            <motion.div 
+                            <motion.div
                                 className="main-home-page-description-container"
                                 initial="hidden"
                                 whileInView="visible"
-                                viewport={{ once: true }}
+                                viewport={{ once: true, margin: "-5%" }}
                             >
                                 <motion.p
                                     variants={itemVariants}
@@ -94,7 +120,7 @@ export default function HomePage() {
                             <motion.div
                                 initial="hidden"
                                 whileInView="visible"
-                                viewport={{ once: true }}
+                                viewport={{ once: true, margin: "-5%" }}
                                 variants={staggerContainer}
                                 className="cta-buttons-container"
                             >
@@ -129,10 +155,10 @@ export default function HomePage() {
 
                     {/* ---------- feature cards ---------- */}
                     <Grid item xs>
-                        <motion.div 
+                        <motion.div
                             initial="hidden"
                             whileInView="visible"
-                            viewport={{ once: true }}
+                            viewport={{ once: true, margin: "-15%" }}
                             variants={staggerContainer}
                         >
                             <Grid
@@ -150,7 +176,7 @@ export default function HomePage() {
                                     <motion.div
                                         variants={itemVariants}
                                         style={{ width: '100%', display: 'flex' }}
-                                        whileHover={{ y: -8, transition: { duration: 0.3 } }}
+                                        whileHover={!isScrolling ? { y: -8, transition: { duration: 0.3 } } : {}}
                                     >
                                         <Card className="main-home-page-card modern-card">
                                             <div className="card-icon-container orange-gradient">
@@ -172,7 +198,7 @@ export default function HomePage() {
                                     <motion.div
                                         variants={itemVariants}
                                         style={{ width: '100%', display: 'flex' }}
-                                        whileHover={{ y: -8, transition: { duration: 0.3 } }}
+                                        whileHover={!isScrolling ? { y: -8, transition: { duration: 0.3 } } : {}}
                                     >
                                         <Card className="main-home-page-card modern-card">
                                             <div className="card-icon-container blue-gradient">
@@ -194,7 +220,7 @@ export default function HomePage() {
                                     <motion.div
                                         variants={itemVariants}
                                         style={{ width: '100%', display: 'flex' }}
-                                        whileHover={{ y: -8, transition: { duration: 0.3 } }}
+                                        whileHover={!isScrolling ? { y: -8, transition: { duration: 0.3 } } : {}}
                                     >
                                         <Card className="main-home-page-card modern-card">
                                             <div className="card-icon-container green-gradient">
@@ -218,412 +244,278 @@ export default function HomePage() {
             </Box>
 
     {/* ---------- why wing it ----------*/}
-    <Box 
-        id="why-wing-it" 
-        className="why-wing-it-section-container"
+    <Box
+        id="why-wing-it"
+        className="student-section-container"
         sx={{
             minHeight: '100vh',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             position: 'relative',
-            overflow: 'hidden'
+            overflow: 'hidden',
+            background: 'linear-gradient(135deg, #2a2a3e 0%, #26314e 50%, #1f4470 100%)',
+            padding: { xs: '4rem 1rem', md: '6rem 2rem' }
         }}
     >
-        {/* Floating animated circles */}
-        <Box
-            sx={{
-                position: 'absolute',
-                width: '150px',
-                height: '150px',
-                background: 'rgba(255, 255, 255, 0.1)',
-                borderRadius: '50%',
-                top: '20%',
-                left: '10%',
-                animation: 'float 6s ease-in-out infinite',
-                '@keyframes float': {
-                    '0%, 100%': { transform: 'translateY(0px) rotate(0deg)' },
-                    '50%': { transform: 'translateY(-20px) rotate(180deg)' }
-                }
-            }}
-        />
-        <Box
-            sx={{
-                position: 'absolute',
-                width: '100px',
-                height: '100px',
-                background: 'rgba(255, 255, 255, 0.08)',
-                borderRadius: '50%',
-                top: '70%',
-                right: '15%',
-                animation: 'float2 8s ease-in-out infinite',
-                animationDelay: '2s',
-                '@keyframes float2': {
-                    '0%, 100%': { transform: 'translateY(0px) rotate(0deg)' },
-                    '50%': { transform: 'translateY(-25px) rotate(-180deg)' }
-                }
-            }}
-        />
-        <Box
-            sx={{
-                position: 'absolute',
-                width: '100px',
-                height: '100px',
-                background: 'rgba(255, 255, 255, 0.06)',
-                borderRadius: '50%',
-                bottom: '20%',
-                left: '20%',
-                animation: 'float3 10s ease-in-out infinite',
-                animationDelay: '4s',
-                '@keyframes float3': {
-                    '0%, 100%': { transform: 'translateY(0px) rotate(0deg)' },
-                    '50%': { transform: 'translateY(-15px) rotate(360deg)' }
-                }
-            }}
-        />
-        <Box
-            sx={{
-                position: 'absolute',
-                width: '45px',
-                height: '45px',
-                background: 'rgba(255, 255, 255, 0.12)',
-                borderRadius: '50%',
-                top: '15%',
-                right: '25%',
-                animation: 'float4 7s ease-in-out infinite',
-                animationDelay: '1s',
-                '@keyframes float4': {
-                    '0%, 100%': { transform: 'translateY(0px) rotate(0deg)' },
-                    '50%': { transform: 'translateY(-30px) rotate(90deg)' }
-                }
-            }}
-        />
 
-        <Grid container
-            spacing={2}
-            columns={5}
-            rows={1}
-            wrap={{ xs: "wrap", sm: "wrap", md: "nowrap", lg: "nowrap" }}
-            justifyContent={{ xs: "center", sm: "center", md: "center", lg: "center" }}
-            direction={{ xs: 'column', md: 'row' }}
-            width={{ xs: '95%', sm: '90%', md: '85%' }}
-            sx={{ zIndex: 2, position: 'relative' }}
-        >
-            {/* ---------- title / description ---------- */}
-            <Grid item xs={12} md={10} lg={8}>
-                <motion.div 
-                    style={{
-                        padding: '0.8rem 0.5rem',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center',
-                        textAlign: 'center',
-                        maxWidth: '900px',
-                        margin: '0 auto',
-                        height: '100%'
-                    }}
-                    initial="hidden"
-                    whileInView="visible"
-                    viewport={{ once: true }}
-                    variants={staggerContainer}
-                >
-                    {/* title */}
-                    <motion.h2
-                        variants={itemVariants}
-                        className="why-wing-it-title"
-                        style={{
-                            marginBottom: '1rem',
-                            textAlign: 'center',
-                            fontSize: 'clamp(2rem, 4vw, 3.2rem)'
-                        }}
-                    >
-                        Built by students, for students 🎓
-                    </motion.h2>
-
-                    {/* description*/}
-                    <Stack spacing={2} style={{ width: '100%', maxWidth: '800px' }}>
-                        <motion.p
-                            variants={itemVariants}
-                            className="why-wing-it-description-text"
-                            style={{
-                                textAlign: 'center',
-                                fontSize: 'clamp(1rem, 2.2vw, 1.25rem)',
-                                lineHeight: '1.5',
-                                marginBottom: '0.8rem'
+        <Box sx={{ maxWidth: '1200px', width: '100%', zIndex: 2, position: 'relative', margin: '0 auto' }}>
+            <motion.div
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, margin: "-10%" }}
+                variants={staggerContainer}
+            >
+                {/* Main Header */}
+                <Box sx={{ textAlign: 'center', marginBottom: '4rem' }}>
+                    <motion.div variants={itemVariants}>
+                        <Typography
+                            sx={{
+                                fontSize: { xs: '2.5rem', md: '3.5rem', lg: '4.2rem' },
+                                fontWeight: 900,
+                                fontFamily: 'Satoshi Black, sans-serif',
+                                color: 'white',
+                                marginBottom: '1rem',
+                                letterSpacing: '-0.02em',
+                                textShadow: '0 4px 20px rgba(0,0,0,0.3)',
+                                background: 'linear-gradient(135deg, #ffffff 0%, #a8c7ed 100%)',
+                                WebkitBackgroundClip: 'text',
+                                WebkitTextFillColor: 'transparent',
+                                backgroundClip: 'text'
                             }}
                         >
-                            We&apos;ve been in your shoes – stressing about interviews, lacking access to quality practice tools, 
-                            and struggling to get meaningful feedback on our performance.
-                        </motion.p>
+                            Built by students, for students
+                        </Typography>
+                    </motion.div>
+                </Box>
 
-                        {/* Enhanced Mission Box */}
-                        <motion.div
-                            variants={itemVariants}
-                            className="highlight-box"
-                            style={{
-                                background: 'rgba(255, 255, 255, 0.15)',
-                                backdropFilter: 'blur(20px)',
-                                border: '1px solid rgba(255, 255, 255, 0.2)',
-                                borderRadius: '20px',
-                                padding: '1.5rem 1.2rem',
-                                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.2)',
-                                transition: 'transform 0.3s ease, box-shadow 0.3s ease',
-                                cursor: 'default'
-                            }}
-                            whileHover={{
-                                transform: 'translateY(-3px)',
-                                boxShadow: '0 12px 48px rgba(0, 0, 0, 0.3)'
-                            }}
-                        >
-                            <Typography 
-                                variant="overline" 
-                                component="div"
-                                style={{
-                                    color: 'rgba(255, 255, 255, 0.8)',
-                                    fontSize: '0.8rem',
-                                    fontWeight: '600',
-                                    marginBottom: '0.8rem',
-                                    textTransform: 'uppercase',
-                                    letterSpacing: '0.1em',
-                                    textAlign: 'center'
+                {/* Content Grid */}
+                <Grid container spacing={4} alignItems="stretch" justifyContent="center">
+                    {/* Left side - Our Story */}
+                    <Grid size={{ xs: 12, md: 6 }}>
+                        <motion.div variants={itemVariants} style={{ height: '100%' }}>
+                            <Box
+                                sx={{
+                                    background: 'rgba(255, 255, 255, 0.08)',
+                                    backdropFilter: 'blur(20px)',
+                                    borderRadius: '24px',
+                                    padding: '2.5rem',
+                                    border: '1px solid rgba(255, 255, 255, 0.15)',
+                                    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
+                                    position: 'relative',
+                                    overflow: 'hidden',
+                                    height: '100%',
+                                    display: 'flex',
+                                    flexDirection: 'column'
                                 }}
                             >
-                                Our Mission
-                            </Typography>
-                            <p 
-                                className="why-wing-it-description-text highlight-text"
-                                style={{
-                                    fontSize: 'clamp(1.5rem, 2.2vw, 1.3rem)',
-                                    fontWeight: '600',
-                                    lineHeight: '1.3',
-                                    textAlign: 'center',
-                                    marginBottom: '0.8rem'
-                                }}
-                            >
-                                <span className="bold-highlight">Making career preparation accessible for everyone.</span>
-                            </p>
-                            <p 
-                                className="why-wing-it-description-text highlight-text"
-                                style={{
-                                    fontSize: '1rem',
-                                    color: 'rgba(255, 255, 255, 0.85)',
-                                    lineHeight: '1.4',
-                                    textAlign: 'center',
-                                    paddingBottom: '10px',
-                                    margin: 0
-                                }}
-                            >
-                                We want to continue building tools that can be used in one centralized platform.
-                            </p>
+                                {/* Gradient overlay */}
+                                <Box
+                                    sx={{
+                                        position: 'absolute',
+                                        top: 0,
+                                        left: 0,
+                                        right: 0,
+                                        height: '4px',
+                                        background: 'linear-gradient(90deg, #667eea, #764ba2, #feca57)',
+                                        borderRadius: '24px 24px 0 0'
+                                    }}
+                                />
+
+                                <Typography
+                                    variant="overline"
+                                    sx={{
+                                        color: 'rgba(255, 255, 255, 0.6)',
+                                        fontSize: '0.75rem',
+                                        fontWeight: 600,
+                                        letterSpacing: '0.1em',
+                                        marginBottom: '1rem',
+                                        display: 'block'
+                                    }}
+                                >
+                                    OUR STORY
+                                </Typography>
+
+                                <Typography
+                                    sx={{
+                                        color: 'white',
+                                        fontSize: '1.3rem',
+                                        fontWeight: 600,
+                                        lineHeight: 1.5,
+                                        marginBottom: '1.5rem',
+                                        fontFamily: 'Satoshi Bold, sans-serif'
+                                    }}
+                                >
+                                    We've been in your shoes
+                                </Typography>
+
+                                <Typography
+                                    sx={{
+                                        color: 'rgba(255, 255, 255, 0.85)',
+                                        fontSize: '1rem',
+                                        lineHeight: 1.6,
+                                        fontFamily: 'DM Sans, sans-serif',
+                                        marginBottom: '1.5rem'
+                                    }}
+                                >
+                                    Stressing about interviews, lacking access to quality practice tools,
+                                    and struggling to get meaningful feedback. That's why we created WiNG.it.
+                                </Typography>
+
+                                <Typography
+                                    sx={{
+                                        color: 'rgba(255, 255, 255, 0.9)',
+                                        fontSize: '1rem',
+                                        lineHeight: 1.6,
+                                        fontFamily: 'DM Sans, sans-serif',
+                                        fontStyle: 'italic'
+                                    }}
+                                >
+                                    We understand the challenges because we've faced them ourselves.
+                                    Every feature in WiNG.it comes from real student experiences and needs.
+                                </Typography>
+                            </Box>
                         </motion.div>
+                    </Grid>
 
-                        {/* Enhanced CTA section */}
-                        <motion.div
-                            variants={itemVariants}
-                            style={{
-                                textAlign: 'center',
-                                marginTop: '2rem'
+                    {/* Right side - Our Mission */}
+                    <Grid size={{ xs: 12, md: 6 }}>
+                        <motion.div variants={itemVariants} style={{ height: '100%' }}>
+                            <Box
+                                sx={{
+                                    background: 'linear-gradient(135deg, rgba(102, 126, 234, 0.15) 0%, rgba(118, 75, 162, 0.15) 100%)',
+                                    backdropFilter: 'blur(20px)',
+                                    borderRadius: '24px',
+                                    padding: '2.5rem',
+                                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                                    boxShadow: '0 8px 32px rgba(102, 126, 234, 0.2)',
+                                    position: 'relative',
+                                    height: '100%',
+                                    display: 'flex',
+                                    flexDirection: 'column'
+                                }}
+                            >
+                                <Typography
+                                    variant="overline"
+                                    sx={{
+                                        color: 'rgba(255, 255, 255, 0.6)',
+                                        fontSize: '0.75rem',
+                                        fontWeight: 600,
+                                        letterSpacing: '0.1em',
+                                        marginBottom: '1rem',
+                                        display: 'block'
+                                    }}
+                                >
+                                    OUR MISSION
+                                </Typography>
+
+                                <Typography
+                                    sx={{
+                                        color: 'white',
+                                        fontSize: '1.4rem',
+                                        fontWeight: 700,
+                                        lineHeight: 1.3,
+                                        fontFamily: 'Satoshi Bold, sans-serif',
+                                        marginBottom: '1.5rem'
+                                    }}
+                                >
+                                    Making career preparation accessible for everyone
+                                </Typography>
+
+                                <Typography
+                                    sx={{
+                                        color: 'rgba(255, 255, 255, 0.85)',
+                                        fontSize: '1rem',
+                                        lineHeight: 1.5,
+                                        fontFamily: 'DM Sans, sans-serif',
+                                        marginBottom: '1.5rem'
+                                    }}
+                                >
+                                    We're building a comprehensive platform where students can practice, learn, and grow.
+                                    No expensive coaching, no gatekeeping—just the tools you need to succeed.
+                                </Typography>
+
+                                <Typography
+                                    sx={{
+                                        color: 'rgba(255, 255, 255, 0.9)',
+                                        fontSize: '1rem',
+                                        lineHeight: 1.5,
+                                        fontFamily: 'DM Sans, sans-serif',
+                                        fontStyle: 'italic'
+                                    }}
+                                >
+                                    Every student deserves the chance to showcase their potential.
+                                </Typography>
+                            </Box>
+                        </motion.div>
+                    </Grid>
+                </Grid>
+
+                {/* What's Next Section */}
+                <motion.div variants={itemVariants}>
+                    <Box sx={{ textAlign: 'center', marginTop: '4rem' }}>
+                        <Typography
+                            sx={{
+                                color: 'rgba(255, 255, 255, 0.9)',
+                                fontSize: '1.2rem',
+                                marginBottom: '2rem',
+                                fontFamily: 'Satoshi Bold, sans-serif'
                             }}
                         >
-                            <p 
-                                className="why-wing-it-description-text"
-                                style={{
-                                    textAlign: 'center',
-                                    fontSize: 'clamp(1rem, 1.8vw, 1.15rem)',
-                                    marginBottom: '1.2rem',
-                                    color: 'rgba(255, 255, 255, 0.9)',
-                                    lineHeight: '1.5'
-                                }}
-                            >
-                                We&apos;re ambitious with expanding WiNG.it. Our goals?
-                            </p>
+                            What's next for WiNG.it?
+                        </Typography>
 
-                            {/* Feature highlights */}
-                            <motion.div
-                                variants={itemVariants}
-                                style={{
-                                    display: 'flex',
-                                    justifyContent: 'center',
-                                    gap: '2rem',
-                                    marginTop: '1.5rem',
-                                    flexWrap: 'wrap',
-                                    marginBottom: '1.5rem',
-                                    maxWidth: '800px', // Add this to control overall width
-                                    margin: '1.5rem auto' // Center the container
-                                }}
-                            >
-                                <motion.div 
+                        <Box sx={{
+                            display: 'grid',
+                            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                            gap: '2rem',
+                            maxWidth: '800px',
+                            margin: '0 auto'
+                        }}>
+                            {[
+                                { icon: '🎯', title: 'Networking', desc: 'Connect with peers and build your professional network' },
+                                { icon: '💬', title: 'Smarter Feedback', desc: 'Expanding AI-powered insights for deeper performance analysis' },
+                                { icon: '⚡', title: 'New Tools', desc: 'Expand your career preparation toolkit' }
+                            ].map((goal, index) => (
+                                <div
+                                    key={index}
                                     style={{
-                                        background: 'rgba(255, 255, 255, 0.1)',
+                                        background: 'rgba(255, 255, 255, 0.08)',
                                         backdropFilter: 'blur(10px)',
-                                        borderRadius: '16px',
-                                        padding: '1rem 1.5rem',
-                                        border: '1px solid rgba(255, 255, 255, 0.15)',
+                                        borderRadius: '20px',
+                                        padding: '2rem 1.5rem',
+                                        border: '1px solid rgba(255, 255, 255, 0.1)',
                                         textAlign: 'center',
-                                        minWidth: '140px',
-                                        flex: 1,
-                                        transition: 'all 0.3s ease'
-                                    }}
-                                    whileHover={{
-                                        transform: 'translateY(-2px)',
-                                        background: 'rgba(255, 255, 255, 0.15)'
+                                        cursor: 'default'
                                     }}
                                 >
-                                    <div style={{ fontSize: '1.8rem', marginBottom: '0.5rem' }}>🎯</div>
-                                    <Typography 
-                                        style={{
-                                            color: 'white',
-                                            fontWeight: '600',
-                                            fontSize: '0.9rem',
-                                            marginBottom: '0.3rem',
-                                            fontFamily: 'DM Sans'
-                                        }}
-                                    >
-                                        Networking
+                                    <Box sx={{ fontSize: '2.5rem', marginBottom: '1rem' }}>
+                                        {goal.icon}
+                                    </Box>
+                                    <Typography sx={{
+                                        color: 'white',
+                                        fontWeight: 600,
+                                        fontSize: '1.1rem',
+                                        marginBottom: '0.8rem',
+                                        fontFamily: 'Satoshi Bold, sans-serif'
+                                    }}>
+                                        {goal.title}
                                     </Typography>
-                                    <Typography 
-                                        style={{
-                                            color: 'rgba(255, 255, 255, 0.8)',
-                                            fontSize: '0.75rem',
-                                            lineHeight: '1.3',
-                                            fontFamily: 'DM Sans'
-                                        }}
-                                    >
-                                        Practice connecting
+                                    <Typography sx={{
+                                        color: 'rgba(255, 255, 255, 0.8)',
+                                        fontSize: '0.9rem',
+                                        lineHeight: 1.4,
+                                        fontFamily: 'DM Sans, sans-serif'
+                                    }}>
+                                        {goal.desc}
                                     </Typography>
-                                </motion.div>
-
-                                <motion.div 
-                                    style={{
-                                        background: 'rgba(255, 255, 255, 0.1)',
-                                        backdropFilter: 'blur(10px)',
-                                        borderRadius: '16px',
-                                        padding: '1rem 1.5rem',
-                                        border: '1px solid rgba(255, 255, 255, 0.15)',
-                                        textAlign: 'center',
-                                        minWidth: '140px',
-                                         flex: 1,
-                                        transition: 'all 0.3s ease'
-                                    }}
-                                    whileHover={{
-                                        transform: 'translateY(-2px)',
-                                        background: 'rgba(255, 255, 255, 0.15)'
-                                    }}
-                                >
-                                    <div style={{ fontSize: '1.8rem', marginBottom: '0.5rem' }}>💬</div>
-                                    <Typography 
-                                        style={{
-                                            color: 'white',
-                                            fontWeight: '600',
-                                            fontSize: '0.9rem',
-                                            marginBottom: '0.3rem',
-                                            fontFamily: 'DM Sans'
-                                        }}
-                                    >
-                                        Smarter Feedback
-                                    </Typography>
-                                    <Typography 
-                                        style={{
-                                            color: 'rgba(255, 255, 255, 0.8)',
-                                            fontSize: '0.75rem',
-                                            lineHeight: '1.3',
-                                            fontFamily: 'DM Sans'
-                                        }}
-                                    >
-                                        Deeper insights
-                                    </Typography>
-                                </motion.div>
-
-                                <motion.div 
-                                    style={{
-                                        background: 'rgba(255, 255, 255, 0.1)',
-                                        backdropFilter: 'blur(10px)',
-                                        borderRadius: '16px',
-                                        padding: '1rem 1.5rem',
-                                        border: '1px solid rgba(255, 255, 255, 0.15)',
-                                        textAlign: 'center',
-                                        minWidth: '140px',
-                                         flex: 1,
-                                        transition: 'all 0.3s ease'
-                                    }}
-                                    whileHover={{
-                                        transform: 'translateY(-2px)',
-                                        background: 'rgba(255, 255, 255, 0.15)'
-                                    }}
-                                >
-                                    <div style={{ fontSize: '1.8rem', marginBottom: '0.5rem' }}>⚡</div>
-                                    <Typography 
-                                        style={{
-                                            color: 'white',
-                                            fontWeight: '600',
-                                            fontSize: '0.9rem',
-                                            marginBottom: '0.3rem',
-                                            fontFamily: 'DM Sans'
-                                        }}
-                                    >
-                                       New Tools
-                                    </Typography>
-                                    <Typography 
-                                        style={{
-                                            color: 'rgba(255, 255, 255, 0.8)',
-                                            fontSize: '0.75rem',
-                                            lineHeight: '1.3',
-                                             fontFamily: 'DM Sans'
-                                        }}
-                                    >
-                                        Expand your career prep
-                                    </Typography>
-                                </motion.div>
-                            </motion.div>
-
-                            {/* Trust indicators */}
-                            <motion.div
-                                variants={itemVariants}
-                                style={{
-                                    display: 'flex',
-                                    justifyContent: 'center',
-                                    alignItems: 'center',
-                                    gap: '2rem',
-                                    flexWrap: 'wrap',
-                                    marginTop: '1rem'
-                                }}
-                            >
-                                <div style={{
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    gap: '0.5rem',
-                                    color: 'rgba(255, 255, 255, 0.8)',
-                                    fontSize: '0.9rem'
-                                }}>
-                                    <span style={{ color: '#4ade80' }}>✓</span>
-                                    <span>University of Florida</span>
                                 </div>
-                                <div style={{
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    gap: '0.5rem',
-                                    color: 'rgba(255, 255, 255, 0.8)',
-                                    fontSize: '0.9rem'
-                                }}>
-                                    <span style={{ color: '#4ade80' }}>✓</span>
-                                    <span>Student Built</span>
-                                </div>
-                                <div style={{
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    gap: '0.5rem',
-                                    color: 'rgba(255, 255, 255, 0.8)',
-                                    fontSize: '0.9rem'
-                                }}>
-                                    <span style={{ color: '#4ade80' }}>✓</span>
-                                    <span>Always Improving</span>
-                                </div>
-                            </motion.div>
-                        </motion.div>
-                    </Stack>
+                            ))}
+                        </Box>
+                    </Box>
                 </motion.div>
-            </Grid>
-        </Grid>
+            </motion.div>
+        </Box>
     </Box>
 
 {/*  ---------- Our Story ----------  */}
@@ -1238,92 +1130,6 @@ export default function HomePage() {
 
 {/* ---------- getting started section ---------- */}
 <Box id="getting-started" className="getting-started-section-container">
-    {/* Animated background components */}
-    <div className="background-animations">
-        <motion.div 
-            className="floating-shape shape-1"
-            animate={{
-                y: [-20, 20, -20],
-                x: [-10, 10, -10],
-                rotate: [0, 360]
-            }}
-            transition={{
-                duration: 8,
-                repeat: Infinity,
-                ease: "easeInOut"
-            }}
-        />
-        <motion.div 
-            className="floating-shape shape-2"
-            animate={{
-                y: [20, -25, 20],
-                x: [15, -10, 15],
-                rotate: [0, -360]
-            }}
-            transition={{
-                duration: 10,
-                repeat: Infinity,
-                ease: "easeInOut",
-                delay: 2
-            }}
-        />
-        <motion.div 
-            className="floating-shape shape-3"
-            animate={{
-                y: [-15, 30, -15],
-                x: [-20, 5, -20],
-                rotate: [0, 180, 360]
-            }}
-            transition={{
-                duration: 12,
-                repeat: Infinity,
-                ease: "easeInOut",
-                delay: 4
-            }}
-        />
-        
-        {/* Floating particles */}
-        <motion.div 
-            className="particle particle-1"
-            animate={{
-                y: [-100, -300],
-                opacity: [0, 1, 0]
-            }}
-            transition={{
-                duration: 6,
-                repeat: Infinity,
-                ease: "easeOut",
-                delay: 1
-            }}
-        />
-        <motion.div 
-            className="particle particle-2"
-            animate={{
-                y: [-80, -250],
-                opacity: [0, 1, 0]
-            }}
-            transition={{
-                duration: 5,
-                repeat: Infinity,
-                ease: "easeOut",
-                delay: 3
-            }}
-        />
-        <motion.div 
-            className="particle particle-3"
-            animate={{
-                y: [-90, -280],
-                opacity: [0, 1, 0]
-            }}
-            transition={{
-                duration: 7,
-                repeat: Infinity,
-                ease: "easeOut",
-                delay: 0.5
-            }}
-        />
-    </div>
-
     <motion.div
         initial="hidden"
         whileInView="visible"
@@ -1335,11 +1141,11 @@ export default function HomePage() {
             <motion.h2 variants={itemVariants} className="get-started-title">
                 Ready to ace your next interview?
             </motion.h2>
-            
+
             <motion.p variants={itemVariants} className="get-started-subtitle">
                 Join us to improve your interview skills with WiNG.it
             </motion.p>
-            
+
             <motion.div variants={itemVariants} className="final-cta-container">
                 <Button 
                     color='inherit' 
