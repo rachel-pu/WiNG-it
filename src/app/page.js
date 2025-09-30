@@ -837,15 +837,19 @@ export default function HomePage() {
                 }}
             >
                 {/* Rachel */}
-                <motion.div variants={itemVariants} whileHover={{ scale: 1.05 }} style={{ height: '100%' , cursor: 'pointer',}} onClick={() => {
-                    window.location.href = "https://www.linkedin.com/in/rachel-pu-ufl/";
-                }}>
-                    <motion.div
-                        whileHover={{ 
-                            scale: 1.03, 
-                            y: -8,
-                            boxShadow: '0 20px 40px rgba(55, 85, 183, 0.2)'
-                        }}
+                <motion.div
+                    variants={itemVariants}
+                    whileHover={{
+                        scale: 1.03,
+                        y: -8
+                    }}
+                    transition={{ duration: 0.3 }}
+                    style={{ height: '100%'}}
+                    onClick={() => {
+                        window.location.href = "https://www.linkedin.com/in/rachel-pu-ufl/";
+                    }}
+                >
+                    <div
                         style={{
                             background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)',
                             borderRadius: '24px',
@@ -854,7 +858,7 @@ export default function HomePage() {
                             backdropFilter: 'blur(20px)',
                             border: '1px solid rgba(255, 255, 255, 0.4)',
                             boxShadow: '0 8px 32px rgba(0, 0, 0, 0.08)',
-                            transition: 'all 0.15s cubic-bezier(0.4, 0, 0.2, 1)',
+                            transition: 'box-shadow 0.3s ease',
                             cursor: 'pointer',
                             position: 'relative',
                             overflow: 'hidden',
@@ -906,7 +910,7 @@ export default function HomePage() {
                             </Typography>
                         </Box>
                         
-                        <Typography 
+                        <Typography
                             sx={{
                                 color: '#64748b',
                                 fontSize: '0.9rem',
@@ -917,19 +921,23 @@ export default function HomePage() {
                         >
                             Computer Science & Digital Arts Sciences @ UF
                         </Typography>
-                    </motion.div>
+                    </div>
                 </motion.div>
 
                 {/* Chelsea */}
-                <motion.div variants={itemVariants} whileHover={{ scale: 1.05 }} style={{ height: '100%' , cursor: 'pointer',}} onClick={() => {
-                    window.location.href = "https://www.linkedin.com/in/chelseaqnguyen/";
-                }}>
-                    <motion.div
-                        whileHover={{ 
-                            scale: 1.03, 
-                            y: -8,
-                            boxShadow: '0 20px 40px rgba(173, 123, 47, 0.2)'
-                        }}
+                <motion.div
+                    variants={itemVariants}
+                    whileHover={{
+                        scale: 1.03,
+                        y: -8
+                    }}
+                    transition={{ duration: 0.3 }}
+                    style={{ height: '100%'}}
+                    onClick={() => {
+                        window.location.href = "https://www.linkedin.com/in/chelseaqnguyen/";
+                    }}
+                >
+                    <div
                         style={{
                             background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)',
                             borderRadius: '24px',
@@ -938,7 +946,7 @@ export default function HomePage() {
                             backdropFilter: 'blur(20px)',
                             border: '1px solid rgba(255, 255, 255, 0.4)',
                             boxShadow: '0 8px 32px rgba(0, 0, 0, 0.08)',
-                            transition: 'all 0.15s cubic-bezier(0.4, 0, 0.2, 1)',
+                            transition: 'box-shadow 0.3s ease',
                             cursor: 'pointer',
                             position: 'relative',
                             overflow: 'hidden',
@@ -989,7 +997,7 @@ export default function HomePage() {
                             </Typography>
                         </Box>
                         
-                        <Typography 
+                        <Typography
                             sx={{
                                 color: '#64748b',
                                 fontSize: '0.9rem',
@@ -1000,19 +1008,23 @@ export default function HomePage() {
                         >
                             Computer Science & Digital Arts Sciences @ UF
                         </Typography>
-                    </motion.div>
+                    </div>
                 </motion.div>
 
                 {/* Clarissa */}
-                <motion.div variants={itemVariants} whileHover={{ scale: 1.05 }} style={{ height: '100%' , cursor: 'pointer',}} onClick={() => {
-                    window.location.href = "https://www.linkedin.com/in/clarissa-cheung-054035187/";
-                }}>
-                    <motion.div
-                        whileHover={{ 
-                            scale: 1.03, 
-                            y: -8,
-                            boxShadow: '0 20px 40px rgba(47, 137, 73, 0.14)'
-                        }}
+                <motion.div
+                    variants={itemVariants}
+                    whileHover={{
+                        scale: 1.03,
+                        y: -8
+                    }}
+                    transition={{ duration: 0.3 }}
+                    style={{ height: '100%'}}
+                    onClick={() => {
+                        window.location.href = "https://www.linkedin.com/in/clarissa-cheung-054035187/";
+                    }}
+                >
+                    <div
                         style={{
                             background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)',
                             borderRadius: '24px',
@@ -1021,7 +1033,7 @@ export default function HomePage() {
                             backdropFilter: 'blur(20px)',
                             border: '1px solid rgba(255, 255, 255, 0.4)',
                             boxShadow: '0 8px 32px rgba(0, 0, 0, 0.08)',
-                            transition: 'all 0.15s cubic-bezier(0.4, 0, 0.2, 1)',
+                            transition: 'box-shadow 0.3s ease',
                             cursor: 'pointer',
                             position: 'relative',
                             overflow: 'hidden',
@@ -1072,7 +1084,7 @@ export default function HomePage() {
                             </Typography>
                         </Box>
                         
-                        <Typography 
+                        <Typography
                             sx={{
                                 color: '#64748b',
                                 fontSize: '0.9rem',
@@ -1083,7 +1095,7 @@ export default function HomePage() {
                         >
                             Computer Science & Economics @ UF
                         </Typography>
-                    </motion.div>
+                    </div>
                 </motion.div>
             </Box>
 
@@ -1129,78 +1141,112 @@ export default function HomePage() {
 </Box>
 
 {/* ---------- getting started section ---------- */}
-<Box id="getting-started" className="getting-started-section-container">
-    <motion.div
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true }}
-        variants={staggerContainer}
-        className="getting-started-content"
-    >
-        <Stack direction={'column'} spacing={2} alignItems="center">
-            <motion.h2 variants={itemVariants} className="get-started-title">
-                Ready to ace your next interview?
-            </motion.h2>
-
-            <motion.p variants={itemVariants} className="get-started-subtitle">
-                Join us to improve your interview skills with WiNG.it
-            </motion.p>
-
-            <motion.div variants={itemVariants} className="final-cta-container">
-                <Button 
-                    color='inherit' 
-                    href='/dashboard'
-                    className="final-cta-button-glow"
-                    size="large"
-                    sx={{
-                        fontSize: '1.5rem !important',
-                        fontFamily: 'Satoshi Bold, sans-serif !important',
-                        background: 'rgba(255, 255, 255, 0.98) !important',
-                        color: '#2850d9 !important',
-                        padding: '22px 55px !important',
-                        borderRadius: '50px !important',
-                        letterSpacing: '-0.01em !important',
-                        textTransform: 'none !important',
-                        transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important',
-                        boxShadow: '0 12px 40px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.5) !important',
-                        display: 'flex !important',
-                        alignItems: 'center !important',
-                        gap: '15px !important',
-                        fontWeight: '700 !important',
-                        position: 'relative',
-                        border: '2px solid transparent !important',
-                        '&:hover': {
-                            transform: 'translateY(-5px) scale(1.05)',
-                            boxShadow: `
-                                0 20px 60px rgba(0, 0, 0, 0.35),
-                                0 0 0 3px rgba(40, 80, 217, 0.4),
-                                0 0 20px rgba(40, 80, 217, 0.3),
-                                0 0 40px rgba(40, 80, 217, 0.2),
-                                0 0 60px rgba(40, 80, 217, 0.1) !important`,
-                            background: '#ffffff !important',
-                            border: '2px solid rgba(40, 80, 217, 0.6) !important',
-                        }
-                    }}
-                >
-                    Start Your Journey
-                    <svg 
-                        className="button-arrow" 
-                        fill="none" 
-                        stroke="currentColor" 
-                        strokeWidth="2.5" 
-                        viewBox="0 0 24 24"
-                        style={{ width: '28px', height: '28px' }}
+<Box
+    id="getting-started"
+    sx={{
+        minHeight: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        position: 'relative',
+        overflow: 'hidden',
+        background: 'linear-gradient(135deg, #2a2a3e 0%, #26314e 50%, #1f4470 100%)',
+        padding: { xs: '4rem 1rem', md: '6rem 2rem' }
+    }}
+>
+    <Box sx={{ maxWidth: '1200px', width: '100%', zIndex: 2, position: 'relative', margin: '0 auto' }}>
+        <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-10%" }}
+            variants={staggerContainer}
+        >
+            {/* Main Header */}
+            <Box sx={{ textAlign: 'center' }}>
+                <motion.div variants={itemVariants}>
+                    <Typography
+                        sx={{
+                            fontSize: { xs: '2.5rem', md: '3.5rem', lg: '4.2rem' },
+                            fontWeight: 900,
+                            fontFamily: 'Satoshi Black, sans-serif',
+                            color: 'white',
+                            marginBottom: '1.5rem',
+                            letterSpacing: '-0.02em',
+                            textShadow: '0 4px 20px rgba(0,0,0,0.3)',
+                            background: 'linear-gradient(135deg, #ffffff 0%, #a8c7ed 100%)',
+                            WebkitBackgroundClip: 'text',
+                            WebkitTextFillColor: 'transparent',
+                            backgroundClip: 'text'
+                        }}
                     >
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14M12 5l7 7-7 7" />
-                    </svg>
-                </Button>
-                
-                <div className="cta-subtext">
-                    <span>Get started easily in less than 30 seconds!</span>
-                </div>
-            </motion.div>
-        </Stack>
-    </motion.div>
+                        Ready to ace your next interview?
+                    </Typography>
+                    <Typography
+                        sx={{
+                            color: 'rgba(255, 255, 255, 0.85)',
+                            fontSize: '1.2rem',
+                            lineHeight: 1.6,
+                            fontFamily: 'DM Sans, sans-serif',
+                            maxWidth: '700px',
+                            margin: '0 auto 3rem auto'
+                        }}
+                    >
+                        Join us to improve your interview skills with WiNG.it
+                    </Typography>
+                </motion.div>
+
+                <motion.div variants={itemVariants}>
+                    <motion.a
+                        href='/dashboard'
+                        whileHover={{ scale: 1.05 }}
+                        transition={{ duration: 0.2 }}
+                        style={{ display: 'inline-block' }}
+                    >
+                        <button
+                            className="relative inline-flex overflow-hidden rounded-full p-[1px] focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 focus:ring-offset-slate-50 transition-all duration-300 hover:shadow-[0_0_40px_rgba(147,112,219,0.6)]"
+                            style={{ height: '64px' }}
+                        >
+                            <span className="absolute inset-[-1000%] animate-[spin_2s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#E2CBFF_0%,#393BB2_50%,#E2CBFF_100%)]" />
+                            <span
+                                className="inline-flex h-full w-full cursor-pointer items-center justify-center rounded-full px-10 py-1 font-medium backdrop-blur-3xl"
+                                style={{
+                                    backgroundColor: '#0f172a',
+                                    color: 'white',
+                                    fontSize: '1.4rem',
+                                    fontFamily: 'Satoshi Bold, sans-serif',
+                                    gap: '12px',
+                                    display: 'flex',
+                                    alignItems: 'center'
+                                }}
+                            >
+                                Start Your Journey
+                                <svg
+                                    fill="none"
+                                    stroke="currentColor"
+                                    strokeWidth="2.5"
+                                    viewBox="0 0 24 24"
+                                    style={{ width: '24px', height: '24px' }}
+                                >
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14M12 5l7 7-7 7" />
+                                </svg>
+                            </span>
+                        </button>
+                    </motion.a>
+
+                    <Typography
+                        sx={{
+                            color: 'rgba(255, 255, 255, 0.7)',
+                            fontSize: '0.95rem',
+                            marginTop: '1.5rem',
+                            fontFamily: 'DM Sans, sans-serif'
+                        }}
+                    >
+                        Get started easily in less than 30 seconds!
+                    </Typography>
+                </motion.div>
+            </Box>
+        </motion.div>
+    </Box>
 </Box>
         </Box>
         </Box>
