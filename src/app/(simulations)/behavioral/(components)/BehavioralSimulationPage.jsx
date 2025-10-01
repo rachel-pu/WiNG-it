@@ -53,7 +53,7 @@ const InterviewQuestions = ({questions}) => {
     useEffect(() => {
         const newSessionId = `session-${Date.now()}`;
         setSessionId(newSessionId);
-        console.log("Interview session ID:", newSessionId);
+        // console.log("Interview session ID:", newSessionId);
     }, []);
 
     // Auto-hide alert after 5 seconds
@@ -105,13 +105,13 @@ const InterviewQuestions = ({questions}) => {
     const fetchAndPlayQuestionAudio = async (text) => {
         // Prevent multiple simultaneous audio requests
         if (isLoadingAudio) {
-            console.log("Audio already loading, skipping request");
+            // console.log("Audio already loading, skipping request");
             return;
         }
 
         try {
             setIsLoadingAudio(true);
-            console.log("Fetching audio for:", text.substring(0, 50));
+            // console.log("Fetching audio for:", text.substring(0, 50));
 
             const response = await fetch("https://us-central1-wing-it-e6a3a.cloudfunctions.net/textToSpeech", {
                 method: "POST",
@@ -131,7 +131,7 @@ const InterviewQuestions = ({questions}) => {
             }
 
             const audioBlob = await response.blob();
-            console.log("Audio blob type:", audioBlob.type);
+            // console.log("Audio blob type:", audioBlob.type);
             const url = URL.createObjectURL(audioBlob);
             setAudioUrl(url);
             setTimeout(() => setShowAlert(false), 2000);
@@ -160,11 +160,11 @@ const InterviewQuestions = ({questions}) => {
             }
 
             const handlePlay = () => {
-                console.log("Audio started playing");
+                // console.log("Audio started playing");
                 setIsSpeaking(true);
             };
             const handleEnded = () => {
-                console.log("Audio finished playing");
+                // console.log("Audio finished playing");
                 setIsSpeaking(false);
             };
             const handleError = (e) => {
@@ -175,7 +175,7 @@ const InterviewQuestions = ({questions}) => {
                 setShowAlert(true);
             };
             const handleCanPlay = () => {
-                console.log("Audio ready to play");
+                // console.log("Audio ready to play");
             };
 
             audio.src = audioUrl;
@@ -235,7 +235,7 @@ const InterviewQuestions = ({questions}) => {
                 for (const type of supportedTypes) {
                     if (MediaRecorder.isTypeSupported(type)) {
                         selectedType = type;
-                        console.log('Using audio format:', type);
+                        // console.log('Using audio format:', type);
                         break;
                     }
                 }
@@ -254,7 +254,7 @@ const InterviewQuestions = ({questions}) => {
 
                 };
 
-                console.log("Audio recording initialized successfully");
+                // console.log("Audio recording initialized successfully");
             } catch (error) {
                 console.error("Error setting up audio recording:", error);
                 setAlertMessage("Failed to set up audio recording. Please check microphone permissions.");
@@ -274,7 +274,7 @@ const InterviewQuestions = ({questions}) => {
             mediaRecorder.current.start();
             recordingStartTime = Date.now();
             setIsRecording(true);
-            console.log("Recording started");
+            // console.log("Recording started");
             setShowWinnieCaption(false);
 
             mediaRecorder.current.onstop = async () => {
@@ -304,7 +304,7 @@ const InterviewQuestions = ({questions}) => {
             mediaRecorder.current.stop();
             setIsRecording(false);
             setIsProcessing(true);
-            console.log("Recording stopped");
+            // console.log("Recording stopped");
 
              if (recordInterval) {
                 clearInterval(recordInterval);
@@ -319,11 +319,11 @@ const InterviewQuestions = ({questions}) => {
 
     const processAudioBlob = async (audioBlob, questionIndexAtRecordingStart, recordTime) => {
     try {
-        console.log('Processing audio blob:', {
-            size: audioBlob.size,
-            type: audioBlob.type,
-            recordTime: recordTime
-        });
+        // console.log('Processing audio blob:', {
+        //     size: audioBlob.size,
+        //     type: audioBlob.type,
+        //     recordTime: recordTime
+        // });
 
         // Convert audio blob to base64
         const arrayBuffer = await audioBlob.arrayBuffer();
@@ -334,7 +334,7 @@ const InterviewQuestions = ({questions}) => {
         }
         const base64Audio = btoa(binaryString);
 
-        console.log('Base64 audio length:', base64Audio.length);
+        // console.log('Base64 audio length:', base64Audio.length);
 
         // Prepare JSON payload with actual blob mimetype
         const payload = {

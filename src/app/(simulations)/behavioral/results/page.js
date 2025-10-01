@@ -675,15 +675,18 @@ function processNormalSegment(segmentText, safeFillerWords, safeActionWords) {
     const cleanWord = token.toLowerCase().replace(/[^\w]/g, '');
     if (!cleanWord) return token;
 
+    // Check filler words FIRST (higher priority than action words/stats)
+    if (safeFillerWords.some(w => w.toLowerCase() === cleanWord)) {
+      return `<span style="background-color:#ffd9d9;color:#dc2626;padding:2px 4px;border-radius:4px;font-weight:600;">${token}</span>`;
+    }
+
     if (/^\d+(?:\.\d+)?(?:%|percent|million|billion|thousand|k|m|b)?$/i.test(cleanWord)) {
       return `<span style="background-color:#c1deff;color:#275377;padding:2px 4px;border-radius:4px;font-weight:600;">${token}</span>`;
     }
     if (safeActionWords.some(w => w.toLowerCase() === cleanWord)) {
       return `<span style="background-color:#d1fae5;color:#065f46;padding:2px 4px;border-radius:4px;font-weight:600;">${token}</span>`;
     }
-    if (safeFillerWords.some(w => w.toLowerCase() === cleanWord)) {
-      return `<span style="background-color:#ffd9d9;color:#dc2626;padding:2px 4px;border-radius:4px;font-weight:600;">${token}</span>`;
-    }
+
     return token;
   }).join('');
 }
