@@ -640,7 +640,7 @@ const highlightText = (text, fillerWords, actionWords, starAnswerParsed) => {
   starEntries.forEach(({ key, phrase }) => {
     const color = starColors[key] || 'black';
     const regex = new RegExp(escapeRegExp(phrase), 'gi');
-    processedText = processedText.replace(regex, match => 
+    processedText = processedText.replace(regex, match =>
       `<span class="star-phrase" data-color="${color}">${match}</span>`
     );
   });
@@ -929,14 +929,53 @@ function escapeRegExp(s) {
                                     >
                                         ← Back to Summary
                                     </motion.button>
-                                    <Typography sx={{
-                                        fontSize: '1.5rem',
-                                        fontWeight: 700,
-                                        color: '#1f2937',
-                                        fontFamily: 'Satoshi Bold'
+                                    <Box sx={{
+                                        display: 'flex',
+                                        gap: 2,
+                                        flexWrap: 'wrap'
                                     }}>
-                                        Detailed Results
-                                    </Typography>
+                                        <motion.button
+                                            whileHover={{ scale: 1.05, y: -2 }}
+                                            whileTap={{ scale: 0.98 }}
+                                            onClick={() => router.push('/behavioral')}
+                                            style={{
+                                                padding: '12px 24px',
+                                                borderRadius: '50px',
+                                                fontWeight: 600,
+                                                fontSize: '0.95rem',
+                                                fontFamily: 'Satoshi Medium',
+                                                background: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
+                                                color: 'white',
+                                                border: 'none',
+                                                boxShadow: '0 4px 15px rgba(59, 130, 246, 0.3)',
+                                                cursor: 'pointer',
+                                                transition: 'all 0.2s ease'
+                                            }}
+                                        >
+                                            🎯 Practice Again
+                                        </motion.button>
+
+                                        <motion.button
+                                            whileHover={{ scale: 1.05, y: -2 }}
+                                            whileTap={{ scale: 0.98 }}
+                                            onClick={() => router.push('/dashboard')}
+                                            style={{
+                                                padding: '12px 24px',
+                                                borderRadius: '50px',
+                                                fontWeight: 600,
+                                                fontSize: '0.95rem',
+                                                fontFamily: 'Satoshi Medium',
+                                                background: 'white',
+                                                color: '#374151',
+                                                border: '2px solid #d1d5db',
+                                                boxShadow: '0 4px 15px rgba(0, 0, 0, 0.1)',
+                                                cursor: 'pointer',
+                                                transition: 'all 0.2s ease'
+                                            }}
+                                        >
+                                            🏠 Back to Dashboard
+                                        </motion.button>
+                                    </Box>
                                 </Box>
                             </motion.div>
 
@@ -1043,11 +1082,12 @@ function escapeRegExp(s) {
                                                                 }) || []}
                                                             </Box>
                                                             <Typography sx={{
-                                                                fontSize: '1.1rem',
-                                                                fontWeight: 600,
+                                                                fontSize: '1.5rem',
+                                                                fontWeight: 900,
                                                                 color: '#1f2937',
-                                                                fontFamily: 'Satoshi Bold',
-                                                                lineHeight: 1.4
+                                                                fontFamily: 'Satoshi Black',
+                                                                lineHeight: 1.5,
+                                                                letterSpacing: '-0.02em'
                                                             }}>
                                                                 {currentData.question}
                                                             </Typography>
@@ -1067,8 +1107,13 @@ function escapeRegExp(s) {
                                                     <Grid item xs={6} sm={3}>
                                                         <MetricCard
                                                             icon={AccessTimeIcon}
-                                                            label="Seconds"
-                                                            value={recordedTimes[selectedQuestion - 1]?.recordedTime}
+                                                            label="Time"
+                                                            value={(() => {
+                                                                const totalSeconds = recordedTimes[selectedQuestion - 1]?.recordedTime || 0;
+                                                                const minutes = Math.floor(totalSeconds / 60);
+                                                                const seconds = String(totalSeconds % 60).padStart(2, '0');
+                                                                return `${minutes}:${seconds}`;
+                                                            })()}
                                                             color="#8b5cf6"
                                                         />
                                                     </Grid>
@@ -1380,55 +1425,79 @@ function escapeRegExp(s) {
                                 </Card>
                             </motion.div>
 
-                            {/* Action Buttons */}
+                            {/* Navigation Arrows */}
                             <motion.div variants={itemVariants}>
                                 <Box sx={{
                                     display: 'flex',
-                                    justifyContent: 'center',
-                                    gap: 3,
-                                    mt: 6,
-                                    flexWrap: 'wrap'
+                                    justifyContent: 'space-between',
+                                    gap: 2,
+                                    mt: 4
                                 }}>
                                     <motion.button
-                                        whileHover={{ scale: 1.05, y: -2 }}
+                                        whileHover={{ scale: 1.05, x: -3 }}
                                         whileTap={{ scale: 0.98 }}
-                                        onClick={() => router.push('/behavioral')}
+                                        onClick={() => {
+                                            if (selectedQuestion > 1) {
+                                                setSelectedQuestion(selectedQuestion - 1);
+                                                setTimeout(() => {
+                                                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                                                    document.documentElement.scrollTop = 0;
+                                                }, 0);
+                                            }
+                                        }}
+                                        disabled={selectedQuestion === 1}
                                         style={{
-                                            padding: '16px 32px',
+                                            padding: '12px 24px',
                                             borderRadius: '50px',
                                             fontWeight: 600,
-                                            fontSize: '1rem',
+                                            fontSize: '0.95rem',
                                             fontFamily: 'Satoshi Medium',
-                                            background: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
-                                            color: 'white',
-                                            border: 'none',
-                                            boxShadow: '0 4px 15px rgba(59, 130, 246, 0.3)',
-                                            cursor: 'pointer',
-                                            transition: 'all 0.2s ease'
+                                            background: selectedQuestion === 1 ? '#e5e7eb' : 'white',
+                                            color: selectedQuestion === 1 ? '#9ca3af' : '#374151',
+                                            border: '2px solid #d1d5db',
+                                            boxShadow: selectedQuestion === 1 ? 'none' : '0 4px 15px rgba(0, 0, 0, 0.1)',
+                                            cursor: selectedQuestion === 1 ? 'not-allowed' : 'pointer',
+                                            transition: 'all 0.2s ease',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            gap: '8px'
                                         }}
                                     >
-                                        🎯 Practice Again
+                                        ← Previous
                                     </motion.button>
 
                                     <motion.button
-                                        whileHover={{ scale: 1.05, y: -2 }}
+                                        whileHover={{ scale: 1.05, x: 3 }}
                                         whileTap={{ scale: 0.98 }}
-                                        onClick={() => router.push('/dashboard')}
+                                        onClick={() => {
+                                            const totalQuestions = Object.keys(questionData).length;
+                                            if (selectedQuestion < totalQuestions) {
+                                                setSelectedQuestion(selectedQuestion + 1);
+                                                setTimeout(() => {
+                                                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                                                    document.documentElement.scrollTop = 0;
+                                                }, 0);
+                                            }
+                                        }}
+                                        disabled={selectedQuestion === Object.keys(questionData).length}
                                         style={{
-                                            padding: '16px 32px',
+                                            padding: '12px 24px',
                                             borderRadius: '50px',
                                             fontWeight: 600,
-                                            fontSize: '1rem',
+                                            fontSize: '0.95rem',
                                             fontFamily: 'Satoshi Medium',
-                                            background: 'white',
-                                            color: '#374151',
+                                            background: selectedQuestion === Object.keys(questionData).length ? '#e5e7eb' : 'white',
+                                            color: selectedQuestion === Object.keys(questionData).length ? '#9ca3af' : '#374151',
                                             border: '2px solid #d1d5db',
-                                            boxShadow: '0 4px 15px rgba(0, 0, 0, 0.1)',
-                                            cursor: 'pointer',
-                                            transition: 'all 0.2s ease'
+                                            boxShadow: selectedQuestion === Object.keys(questionData).length ? 'none' : '0 4px 15px rgba(0, 0, 0, 0.1)',
+                                            cursor: selectedQuestion === Object.keys(questionData).length ? 'not-allowed' : 'pointer',
+                                            transition: 'all 0.2s ease',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            gap: '8px'
                                         }}
                                     >
-                                        🏠 Back to Dashboard
+                                        Next →
                                     </motion.button>
                                 </Box>
                             </motion.div>
