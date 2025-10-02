@@ -71,7 +71,7 @@ exports.generateQuestions = functions.https.onRequest((req, res) => {
         model: "gpt-4o-mini",
         messages: [{ role: "user", content: prompt }],
         max_tokens: 500,
-        temperature: 0.7
+        temperature: 1
       });
 
       // Calculate OpenAI cost (GPT-4o-mini: ~$0.0001/1K tokens)
@@ -385,7 +385,6 @@ exports.saveResponse = functions.https.onRequest((req, res) => {
       }
 
       // Extract individual fields
-      const fillerWordCount = aiResults.fillerWords;
       const questionTypes = aiResults.questionTypes;
       const tips = aiResults.tips;
       const technology = aiResults.technology;
