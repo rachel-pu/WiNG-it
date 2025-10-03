@@ -66,7 +66,6 @@ const QuickstartPage = ({
     const questionTypeOptions = [
         { id: 'situational', label: 'Situational', icon: BusinessCenterIcon },
         { id: 'problem-solving', label: 'Problem-solving', icon: PsychologyIcon },
-        { id: 'technical', label: 'Technical', icon: FlashOnIcon },
         { id: 'leadership', label: 'Leadership', icon: AutoAwesomeIcon },
         { id: 'teamwork', label: 'Teamwork', icon: GroupIcon }
     ];

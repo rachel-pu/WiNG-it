@@ -15,7 +15,7 @@ export default function BehavioralInterviewSimulation() {
     const [questions, setQuestions] = useState([]);
     const [error, setError] = useState("");
     const [jobRole, setJobRole] = useState("");
-    const [numQuestions, setNumQuestions] = useState(5);
+    const [numQuestions, setNumQuestions] = useState(3);
     const [questionTypes, setQuestionTypes] = useState([]);
     const [interviewerDifficulty, setInterviewerDifficulty] = useState("easy-going-personality");
     const [showQuickstart, setShowQuickstart] = useState(true);
