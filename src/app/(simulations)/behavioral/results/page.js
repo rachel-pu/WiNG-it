@@ -501,7 +501,8 @@ export default function InterviewResults() {
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)'
+                        background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)',
+                        marginLeft: -30
                     }}>
                         <CircularProgress size={60} />
                         <Typography sx={{ ml: 2, fontSize: '1.2rem', color: '#374151', fontFamily: 'DM Sans' }}>
@@ -528,9 +529,9 @@ export default function InterviewResults() {
                         justifyContent: 'center',
                         background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)'
                     }}>
-                        <Box sx={{ textAlign: 'center' }}>
+                        <Box sx={{ textAlign: 'center' , marginLeft:-30 }}>
                             <ErrorIcon sx={{ fontSize: 60, color: '#ef4444', mb: 2 }} />
-                            <Typography sx={{ fontSize: '1.5rem', fontWeight: 600, color: '#374151', mb: 1, fontFamily: 'Satoshi Bold' }}>
+                            <Typography sx={{ fontSize: '1.5rem', fontWeight: 600, color: '#374151', mb: 1, fontFamily: 'Satoshi Bold'}}>
                                 Unable to Load Results
                             </Typography>
                             <Typography sx={{ color: '#6b7280', mb: 3, fontFamily: 'DM Sans' }}>
