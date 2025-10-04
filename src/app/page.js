@@ -254,7 +254,7 @@ export default function HomePage() {
             justifyContent: 'center',
             position: 'relative',
             overflow: 'hidden',
-            background: 'linear-gradient(135deg, #2a2a3e 0%, #26314e 50%, #1f4470 100%)',
+            background: 'linear-gradient(135deg, #444465ff 0%, #33426aff 50%, #27548bff 100%)',
             padding: { xs: '4rem 1rem', md: '6rem 2rem' }
         }}
     >
@@ -278,7 +278,7 @@ export default function HomePage() {
                                 marginBottom: '1rem',
                                 letterSpacing: '-0.02em',
                                 textShadow: '0 4px 20px rgba(0,0,0,0.3)',
-                                background: 'linear-gradient(135deg, #ffffff 0%, #a8c7ed 100%)',
+                                background: 'linear-gradient(135deg, #ffffff 0%, #c2dbf9ff 100%)',
                                 WebkitBackgroundClip: 'text',
                                 WebkitTextFillColor: 'transparent',
                                 backgroundClip: 'text'
@@ -1149,20 +1149,8 @@ export default function HomePage() {
         alignItems: 'center',
         justifyContent: 'center',
         position: 'relative',
-        background: 'linear-gradient(135deg, #2a2a3e 0%, #26314e 50%, #1f4470 100%)',
+        background: 'linear-gradient(135deg, #444465ff 0%, #33426aff 50%, #27548bff 100%)',
         padding: { xs: '4rem 1rem', md: '6rem 2rem' },
-        '&::before': {
-            content: '""',
-            position: 'absolute',
-            top: '-70px',
-            left: 0,
-            right: 0,
-            height: '70px',
-            background:
-                'linear-gradient(to bottom, transparent 0%, rgba(42, 42, 62, 0.3) 50%, rgba(42, 42, 62, 0.8) 100%)',
-            pointerEvents: 'none',
-            zIndex: 9999999,
-        },
     }}
 >
     <Box sx={{ maxWidth: '1200px', width: '100%', zIndex: 2, position: 'relative', margin: '0 auto' }}>

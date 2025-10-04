@@ -892,15 +892,3 @@
         radial-gradient(circle at 80% 20%, rgba(102, 126, 234, 0.1) 0%, transparent 50%);
     pointer-events: none;
 }
-
-.main-home-page-container::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 70px;
-    background: linear-gradient(to bottom, transparent 0%, rgba(42, 42, 62, 0.3) 50%, rgba(42, 42, 62, 0.8) 100%);
-    pointer-events: none;
-    z-index: 1;
-}
