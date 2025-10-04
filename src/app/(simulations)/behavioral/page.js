@@ -10,6 +10,7 @@ import {CircularProgress} from "@mui/material";
 import DefaultAppLayout from "../../DefaultAppLayout";
 import app from "@/lib/firebase";
 import "./(components)/BehavioralSimulationPage.css";
+import { m } from "framer-motion";
 
 export default function BehavioralInterviewSimulation() {
     const [questions, setQuestions] = useState([]);
@@ -129,7 +130,7 @@ export default function BehavioralInterviewSimulation() {
                             ) : (
                                 <Box className="behavioral-loading-overlay">
                                     {/* Loading content container */}
-                                    <Box className="behavioral-loading-container">
+                                    <Box className="behavioral-loading-container" style={{ textAlign: 'center' }}>
                                         <CircularProgress
                                             size={60}
                                             className="behavioral-loading-spinner"

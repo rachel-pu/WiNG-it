@@ -48,10 +48,10 @@ exports.generateQuestions = functions.https.onRequest((req, res) => {
         return res.status(405).json({ error: 'Method Not Allowed' });
       }
 
-      const { job_role, numQuestions, questionTypes } = req.body;
+      const { job_role, numQuestions, questionTypes, interviewerDifficulty } = req.body;
 
       const prompt = `
-        Generate EXACTLY ${numQuestions} behavioral interview questions related to ${questionTypes} for a ${job_role || 'general'} role in tech.
+        Generate EXACTLY ${numQuestions} behavioral interview questions related to ${questionTypes} for a ${job_role || 'general'} job position.
         
         IMPORTANT: Generate ONLY ${numQuestions} questions. No more, no less.
         
@@ -59,10 +59,12 @@ exports.generateQuestions = functions.https.onRequest((req, res) => {
         - Format strictly as: "1. [Question]", "2. [Question]", etc.
         - Do NOT include any introductory text, titles, or explanations outside the numbered format.
         - Each question should only have one question mark max. There should be no multiple questions in one question. Make sure each question will not require the user to talk for over 5 minutes.
-        - For the FIRST question only: Combine this introduction: "Hi, I'm Winnie. It's nice to meet you. Let's get started with the interview." before the actual question.
-        - For example: "1. Hi, I'm Winnie. It's nice to meet you. Let's get started with the interview. [First Question]"
-        - Questions 2-${numQuestions} should be direct questions without any introduction.
-        
+        - For the questions, factor in the interviewerDifficulty level: ${interviewerDifficulty || 'medium'}.
+        - For example, if interviewerDifficulty is "Intense", include more challenging questions that require deep reflection and problem-solving and be more harsh in the question.
+        - If interviewerDifficulty is "Professional", include a balanced mix of common and moderately challenging questions and deliver them in a standard corporate interview style
+        - If interviewerDifficulty is "Easy-going", include more straightforward and common questions that are easier to answer and deliver them in a friendly and relaxed manner.
+        - Ensure questions are clear, concise, and relevant to the specified job role and question types.
+        - Avoid overly complex or ambiguous questions.
       `;
 
       console.log(prompt);
@@ -303,31 +305,20 @@ exports.saveResponse = functions.https.onRequest((req, res) => {
           details: transcriptionError.message 
         });
       }
-      const fillerWordsList = [
-        "um", "uh", "uhm", "hmm", "like", "you know", "actually", "i think", "guess",
-        "basically", "literally", "so", "well", "kind of", "sort of", "maybe",
-        "er", "ah", "huh", "right", "okay", "alright", "just", "anyway", "I mean",
-        "sorta", "kinda", "like I said", "you see", "as I said", "or something", 
-        "if that makes sense", "you know what I mean", "let’s see", "so yeah", "so basically"
-    ];
 
       // Extract transcript and analysis data
       const transcript = result?.results?.channels?.[0]?.alternatives?.[0]?.transcript || "";
       const words = result?.results?.channels?.[0]?.alternatives?.[0]?.words || [];
-      const confidence = result?.results?.channels?.[0]?.alternatives?.[0]?.confidence || 0;
-
       console.log('Transcript:', transcript.substring(0, 100));
 
       const prompt = `
-          Generate a JSON object with the keys: fillerWords, technology, questionTypes, strengths, tips, starAnswerParsed, starAnswerParsedImproved, improvedResponse.
+          Generate a JSON object with the keys: technology, questionTypes, strengths, tips, starAnswerParsed, starAnswerParsedImproved, improvedResponse.
           Using the following:
 
           Transcript: ${transcript}
           Question: ${questionText}
-          Filler Words List: ${fillerWordsList.join(", ")}
 
           Instructions:
-          - Count how many filler words according to the Filler Words List exist in the transcript, add the count to fillerWords.
           - Identify any technology, programming languages, and tools mentioned in the transcript, add them as an array to technology.
           - Categorize the question as any of: Situational, Problem-solving, Technical, Leadership, Teamwork (can be multiple).
           - Provide 1-2 bullet points of specific tips to improve the answer (provide as an array).
@@ -354,7 +345,17 @@ exports.saveResponse = functions.https.onRequest((req, res) => {
           }
             Now analyze the transcript from above (not the example transcript) and fill in the starAnswerParsed variable.
 
-          - Finally, using the improvedResponse, break down the response into the STAR interview method components and fill in the starAnswerParsedImproved variable, this should be formatted the same as the starAnswerParsed variable and follow the same starAnswerParsed Important rules.
+          - Finally, using the improvedResponse, extract the response into the STAR interview method components and fill in the starAnswerParsedImproved variable
+          This should be formatted the same as the starAnswerParsed variable and follow the same starAnswerParsed Important rules.
+          For example:
+
+          Example Output JSON:
+          {
+            "situation": "I was assigned a school project that required building a database, but I initially had no experience with SQL",
+            "task": "I was assigned a school project that required building a database",
+            "action": "I quickly learned SQL through tutorials and practice",
+            "result": "successfully completing the project and gaining confidence in database management"
+          }
       `;
 
       // After parsing AI response
@@ -382,7 +383,6 @@ exports.saveResponse = functions.https.onRequest((req, res) => {
       } catch (err) {
         console.error("Error analyzing AI response:", err);
         aiResults = {
-          fillerWords: [],
           questionTypes: [],
           tips: "" ,
           strengths: "",
@@ -398,21 +398,8 @@ exports.saveResponse = functions.https.onRequest((req, res) => {
       const starAnswerParsed = aiResults.starAnswerParsed;
       const improvedResponse = aiResults.improvedResponse;
 
-      // Analyze filler words for detailed tracking
-      const fillerWords = words
-        .filter(w => w.word && fillerWordsList.includes(w.word.toLowerCase().trim()))
-        .map(w => ({
-          word: w.word,
-          start: w.start,
-          end: w.end,
-          confidence: w.confidence
-        }));
-
       // Calculate speech metrics
       const totalWords = words.length;
-      const fillerWordCount = fillerWords.length;
-      const fillerWordPercentage = totalWords > 0 ? (fillerWordCount / totalWords * 100).toFixed(2) : 0;
-
       const durationSeconds = recordedTime / 1000;
       const wordsPerMinute = durationSeconds > 0 ? Math.round((totalWords / durationSeconds) * 60) : 0;
 
@@ -423,12 +410,7 @@ exports.saveResponse = functions.https.onRequest((req, res) => {
         transcript,
         analysis: {
           totalWords,
-          fillerWords,
-          fillerWordCount,
-          fillerWordPercentage: parseFloat(fillerWordPercentage),
-          transcriptionConfidence: confidence,
           wordsPerMinute,
-          durationSeconds: Math.round(durationSeconds),
           technology,
           questionTypes,
           strengths,
