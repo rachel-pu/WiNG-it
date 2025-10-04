@@ -26,6 +26,7 @@ export default function InterviewResults() {
     const router = useRouter();
     const [activeTab, setActiveTab] = useState(0);
     const [showDetailedResults, setShowDetailedResults] = useState(false);
+    const [showHighlights, setShowHighlights] = useState(true);
 
 
     function calculatePerformanceScoreDiminishing({starAnswerParsed, responseTime, wordCount, fillerWords, actionWords, statsUsed, interviewerDifficulty = 'easy-going-personality'}) {
@@ -310,7 +311,6 @@ export default function InterviewResults() {
             const actionWordsList = extractActionWords(transcript);
             const fillerWordsList = extractFillerWords(transcript);
             const statsUsed = extractStats(transcript);
-            console.log("filler word list:", analysis?.fillerWordsLis);
             processedData[questionNumber] = {
                 question: response?.questionText || `Question ${questionNumber}`,
                 responseTime: analysis?.recordedTime || 0,
@@ -549,11 +549,9 @@ export default function InterviewResults() {
     const overallTips = generateOverallTips();
 
 const highlightText = (text, fillerWords, actionWords, starAnswerParsed) => {
-    console.log("FIller words: ", fillerWords);
   if (!text) return text;
 
   const safeFillerWords = Array.isArray(fillerWords) ? fillerWords.filter(w => w?.trim()) : [];
-  console.log("safe FIller words: ", safeFillerWords);
   const safeActionWords = Array.isArray(actionWords) ? actionWords.filter(w => w?.trim()) : [];
 
   // STAR underline colors (hex ensures visibility)
@@ -1098,22 +1096,53 @@ function escapeRegExp(s) {
                                                         >
                                                         ✨ Improved Response
                                                         </button>
+                                                        <motion.button
+                                                        whileHover={{ scale: 1.05, y: -2 }}
+                                                        whileTap={{ scale: 0.98 }}
+                                                        onClick={() => setShowHighlights(!showHighlights)}
+                                                        style={{
+                                                            padding: '5px 24px',
+                                                            borderRadius: '50px',
+                                                            fontWeight: 600,
+                                                            height: 'auto',
+                                                            margin: '5px',
+                                                            fontSize: '0.85rem',
+                                                            fontFamily: 'Satoshi Medium',
+                                                            background: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
+                                                            color: 'white',
+                                                            border: 'none',
+                                                            boxShadow: '0 4px 15px rgba(59, 130, 246, 0.3)',
+                                                            cursor: 'pointer',
+                                                            transition: 'all 0.2s ease'
+                                                        }}
+                                                    >
+                                                         {showHighlights ? 'Hide Highlights' : 'Show Highlights'}
+                                                    </motion.button>
                                                     </div>
                                                     {/* Tab Content */}
                                                     {activeTab === 0 && (
                                                         <div>
-                                                        <div style={contentBoxStyle}>
-                                                            <div
-                                                            style={textStyle}
-                                                            dangerouslySetInnerHTML={{
-                                                                __html: highlightText(
-                                                                currentData.transcript,
-                                                                currentData.fillerWordsList,
-                                                                currentData.actionWordsList,
-                                                                currentData.starAnswerParsed
-                                                                )
-                                                            }}
-                                                            />
+                                                            <div style={contentBoxStyle}>
+                                                                {showHighlights ? (
+                                                                    <div
+                                                                    style={textStyle}
+                                                                    dangerouslySetInnerHTML={{
+                                                                        __html: highlightText(
+                                                                        currentData.transcript,
+                                                                        currentData.fillerWordsList,
+                                                                        currentData.actionWordsList,
+                                                                        currentData.starAnswerParsed
+                                                                        )
+                                                                    }}
+                                                                    />
+                                                                ): (
+                                                                    <div
+                                                                    style={textStyle}
+                                                                    dangerouslySetInnerHTML={{
+                                                                        __html: `<p>${currentData.transcript}</p>`
+                                                                    }}
+                                                                    />
+                                                                )}
                                                         </div>
 
                                                         {/* Legend */}
@@ -1154,18 +1183,27 @@ function escapeRegExp(s) {
 
                                                     {activeTab === 1 && (
                                                         <div style={contentBoxStyle}>
-                                                        <div
-                                                            style={textStyle}
-                                                            dangerouslySetInnerHTML={{
-                                                            __html: highlightText(
-                                                                currentData.improvedResponse,
-                                                                [],
-                                                                currentData.actionWordsList,
-                                                                currentData.starAnswerParsedImproved,
-                                                                )
-                                                            }}
-                                                            
-                                                        />
+                                                            {showHighlights ? (
+                                                                <div
+                                                                    style={textStyle}
+                                                                    dangerouslySetInnerHTML={{
+                                                                    __html: highlightText(
+                                                                        currentData.improvedResponse,
+                                                                        [],
+                                                                        currentData.actionWordsList,
+                                                                        currentData.starAnswerParsedImproved,
+                                                                        )
+                                                                    }}
+                                                                    
+                                                                />
+                                                            ): (
+                                                                <div
+                                                                style={textStyle}
+                                                                dangerouslySetInnerHTML={{
+                                                                    __html: `<p>${currentData.transcript}</p>`
+                                                                }}
+                                                                />
+                                                            )}
                                                         </div>
                                                     )}
                                                 </Box>
