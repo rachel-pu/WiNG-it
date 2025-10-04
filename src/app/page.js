@@ -1149,9 +1149,20 @@ export default function HomePage() {
         alignItems: 'center',
         justifyContent: 'center',
         position: 'relative',
-        overflow: 'hidden',
         background: 'linear-gradient(135deg, #2a2a3e 0%, #26314e 50%, #1f4470 100%)',
-        padding: { xs: '4rem 1rem', md: '6rem 2rem' }
+        padding: { xs: '4rem 1rem', md: '6rem 2rem' },
+        '&::before': {
+            content: '""',
+            position: 'absolute',
+            top: '-70px',
+            left: 0,
+            right: 0,
+            height: '70px',
+            background:
+                'linear-gradient(to bottom, transparent 0%, rgba(42, 42, 62, 0.3) 50%, rgba(42, 42, 62, 0.8) 100%)',
+            pointerEvents: 'none',
+            zIndex: 9999999,
+        },
     }}
 >
     <Box sx={{ maxWidth: '1200px', width: '100%', zIndex: 2, position: 'relative', margin: '0 auto' }}>

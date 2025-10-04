@@ -27,40 +27,12 @@
   transform-style: preserve-3d;
 }
 
-/* // MAIN HOME PAGE CONTAINER STYLING // */
-.main-home-page-container{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    min-height: 100vh;
-    padding: 5% 5% 8% 5%;
-    background: linear-gradient(135deg, #F3F1EA 0%, #E8E6D9 100%);
-    position: relative;
-    overflow: hidden;
-    width: 100%;
-}
-
-.main-home-page-container::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: 
-        radial-gradient(circle at 20% 80%, rgba(40, 80, 217, 0.1) 0%, transparent 50%),
-        radial-gradient(circle at 80% 20%, rgba(102, 126, 234, 0.1) 0%, transparent 50%);
-    pointer-events: none;
-}
-
 /** ---------- 'master your interviews with ai-powered practice' ---------- **/
 .main-home-page-title-container{
     display: flex;
     align-items: center;
     justify-content: center;
     flex-direction: column;
-    margin-bottom: -2rem;
     position: relative;
     z-index: 2;
 }
@@ -279,6 +251,7 @@
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
     will-change: transform, box-shadow;
     backface-visibility: hidden;
+    margin-bottom: 70px !important;
 }
 
 /* Only apply enhanced hover glow to feature cards in the main home section */
@@ -679,6 +652,7 @@
     pointer-events: none;
 }
 
+
 /* Background animated components */
 .background-animations {
     position: absolute;
@@ -890,4 +864,43 @@
     .final-cta-button-glow:hover {
         animation: none; /* Disable complex animations on mobile */
     }
+}
+
+/* // MAIN HOME PAGE CONTAINER STYLING // */
+.main-home-page-container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 5% 5% 0% 5%;
+    background: linear-gradient(135deg, #F3F1EA 0%, #E8E6D9 100%);
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+}
+
+.main-home-page-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+        radial-gradient(circle at 20% 80%, rgba(40, 80, 217, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(102, 126, 234, 0.1) 0%, transparent 50%);
+    pointer-events: none;
+}
+
+.main-home-page-container::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 70px;
+    background: linear-gradient(to bottom, transparent 0%, rgba(42, 42, 62, 0.3) 50%, rgba(42, 42, 62, 0.8) 100%);
+    pointer-events: none;
+    z-index: 1;
 }
