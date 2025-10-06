@@ -101,8 +101,7 @@ export default function BehavioralInterviewSimulation() {
 
     return (
         <Box className="behavioral-container">
-            <CssBaseline />
-            <DefaultAppLayout elevation={16} title="Behavioral Interview Simulation" color="#2850d9" titlecolor="#FFFFFF">
+            <DefaultAppLayout>
                 {/* --------- main content --------- */}
                 {showQuickstart ? (
                     <QuickstartPage
@@ -122,7 +121,6 @@ export default function BehavioralInterviewSimulation() {
                         component="main"
                         className="behavioral-main-content"
                     >
-                        <Toolbar />
                         {/* question box component */}
                         <Box component="main" className="behavioral-question-box">
                             {questions && questions.length > 0 && showSimulation ? (

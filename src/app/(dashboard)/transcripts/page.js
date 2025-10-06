@@ -2,9 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import LeftNavbar from '/components/LeftNavbar';
 import CssBaseline from "@mui/material/CssBaseline";
-import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";

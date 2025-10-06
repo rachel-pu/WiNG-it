@@ -26,7 +26,6 @@ export default function InterviewResults() {
     const router = useRouter();
     const [activeTab, setActiveTab] = useState(0);
     const [showDetailedResults, setShowDetailedResults] = useState(false);
-    const [showHighlights, setShowHighlights] = useState(true);
 
 
     function calculatePerformanceScoreDiminishing({starAnswerParsed, responseTime, wordCount, fillerWords, actionWords, statsUsed, interviewerDifficulty = 'easy-going-personality'}) {
@@ -309,18 +308,18 @@ export default function InterviewResults() {
             // Extract action words and stats from transcript
             const transcript = response?.transcript || "";
             const actionWordsList = extractActionWords(transcript);
-            const fillerWordsList = extractFillerWords(transcript);
             const statsUsed = extractStats(transcript);
+            
             processedData[questionNumber] = {
                 question: response?.questionText || `Question ${questionNumber}`,
                 responseTime: analysis?.recordedTime || 0,
                 wordCount: analysis?.totalWords || 0,
-                fillerWords: fillerWordsList.length,
+                fillerWords: analysis?.fillerWordCount || 0,
                 actionWords: actionWordsList.length,
                 statsUsed: statsUsed.length,
                 transcript: transcript,
                 questionTypes: analysis?.questionTypes,
-                fillerWordsList: fillerWordsList,
+                fillerWordsList: analysis?.fillerWordsList || [],
                 actionWordsList: actionWordsList,
                 score: score,
                 strengths: analysis?.strengths || generateStrengths(analysis, actionWordsList.length, statsUsed.length),
@@ -328,7 +327,6 @@ export default function InterviewResults() {
                 tips: analysis?.tips ||generateTips(analysis),
                 improvedResponse: analysis?.improvedResponse,
                 starAnswerParsed: analysis?.starAnswerParsed,
-                starAnswerParsedImproved: analysis?.starAnswerParsedImproved
             };
         });
         
@@ -340,26 +338,11 @@ export default function InterviewResults() {
         const commonActionWords = [
             "achieved", "analyzed", "built", "collaborated", "created", "delivered", "developed",
             "directed", "implemented", "improved", "increased", "led", "managed", "organized",
-            "resolved", "worked", "decided", "approach", "helped", "noticed", "took", "mentored", "implement",
-            "refactored"
+            "resolved", "worked", "decided", "approach", "helped", "noticed", "took", "mentored"
         ];
         
         const words = text.toLowerCase().match(/\b\w+\b/g) || [];
         return commonActionWords.filter(actionWord => words.includes(actionWord));
-    };
-
-    // Helper function to extract filler words from transcript
-    const extractFillerWords = (text) => {
-        const commonFillerWords = [
-            "um", "uh", "uhm", "hmm", "like", "you know", "actually", "i think", "guess",
-            "basically", "literally", "so", "well", "kind of", "sort of", "maybe",
-            "er", "ah", "huh", "right", "okay", "alright", "just", "anyway", "I mean",
-            "sorta", "kinda", "like I said", "you see", "as I said", "or something", 
-            "if that makes sense", "you know what I mean", "let’s see", "so yeah", "so basically"
-        ];
-        
-        const words = text.toLowerCase().match(/\b\w+\b/g) || [];
-        return commonFillerWords.filter(fillerWord => words.includes(fillerWord));
     };
 
     // Helper function to extract statistics/numbers from transcript
@@ -418,16 +401,99 @@ export default function InterviewResults() {
         return tips.slice(0, 3);
     };
 
+    // Mock data for fallback (when no real data is available)
+    const mockQuestionData = {
+        1: {
+            question: "Tell me about a time when you had to work with a difficult team member.",
+            responseTime: 120, // seconds
+            wordCount: 156,
+            fillerWords: 3,
+            actionWords: 6,
+            statsUsed: 2,
+            transcript: "In my previous internship at TechCorp, I worked with a team member who was consistently missing deadlines and not communicating effectively. I decided to approach them directly and professionally to understand what challenges they were facing. I discovered they were overwhelmed with their workload and unclear about priorities. I helped them break down tasks into manageable pieces and set up weekly check-ins to track progress. As a result, our team's productivity increased by 30% and we delivered our project two weeks ahead of schedule.",
+            fillerWordsList: ["um", "uh", "like"],
+            actionWordsList: ["worked", "decided", "approach", "helped", "delivered", "increased"],
+            score: 85,
+            strengths: [
+                "Used specific metrics (30% productivity increase)",
+                "Showed proactive problem-solving approach",
+                "Demonstrated leadership and empathy"
+            ],
+            improvements: [
+                "Could reduce filler words (3 detected)",
+                "Add more context about the project timeline",
+                "Include more details about the team size"
+            ],
+            tips: [
+                "Practice the STAR method: Situation, Task, Action, Result",
+                "Prepare specific numbers and metrics beforehand",
+                "Record yourself to identify speech patterns"
+            ]
+        },
+        2: {
+            question: "Describe a situation where you had to meet a tight deadline.",
+            responseTime: 95,
+            wordCount: 142,
+            fillerWords: 1,
+            actionWords: 8,
+            statsUsed: 4,
+            transcript: "During my final semester, I had to complete a capstone project in just three weeks instead of the usual eight weeks due to a scheduling conflict. I immediately created a detailed project timeline, identified the most critical components, and reached out to my professor for guidance on prioritization. I worked 60 hours per week, collaborated with two classmates for peer review, and utilized office hours extensively. Despite the compressed timeline, I delivered a high-quality project that received an A grade and was selected for presentation at the university showcase.",
+            fillerWordsList: ["uh"],
+            actionWordsList: ["created", "identified", "reached", "worked", "collaborated", "utilized", "delivered", "selected"],
+            score: 92,
+            strengths: [
+                "Excellent use of specific metrics (3 weeks vs 8 weeks, 60 hours/week)",
+                "Clear problem-solving methodology",
+                "Strong outcome with measurable results"
+            ],
+            improvements: [
+                "Could elaborate more on the collaboration process",
+                "Add details about specific challenges faced"
+            ],
+            tips: [
+                "Continue using specific timeframes and numbers",
+                "Consider adding more emotional context",
+                "Practice smooth transitions between points"
+            ]
+        },
+        3: {
+            question: "Give me an example of when you showed leadership.",
+            responseTime: 110,
+            wordCount: 178,
+            fillerWords: 5,
+            actionWords: 7,
+            statsUsed: 3,
+            transcript: "As a teaching assistant for an introductory programming course, I noticed that many students were struggling with the basic concepts and falling behind. I took the initiative to organize weekly study sessions outside of regular class hours. I created supplementary materials, including practice problems and visual guides, to help explain complex topics. Over the course of the semester, I mentored 15 students individually and saw their average test scores improve by 25%. The professor was so impressed that they asked me to continue as head TA the following semester.",
+            fillerWordsList: ["um", "uh", "so", "like", "you know"],
+            actionWordsList: ["noticed", "took", "organize", "created", "mentored", "improve", "asked"],
+            score: 78,
+            strengths: [
+                "Showed initiative and proactive thinking",
+                "Quantified impact with specific numbers",
+                "Demonstrated sustained commitment over time"
+            ],
+            improvements: [
+                "Reduce filler words (5 detected - highest count)",
+                "Could add more details about the challenges faced",
+                "Include more specifics about the materials created"
+            ],
+            tips: [
+                "Practice speaking more slowly to reduce filler words",
+                "Use the 'pause and breathe' technique",
+                "Prepare transition phrases to connect ideas smoothly"
+            ]
+        }
+    };
 
     // Use processed data or fallback to mock data
-    const questionData = interviewData ? processInterviewData(interviewData) : [];
+    const questionData = interviewData ? processInterviewData(interviewData) : mockQuestionData;
 
     // Show loading state
     if (loading) {
         return (
             <Box sx={{ display: "flex" }}>
                 <CssBaseline />
-                <DefaultAppLayout  elevation={16} title="Interview Results" color="#2850d9" titlecolor="#FFFFFF">
+                <DefaultAppLayout>
                     <Box sx={{ 
                         position: 'fixed',
                         width: '100%',
@@ -435,8 +501,7 @@ export default function InterviewResults() {
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)',
-                        marginLeft: -20
+                        background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)'
                     }}>
                         <CircularProgress size={60} />
                         <Typography sx={{ ml: 2, fontSize: '1.2rem', color: '#374151', fontFamily: 'DM Sans' }}>
@@ -452,8 +517,7 @@ export default function InterviewResults() {
     if (error) {
         return (
             <Box sx={{ display: "flex" }}>
-                <CssBaseline />
-                <DefaultAppLayout  elevation={16} title="Interview Results" color="#2850d9" titlecolor="#FFFFFF">
+                <DefaultAppLayout>
                     <Box sx={{ 
                         position: 'fixed',
                         width: '100%',
@@ -463,9 +527,9 @@ export default function InterviewResults() {
                         justifyContent: 'center',
                         background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)'
                     }}>
-                        <Box sx={{ textAlign: 'center' , marginLeft:-30 }}>
+                        <Box sx={{ textAlign: 'center' }}>
                             <ErrorIcon sx={{ fontSize: 60, color: '#ef4444', mb: 2 }} />
-                            <Typography sx={{ fontSize: '1.5rem', fontWeight: 600, color: '#374151', mb: 1, fontFamily: 'Satoshi Bold'}}>
+                            <Typography sx={{ fontSize: '1.5rem', fontWeight: 600, color: '#374151', mb: 1, fontFamily: 'Satoshi Bold' }}>
                                 Unable to Load Results
                             </Typography>
                             <Typography sx={{ color: '#6b7280', mb: 3, fontFamily: 'DM Sans' }}>
@@ -823,23 +887,15 @@ function escapeRegExp(s) {
     }
 
     return (
-        <Box sx={{ display: "flex" }}>
-            <CssBaseline />
-            <DefaultAppLayout  elevation={16} title="Interview Results" color="#2850d9" titlecolor="#FFFFFF">
-                <Box sx={{
-                    minHeight: '100vh',
-                    background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)',
-                    position: 'relative'
-                }}>
-                    <Toolbar />
-                    
+        <Box>
+            <DefaultAppLayout>
+                <Box className="main-results-container">                    
                     <Box sx={{ p: { xs: 2, md: 4 } }}>
                         <motion.div
                             initial="hidden"
                             animate="visible"
                             variants={containerVariants}
                         >
-
 
                             {/* Back to Complete Screen Button */}
                             <motion.div variants={itemVariants}>
@@ -882,10 +938,10 @@ function escapeRegExp(s) {
                                                 fontWeight: 600,
                                                 fontSize: '0.95rem',
                                                 fontFamily: 'Satoshi Medium',
-                                                background: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
+                                                background: 'linear-gradient(135deg, #1d2e5dff 0%, #1d3ca1ff 100%)',
                                                 color: 'white',
-                                                border: 'none',
-                                                boxShadow: '0 4px 15px rgba(59, 130, 246, 0.3)',
+                                                border: '2px solid #122456ff',
+                                                boxShadow: '0 4px 15px rgba(30, 58, 138, 0.5)',
                                                 cursor: 'pointer',
                                                 transition: 'all 0.2s ease'
                                             }}
@@ -1096,53 +1152,22 @@ function escapeRegExp(s) {
                                                         >
                                                         ✨ Improved Response
                                                         </button>
-                                                        <motion.button
-                                                        whileHover={{ scale: 1.05, y: -2 }}
-                                                        whileTap={{ scale: 0.98 }}
-                                                        onClick={() => setShowHighlights(!showHighlights)}
-                                                        style={{
-                                                            padding: '5px 24px',
-                                                            borderRadius: '50px',
-                                                            fontWeight: 600,
-                                                            height: 'auto',
-                                                            margin: '5px',
-                                                            fontSize: '0.85rem',
-                                                            fontFamily: 'Satoshi Medium',
-                                                            background: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
-                                                            color: 'white',
-                                                            border: 'none',
-                                                            boxShadow: '0 4px 15px rgba(59, 130, 246, 0.3)',
-                                                            cursor: 'pointer',
-                                                            transition: 'all 0.2s ease'
-                                                        }}
-                                                    >
-                                                         {showHighlights ? 'Hide Highlights' : 'Show Highlights'}
-                                                    </motion.button>
                                                     </div>
                                                     {/* Tab Content */}
                                                     {activeTab === 0 && (
                                                         <div>
-                                                            <div style={contentBoxStyle}>
-                                                                {showHighlights ? (
-                                                                    <div
-                                                                    style={textStyle}
-                                                                    dangerouslySetInnerHTML={{
-                                                                        __html: highlightText(
-                                                                        currentData.transcript,
-                                                                        currentData.fillerWordsList,
-                                                                        currentData.actionWordsList,
-                                                                        currentData.starAnswerParsed
-                                                                        )
-                                                                    }}
-                                                                    />
-                                                                ): (
-                                                                    <div
-                                                                    style={textStyle}
-                                                                    dangerouslySetInnerHTML={{
-                                                                        __html: `<p>${currentData.transcript}</p>`
-                                                                    }}
-                                                                    />
-                                                                )}
+                                                        <div style={contentBoxStyle}>
+                                                            <div
+                                                            style={textStyle}
+                                                            dangerouslySetInnerHTML={{
+                                                                __html: highlightText(
+                                                                currentData.transcript,
+                                                                currentData.fillerWordsList,
+                                                                currentData.actionWordsList,
+                                                                currentData.starAnswerParsed
+                                                                )
+                                                            }}
+                                                            />
                                                         </div>
 
                                                         {/* Legend */}
@@ -1183,27 +1208,12 @@ function escapeRegExp(s) {
 
                                                     {activeTab === 1 && (
                                                         <div style={contentBoxStyle}>
-                                                            {showHighlights ? (
-                                                                <div
-                                                                    style={textStyle}
-                                                                    dangerouslySetInnerHTML={{
-                                                                    __html: highlightText(
-                                                                        currentData.improvedResponse,
-                                                                        [],
-                                                                        currentData.actionWordsList,
-                                                                        currentData.starAnswerParsedImproved,
-                                                                        )
-                                                                    }}
-                                                                    
-                                                                />
-                                                            ): (
-                                                                <div
-                                                                style={textStyle}
-                                                                dangerouslySetInnerHTML={{
-                                                                    __html: `<p>${currentData.transcript}</p>`
-                                                                }}
-                                                                />
-                                                            )}
+                                                        <div
+                                                            style={textStyle}
+                                                            dangerouslySetInnerHTML={{
+                                                            __html: currentData.improvedResponse
+                                                            }}
+                                                        />
                                                         </div>
                                                     )}
                                                 </Box>

@@ -92,9 +92,8 @@ const InterviewCompleteScreen = ({
                     }}
                 />
             )}
-            <Box sx={{ display: "flex", width: "100%", height: "100vh" }}>
-                <CssBaseline />
-                <DefaultAppLayout elevation={16} title="Interview Results" color="#2850d9" titlecolor="#FFFFFF">
+            <Box>
+                <DefaultAppLayout>
                 <Box className="interview-complete-container">
             {/* Decorative Background Elements */}
             <Box className="decorative-circle-top" />

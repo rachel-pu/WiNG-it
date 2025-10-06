@@ -118,8 +118,6 @@ const QuickstartPage = ({
 
     return (
         <Box component="main" className="quickstart-main-modern">
-            <Toolbar />    
-
             <div className="quickstart-content-grid">
                 {/* Instructions Panel */}
                 <motion.div 
@@ -289,9 +287,6 @@ const QuickstartPage = ({
                     <ArrowForwardIcon />
                 </Button>
                 
-                <Typography className="start-button-subtitle">
-                    Ready when you are! Good luck!
-                </Typography>
             </motion.div>
 
             {/* Top notification alert */}

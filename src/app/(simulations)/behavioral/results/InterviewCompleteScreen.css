@@ -7,14 +7,9 @@
     align-items: center;
     justify-content: center;
     position: relative;
-    width: 103%;
-    min-width: 100%;
-    flex: 1; /* Take remaining space after sidebar */
+    width: 100%;
     overflow-x: hidden;
     overflow: hidden;
-    padding: 0; /* Remove all horizontal padding */
-    padding-top: 100px; /* Keep only top padding for AppBar */
-    padding-bottom: 20px; /* Small bottom padding for breathing room */
     box-sizing: border-box;
     margin: 0; /* Remove any default margins */
 }
@@ -22,7 +17,6 @@
 @media (min-width: 768px) {
     .interview-complete-container {
         padding: 0; /* Remove all horizontal padding on larger screens too */
-        padding-top: 96px; /* Keep AppBar spacing */
         padding-bottom: 20px; /* Small bottom padding */
     }
 }
@@ -57,9 +51,15 @@
     position: relative;
     z-index: 2;
     flex: 1; /* Take up available space */
-    padding: 0 32px; /* Increased padding for more breathing room */
+    padding: 60px 32px 40px 32px; /* Top, Right, Bottom, Left padding */
     margin: 0; /* No margins */
     box-sizing: border-box;
+}
+
+@media (max-width: 767px) {
+    .interview-complete-content {
+        padding: 80px 20px 60px 20px; /* More top/bottom padding on mobile/tablet */
+    }
 }
 
 /* Celebration Section */
