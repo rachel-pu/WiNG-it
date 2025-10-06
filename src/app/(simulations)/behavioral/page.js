@@ -20,6 +20,7 @@ export default function BehavioralInterviewSimulation() {
     const [numQuestions, setNumQuestions] = useState(3);
     const [questionTypes, setQuestionTypes] = useState([]);
     const [interviewerDifficulty, setInterviewerDifficulty] = useState("easy-going-personality");
+    const [customQuestions, setCustomQuestions] = useState("");
     const [showQuickstart, setShowQuickstart] = useState(true);
     const [showSimulation, setShowSimulation] = useState(false);
 
@@ -67,35 +68,67 @@ export default function BehavioralInterviewSimulation() {
         setCompany(e.target.value);
     };
 
+    const handleCustomQuestionsChange = (e) => {
+        setCustomQuestions(e.target.value);
+    };
+
     // Handles the array of question types
     const handleQuestionTypesChange = (event) => {
         setQuestionTypes(event.target.value);
         console.log('Question types updated:', event.target.value);
     };
 
-    const handleGetStarted = () => {
+    const handleGetStarted = (tabIndex) => {
         setError("");
-        if (!jobRole || jobRole.trim() === '') {
-            setError('Please enter a target role');
-            return false;
-        }
 
-        // Check if job role is too short
-        if (jobRole.trim().length < 4) {
-            setError('Target role must be at least 4 characters long');
-            return false;
-        }
+        // Tab 0: AI-Generated Questions
+        if (tabIndex === 0) {
+            if (!jobRole || jobRole.trim() === '') {
+                setError('Please enter a target role');
+                return false;
+            }
 
-        // Check if job role is too long
-        if (jobRole.trim().length > 100) {
-            setError('Target role must be less than 100 characters');
-            return false;
-        }
+            // Check if job role is too short
+            if (jobRole.trim().length < 4) {
+                setError('Target role must be at least 4 characters long');
+                return false;
+            }
 
-        if (!error) {
-            setShowQuickstart(false);
-            // getting backend questions
-            fetchQuestions();
+            // Check if job role is too long
+            if (jobRole.trim().length > 100) {
+                setError('Target role must be less than 100 characters');
+                return false;
+            }
+
+            if (!error) {
+                setShowQuickstart(false);
+                // getting backend questions
+                fetchQuestions();
+            }
+        }
+        // Tab 1: Custom Questions
+        else if (tabIndex === 1) {
+            const customQuestionsArray = customQuestions
+                .split('\n')
+                .map(q => q.trim())
+                .filter(q => q.length > 0);
+
+            if (customQuestionsArray.length === 0) {
+                setError('Please enter at least one question');
+                return false;
+            }
+
+            if (customQuestionsArray.length > 5) {
+                setError('Maximum 5 questions allowed');
+                return false;
+            }
+
+            if (!error) {
+                setShowQuickstart(false);
+                // Use custom questions directly
+                setQuestions(customQuestionsArray);
+                setShowSimulation(true);
+            }
         }
     }
 
@@ -117,12 +150,14 @@ export default function BehavioralInterviewSimulation() {
                         numQuestions={numQuestions}
                         questionTypes={questionTypes}
                         interviewerDifficulty={interviewerDifficulty}
+                        customQuestions={customQuestions}
                         handleJobRoleChange={handleJobRoleChange}
                         handleCompanyChange={handleCompanyChange}
                         handleQuestionsChange={handleQuestionsChange}
                         handleQuestionTypesChange={handleQuestionTypesChange}
                         handleGetStarted={handleGetStarted}
                         handleInterviewerDifficultyChange={handleInterviewerDifficultyChange}
+                        handleCustomQuestionsChange={handleCustomQuestionsChange}
                     />
                 ) : (
                     <Box

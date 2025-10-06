@@ -256,6 +256,36 @@
     color: #9ca3af;
 }
 
+/* Custom questions textarea */
+.custom-questions-textarea {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border-radius: 0.75rem;
+    border: 1px solid #d1d5db;
+    background: rgba(255, 255, 255, 0.5);
+    font-family: "DM Sans", sans-serif;
+    font-size: 0.875rem;
+    transition: all 0.2s ease;
+    box-sizing: border-box;
+    resize: vertical;
+    min-height: 200px;
+    line-height: 1.6;
+}
+
+.custom-questions-textarea:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.custom-questions-textarea::placeholder {
+    color: #9ca3af;
+}
+
+.custom-questions-container {
+    width: 100%;
+}
+
 /* Number selector */
 .number-selector {
     display: flex;
