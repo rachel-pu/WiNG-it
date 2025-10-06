@@ -4,11 +4,11 @@ import Toolbar from "@mui/material/Toolbar";
 import CssBaseline from "@mui/material/CssBaseline";
 import React, {useState} from "react";
 import Typography from "@mui/material/Typography";
-import QuickstartPage from "@/app/(simulations)/behavioral/(components)/QuickstartPage";
-import BehavioralSimulationPage from "@/app/(simulations)/behavioral/(components)/BehavioralSimulationPage";
+import QuickstartPage from "./(components)/QuickstartPage";
+import BehavioralSimulationPage from "./(components)/BehavioralSimulationPage";
 import {CircularProgress} from "@mui/material";
 import DefaultAppLayout from "../../DefaultAppLayout";
-import app from "@/lib/firebase";
+import app from "../../../lib/firebase";
 import "./(components)/BehavioralSimulationPage.css";
 import { m } from "framer-motion";
 
