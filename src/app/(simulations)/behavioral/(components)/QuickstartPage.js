@@ -3,7 +3,7 @@ import "./QuickstartPage.css";
 import Toolbar from "@mui/material/Toolbar";
 import React, { useState, useEffect } from "react";
 import Box from "@mui/material/Box";
-import { Button, Typography, Switch, FormControlLabel, Alert, Fade } from "@mui/material";
+import { Button, Typography, Switch, FormControlLabel, Alert, Fade, Tabs, Tab } from "@mui/material";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 
@@ -21,22 +21,29 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import PsychologyIcon from '@mui/icons-material/Psychology';
 import BusinessCenterIcon from '@mui/icons-material/BusinessCenter';
 import BuildIcon from '@mui/icons-material/Build';
+import EditNoteIcon from '@mui/icons-material/EditNote';
+import AutoFixHighIcon from '@mui/icons-material/AutoFixHigh';
 
 const QuickstartPage = ({
     error,
     jobRole,
+    company,
     numQuestions,
     questionTypes,
     interviewerDifficulty,
+    customQuestions,
     handleQuestionsChange,
     handleJobRoleChange,
+    handleCompanyChange,
     handleQuestionTypesChange,
     handleGetStarted,
     handleInterviewerDifficultyChange,
+    handleCustomQuestionsChange,
 }) => {
     const [showAlert, setShowAlert] = useState(false);
     const [alertMessage, setAlertMessage] = useState("");
     const [alertSeverity, setAlertSeverity] = useState("error");
+    const [selectedTab, setSelectedTab] = useState(0);
 
     // Show alert when error prop changes
     useEffect(() => {
@@ -113,7 +120,25 @@ const QuickstartPage = ({
     };
 
     const handleStartButtonClick = () => {
-        handleGetStarted();
+        handleGetStarted(selectedTab);
+    };
+
+    const handleTabChange = (event, newValue) => {
+        setSelectedTab(newValue);
+    };
+
+    const handleCustomQuestionsInput = (e) => {
+        const value = e.target.value;
+        const questionCount = value.split('\n').filter(q => q.trim()).length;
+
+        if (questionCount > 5) {
+            setAlertMessage('Maximum 5 questions allowed');
+            setAlertSeverity('warning');
+            setShowAlert(true);
+            return;
+        }
+
+        handleCustomQuestionsChange(e);
     };
 
     return (
@@ -190,77 +215,171 @@ const QuickstartPage = ({
                         <Typography className="panel-title">Customize Your Interview</Typography>
                     </div>
 
+                    {/* Tabs */}
+                    <Tabs
+                        value={selectedTab}
+                        onChange={handleTabChange}
+                        className="interview-tabs"
+                        sx={{
+                            marginBottom: '1.5rem',
+                            '& .MuiTab-root': {
+                                fontFamily: '"DM Sans", sans-serif',
+                                textTransform: 'none',
+                                fontSize: '0.875rem',
+                                fontWeight: 500,
+                                color: '#64748b',
+                                minHeight: '48px',
+                            },
+                            '& .Mui-selected': {
+                                color: '#7c3aed !important',
+                                fontFamily: '"Satoshi Bold", sans-serif',
+                            },
+                            '& .MuiTabs-indicator': {
+                                backgroundColor: '#7c3aed',
+                                height: '3px',
+                                borderRadius: '3px 3px 0 0',
+                            },
+                        }}
+                    >
+                        <Tab
+                            icon={<AutoFixHighIcon />}
+                            iconPosition="start"
+                            label="AI-Generated Questions"
+                        />
+                        <Tab
+                            icon={<EditNoteIcon />}
+                            iconPosition="start"
+                            label="Custom Questions"
+                        />
+                    </Tabs>
+
                     <div className="config-form">
-                        {/* Job Role Input */}
-                        <div className="form-group">
-                            <label className="form-label">Target Role</label>
-                            <input
-                                type="text"
-                                value={jobRole}
-                                onChange={handleJobRoleChange}
-                                placeholder="e.g. Software Engineer, Product Manager"
-                                className="form-input"
-                            />
-                        </div>
+                        {/* AI-Generated Questions Tab */}
+                        {selectedTab === 0 && (
+                            <>
+                                {/* Job Role and Company Inputs - Side by Side */}
+                                <div className="form-group-row">
+                                    <div className="form-group-half">
+                                        <label className="form-label">Target Role</label>
+                                        <input
+                                            type="text"
+                                            value={jobRole}
+                                            onChange={handleJobRoleChange}
+                                            placeholder="e.g. Software Engineer"
+                                            className="form-input"
+                                        />
+                                    </div>
+                                    <div className="form-group-half">
+                                        <label className="form-label">Company</label>
+                                        <input
+                                            type="text"
+                                            value={company}
+                                            onChange={handleCompanyChange}
+                                            placeholder="e.g. Google, Amazon"
+                                            className="form-input"
+                                        />
+                                    </div>
+                                </div>
 
-                        {/* Number of Questions */}
-                        <div className="form-group">
-                            <label className="form-label">Number of Questions</label>
-                            <div className="number-selector">
-                                {[1, 2, 3, 4, 5].map((num) => (
-                                    <button
-                                        key={num}
-                                        onClick={() => handleQuestionsChange({ target: { value: num } })}
-                                        className={`number-btn ${numQuestions === num ? 'active' : ''}`}
-                                    >
-                                        {num}
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
+                                {/* Number of Questions */}
+                                <div className="form-group">
+                                    <label className="form-label">Number of Questions</label>
+                                    <div className="number-selector">
+                                        {[1, 2, 3, 4, 5].map((num) => (
+                                            <button
+                                                key={num}
+                                                onClick={() => handleQuestionsChange({ target: { value: num } })}
+                                                className={`number-btn ${numQuestions === num ? 'active' : ''}`}
+                                            >
+                                                {num}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
 
-                        {/* Question Types */}
-                        <div className="form-group">
-                            <label className="form-label">Question Types</label>
-                            <div className="question-types">
-                                {questionTypeOptions.map((type) => {
-                                    const Icon = type.icon;
-                                    const currentTypes = Array.isArray(questionTypes) ? questionTypes : [];
-                                    const isSelected = currentTypes.includes(type.id);
-                                    
-                                    return (
-                                        <button
-                                            key={type.id}
-                                            onClick={() => handleQuestionTypeToggle(type.id)}
-                                            className={`type-btn ${isSelected ? 'selected' : ''}`}
-                                        >
-                                            <Icon />
-                                            <span>{type.label}</span>
-                                        </button>
-                                    );
-                                })}
-                            </div>
-                            {(!questionTypes || (Array.isArray(questionTypes) && questionTypes.length === 0)) && (
-                                <Typography className="helper-text">Leave empty for random selection</Typography>
-                            )}
-                        </div>
+                                {/* Question Types */}
+                                <div className="form-group">
+                                    <label className="form-label">Question Types</label>
+                                    <div className="question-types">
+                                        {questionTypeOptions.map((type) => {
+                                            const Icon = type.icon;
+                                            const currentTypes = Array.isArray(questionTypes) ? questionTypes : [];
+                                            const isSelected = currentTypes.includes(type.id);
 
-                        {/* Interviewer Difficulty */}
-                        <div className="form-group">
-                            <label className="form-label">Interviewer Style</label>
-                            <div className="difficulty-options">
-                                {difficultyLevels.map((level) => (
-                                    <button
-                                        key={level.id}
-                                        onClick={() => handleInterviewerDifficultyChange(level.id)}
-                                        className={`difficulty-btn ${interviewerDifficulty === level.id ? 'active' : ''}`}
-                                    >
-                                        <div className="difficulty-label">{level.label}</div>
-                                        <div className="difficulty-description">{level.description}</div>
-                                    </button>
-                                ))}
+                                            return (
+                                                <button
+                                                    key={type.id}
+                                                    onClick={() => handleQuestionTypeToggle(type.id)}
+                                                    className={`type-btn ${isSelected ? 'selected' : ''}`}
+                                                >
+                                                    <Icon />
+                                                    <span>{type.label}</span>
+                                                </button>
+                                            );
+                                        })}
+                                    </div>
+                                    {(!questionTypes || (Array.isArray(questionTypes) && questionTypes.length === 0)) && (
+                                        <Typography className="helper-text">Leave empty for random selection</Typography>
+                                    )}
+                                </div>
+
+                                {/* Interviewer Difficulty */}
+                                <div className="form-group">
+                                    <label className="form-label">Interviewer Style</label>
+                                    <div className="difficulty-options">
+                                        {difficultyLevels.map((level) => (
+                                            <button
+                                                key={level.id}
+                                                onClick={() => handleInterviewerDifficultyChange(level.id)}
+                                                className={`difficulty-btn ${interviewerDifficulty === level.id ? 'active' : ''}`}
+                                            >
+                                                <div className="difficulty-label">{level.label}</div>
+                                                <div className="difficulty-description">{level.description}</div>
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+                            </>
+                        )}
+
+                        {/* Custom Questions Tab */}
+                        {selectedTab === 1 && (
+                            <div className="custom-questions-container">
+                                <div className="form-group">
+                                    <label className="form-label">Enter Your Questions</label>
+                                    <Typography className="helper-text" sx={{ marginBottom: '0.75rem' }}>
+                                        Enter one question per line. You can add up to 5 questions.
+                                    </Typography>
+                                    <textarea
+                                        value={customQuestions}
+                                        onChange={handleCustomQuestionsInput}
+                                        placeholder="e.g.&#10;Tell me about a time you faced a difficult challenge.&#10;Describe a situation where you had to work with a difficult team member.&#10;How do you handle tight deadlines?"
+                                        className="custom-questions-textarea"
+                                        rows={10}
+                                    />
+                                    <Typography className="helper-text" sx={{ marginTop: '0.5rem', textAlign: 'right' }}>
+                                        {customQuestions.split('\n').filter(q => q.trim()).length} / 5 questions
+                                    </Typography>
+                                </div>
+
+                                {/* Interviewer Difficulty for Custom Questions */}
+                                <div className="form-group">
+                                    <label className="form-label">Interviewer Style</label>
+                                    <div className="difficulty-options">
+                                        {difficultyLevels.map((level) => (
+                                            <button
+                                                key={level.id}
+                                                onClick={() => handleInterviewerDifficultyChange(level.id)}
+                                                className={`difficulty-btn ${interviewerDifficulty === level.id ? 'active' : ''}`}
+                                            >
+                                                <div className="difficulty-label">{level.label}</div>
+                                                <div className="difficulty-description">{level.description}</div>
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
                             </div>
-                        </div>
+                        )}
                     </div>
                 </motion.div>
             </div>

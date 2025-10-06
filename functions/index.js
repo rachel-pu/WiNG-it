@@ -48,13 +48,29 @@ exports.generateQuestions = functions.https.onRequest((req, res) => {
         return res.status(405).json({ error: 'Method Not Allowed' });
       }
 
-      const { job_role, numQuestions, questionTypes, interviewerDifficulty } = req.body;
+      const { job_role, company, numQuestions, questionTypes, interviewerDifficulty, customQuestions } = req.body;
 
+      // If custom questions are provided, return them directly
+      if (customQuestions && Array.isArray(customQuestions) && customQuestions.length > 0) {
+        console.log(`Using custom questions: ${customQuestions.length} questions provided`);
+        return res.json({
+          questions: customQuestions,
+          metadata: {
+            provider: 'custom',
+            requested: customQuestions.length,
+            generated: customQuestions.length,
+            returned: customQuestions.length
+          }
+        });
+      }
+
+      // Otherwise, generate AI questions
+      const companyContext = company ? ` at ${company}` : '';
       const prompt = `
-        Generate EXACTLY ${numQuestions} behavioral interview questions related to ${questionTypes} for a ${job_role || 'general'} job position.
-        
+        Generate EXACTLY ${numQuestions} behavioral interview questions related to ${questionTypes} for a ${job_role || 'general'} job position${companyContext}.
+
         IMPORTANT: Generate ONLY ${numQuestions} questions. No more, no less.
-        
+
         Rules:
         - Format strictly as: "1. [Question]", "2. [Question]", etc.
         - Do NOT include any introductory text, titles, or explanations outside the numbered format.
@@ -81,7 +97,7 @@ exports.generateQuestions = functions.https.onRequest((req, res) => {
       const outputTokens = completion.usage.completion_tokens;
       const totalTokens = completion.usage.total_tokens;
       const estimatedCost = (totalTokens / 1000) * 0.0001;
-      
+
       console.log(`🔢 OpenAI API Call Cost:`);
       console.log(`   Input tokens: ${inputTokens}`);
       console.log(`   Output tokens: ${outputTokens}`);
@@ -90,7 +106,7 @@ exports.generateQuestions = functions.https.onRequest((req, res) => {
 
       const responseText = completion.choices[0].message.content;
       console.log(`Raw OpenAI response: ${responseText.substring(0, 200)}...`);
-      
+
       const questions = extractQuestions(responseText, numQuestions);
 
       if (!questions || questions.length === 0) {
@@ -99,9 +115,9 @@ exports.generateQuestions = functions.https.onRequest((req, res) => {
 
       // Ensure we have the exact number requested
       const finalQuestions = questions.slice(0, numQuestions);
-      
+
       console.log(`Requested: ${numQuestions} questions, Generated: ${questions.length}, Returning: ${finalQuestions.length}`);
-      
+
       if (finalQuestions.length !== numQuestions) {
         console.warn(`Warning: Requested ${numQuestions} questions but got ${finalQuestions.length}`);
       }

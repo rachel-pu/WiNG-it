@@ -39,7 +39,7 @@
 /* Grid layout */
 .quickstart-content-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 0.8fr 1.2fr;
     gap: 1.75rem;
     margin-bottom: 2rem;
     width: 100%;
@@ -214,6 +214,19 @@
     gap: 0.5rem;
 }
 
+.form-group-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    width: 100%;
+}
+
+.form-group-half {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
 .form-label {
     font-family: "Satoshi Bold", sans-serif;
     color: #374151;
@@ -241,6 +254,36 @@
 
 .form-input::placeholder {
     color: #9ca3af;
+}
+
+/* Custom questions textarea */
+.custom-questions-textarea {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border-radius: 0.75rem;
+    border: 1px solid #d1d5db;
+    background: rgba(255, 255, 255, 0.5);
+    font-family: "DM Sans", sans-serif;
+    font-size: 0.875rem;
+    transition: all 0.2s ease;
+    box-sizing: border-box;
+    resize: vertical;
+    min-height: 200px;
+    line-height: 1.6;
+}
+
+.custom-questions-textarea:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.custom-questions-textarea::placeholder {
+    color: #9ca3af;
+}
+
+.custom-questions-container {
+    width: 100%;
 }
 
 /* Number selector */
@@ -528,32 +571,36 @@
     .quickstart-main-modern {
         padding: 1rem;
     }
-    
+
     .quickstart-header {
         margin-bottom: 0.95rem;
     }
-    
+
     .quickstart-title-modern {
         font-size: 2rem !important;
     }
-    
+
     .quickstart-description-modern {
         font-size: 0.8rem !important;
     }
-    
+
     .quickstart-instructions-panel,
     .quickstart-config-panel {
         padding: 1.5rem;
     }
-    
+
+    .form-group-row {
+        grid-template-columns: 1fr;
+    }
+
     .question-types {
         grid-template-columns: 1fr;
     }
-    
+
     .number-selector {
         flex-wrap: wrap;
     }
-    
+
     .start-button {
         padding: 1rem 2.5rem !important;
         font-size: 1rem !important;
