@@ -14,7 +14,7 @@ import MicIcon from '@mui/icons-material/Mic';
 import GpsFixedIcon from '@mui/icons-material/GpsFixed';
 import GroupIcon from '@mui/icons-material/Group';
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
-import FlashOnIcon from '@mui/icons-material/FlashOn';
+import Person3 from '@mui/icons-material/Person3';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import SettingsIcon from '@mui/icons-material/Settings';
@@ -197,6 +197,20 @@ const QuickstartPage = ({
                         <Typography className="pro-tip-text">
                             Treat this as a real interview for maximum benefit. Practice your STAR method responses!
                         </Typography>
+                    </motion.div>
+                    <motion.div
+                        initial="hidden"
+                        animate="visible"
+                        transition={{ delay: 0.8 }}
+                        variants={itemVariants}
+                        className="pro-tip"
+                    >
+                        <div className="pro-tip-header">
+                            <Person3 />
+                            <span>Winnie</span>
+                        </div>
+                        <Typography className="pro-tip-text">
+                            Winnie will be your virtual interviewer. She’s an objective evaluator who scores your answers purely by their stats: length, wording, and how closely they follow the STAR Method.                        </Typography>
                     </motion.div>
                 </motion.div>
 
