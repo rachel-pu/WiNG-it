@@ -39,7 +39,7 @@
 /* Grid layout */
 .quickstart-content-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 0.8fr 1.2fr;
     gap: 1.75rem;
     margin-bottom: 2rem;
     width: 100%;
@@ -209,6 +209,19 @@
 }
 
 .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.form-group-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    width: 100%;
+}
+
+.form-group-half {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
@@ -528,32 +541,36 @@
     .quickstart-main-modern {
         padding: 1rem;
     }
-    
+
     .quickstart-header {
         margin-bottom: 0.95rem;
     }
-    
+
     .quickstart-title-modern {
         font-size: 2rem !important;
     }
-    
+
     .quickstart-description-modern {
         font-size: 0.8rem !important;
     }
-    
+
     .quickstart-instructions-panel,
     .quickstart-config-panel {
         padding: 1.5rem;
     }
-    
+
+    .form-group-row {
+        grid-template-columns: 1fr;
+    }
+
     .question-types {
         grid-template-columns: 1fr;
     }
-    
+
     .number-selector {
         flex-wrap: wrap;
     }
-    
+
     .start-button {
         padding: 1rem 2.5rem !important;
         font-size: 1rem !important;

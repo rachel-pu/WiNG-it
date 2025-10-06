@@ -48,10 +48,11 @@ exports.generateQuestions = functions.https.onRequest((req, res) => {
         return res.status(405).json({ error: 'Method Not Allowed' });
       }
 
-      const { job_role, numQuestions, questionTypes, interviewerDifficulty } = req.body;
+      const { job_role, company, numQuestions, questionTypes, interviewerDifficulty } = req.body;
 
+      const companyContext = company ? ` at ${company}` : '';
       const prompt = `
-        Generate EXACTLY ${numQuestions} behavioral interview questions related to ${questionTypes} for a ${job_role || 'general'} job position.
+        Generate EXACTLY ${numQuestions} behavioral interview questions related to ${questionTypes} for a ${job_role || 'general'} job position${companyContext}.
         
         IMPORTANT: Generate ONLY ${numQuestions} questions. No more, no less.
         

@@ -16,6 +16,7 @@ export default function BehavioralInterviewSimulation() {
     const [questions, setQuestions] = useState([]);
     const [error, setError] = useState("");
     const [jobRole, setJobRole] = useState("");
+    const [company, setCompany] = useState("");
     const [numQuestions, setNumQuestions] = useState(3);
     const [questionTypes, setQuestionTypes] = useState([]);
     const [interviewerDifficulty, setInterviewerDifficulty] = useState("easy-going-personality");
@@ -32,6 +33,7 @@ export default function BehavioralInterviewSimulation() {
         },
         body: JSON.stringify({
             job_role: jobRole,
+            company,
             numQuestions,
             questionTypes,
             interviewerDifficulty
@@ -59,6 +61,10 @@ export default function BehavioralInterviewSimulation() {
     const handleJobRoleChange = (e) => {
         setJobRole(e.target.value);
         setError(""); // Clear error on input change
+    };
+
+    const handleCompanyChange = (e) => {
+        setCompany(e.target.value);
     };
 
     // Handles the array of question types
@@ -107,10 +113,12 @@ export default function BehavioralInterviewSimulation() {
                     <QuickstartPage
                         error={error}
                         jobRole={jobRole}
+                        company={company}
                         numQuestions={numQuestions}
                         questionTypes={questionTypes}
                         interviewerDifficulty={interviewerDifficulty}
                         handleJobRoleChange={handleJobRoleChange}
+                        handleCompanyChange={handleCompanyChange}
                         handleQuestionsChange={handleQuestionsChange}
                         handleQuestionTypesChange={handleQuestionTypesChange}
                         handleGetStarted={handleGetStarted}

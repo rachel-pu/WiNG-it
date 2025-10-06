@@ -25,11 +25,13 @@ import BuildIcon from '@mui/icons-material/Build';
 const QuickstartPage = ({
     error,
     jobRole,
+    company,
     numQuestions,
     questionTypes,
     interviewerDifficulty,
     handleQuestionsChange,
     handleJobRoleChange,
+    handleCompanyChange,
     handleQuestionTypesChange,
     handleGetStarted,
     handleInterviewerDifficultyChange,
@@ -191,16 +193,28 @@ const QuickstartPage = ({
                     </div>
 
                     <div className="config-form">
-                        {/* Job Role Input */}
-                        <div className="form-group">
-                            <label className="form-label">Target Role</label>
-                            <input
-                                type="text"
-                                value={jobRole}
-                                onChange={handleJobRoleChange}
-                                placeholder="e.g. Software Engineer, Product Manager"
-                                className="form-input"
-                            />
+                        {/* Job Role and Company Inputs - Side by Side */}
+                        <div className="form-group-row">
+                            <div className="form-group-half">
+                                <label className="form-label">Target Role</label>
+                                <input
+                                    type="text"
+                                    value={jobRole}
+                                    onChange={handleJobRoleChange}
+                                    placeholder="e.g. Software Engineer"
+                                    className="form-input"
+                                />
+                            </div>
+                            <div className="form-group-half">
+                                <label className="form-label">Company</label>
+                                <input
+                                    type="text"
+                                    value={company}
+                                    onChange={handleCompanyChange}
+                                    placeholder="e.g. Google, Amazon"
+                                    className="form-input"
+                                />
+                            </div>
                         </div>
 
                         {/* Number of Questions */}
