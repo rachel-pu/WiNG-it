@@ -10,16 +10,14 @@ import DashboardCard from '../dashboard/(components)/DashboardCard';
 
 export default function Dashboard() {
     return (
-        <Box sx={{ display: 'flex' }} bgcolor={'#F3F1EA'}>
-            <CssBaseline />
-            <DefaultAppLayout elevation={1} title="Dashboard" color="rgba(255, 255, 255, 1)" titlecolor="#2850d9">
+        <Box>
+            <DefaultAppLayout>
                 {/* Main Content */}
                 <Box
                     component="main"
                     sx={{
                         flexGrow: 1,
                         p: 4,
-                        marginTop: '5%',
                         background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)',
                         minHeight: '100vh'
                     }}
@@ -29,7 +27,7 @@ export default function Dashboard() {
                     <Grid 
                         container 
                         spacing={3} 
-                        sx={{ maxWidth: "1400px", width: "100%" }}
+                        sx={{width: "100%" }}
                         columns={{ xs: 1, sm: 1, md: 2, lg: 3 }}
                     >
                         {/* Behavioral Interview - Active */}

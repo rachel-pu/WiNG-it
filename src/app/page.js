@@ -10,7 +10,7 @@ import Card from '@mui/material/Card';
 import { FaPencilRuler } from "react-icons/fa";
 import { IoDocumentText } from "react-icons/io5";
 import { BiSolidMessageCheck } from "react-icons/bi";
-import HomePageNavbar from "../../components/HomePageNavbar";
+import HomePageNavbar from "../components/ui/HomePageNavbar";
 import "./HomePage.css";
 
 const pages = ['Why WiNG.it', 'Our Story', 'Get Started'];
