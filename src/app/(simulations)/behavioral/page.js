@@ -25,7 +25,7 @@ export default function BehavioralInterviewSimulation() {
     const [showSimulation, setShowSimulation] = useState(false);
 
 
-    const fetchQuestions = async () => {
+    const fetchQuestions = async (isCustom = false, customQuestionsArray = []) => {
     try {
         const response = await fetch('https://us-central1-wing-it-e6a3a.cloudfunctions.net/generateQuestions', {
         method: 'POST',
@@ -37,7 +37,8 @@ export default function BehavioralInterviewSimulation() {
             company,
             numQuestions,
             questionTypes,
-            interviewerDifficulty
+            interviewerDifficulty,
+            customQuestions: isCustom ? customQuestionsArray : null
         }),
         });
 
@@ -125,9 +126,8 @@ export default function BehavioralInterviewSimulation() {
 
             if (!error) {
                 setShowQuickstart(false);
-                // Use custom questions directly
-                setQuestions(customQuestionsArray);
-                setShowSimulation(true);
+                // Send custom questions to backend
+                fetchQuestions(true, customQuestionsArray);
             }
         }
     }

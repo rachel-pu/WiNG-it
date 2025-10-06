@@ -127,6 +127,20 @@ const QuickstartPage = ({
         setSelectedTab(newValue);
     };
 
+    const handleCustomQuestionsInput = (e) => {
+        const value = e.target.value;
+        const questionCount = value.split('\n').filter(q => q.trim()).length;
+
+        if (questionCount > 5) {
+            setAlertMessage('Maximum 5 questions allowed');
+            setAlertSeverity('warning');
+            setShowAlert(true);
+            return;
+        }
+
+        handleCustomQuestionsChange(e);
+    };
+
     return (
         <Box component="main" className="quickstart-main-modern">
             <div className="quickstart-content-grid">
@@ -338,7 +352,7 @@ const QuickstartPage = ({
                                     </Typography>
                                     <textarea
                                         value={customQuestions}
-                                        onChange={handleCustomQuestionsChange}
+                                        onChange={handleCustomQuestionsInput}
                                         placeholder="e.g.&#10;Tell me about a time you faced a difficult challenge.&#10;Describe a situation where you had to work with a difficult team member.&#10;How do you handle tight deadlines?"
                                         className="custom-questions-textarea"
                                         rows={10}
