@@ -120,10 +120,9 @@ const QuickstartPage = ({
         <Box component="main" className="quickstart-main-modern">
             <div className="quickstart-content-grid">
                 {/* Instructions Panel */}
-                <motion.div 
+                <motion.div
                     initial="hidden"
-                    whileInView="visible"
-                    viewport={{ once: true }}
+                    animate="visible"
                     transition={{ delay: 0.2 }}
                     variants={itemVariants}
                     className="quickstart-instructions-panel"
@@ -139,11 +138,10 @@ const QuickstartPage = ({
                         {steps.map((step, index) => {
                             const Icon = step.icon;
                             return (
-                                <motion.div 
+                                <motion.div
                                     key={index}
                                     initial="hidden"
-                                    whileInView="visible"
-                                    viewport={{ once: true }}
+                                    animate="visible"
                                     transition={{ delay: 0.4 + index * 0.1 }}
                                     variants={itemVariants}
                                     className="step-item"
@@ -160,10 +158,9 @@ const QuickstartPage = ({
                         })}
                     </div>
 
-                    <motion.div 
+                    <motion.div
                         initial="hidden"
-                        whileInView="visible"
-                        viewport={{ once: true }}
+                        animate="visible"
                         transition={{ delay: 0.8 }}
                         variants={itemVariants}
                         className="pro-tip"
@@ -179,10 +176,9 @@ const QuickstartPage = ({
                 </motion.div>
 
                 {/* Configuration Panel */}
-                <motion.div 
+                <motion.div
                     initial="hidden"
-                    whileInView="visible"
-                    viewport={{ once: true }}
+                    animate="visible"
                     transition={{ delay: 0.3 }}
                     variants={itemVariants}
                     className="quickstart-config-panel"
@@ -270,10 +266,9 @@ const QuickstartPage = ({
             </div>
 
             {/* Start Button */}
-            <motion.div 
+            <motion.div
                 initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true }}
+                animate="visible"
                 transition={{ delay: 0.5 }}
                 variants={itemVariants}
                 className="start-button-container"
