@@ -201,6 +201,34 @@
     margin: 0 !important;
 }
 
+/* Winnie */
+.winnie-intro {
+    margin-top: 2rem;
+    padding: 1rem;
+    background: linear-gradient(135deg, #c3e3c2, #e2ffe0);
+    border-radius: 1rem;
+    border: 1px solid #a8dda6;
+}
+
+.winnie-intro-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+    color: #239e11;
+    font-family: "Satoshi Bold", sans-serif;
+    font-size: 0.875rem;
+}
+
+.winnie-intro-text {
+    font-family: "DM Sans", sans-serif !important;
+    color: #239e11 !important;
+    font-size: 0.875rem !important;
+    line-height: 1.4 !important;
+    margin: 0 !important;
+}
+
+
 /* Form styles */
 .config-form {
     display: flex;

@@ -203,13 +203,13 @@ const QuickstartPage = ({
                         animate="visible"
                         transition={{ delay: 0.8 }}
                         variants={itemVariants}
-                        className="pro-tip"
+                        className="winnie-intro"
                     >
-                        <div className="pro-tip-header">
+                        <div className="winnie-intro-header">
                             <Person3 />
                             <span>Winnie</span>
                         </div>
-                        <Typography className="pro-tip-text">
+                        <Typography className="winnie-intro-text">
                             Winnie will be your virtual interviewer. She’s an objective evaluator who scores your answers purely by their stats: length, wording, and how closely they follow the STAR Method.                        </Typography>
                     </motion.div>
                 </motion.div>
