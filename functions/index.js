@@ -15,9 +15,9 @@ const db = admin.database();
 
 // Initialize OpenAI
 const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY
+  apiKey: import.meta.env.OPENAI_API_KEY
 });
-const deepgramClient = createClient(process.env.DEEPGRAM_API_KEY);
+const deepgramClient = createClient(import.meta.env.DEEPGRAM_API_KEY);
 
 // Initialize Google Cloud TTS client
 const ttsClient = new textToSpeech.TextToSpeechClient();
@@ -466,7 +466,7 @@ exports.saveResponse = functions.https.onRequest((req, res) => {
       console.error("Unexpected error in saveResponse:", error);
       return res.status(500).json({ 
         error: "Internal server error", 
-        details: process.env.NODE_ENV === 'development' ? error.message : undefined
+        details: import.meta.env.NODE_ENV === 'development' ? error.message : undefined
       });
     }
   });
