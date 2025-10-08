@@ -169,8 +169,6 @@ export default function BehavioralInterviewSimulation() {
                             {questions && questions.length > 0 && showSimulation ? (
                                 <BehavioralSimulationPage questions={questions}/>
                             ) : (
-                                <Box className="behavioral-loading-overlay">
-                                    {/* Loading content container */}
                                     <Box className="behavioral-loading-container" style={{ textAlign: 'center' }}>
                                         <CircularProgress
                                             size={60}
@@ -180,7 +178,6 @@ export default function BehavioralInterviewSimulation() {
                                             Generating your simulation experience...
                                         </Typography>
                                     </Box>
-                                </Box>
                             )}
                         </Box>
                     </Box>
