@@ -722,9 +722,9 @@
 /* Top notification alert styles */
 .quickstart-alert-container {
     position: fixed;
-    top: 90px;
+    top: 30px;
     left: 50%;
-    transform: translateX(calc(-50% + 120px)); /* Adjust for sidebar width */
+    transform: translateX(-50%);
     z-index: 2000;
     width: auto;
     max-width: 90%;
