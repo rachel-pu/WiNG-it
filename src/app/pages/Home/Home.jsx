@@ -127,8 +127,8 @@ export default function HomePage() {
                             >
                                 <motion.div variants={itemVariants}>
                                     <Button
-                                        // href="/signin"
-                                        href = '/dashboard'
+                                        href="/signin"
+                                        // href = '/dashboard'
                                         className="primary-cta-button"
                                         size="large"
                                     >

@@ -3,139 +3,89 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  background: linear-gradient(135deg, #FBFAFF 0%, #F5F3FF 100%);
-  padding: 20px;
-  position: relative;
-  overflow: hidden;
-  margin-top: 50px;
+  background: linear-gradient(135deg, #444465ff 0%, #33426aff 50%, #27548bff 100%);
+  font-family: 'Inter', sans-serif;
+  margin-top: -30px;
 }
 
 .auth-card {
-  position: relative;
-  z-index: 1;
   background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(20px);
+  backdrop-filter: blur(15px);
   padding: 48px 40px;
   border-radius: 32px;
-  box-shadow: 
-    0 20px 60px rgba(0, 0, 0, 0.08),
-    0 0 0 1px rgba(255, 255, 255, 0.5) inset;
-  width: 100%;
   max-width: 440px;
-  border: 1px solid rgba(168, 85, 247, 0.1);
-  margin-top: 20px;
-}
-
-/* Header Section */
-.auth-header {
-  text-align: center;
-  margin-bottom: 32px;
-  margin-top: 20px;
-}
-
-.auth-icon-badge {
-  width: 64px;
-  height: 64px;
-  border-radius: 20px;
-  background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 auto 20px;
-  box-shadow: 
-    0 10px 25px rgba(168, 85, 247, 0.25),
-    0 0 0 8px rgba(168, 85, 247, 0.08);
-}
-
-.sparkle-icon {
-  width: 28px;
-  height: 28px;
-  color: white;
+  width: 100%;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.08);
 }
 
 .auth-title {
   font-size: 28px;
   font-weight: 800;
   color: #1e293b;
-  margin: 0 0 8px 0;
-  letter-spacing: -0.5px;
+  margin-bottom: 8px;
+  text-align: center;
 }
 
 .auth-description {
   font-size: 15px;
   color: #64748b;
-  margin: 0;
-  font-weight: 500;
+  margin-bottom: 32px;
+  text-align: center;
 }
 
-/* Google Sign In Button */
-.google-sign-in-btn {
+.modern-input {
   width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  padding: 14px 20px;
-  background: white;
+  padding: 12px 14px;
+  margin-bottom: 20px;
   border: 2px solid #e2e8f0;
   border-radius: 12px;
   font-size: 15px;
-  font-weight: 600;
-  color: #334155;
+  box-sizing: border-box;
+}
+
+.input-wrapper {
+  position: relative;
+}
+
+.password-input {
+  padding-right: 80px;
+}
+
+.password-toggle {
+  position: absolute;
+  right: 12px;
+  top: 35%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: #64748b;
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  margin-bottom: 24px;
+  font-weight: 600;
 }
 
-.google-sign-in-btn:hover {
-  background: #f8fafc;
-  border-color: #cbd5e1;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+.primary-btn {
+  width: 100%;
+  padding: 14px 0;
+  background: linear-gradient(135deg, #2850d9 0%, #667eea 100%);
+  border: none;
+  border-radius: 12px;
+  color: white;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 10px;
 }
 
-.google-sign-in-btn:active {
-  transform: translateY(0);
+.primary-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
-.google-icon-modern {
-  width: 20px;
-  height: 20px;
-  background: url('https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg') no-repeat center center;
-  background-size: contain;
-}
-
-/* Divider */
-.auth-divider {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  margin: 24px 0;
-}
-
-.divider-line {
-  flex: 1;
-  height: 1px;
-  background: linear-gradient(to right, transparent, #e2e8f0, transparent);
-}
-
-.divider-text {
-  font-size: 13px;
-  color: #94a3b8;
-  font-weight: 500;
-}
-
-/* Message Boxes */
 .message-box {
-  display: flex;
-  align-items: center;
-  gap: 10px;
   padding: 12px 16px;
   border-radius: 12px;
-  font-size: 14px;
   margin-bottom: 20px;
-  font-weight: 500;
+  font-size: 14px;
 }
 
 .error-box {
@@ -144,226 +94,11 @@
   color: #dc2626;
 }
 
-.success-box {
-  background: #f0fdf4;
-  border: 1px solid #bbf7d0;
-  color: #16a34a;
-}
-
-.message-icon {
-  width: 18px;
-  height: 18px;
-  flex-shrink: 0;
-}
-
-/* Input Groups */
-.input-group {
-  margin-bottom: 20px;
-}
-
-.input-label {
-  display: block;
-  font-size: 14px;
-  font-weight: 600;
-  color: #334155;
-  margin-bottom: 8px;
-}
-
-.input-wrapper {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
-
-.input-icon {
-  position: absolute;
-  left: 14px;
-  width: 18px;
-  height: 18px;
-  color: #94a3b8;
-  pointer-events: none;
-  z-index: 1;
-}
-
-.modern-input {
-  width: 100%;
-  padding: 12px 14px 12px 42px;
-  font-size: 15px;
-  color: #1e293b;
-  background: white;
-  border: 2px solid #e2e8f0;
-  border-radius: 12px;
-  transition: all 0.3s ease;
-  font-family: inherit;
-  box-sizing: border-box;
-}
-
-.modern-input:focus {
-  outline: none;
-  border-color: #a855f7;
-  box-shadow: 0 0 0 4px rgba(168, 85, 247, 0.1);
-}
-
-.modern-input::placeholder {
-  color: #cbd5e1;
-}
-
-.password-input-field {
-  padding-right: 42px;
-}
-
-.password-toggle {
-  position: absolute;
-  right: 12px;
-  background: none;
-  border: none;
-  color: #94a3b8;
-  cursor: pointer;
-  padding: 4px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: color 0.2s ease;
-  z-index: 1;
-}
-
-.password-toggle:hover {
-  color: #64748b;
-}
-
-/* Forgot Password Button */
-.forgot-password-btn {
-  background: none;
-  border: none;
-  color: #9333ea;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  padding: 0;
-  margin-bottom: 24px;
-  transition: color 0.2s ease;
-}
-
-.forgot-password-btn:hover {
-  color: #7c3aed;
-  text-decoration: underline;
-}
-
-/* Primary Button */
-.primary-btn {
-  width: 100%;
-  padding: 14px 24px;
-  background: linear-gradient(135deg, #9333ea 0%, #c026d3 100%);
-  color: white;
-  border: none;
-  border-radius: 12px;
-  font-size: 15px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 
-    0 8px 20px rgba(147, 51, 234, 0.25),
-    0 0 0 1px rgba(255, 255, 255, 0.1) inset;
-  position: relative;
-  overflow: hidden;
-}
-
-.primary-btn::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(255, 255, 255, 0.2),
-    transparent
-  );
-  transition: left 0.5s ease;
-}
-
-.primary-btn:hover::before {
-  left: 100%;
-}
-
-.primary-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 
-    0 12px 28px rgba(147, 51, 234, 0.35),
-    0 0 0 1px rgba(255, 255, 255, 0.2) inset;
-}
-
-.primary-btn:active {
-  transform: translateY(0);
-}
-
-.primary-btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-  transform: none;
-}
-
-/* Footer */
-.auth-footer {
-  margin-top: 24px;
-  text-align: center;
-}
-
-.footer-text {
-  font-size: 14px;
-  color: #64748b;
-  margin: 0;
-}
-
-.footer-link {
-  color: #9333ea;
-  font-weight: 600;
-  text-decoration: none;
-  transition: color 0.2s ease;
-}
-
-.footer-link:hover {
-  color: #7c3aed;
-  text-decoration: underline;
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-  .auth-card {
-    padding: 40px 28px;
-    border-radius: 24px;
-  }
-  
-  .auth-title {
-    font-size: 24px;
-  }
-  
-  .auth-description {
-    font-size: 14px;
-  }
-}
-
 @media (max-width: 480px) {
-  .auth-page {
-    padding: 16px;
-  }
-  
   .auth-card {
     padding: 32px 24px;
+    border-radius: 24px;
   }
-  
-  .auth-icon-badge {
-    width: 56px;
-    height: 56px;
-  }
-  
-  .sparkle-icon {
-    width: 24px;
-    height: 24px;
-  }
-  
   .auth-title {
     font-size: 22px;
   }
