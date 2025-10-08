@@ -22,21 +22,14 @@
   font-size: 28px;
   font-weight: 800;
   color: #1e293b;
-  margin-bottom: 8px;
-  text-align: center;
-}
-
-.auth-description {
-  font-size: 15px;
-  color: #64748b;
-  margin-bottom: 32px;
+  margin-bottom: 5px;
   text-align: center;
 }
 
 .modern-input {
   width: 100%;
   padding: 12px 14px;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
   border: 2px solid #e2e8f0;
   border-radius: 12px;
   font-size: 15px;
@@ -157,4 +150,28 @@
   font-size: 13px;
   color: #94a3b8;
   font-weight: 500;
+}
+
+.input-label {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: #334155;
+}
+
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-icon {
+  position: absolute;
+  left: 15px;
+  top: 15px;
+  width: 18px;
+  height: 20px;
+  color: #94a3b8;
+  pointer-events: none;
+  z-index: 1;
 }
