@@ -11,25 +11,15 @@
     text-align: center;
 }
 
-.behavioral-loading-overlay {
-    position: absolute;
-    /* top: 0;
-    left: 0;
-    right: -200px;
-    bottom: 0; */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: #2a2a2e;
-    z-index: 1000;
-}
+
 
 .behavioral-loading-container {
     display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
-    gap: 24px; /* 3 * 8px spacing unit */
+    gap: 24px;
+    height: 100vh;
     text-align: center;
 }
 
