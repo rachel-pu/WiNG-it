@@ -121,7 +121,7 @@ export default function HomePagenNavbar() {
 
                                 <Button
                                     color="inherit"
-                                    href="/dashboard"
+                                    href="/signin"
                                     sx={{
                                         fontSize: '1.05rem',
                                         fontFamily: 'Satoshi Medium',
@@ -188,8 +188,7 @@ export default function HomePagenNavbar() {
                         </Button>
                         <Button 
                             color='inherit' 
-                            // href='/sign-up' 
-                            href = '/dashboard'
+                            href='/signin'
                             sx={{
                                 fontSize: '1.05rem', 
                                 fontFamily: 'Satoshi Bold', 

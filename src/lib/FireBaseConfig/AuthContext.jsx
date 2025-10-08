@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect } from 'react';
 import {
   onAuthStateChanged,
   GoogleAuthProvider,
@@ -6,7 +6,7 @@ import {
   signOut,
   fetchSignInMethodsForEmail
 } from 'firebase/auth';
-import { auth } from './OAuth';
+import { auth } from './OAuth.jsx';
 
 const AuthContext = createContext();
 
@@ -16,10 +16,6 @@ export function useAuth() {
 
 export const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState();
-
-  const isUflEmail = (email) => {
-    return email.toLowerCase().endsWith('@ufl.edu');
-  };
 
   const googleSignIn = async () => {
     const provider = new GoogleAuthProvider();
@@ -33,12 +29,6 @@ export const AuthProvider = ({ children }) => {
       // First get the email without signing in
       const result = await signInWithPopup(auth, provider);
       const credential = GoogleAuthProvider.credentialFromResult(result);
-      
-      // Check if the email is a UFL email
-      if (!isUflEmail(result.user.email)) {
-        await signOut(auth); // Sign out if not a UFL email
-        throw new Error('Only @ufl.edu email addresses are allowed. Please use your UF email.');
-      }
 
       return result;
     } catch (error) {

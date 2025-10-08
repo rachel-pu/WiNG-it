@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { getAuth, signOut, createUserWithEmailAndPassword, sendEmailVerification, onAuthStateChanged } from 'firebase/auth';
 import { getDatabase, ref, set, update, get } from 'firebase/database';
 import './signin.css';
-import { GoogleUserAuth } from '../../../FireBaseConfig/AuthContext';
+import { GoogleUserAuth } from '../../../FireBaseConfig/AuthContext.jsx';
 
 const SignUp = () => {
     const [name, setName] = useState('');
