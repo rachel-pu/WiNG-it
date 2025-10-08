@@ -6,6 +6,7 @@ import HomePageNavbar from "../../../components/HomePageNavbar";
 import { supabase } from '../../../../supabase.js'
 import { motion } from 'framer-motion';
 import { GoogleUserAuth } from '../../../lib/FireBaseConfig/AuthContext.jsx';
+import { Mail, Lock, Eye, EyeOff, User} from 'lucide-react';
 
 const SignIn = () => {
     const [name, setName] = useState('');
@@ -74,7 +75,7 @@ const SignIn = () => {
             <HomePageNavbar/>
             <div className="auth-page">
             <div className="auth-card">
-                <h1 className="auth-title">Sign In</h1>
+                <h1 className="auth-title">Welcome Back</h1>
                 <motion.div variants={itemVariants}>
                 <button className="google-sign-in-btn" onClick={handleGoogleSignInClick}>
                     <span className="google-icon-modern"></span>
@@ -91,36 +92,55 @@ const SignIn = () => {
 
                 {error && <div className="message-box error-box">{error}</div>}
 
-                <input
-                type="text"
-                className="modern-input"
-                placeholder="Name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                />
-                <input
-                type="email"
-                className="modern-input"
-                placeholder="Email Address"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                />
-                <div className="input-wrapper">
-                <input
-                    type={showPassword ? 'text' : 'password'}
-                    className="modern-input password-input"
-                    placeholder="Password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                />
-                <button
-                    type="button"
-                    className="password-toggle"
-                    onClick={() => setShowPassword(!showPassword)}
-                >
-                    {showPassword ? 'Hide' : 'Show'}
-                </button>
-                </div>
+                <motion.div className="input-group" variants={itemVariants}>
+                    <label className="input-label">Full Name</label>
+                    <div className="input-wrapper">
+                        <User className="input-icon" />
+                        <input 
+                        type="email" 
+                        className="modern-input" 
+                        placeholder="       John Doe" 
+                        value={email}
+                        onChange={(e) => setName(e.target.value)}
+                        />
+                    </div>
+                </motion.div>
+                
+                <motion.div className="input-group" variants={itemVariants}>
+                    <label className="input-label">Email address</label>
+                    <div className="input-wrapper">
+                        <Mail className="input-icon" />
+                        <input 
+                        type="email" 
+                        className="modern-input" 
+                        placeholder="       you@example.com" 
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        />
+                    </div>
+                </motion.div>
+
+                <motion.div className="input-group" variants={itemVariants}>
+                    <label className="input-label">Password</label>
+                    <div className="input-wrapper">
+                        <Lock className="input-icon" />
+                        <input 
+                        type={showPassword ? "text" : "password"}
+                        className="modern-input password-input-field" 
+                        placeholder="       Enter your password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        />
+                        <button 
+                        type="button"
+                        className="password-toggle"
+                        onClick={() => setShowPassword(!showPassword)}
+                        >
+                        {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                        </button>
+                    </div>
+                </motion.div>
+
 
                 <button className="primary-btn" onClick={handleSignIn}>
                     Continue
