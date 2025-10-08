@@ -169,15 +169,15 @@ export default function BehavioralInterviewSimulation() {
                             {questions && questions.length > 0 && showSimulation ? (
                                 <BehavioralSimulationPage questions={questions}/>
                             ) : (
-                                    <Box className="behavioral-loading-container" style={{ textAlign: 'center' }}>
-                                        <CircularProgress
-                                            size={60}
-                                            className="behavioral-loading-spinner"
-                                        />
-                                        <Typography className="behavioral-loading-text">
-                                            Generating your simulation experience...
-                                        </Typography>
-                                    </Box>
+                                <Box className="behavioral-loading-container" style={{ textAlign: 'center' }}>
+                                    <CircularProgress
+                                        size={60}
+                                        className="behavioral-loading-spinner"
+                                    />
+                                    <Typography className="behavioral-loading-text">
+                                        Generating your simulation experience...
+                                    </Typography>
+                                </Box>
                             )}
                         </Box>
                     </Box>
