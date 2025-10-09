@@ -3,7 +3,7 @@ import Box from '@mui/material/Box';
 import CssBaseline from '@mui/material/CssBaseline';
 import Grid from '@mui/material/Grid';
 import DefaultAppLayout from "../../DefaultAppLayout.jsx";
-import DashboardCard from './components/DashboardCard';
+import DashboardCard from './components/DashboardCard.jsx';
 
 export default function Dashboard() {
     return (
