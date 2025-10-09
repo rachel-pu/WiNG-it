@@ -14,6 +14,7 @@ const SignUp = () => {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
+  const navigate = useNavigate();
   const itemVariants = {
       hidden: { opacity: 0, y: 10 },
       visible: { opacity: 1, y: 0 }

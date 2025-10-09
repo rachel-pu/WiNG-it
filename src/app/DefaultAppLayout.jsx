@@ -8,6 +8,7 @@ import { HiChatBubbleLeftRight } from "react-icons/hi2";
 import { IoMdSettings } from "react-icons/io";
 import { Link } from 'react-router-dom';
 import { motion } from "motion/react";
+import { useNavigate } from "react-router-dom";
 
 
 const DefaultAppLayout = ({ title, color, titlecolor, elevation, children }) => {
@@ -64,13 +65,15 @@ const DefaultAppLayout = ({ title, color, titlecolor, elevation, children }) => 
 };
 
 export const Logo = ({ open }) => {
+  const navigate = useNavigate();
   return (
     <Link
-      href="/"
+      to="/"
       className="relative z-20 flex items-center space-x-2 py-1 text-sm font-normal text-black no-underline"
     >
       <GiFluffyWing color="#324FD1" size={25} className="shrink-0" />
       <motion.span
+        onClick={() => navigate("/")}
         animate={{
           opacity: open ? 1 : 0,
           width: open ? "auto" : 0,
