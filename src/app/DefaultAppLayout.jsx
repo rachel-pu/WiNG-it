@@ -5,6 +5,7 @@ import { Sidebar, SidebarBody, SidebarLink } from "../components/sidebar";
 import { GiFluffyWing } from "react-icons/gi";
 import { MdDashboard } from "react-icons/md";
 import { HiChatBubbleLeftRight } from "react-icons/hi2";
+import { IoMdSettings } from "react-icons/io";
 import { Link } from 'react-router-dom';
 import { motion } from "motion/react";
 
@@ -23,6 +24,11 @@ const DefaultAppLayout = ({ title, color, titlecolor, elevation, children }) => 
       label: "Behavioral Interview",
       href: "/behavioral",
       icon: <HiChatBubbleLeftRight className="h-6 w-6 shrink-0 text-neutral-700 dark:text-neutral-200" />,
+    },
+    {
+      label: "Settings",
+      href: "/settings",
+      icon: <IoMdSettings className="h-6 w-6 shrink-0 text-neutral-700 dark:text-neutral-200" />,
     },
   ];
 
