@@ -1,9 +1,9 @@
 "use client";
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import HomePageNavbar from "../../../components/HomePageNavbar";
 import { supabase } from '../../../../supabase.js'
 import { motion } from 'framer-motion';
-import { Mail, Lock, Eye, EyeOff, User} from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff, User, Underline} from 'lucide-react';
 import { useNavigate } from "react-router-dom";
 import './Signup.css';
 
@@ -57,6 +57,24 @@ const SignUp = () => {
     }
   };
 
+  const googleSignUp = async () => {
+    setError('');
+    try {
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/signin`,
+        },
+      });
+
+      if (error) throw error;
+      console.log('Google OAuth initiated:', data);
+    } catch (err) {
+      console.error('Google sign-up error:', err);
+      setError(err.message || 'An error occurred during Google sign-up.');
+    }
+  };
+
 
   return (
     <div>
@@ -65,8 +83,7 @@ const SignUp = () => {
         <div className="auth-card">
             <h1 className="auth-title">Sign Up</h1>
             <motion.div variants={itemVariants}>
-                {/* <button className="google-sign-in-btn" onClick={googleSignIn}> */}
-                <button className="google-sign-in-btn">
+                <button className="google-sign-in-btn" onClick={googleSignUp}>
                     <span className="google-icon-modern"></span>
                     <span>Continue with Google</span>
                 </button>
@@ -77,8 +94,6 @@ const SignUp = () => {
                 <span className="divider-text">or</span>
                 <span className="divider-line"></span>
             </motion.div>
-            <p className="auth-description">Sign up with your email to continue.</p>
-
             {error && <div className="message-box error-box">{error}</div>}
 
             <motion.div className="input-group" variants={itemVariants}>
@@ -133,6 +148,12 @@ const SignUp = () => {
             <button className="primary-btn" onClick={handleSignUp}>
                 Continue
             </button>
+            <p
+              className="auth-description cursor-pointer"
+              onClick={() => navigate("/signin")}
+            >
+              Have an account? Sign in instead.
+            </p>
         </div>
       </div>
     </div>

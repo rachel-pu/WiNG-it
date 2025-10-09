@@ -19,10 +19,8 @@ const SignIn = () => {
     };
 
     const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-    const isStrongPassword = (password) =>
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(password);
 
-     const handleSignIn = async () => {
+    const handleSignIn = async () => {
         setError('');
 
         if (!isValidEmail(email)) return setError('Please enter a valid email address.');
@@ -50,25 +48,26 @@ const SignIn = () => {
     };
 
 
-     const handleGoogleSignIn = async () => {
+    const googleSignIn = async () => {
         setError('');
 
         try {
             const { data, error } = await supabase.auth.signInWithOAuth({
-                provider: 'google',
-                options: {
-                    redirectTo: `${window.location.origin}/signin`,
-                },
+            provider: 'google',
+            options: {
+                redirectTo: `${window.location.origin}/dashboard`,
+            },
             });
 
             if (error) throw error;
 
-            console.log('Redirecting to Google OAuth:', data.url);
+            console.log('Google OAuth initiated:', data);
         } catch (err) {
-            console.error("Google sign-in error:", err);
-            setError(err.message || "Failed to sign in with Google. Please try again.");
+            console.error('Google sign-in error:', err);
+            setError(err.message || 'An error occurred during Google sign-in.');
         }
     };
+
 
 
     return (
@@ -78,7 +77,7 @@ const SignIn = () => {
             <div className="auth-card">
                 <h1 className="auth-title">Welcome Back</h1>
                 <motion.div variants={itemVariants}>
-                    <button className="google-sign-in-btn" onClick={handleGoogleSignIn}>
+                    <button className="google-sign-in-btn" onClick={googleSignIn}>
                         <span className="google-icon-modern"></span>
                         <span>Continue with Google</span>
                     </button>
@@ -131,6 +130,13 @@ const SignIn = () => {
                 <button className="primary-btn" onClick={handleSignIn}>
                     Continue
                 </button>
+                <p
+                className="auth-description cursor-pointer"
+                style={{ marginTop: 10, color: "#2381edff", textDecoration: "underline" }}
+                onClick={() => navigate("/signup")}
+                >
+                Don't have an account? Sign up instead.
+                </p>
             </div>
         </div>
     </div>
