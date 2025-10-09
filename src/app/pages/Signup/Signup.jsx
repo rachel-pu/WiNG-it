@@ -2,8 +2,7 @@
 import { useState, useEffect } from 'react';
 import { getAuth, signOut, createUserWithEmailAndPassword, sendEmailVerification, onAuthStateChanged } from 'firebase/auth';
 import { getDatabase, ref, set, update, get } from 'firebase/database';
-import './Signin.css';
-import app from "../../../lib/firebase.jsx";
+import './Signup.css';
 import HomePageNavbar from "../../../components/HomePageNavbar";
 import { supabase } from '../../../../supabase.js'
 
