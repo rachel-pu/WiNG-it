@@ -36,9 +36,6 @@ functions/.env
 *.tsbuildinfo
 next-env.d.ts
 
-# clerk configuration (can include secrets)
-/.clerk/
-
 #
 config/mercurial-idiom-451220-i3.jsonfunctions/.env
 firebase-debug.log
