@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import {motion, useReducedMotion} from "framer-motion";
 import Box from '@mui/material/Box';
-import Grid from '@mui/material/Grid2';
+import Grid from '@mui/material/Grid';
 import {Typography} from "@mui/material";
 import Stack from '@mui/material/Stack';
 import {Button} from "@mui/material";

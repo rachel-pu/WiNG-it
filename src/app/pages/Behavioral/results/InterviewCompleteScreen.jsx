@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Box, Typography, Grid2 as Grid, Card, CssBaseline, Toolbar } from "@mui/material";
+import { Box, Typography, Grid as Grid, Card, CssBaseline, Toolbar } from "@mui/material";
 import { motion } from "framer-motion";
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import Confetti from 'react-confetti';
