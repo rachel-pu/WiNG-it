@@ -1,5 +1,3 @@
-// Replace your current dashboard page.js content with this:
-
 "use client";
 import Box from '@mui/material/Box';
 import CssBaseline from '@mui/material/CssBaseline';

@@ -36,11 +36,12 @@
 .modern-input {
   width: 100%;
   padding: 12px 14px;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
   border: 2px solid #e2e8f0;
   border-radius: 12px;
   font-size: 15px;
   box-sizing: border-box;
+  text-indent: 30px;
 }
 
 .input-wrapper {
@@ -102,4 +103,61 @@
   .auth-title {
     font-size: 22px;
   }
+}
+
+
+
+.google-sign-in-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 14px 20px;
+  background: white;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #334155;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  margin-bottom: 24px;
+}
+
+.google-sign-in-btn:hover {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.google-sign-in-btn:active {
+  transform: translateY(0);
+}
+
+.google-icon-modern {
+  width: 20px;
+  height: 20px;
+  background: url('https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg') no-repeat center center;
+  background-size: contain;
+}
+
+.auth-divider {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 24px 0;
+}
+
+.divider-line {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(to right, transparent, #e2e8f0, transparent);
+}
+
+.divider-text {
+  font-size: 13px;
+  color: #94a3b8;
+  font-weight: 500;
 }

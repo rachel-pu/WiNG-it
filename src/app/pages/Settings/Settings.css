@@ -1,0 +1,160 @@
+.settings-page {
+    min-height: 100vh;
+    background:linear-gradient(135deg, #444465ff 0%, #33426aff 50%, #27548bff 100%);
+    padding:20px;
+}
+
+.settings-container {
+    max-width: 64rem; 
+    margin: 0 auto;
+}
+
+.settings-title {
+    font-size: 2.25rem; 
+    font-weight: 700;
+    color: #ffffff;
+    margin-bottom: 0.5rem;
+    margin-top: 50px;
+}
+
+.settings-subtitle {
+    color: #9ca3af; 
+    margin-bottom: 2rem;
+}
+
+.settings-card {
+    background-color: #c2dbf9ff; 
+    border-radius: 1rem; 
+    padding: 1.5rem; 
+    margin-bottom: 1.5rem; 
+    box-shadow: 0 10px 15px rgba(0,0,0,0.1); 
+}
+
+.settings-card h2 {
+    font-size: 1.5rem;
+    font-weight: 600; 
+    color: #463d3d;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #374151; 
+}
+
+.settings-grid-2 {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+@media (min-width: 768px) {
+    .settings-grid-2 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+.form-field {
+    margin-bottom: 1.5rem;
+}
+
+.form-label {
+    display: block;
+    font-size: 0.875rem; 
+    font-weight: 500;
+    color: #2f343b; 
+    margin-bottom: 0.5rem; 
+}
+
+.form-display {
+    flex: 1;
+    background-color: #1f2937; 
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    color: #e5e7eb;
+}
+
+.form-display.textarea-display {
+    min-height: 6rem;
+}
+
+.form-display.disabled {
+    opacity: 0.6;
+}
+
+.form-input, .form-textarea {
+    flex: 1;
+    background-color: #374151; 
+    color: #ffffff;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    border: 1px solid #4b5563; 
+    outline: none;
+    font-family: inherit;
+    margin: 10px;
+}
+
+.form-textarea {
+    resize: none;
+
+}
+
+.form-input:focus, .form-textarea:focus {
+    border-color: #3b82f6;
+}
+
+.button {
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    font-weight: 500;
+    transition: all 0.2s;
+    cursor: pointer;
+    border: none;
+    white-space: nowrap;
+}
+
+.button-edit {
+    background-color: #25af23;
+    color: white;
+    padding: 10px 25px;
+    border-radius: 24px;
+    margin-top: 10px;
+    margin-bottom: 7px;
+}
+
+.button-edit:hover {
+    background-color: rgb(86, 234, 131); 
+}
+
+.button-save {
+    background-color: #16a34a; 
+    color: white;
+}
+
+.button-save:hover {
+    background-color: #15803d; 
+}
+
+.button-upload {
+    background-color: #2563eb;
+    color: white;
+    padding: 10px 25px;
+    border-radius: 24px;
+    margin-top: 10px;
+    margin-bottom: 7px;
+}
+
+.button-upload:hover {
+    background-color: #1d4ed8;
+}
+
+.button-download {
+    background-color: #374151; 
+    color: white;
+    padding: 10px 25px;
+    border-radius: 24px;
+    margin-top: 10px;
+    margin-bottom: 7px;
+}
+
+.button-download:hover {
+    background-color: #4b5563;
+}
