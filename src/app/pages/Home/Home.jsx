@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import {motion, inView, animate, useReducedMotion} from "framer-motion";
+import {motion, useReducedMotion} from "framer-motion";
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid2';
 import {Typography} from "@mui/material";
@@ -11,13 +11,41 @@ import { FaPencilRuler } from "react-icons/fa";
 import { IoDocumentText } from "react-icons/io5";
 import { BiSolidMessageCheck } from "react-icons/bi";
 import HomePageNavbar from "../../../components/HomePageNavbar";
+import { supabase } from '../../../../supabase.js'
+import { useNavigate } from "react-router-dom";
 import "./HomePage.css";
 import "../../globals.css"
+
 
 const pages = ['Why WiNG.it', 'Our Story', 'Get Started'];
 export default function HomePage() {
     const [isScrolling, setIsScrolling] = useState(false);
+    const [session, setSession] = useState(null);
+    const navigate = useNavigate();
     const shouldReduceMotion = useReducedMotion();
+
+    useEffect(() => {
+        const getSession = async () => {
+        const { data } = await supabase.auth.getSession();
+        setSession(data?.session);
+        };
+        getSession();
+
+        // Listen for auth state changes
+        const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
+        setSession(session);
+        });
+
+        return () => listener.subscription.unsubscribe();
+    }, []);
+
+    const handleStart = () => {
+        if (session) {
+        navigate('/dashboard');
+        } else {
+        navigate('/signin');
+        }
+    };
 
     // Scroll detection to pause heavy animations during fast scroll
     useEffect(() => {
@@ -127,8 +155,7 @@ export default function HomePage() {
                             >
                                 <motion.div variants={itemVariants}>
                                     <Button
-                                        href="/signin"
-                                        // href = '/dashboard'
+                                        onClick={handleStart}
                                         className="primary-cta-button"
                                         size="large"
                                     >
@@ -1197,7 +1224,7 @@ export default function HomePage() {
 
                 <motion.div variants={itemVariants}>
                     <motion.a
-                        href='/dashboard'
+                        onClick={handleStart}
                         whileHover={{ scale: 1.05 }}
                         transition={{ duration: 0.2 }}
                         style={{ display: 'inline-block' }}
