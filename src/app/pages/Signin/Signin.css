@@ -34,6 +34,7 @@
   border-radius: 12px;
   font-size: 15px;
   box-sizing: border-box;
+  text-indent: 30px;
 }
 
 .input-wrapper {
@@ -167,7 +168,7 @@
 
 .input-icon {
   position: absolute;
-  left: 15px;
+  left: 20px;
   top: 15px;
   width: 18px;
   height: 20px;
