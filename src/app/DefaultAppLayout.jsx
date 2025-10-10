@@ -1,18 +1,18 @@
 "use client";
-import{ useEffect, useState } from "react";
+import{ useState } from "react";
 import { cn } from "../lib/utils";
 import { Sidebar, SidebarBody, SidebarLink } from "../components/sidebar";
 import { GiFluffyWing } from "react-icons/gi";
 import { MdDashboard } from "react-icons/md";
 import { HiChatBubbleLeftRight } from "react-icons/hi2";
 import { IoMdSettings } from "react-icons/io";
-import { Link } from 'react-router-dom';
+import { FaSignOutAlt } from "react-icons/fa";
 import { motion } from "motion/react";
 import { useNavigate } from "react-router-dom";
+import { supabase } from "../../supabase.js";
 
 
-const DefaultAppLayout = ({ title, color, titlecolor, elevation, children }) => {
-  const [ready, setReady] = useState(false);
+const DefaultAppLayout = ({ children }) => {
   const [open, setOpen] = useState(false);
 
   const links = [
@@ -33,9 +33,6 @@ const DefaultAppLayout = ({ title, color, titlecolor, elevation, children }) => 
     },
   ];
 
-  useEffect(() => {
-    setReady(true);
-  }, []);
 
   return (
     <div className="flex flex-col h-screen">
@@ -64,26 +61,45 @@ const DefaultAppLayout = ({ title, color, titlecolor, elevation, children }) => 
   );
 };
 
-export const Logo = ({ open }) => {
+export const Logo = ({ open, onSignOut }) => {
   const navigate = useNavigate();
+
+  const handleSignOut = async () => {
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      console.error("Error signing out:", error.message);
+    } else {
+      navigate("/signin");
+    }
+  };
+
   return (
-    <Link
-      to="/"
-      className="relative z-20 flex items-center space-x-2 py-1 text-sm font-normal text-black no-underline"
-    >
-      <GiFluffyWing color="#324FD1" size={25} className="shrink-0" />
-      <motion.span
-        onClick={() => navigate("/")}
-        animate={{
-          opacity: open ? 1 : 0,
-          width: open ? "auto" : 0,
-        }}
-        className="font-black whitespace-nowrap overflow-hidden text-black dark:text-white"
-        style={{ fontFamily: 'Satoshi Black, sans-serif', fontSize: 25}}
-      >
-        WiNG.it
-      </motion.span>
-    </Link>
+    <div className="relative flex items-center justify-between w-full px-1">
+      {/* Left side: Logo + Text */}
+      <div className="flex items-center">
+        <GiFluffyWing color="#324FD1" size={25} className="shrink-0" />
+        <motion.span
+          onClick={() => navigate("/")}
+          animate={{
+            opacity: open ? 1 : 0,
+            width: open ? "auto" : 0,
+          }}
+          className="font-black whitespace-nowrap overflow-hidden text-black dark:text-white"
+          style={{ fontFamily: 'Satoshi Black, sans-serif', fontSize: 25 }}
+        >
+          WiNG.it
+        </motion.span>
+      </div>
+
+      {/* Right side: Sign Out */}
+      <div>
+        <FaSignOutAlt
+          size={20}
+          className="cursor-pointer text-black dark:text-white"
+          onClick={handleSignOut}
+        />
+      </div>
+    </div>
   );
 };
 

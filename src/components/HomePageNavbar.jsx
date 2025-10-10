@@ -121,7 +121,7 @@ export default function HomePagenNavbar() {
 
                                 <Button
                                     color="inherit"
-                                    href="/signin"
+                                    onClick={() => navigate('/signin')}
                                     sx={{
                                         fontSize: '1.05rem',
                                         fontFamily: 'Satoshi Medium',
@@ -148,7 +148,7 @@ export default function HomePagenNavbar() {
                         variant="h5"
                         noWrap
                         component="a"
-                        href="#app-bar-with-responsive-menu"
+                        href="/"
                         sx={{
                             mr: 2,
                             display: { xs: 'flex', md: 'none' },

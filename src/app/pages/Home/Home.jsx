@@ -39,14 +39,6 @@ export default function HomePage() {
         return () => listener.subscription.unsubscribe();
     }, []);
 
-    const handleStart = () => {
-        if (session) {
-        navigate('/dashboard');
-        } else {
-        navigate('/signin');
-        }
-    };
-
     // Scroll detection to pause heavy animations during fast scroll
     useEffect(() => {
         let scrollTimer;
@@ -155,7 +147,7 @@ export default function HomePage() {
                             >
                                 <motion.div variants={itemVariants}>
                                     <Button
-                                        onClick={handleStart}
+                                        onClick={() => navigate('/signin')}
                                         className="primary-cta-button"
                                         size="large"
                                     >
@@ -1224,7 +1216,6 @@ export default function HomePage() {
 
                 <motion.div variants={itemVariants}>
                     <motion.a
-                        onClick={handleStart}
                         whileHover={{ scale: 1.05 }}
                         transition={{ duration: 0.2 }}
                         style={{ display: 'inline-block' }}
@@ -1232,6 +1223,7 @@ export default function HomePage() {
                         <button
                             className="relative inline-flex overflow-hidden rounded-full p-[1px] focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 focus:ring-offset-slate-50 transition-all duration-300 hover:shadow-[0_0_40px_rgba(147,112,219,0.6)]"
                             style={{ height: '64px' }}
+                            onClick={() => navigate('/signin')}
                         >
                             <span className="absolute inset-[-1000%] animate-[spin_2s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#E2CBFF_0%,#393BB2_50%,#E2CBFF_100%)]" />
                             <span
