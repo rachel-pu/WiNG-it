@@ -43,14 +43,13 @@ export default function Settings() {
                 <label className="form-label">
                     {label}
                 </label>
-                <div className="form-display">
+                <div className="form-row">
                     {isEditing ? (
                         isTextarea ? (
                             <textarea
                                 value={formData[field]}
                                 onChange={(e) => handleChange(field, e.target.value)}
                                 className="form-textarea"
-                                rows="4"
                             />
                         ) : (
                             <input
@@ -61,18 +60,14 @@ export default function Settings() {
                             />
                         )
                     ) : (
-                        <div className={`form-textarea ${isTextarea ? 'min-h-24' : ''} ${!editable ? 'opacity-60' : ''}`}>
+                        <div className={`form-display ${isTextarea ? 'textarea-display' : ''}`}>
                             {formData[field] || 'Not set'}
                         </div>
                     )}
                     {editable && (
                         <button
                             onClick={() => isEditing ? handleSave(field) : handleEdit(field)}
-                            className={`button-edit ${
-                                isEditing 
-                                    ? 'bg-green-600 hover:bg-green-700 text-white' 
-                                    : 'bg-blue-600 hover:bg-blue-700 text-white'
-                            }`}
+                            className={isEditing ? 'button-save' : 'button-edit'}
                         >
                             {isEditing ? 'Save' : 'Edit'}
                         </button>
@@ -129,17 +124,20 @@ export default function Settings() {
                         {/* Professional Information Section */}
                         <div className="settings-card">
                             <h2>Professional Information</h2>
-                            
+
                             {renderField('Current Job/Position', 'currentJob')}
-                            {renderField('Current Resume', 'resume')}
-                            
-                            <div className="mt-6 flex gap-3">
-                                <button className="button-upload">
-                                    Upload New Resume
-                                </button>
-                                <button className="button-download">
-                                    Download Current
-                                </button>
+
+                            <div className="form-field">
+                                <label className="form-label">Resume</label>
+                                <div className="resume-section">
+                                    <div className="resume-filename">{formData.resume}</div>
+                                    <button className="button-upload">
+                                        Upload New
+                                    </button>
+                                    <button className="button-download">
+                                        Download
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
