@@ -1,9 +1,8 @@
 "use client";
-import { useState, useEffect } from 'react';
-import HomePageNavbar from "../../../../components/HomePageNavbar";
+import { useState } from 'react';
 import { supabase } from '../../../../../supabase.js'
 import { motion } from 'framer-motion';
-import { Mail, Lock, Eye, EyeOff, User, Underline} from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff, User, ArrowLeft} from 'lucide-react';
 import { useNavigate } from "react-router-dom";
 import './Signup.css';
 
@@ -78,9 +77,25 @@ const SignUp = () => {
 
   return (
     <div>
-        <HomePageNavbar/>
         <div className="auth-page">
         <div className="auth-card">
+          <button
+            onClick={() => navigate('/')}
+            sx={{
+                color: '#64748b',
+                '&:hover': {
+                backgroundColor: 'rgba(100, 116, 139, 0.1)',
+                color: '#1e293b'
+                },
+                transition: 'all 0.3s ease',
+                textTransform: 'none',
+                fontFamily: 'DM Sans, sans-serif',
+                gap: '8px',
+                size: '20px'
+            }}
+            >
+            <ArrowLeft size={20} />
+        </button>
             <h1 className="auth-title">Sign Up</h1>
             <motion.div variants={itemVariants}>
                 <button className="google-sign-in-btn" onClick={googleSignUp}>
