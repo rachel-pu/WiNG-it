@@ -1,11 +1,39 @@
 "use client";
+import { useEffect } from "react";
 import Box from '@mui/material/Box';
-import CssBaseline from '@mui/material/CssBaseline';
 import Grid from '@mui/material/Grid';
 import DefaultAppLayout from "../../DefaultAppLayout.jsx";
 import DashboardCard from './components/DashboardCard.jsx';
+import { supabase } from '../../../../supabase.js'
 
 export default function Dashboard() {
+     useEffect(() => {
+        const setUserCookie = async () => {
+        const { data, error } = await supabase.auth.getSession();
+        if (error || !data.session) return;
+
+        const userId = data.session.user.id;
+        document.cookie = `user_id=${userId}; path=/; max-age=604800; secure; samesite=strict`;
+        };
+        console.log(document.cookie);
+        setUserCookie();
+    }, []);
+
+    useEffect(() => {
+        const {
+            data: { subscription },
+        } = supabase.auth.onAuthStateChange((_event, session) => {
+            if (session?.user) {
+            document.cookie = `user_id=${session.user.id}; path=/; max-age=604800; secure; samesite=strict`;
+            } else {
+            document.cookie = 'user_id=; Max-Age=0; path=/;';
+            }
+        });
+
+        return () => subscription.unsubscribe();
+    }, []);
+
+
     return (
         <Box>
             <DefaultAppLayout>
