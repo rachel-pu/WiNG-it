@@ -1,11 +1,16 @@
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
 .auth-page {
-  min-height: 100vh;
+  height: 105vh;
   display: flex;
   justify-content: center;
   align-items: center;
   background: linear-gradient(135deg, #444465ff 0%, #33426aff 50%, #27548bff 100%);
   font-family: 'Inter', sans-serif;
-  margin-top: -30px;
 }
 
 .auth-card {

@@ -7,14 +7,33 @@ import Dashboard from './app/pages/Dashboard/Dashboard.jsx';
 import Behavioral from './app/pages/Tools/Behavioral/Behavioral.jsx';
 import InterviewResults from "./app/pages/Tools/Behavioral/results/result.jsx"
 import ProtectedRoute from './components/ProtectedRoute.jsx'; 
+import PublicRoute from './components/PublicRoute.jsx'; 
 
 function App() {
   return (
     <div>
       <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/signin" element={<Signin />} />
-        <Route path="/signup" element={<Signup />} />
+        <Route path="/"
+          element={
+            <PublicRoute>
+              <Home />
+            </PublicRoute>
+          }
+        />
+        <Route path="/signin"
+          element={
+            <PublicRoute>
+              <Signin />
+            </PublicRoute>
+          }
+        />
+        <Route path="/signup"
+          element={
+            <PublicRoute>
+              <Signup />
+            </PublicRoute>
+          }
+        />
         <Route path="/settings"
           element={
             <ProtectedRoute>
