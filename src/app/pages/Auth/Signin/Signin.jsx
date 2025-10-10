@@ -30,7 +30,6 @@ const SignIn = () => {
                 email,
                 password,
             });
-
             if (error) throw error;
 
             console.log('User signed in:', data.user);

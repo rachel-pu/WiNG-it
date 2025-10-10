@@ -1,8 +1,10 @@
-import { useState } from 'react';
+import { useState, useEffect} from 'react';
 import Box from '@mui/material/Box';
 import DefaultAppLayout from "../../DefaultAppLayout.jsx";
+import { supabase } from '../../../../supabase.js';
 import "./Settings.css"
 export default function Settings() {
+    const [session, setSession] = useState(null);
     const [formData, setFormData] = useState({
         firstName: 'John',
         lastName: 'Doe',
@@ -17,6 +19,24 @@ export default function Settings() {
         minor: 'Mathematics',
         currentJob: 'Software Engineering Intern at Tech Corp'
     });
+
+    useEffect(() => {
+        // Helper to get a cookie value by name
+        const getCookie = (name) => {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
+        };
+
+        const userId = getCookie('user_id');
+        if (userId) {
+            console.log('User ID from cookie:', userId);
+            setFormData((prev) => ({ ...prev, userId }));
+        } else {
+            console.log('No user_id cookie found');
+        }
+    }, []);
+
 
     const [sections, setSections] = useState([
         {
