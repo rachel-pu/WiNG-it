@@ -18,61 +18,56 @@ export default function Settings() {
         currentJob: 'Software Engineering Intern at Tech Corp'
     });
 
-    const [editMode, setEditMode] = useState({});
+    const [editingSection, setEditingSection] = useState(null);
 
-    const handleEdit = (field) => {
-        setEditMode({ ...editMode, [field]: true });
+    const handleEditSection = (section) => {
+        setEditingSection(section);
     };
 
-    const handleSave = (field) => {
-        setEditMode({ ...editMode, [field]: false });
+    const handleSaveSection = (section) => {
+        setEditingSection(null);
         // Here you would typically save to backend
-        console.log('Saved:', field, formData[field]);
+        console.log('Saved section:', section);
+    };
+
+    const handleCancelSection = () => {
+        setEditingSection(null);
+        // Here you would typically reset formData to previous values
     };
 
     const handleChange = (field, value) => {
         setFormData({ ...formData, [field]: value });
     };
 
-    const renderField = (label, field, editable = true) => {
-        const isEditing = editMode[field];
+    const renderField = (label, field, isEditable = true) => {
         const isTextarea = field === 'bio';
+        const isEditing = editingSection && isEditable;
 
         return (
             <div className="form-field">
                 <label className="form-label">
                     {label}
                 </label>
-                <div className="form-row">
-                    {isEditing ? (
-                        isTextarea ? (
-                            <textarea
-                                value={formData[field]}
-                                onChange={(e) => handleChange(field, e.target.value)}
-                                className="form-textarea"
-                            />
-                        ) : (
-                            <input
-                                type="text"
-                                value={formData[field]}
-                                onChange={(e) => handleChange(field, e.target.value)}
-                                className="form-input"
-                            />
-                        )
+                {isEditing ? (
+                    isTextarea ? (
+                        <textarea
+                            value={formData[field]}
+                            onChange={(e) => handleChange(field, e.target.value)}
+                            className="form-textarea"
+                        />
                     ) : (
-                        <div className={`form-display ${isTextarea ? 'textarea-display' : ''}`}>
-                            {formData[field] || 'Not set'}
-                        </div>
-                    )}
-                    {editable && (
-                        <button
-                            onClick={() => isEditing ? handleSave(field) : handleEdit(field)}
-                            className={isEditing ? 'button-save' : 'button-edit'}
-                        >
-                            {isEditing ? 'Save' : 'Edit'}
-                        </button>
-                    )}
-                </div>
+                        <input
+                            type="text"
+                            value={formData[field]}
+                            onChange={(e) => handleChange(field, e.target.value)}
+                            className="form-input"
+                        />
+                    )
+                ) : (
+                    <div className={`form-display ${isTextarea ? 'textarea-display' : ''} ${!isEditable ? 'disabled' : ''}`}>
+                        {formData[field] || 'Not set'}
+                    </div>
+                )}
             </div>
         );
     };
@@ -87,8 +82,33 @@ export default function Settings() {
 
                         {/* Personal Information Section */}
                         <div className="settings-card">
-                            <h2>Personal Information</h2>
-                            
+                            <div className="settings-card-header">
+                                <h2>Personal Information</h2>
+                                {editingSection === 'personal' ? (
+                                    <div className="button-group">
+                                        <button
+                                            onClick={() => handleSaveSection('personal')}
+                                            className="button-save"
+                                        >
+                                            Save Changes
+                                        </button>
+                                        <button
+                                            onClick={handleCancelSection}
+                                            className="button-cancel"
+                                        >
+                                            Cancel
+                                        </button>
+                                    </div>
+                                ) : (
+                                    <button
+                                        onClick={() => handleEditSection('personal')}
+                                        className="button-edit"
+                                    >
+                                        Edit
+                                    </button>
+                                )}
+                            </div>
+
                             <div className="settings-grid-2">
                                 <div>
                                     {renderField('First Name', 'firstName')}
@@ -99,18 +119,43 @@ export default function Settings() {
                             </div>
 
                             {renderField('User ID', 'userId', false)}
-                            {renderField('Email', 'email', false)}
+                            {renderField('Email', 'email')}
                             {renderField('Password', 'password', false)}
                             {renderField('Bio', 'bio')}
                         </div>
 
                         {/* Academic Information Section */}
                         <div className="settings-card">
-                            <h2>Academic Information</h2>
-                            
+                            <div className="settings-card-header">
+                                <h2>Academic Information</h2>
+                                {editingSection === 'academic' ? (
+                                    <div className="button-group">
+                                        <button
+                                            onClick={() => handleSaveSection('academic')}
+                                            className="button-save"
+                                        >
+                                            Save Changes
+                                        </button>
+                                        <button
+                                            onClick={handleCancelSection}
+                                            className="button-cancel"
+                                        >
+                                            Cancel
+                                        </button>
+                                    </div>
+                                ) : (
+                                    <button
+                                        onClick={() => handleEditSection('academic')}
+                                        className="button-edit"
+                                    >
+                                        Edit
+                                    </button>
+                                )}
+                            </div>
+
                             {renderField('School', 'school')}
                             {renderField('School Year', 'schoolYear')}
-                            
+
                             <div className="settings-grid-2">
                                 <div>
                                     {renderField('Major', 'major')}
@@ -123,7 +168,32 @@ export default function Settings() {
 
                         {/* Professional Information Section */}
                         <div className="settings-card">
-                            <h2>Professional Information</h2>
+                            <div className="settings-card-header">
+                                <h2>Professional Information</h2>
+                                {editingSection === 'professional' ? (
+                                    <div className="button-group">
+                                        <button
+                                            onClick={() => handleSaveSection('professional')}
+                                            className="button-save"
+                                        >
+                                            Save Changes
+                                        </button>
+                                        <button
+                                            onClick={handleCancelSection}
+                                            className="button-cancel"
+                                        >
+                                            Cancel
+                                        </button>
+                                    </div>
+                                ) : (
+                                    <button
+                                        onClick={() => handleEditSection('professional')}
+                                        className="button-edit"
+                                    >
+                                        Edit
+                                    </button>
+                                )}
+                            </div>
 
                             {renderField('Current Job/Position', 'currentJob')}
 

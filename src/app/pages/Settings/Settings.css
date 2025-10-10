@@ -31,13 +31,25 @@
     box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
 
+.settings-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid #e5e7eb;
+}
+
 .settings-card h2 {
     font-size: 1.125rem;
     font-weight: 600;
     color: #1f2937;
-    margin-bottom: 1rem;
-    padding-bottom: 0.75rem;
-    border-bottom: 1px solid #e5e7eb;
+    margin: 0;
+}
+
+.button-group {
+    display: flex;
+    gap: 0.5rem;
 }
 
 .settings-grid-2 {
@@ -65,14 +77,8 @@
     margin-bottom: 0.375rem;
 }
 
-.form-row {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-}
-
 .form-display {
-    flex: 1;
+    width: 100%;
     background-color: #f9fafb;
     padding: 0.5rem 0.75rem;
     border-radius: 0.375rem;
@@ -90,7 +96,7 @@
 }
 
 .form-input, .form-textarea {
-    flex: 1;
+    width: 100%;
     background-color: #ffffff;
     color: #1f2937;
     padding: 0.5rem 0.75rem;
@@ -104,6 +110,7 @@
 .form-textarea {
     resize: vertical;
     min-height: 4rem;
+    width: 100%;
 }
 
 .form-input:focus, .form-textarea:focus {
@@ -145,6 +152,24 @@
 .button-save:hover {
     background-color: #059669;
     transform: translateY(-1px);
+}
+
+.button-cancel {
+    background-color: transparent;
+    color: #6b7280;
+    padding: 0.375rem 0.875rem;
+    border-radius: 0.375rem;
+    border: 1px solid #d1d5db;
+    font-weight: 500;
+    font-size: 0.8125rem;
+    transition: all 0.15s;
+    cursor: pointer;
+}
+
+.button-cancel:hover {
+    background-color: #f9fafb;
+    color: #374151;
+    border-color: #9ca3af;
 }
 
 .button-upload {
