@@ -42,7 +42,7 @@ const SignUp = () => {
         password,
         options: {
           data: { name },
-          emailRedirectTo: `/signin`,
+          emailRedirectTo: `${window.location.origin}/signin`,
         },
       });
 
@@ -78,7 +78,7 @@ const SignUp = () => {
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `/signin`,
+          redirectTo: `${window.location.origin}/signin`,
         },
       });
 
