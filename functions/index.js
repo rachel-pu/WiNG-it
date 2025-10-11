@@ -359,17 +359,27 @@ const saveResponse = functions.https.onRequest((req, res) => {
           }
             Now analyze the transcript from above (not the example transcript) and fill in the starAnswerParsed variable.
 
-          - Finally, using the improvedResponse, extract the response into the STAR interview method components and fill in the starAnswerParsedImproved variable
-          This should be formatted the same as the starAnswerParsed variable and follow the same starAnswerParsed Important rules.
-          For example:
+          - Finally, using the improvedResponse, extract the response into the STAR interview method components and fill in the starAnswerParsedImproved variable using the following rules:
+        
+            starAnswerParsedImproved Important rules:
+          - DO NOT summarize, rephrase, or clean the text.
+          - DO NOT add periods at the end of values.
+          - DO NOT make up any information.
+          - Keep filler words, stutters, and unfinished phrases exactly as in the transcript.
+          - Output ONLY valid JSON with exactly 4 keys: situation, task, action, result.
+
+           Example Input Transcript:
+          "In one of my school projects, I was tasked with building a database system, but I initially had no experience with SQL. To overcome this, I quickly learned SQL through online tutorials and hands-on practice. I then designed and implemented a fully functional database that met all project requirements. As a result, I gained valuable experience in database design and significantly improved my technical confidence"
 
           Example Output JSON:
           {
-            "situation": "I was assigned a school project that required building a database, but I initially had no experience with SQL",
-            "task": "I was assigned a school project that required building a database",
-            "action": "I quickly learned SQL through tutorials and practice",
-            "result": "successfully completing the project and gaining confidence in database management"
+            "situation": "In one of my school projects",
+            "task": "I was tasked with building a database system, but I initially had no experience with SQL",
+            "action": "To overcome this, I quickly learned SQL through online tutorials and hands-on practice. I then designed and implemented a fully functional database that met all project requirements",
+            "result": "As a result, I gained valuable experience in database design and significantly improved my technical confidence"
           }
+            Now analyze the transcript from above (not the example transcript) and fill in the starAnswerParsedImproved variable.
+
       `;
 
       // After parsing AI response
