@@ -26,7 +26,8 @@ const InterviewQuestions = ({questions}) => {
     const [isSpeaking, setIsSpeaking] = useState(false);
     const [hasRecorded, setHasRecorded] = useState(false);
     const [isProcessing, setIsProcessing] = useState(false);
-    const [sessionId, setSessionId] = useState("");
+    const [sessionId, setSessionId] = useState(""); 
+    const [userId, setUserId] = useState("");
     const [alertMessage, setAlertMessage] = useState("");
     const [alertSeverity, setAlertSeverity] = useState("info");
     const [showAlert, setShowAlert] = useState(false);
@@ -50,7 +51,6 @@ const InterviewQuestions = ({questions}) => {
     useEffect(() => {
         const newSessionId = `session-${Date.now()}`;
         setSessionId(newSessionId);
-        // console.log("Interview session ID:", newSessionId);
     }, []);
 
     // Auto-hide alert after 5 seconds
@@ -62,6 +62,24 @@ const InterviewQuestions = ({questions}) => {
             return () => clearTimeout(timer);
         }
     }, [showAlert]);
+
+     useEffect(() => {
+        // Helper to get a cookie value by name
+        const getCookie = (name) => {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
+        };
+
+        const userId = getCookie('user_id');
+        
+        if (userId) {
+            setUserId(userId);
+        } else {
+            console.log('No user_id cookie found');
+        }
+    }, []);
+
 
     // Webcam stream setup
     const handleToggleVideo = async () => {
@@ -110,14 +128,14 @@ const InterviewQuestions = ({questions}) => {
             setIsLoadingAudio(true);
             // console.log("Fetching audio for:", text.substring(0, 50));
 
-            const response = await fetch("https://us-central1-wing-it-e6a3a.cloudfunctions.net/textToSpeech", {
+            const response = await fetch("https://us-central1-wing-it-e6a3a.cloudfunctions.net/handleTextToSpeech", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
                 },
                 body: JSON.stringify({
                     text,
-                    voice: "sarah", // Use LemonFox.ai voice
+                    voice: "en-US-Wavenet-C", // Use LemonFox.ai voice
                     speed: 1.0 // Normal speaking speed
                 })
             });
@@ -335,6 +353,7 @@ const InterviewQuestions = ({questions}) => {
 
         // Prepare JSON payload with actual blob mimetype
         const payload = {
+            userId,
             sessionId,
             questionNumber: currentQuestionIndex + 1,
             questionText: questions[currentQuestionIndex],
@@ -412,7 +431,8 @@ const InterviewQuestions = ({questions}) => {
         if (currentQuestionIndex < questions.length - 1) {
             setCurrentQuestionIndex(currentQuestionIndex + 1);
         } else {
-            const url = `/behavioral/results?sessionId=${encodeURIComponent(sessionId)}`;
+            const url = `/behavioral/results?userId=${encodeURIComponent(userId)}&sessionId=${encodeURIComponent(sessionId)}`;
+            sessionStorage.setItem("uesrId", userId);
             sessionStorage.setItem("interviewSessionId", sessionId);
             navigate(url);
         }

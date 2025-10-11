@@ -18,7 +18,7 @@ export const functions = getFunctions(app);
 
 // Callable functions
 export const generateQuestions = httpsCallable(functions, 'generateQuestions');
-export const textToSpeech = httpsCallable(functions, 'textToSpeech');
+export const handleTextToSpeech = httpsCallable(functions, 'handleTextToSpeech');
 export const saveResponse = httpsCallable(functions, 'saveResponse');
 export const getInterviewResults = httpsCallable(functions, 'getInterviewResults');
 export default app;
