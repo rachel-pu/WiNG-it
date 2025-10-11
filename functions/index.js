@@ -5,7 +5,6 @@ const OpenAI = require('openai');
 require('dotenv').config();
 const { createClient } = require('@deepgram/sdk');
 const { Readable } = require('stream');
-const textToSpeech = require('@google-cloud/text-to-speech');
 
 // Initialize Firebase Admin
 admin.initializeApp();
@@ -16,9 +15,6 @@ const openai = new OpenAI({
   apiKey: process.env.VITE_OPENAI_API_KEY
 });
 const deepgramClient = createClient(process.env.VITE_DEEPGRAM_API_KEY);
-
-// Initialize Google Cloud TTS client
-const ttsClient = new textToSpeech.TextToSpeechClient();
 
 // Utility function to extract questions from text
 function extractQuestions(text, maxQuestions = 10) {
@@ -139,9 +135,9 @@ const generateQuestions = functions.https.onRequest((req, res) => {
   });
 });
 
-// Text to Speech Function
+// Text to Speech Function using Lemonfox API
 const handleTextToSpeech = functions.https.onRequest((req, res) => {
-  console.log("Converting text to speech");
+  console.log("Converting text to speech with Lemonfox");
   return cors(req, res, async () => {
     try {
       if (req.method === "OPTIONS") {
@@ -152,8 +148,8 @@ const handleTextToSpeech = functions.https.onRequest((req, res) => {
         return res.status(405).json({ error: "Method not allowed" });
       }
 
-      const { text, voice = 'en-US-Wavenet-C' } = req.body;
-      
+      const { text, voice = 'sky', speed = 1.0 } = req.body;
+
       if (!text || text.trim() === "") {
         return res.status(400).json({ error: "No text provided" });
       }
@@ -163,39 +159,50 @@ const handleTextToSpeech = functions.https.onRequest((req, res) => {
 
       // Validate text length
       if (text.length > 5000) {
-        return res.status(400).json({ 
-          error: "Text too long. Maximum 5000 characters allowed." 
+        return res.status(400).json({
+          error: "Text too long. Maximum 5000 characters allowed."
         });
       }
 
-      const request = {
-        input: { text: text },
-        voice: {
-          languageCode: 'en-US',
-          name: voice,
-        },
-        audioConfig: { 
-          audioEncoding: 'MP3',
-          speakingRate: 1.0,
-          pitch: 0.0,
-          volumeGainDb: 0.0,
-        },
+      // Prepare request to Lemonfox API
+      const lemonfoxPayload = {
+        input: text,
+        voice: voice,
+        language: 'en-us',
+        response_format: 'mp3',
+        speed: speed
       };
 
-      console.log("Sending request to Google Cloud TTS...");
-      const [response] = await ttsClient.synthesizeSpeech(request);
+      console.log("Sending request to Lemonfox TTS API...");
 
-      if (!response.audioContent) {
-        throw new Error("No audio content received from Google Cloud TTS");
+      const lemonfoxResponse = await fetch('https://api.lemonfox.ai/v1/audio/speech', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${process.env.LEMONFOX_API_KEY}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(lemonfoxPayload)
+      });
+
+      if (!lemonfoxResponse.ok) {
+        const errorText = await lemonfoxResponse.text();
+        throw new Error(`Lemonfox API error: ${lemonfoxResponse.status} - ${errorText}`);
       }
 
-      // Calculate Google TTS cost (~$4.00 per 1M characters for Wavenet voices)
+      const audioBuffer = await lemonfoxResponse.arrayBuffer();
+      const audioBufferNode = Buffer.from(audioBuffer);
+
+      if (!audioBufferNode || audioBufferNode.length === 0) {
+        throw new Error("No audio content received from Lemonfox API");
+      }
+
+      // Calculate Lemonfox TTS cost (~$2.50 per 1M characters)
       const characterCount = text.length;
-      const estimatedCost = (characterCount / 1000000) * 4.00;
-      
+      const estimatedCost = (characterCount / 1000000) * 2.50;
+
       console.log("✅ Text-to-speech successful");
-      console.log(`Audio content size: ${response.audioContent.length} bytes`);
-      console.log(`💰 Google TTS API Call Cost:`);
+      console.log(`Audio content size: ${audioBufferNode.length} bytes`);
+      console.log(`💰 Lemonfox TTS API Call Cost:`);
       console.log(`   Characters processed: ${characterCount}`);
       console.log(`   Estimated cost: $${estimatedCost.toFixed(6)}`);
 
@@ -203,36 +210,17 @@ const handleTextToSpeech = functions.https.onRequest((req, res) => {
       res.setHeader("Content-Type", "audio/mpeg");
       res.setHeader("Content-Disposition", "inline");
       res.setHeader("Cache-Control", "no-cache");
-      res.setHeader("Content-Length", response.audioContent.length);
+      res.setHeader("Content-Length", audioBufferNode.length);
 
       // Send the audio buffer
-      return res.send(response.audioContent);
-      
+      return res.send(audioBufferNode);
+
     } catch (error) {
       console.error("Error in text-to-speech:", error);
-      
-      // More detailed error handling
-      if (error.code === 3) {
-        return res.status(400).json({ 
-          error: "Invalid request parameters", 
-          details: error.message 
-        });
-      } else if (error.code === 7) {
-        return res.status(403).json({ 
-          error: "Permission denied. Check your Google Cloud credentials.", 
-          details: error.message 
-        });
-      } else if (error.code === 8) {
-        return res.status(429).json({ 
-          error: "Quota exceeded", 
-          details: error.message 
-        });
-      }
-      
-      return res.status(500).json({ 
-        error: "Text-to-speech failed", 
-        details: error.message,
-        code: error.code || 'unknown'
+
+      return res.status(500).json({
+        error: "Text-to-speech failed",
+        details: error.message
       });
     }
   });

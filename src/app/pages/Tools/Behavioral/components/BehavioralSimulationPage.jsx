@@ -135,7 +135,7 @@ const InterviewQuestions = ({questions}) => {
                 },
                 body: JSON.stringify({
                     text,
-                    voice: "en-US-Wavenet-C", // Use LemonFox.ai voice
+                    voice: "sky", // Use Lemonfox.ai voice
                     speed: 1.0 // Normal speaking speed
                 })
             });
