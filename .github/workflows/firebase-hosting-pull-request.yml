@@ -29,6 +29,7 @@ jobs:
         env:
             VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
             VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+            NODE_ENV: production
         run: npm run build
 
       # 4. Deploy preview to Firebase
@@ -37,4 +38,4 @@ jobs:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
           firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_WING_IT_E6A3A }}
           projectId: wing-it-e6a3a
-          
+
