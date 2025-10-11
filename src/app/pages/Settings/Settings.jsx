@@ -1,42 +1,33 @@
 import { useState, useEffect} from 'react';
 import Box from '@mui/material/Box';
 import DefaultAppLayout from "../../DefaultAppLayout.jsx";
-import { supabase } from '../../../../supabase.js';
 import "./Settings.css"
+import { ref, get, update } from "firebase/database";
+import {database} from '../../../lib/firebase.jsx'
+
 export default function Settings() {
-    const [session, setSession] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [editingSection, setEditingSection] = useState(null);
+    const [error, setError] = useState('');
+    const [showAddSection, setShowAddSection] = useState(false);
+    const [newSectionTitle, setNewSectionTitle] = useState('');
+    const [selectedTemplate, setSelectedTemplate] = useState('');
+
+
     const [formData, setFormData] = useState({
-        firstName: 'John',
-        lastName: 'Doe',
-        email: 'john.doe@example.com',
-        password: '••••••••',
-        bio: 'Software engineering student passionate about web development and AI.',
-        userId: 'UID-2024-12345',
-        resume: 'resume_john_doe_2024.pdf',
-        schoolYear: 'Junior',
-        school: 'University of Florida',
-        major: 'Computer Science',
-        minor: 'Mathematics',
-        currentJob: 'Software Engineering Intern at Tech Corp'
+        firstName: '',
+        lastName: '',
+        email: '',
+        password: '',
+        bio: '',
+        userId: '',
+        resume: '',
+        schoolYear: '',
+        school: '',
+        major: '',
+        minor: '',
+        currentJob: ''
     });
-
-    useEffect(() => {
-        // Helper to get a cookie value by name
-        const getCookie = (name) => {
-            const value = `; ${document.cookie}`;
-            const parts = value.split(`; ${name}=`);
-            if (parts.length === 2) return parts.pop().split(';').shift();
-        };
-
-        const userId = getCookie('user_id');
-        if (userId) {
-            console.log('User ID from cookie:', userId);
-            setFormData((prev) => ({ ...prev, userId }));
-        } else {
-            console.log('No user_id cookie found');
-        }
-    }, []);
-
 
     const [sections, setSections] = useState([
         {
@@ -74,12 +65,7 @@ export default function Settings() {
         }
     ]);
 
-    const [editingSection, setEditingSection] = useState(null);
-    const [showAddSection, setShowAddSection] = useState(false);
-    const [newSectionTitle, setNewSectionTitle] = useState('');
-    const [selectedTemplate, setSelectedTemplate] = useState('');
-
-    const sectionTemplates = {
+        const sectionTemplates = {
         'academic': {
             title: 'Academic Information',
             fields: [
@@ -142,6 +128,43 @@ export default function Settings() {
         }
     };
 
+    useEffect(() => {
+        // Helper to get a cookie value by name
+        const getCookie = (name) => {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
+        };
+
+        const userId = getCookie('user_id');
+        if (userId) {
+            setFormData((prev) => ({ ...prev, userId }));
+        } else {
+            console.log('No user_id cookie found');
+        }
+    }, []);
+
+    useEffect(() => {
+        const fetchUser = async () => {
+            if (!formData.userId) return;
+            try {
+                const snapshot = await get(ref(database, `users/${formData.userId}`));
+                if (snapshot.exists()) {
+                    setFormData(snapshot.val());
+                } else {
+                    setError('User not found in database.');
+                }
+            } catch (err) {
+                console.error('Error fetching user:', err);
+                setError('Failed to fetch user data.');
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchUser();
+    }, [formData.userId]);
+
+
     const handleEditSection = (section) => {
         setEditingSection(section);
     };
@@ -158,7 +181,7 @@ export default function Settings() {
     };
 
     const handleChange = (field, value) => {
-        setFormData({ ...formData, [field]: value });
+        setFormData((prev) => ({ ...prev, [field]: value }));
     };
 
     const handleDeleteSection = (sectionId) => {
@@ -203,6 +226,17 @@ export default function Settings() {
         }
     };
 
+    const handleSave = async () => {
+        if (!formData.userId) return alert("User ID not found!");
+        try {
+            await update(ref(database, `users/${formData.userId}`), formData);
+            alert('Profile updated successfully!');
+        } catch (err) {
+            console.error('Error updating user:', err);
+            alert('Failed to update user profile.');
+        }
+    };
+
     const handleAddField = (sectionId) => {
         const fieldName = prompt('Enter field name:');
         if (fieldName) {
@@ -237,6 +271,10 @@ export default function Settings() {
             return section;
         }));
     };
+
+    if (loading) return <p>Loading...</p>;
+    if (error) return <p style={{ color: 'red' }}>{error}</p>;
+
 
     const renderField = (field, sectionId, isEditingSection) => {
         const isTextarea = field.type === 'textarea';

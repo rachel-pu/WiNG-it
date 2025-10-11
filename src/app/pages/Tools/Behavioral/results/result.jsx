@@ -211,13 +211,15 @@ export default function InterviewResults() {
             try {
                 setLoading(true);
                 const params = new URLSearchParams(window.location.search);
+                const userId = params.get("userId");
                 const sessionId = params.get("sessionId");
-
-                if (!sessionId) {
-                throw new Error("No sessionId found in URL");
+                if (!userId) {
+                    throw new Error("No userId found in URL");
                 }
 
-                console.log("Fetching interview results for session:", sessionId);
+                if (!sessionId) {
+                    throw new Error("No sessionId found in URL");
+                }
                 
                 // Call the backend function
                  const res = await fetch(
@@ -225,7 +227,7 @@ export default function InterviewResults() {
                 {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ sessionId }),
+                    body: JSON.stringify({ userId, sessionId }),
                 }
                 );
                 

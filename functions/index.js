@@ -2,11 +2,9 @@ const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 const cors = require('cors')({ origin: true });
 const OpenAI = require('openai');
-require("dotenv").config();
+require('dotenv').config();
 const { createClient } = require('@deepgram/sdk');
-const { Readable } = require("stream");
-
-// Initialize Google Cloud Text-to-Speech
+const { Readable } = require('stream');
 const textToSpeech = require('@google-cloud/text-to-speech');
 
 // Initialize Firebase Admin
@@ -15,9 +13,9 @@ const db = admin.database();
 
 // Initialize OpenAI
 const openai = new OpenAI({
-  apiKey: import.meta.env.OPENAI_API_KEY
+  apiKey: process.env.VITE_OPENAI_API_KEY
 });
-const deepgramClient = createClient(import.meta.env.DEEPGRAM_API_KEY);
+const deepgramClient = createClient(process.env.VITE_DEEPGRAM_API_KEY);
 
 // Initialize Google Cloud TTS client
 const ttsClient = new textToSpeech.TextToSpeechClient();
@@ -36,7 +34,7 @@ function extractQuestions(text, maxQuestions = 10) {
 }
 
 // Generate Questions Function
-exports.generateQuestions = functions.https.onRequest((req, res) => {
+const generateQuestions = functions.https.onRequest((req, res) => {
   console.log("Generating questions...");
   return cors(req, res, async () => {
     try {
@@ -142,7 +140,7 @@ exports.generateQuestions = functions.https.onRequest((req, res) => {
 });
 
 // Text to Speech Function
-exports.textToSpeech = functions.https.onRequest((req, res) => {
+const handleTextToSpeech = functions.https.onRequest((req, res) => {
   console.log("Converting text to speech");
   return cors(req, res, async () => {
     try {
@@ -241,13 +239,13 @@ exports.textToSpeech = functions.https.onRequest((req, res) => {
 });
 
 // Save Response Function
-exports.saveResponse = functions.https.onRequest((req, res) => {
+const saveResponse = functions.https.onRequest((req, res) => {
   return cors(req, res, async () => {
+    res.set('Access-Control-Allow-Origin', '*');
+    res.set('Access-Control-Allow-Methods', 'GET, PUT, POST, OPTIONS');
+    res.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
     try {
       if (req.method === "OPTIONS") {
-        res.set('Access-Control-Allow-Origin', '*');
-        res.set('Access-Control-Allow-Methods', 'GET, PUT, POST, OPTIONS');
-        res.set('Access-Control-Allow-Headers', '*');
         return res.status(204).send("");
       }
 
@@ -255,9 +253,9 @@ exports.saveResponse = functions.https.onRequest((req, res) => {
         return res.status(405).json({ error: "Method not allowed" });
       }
 
-      const { sessionId, questionNumber, questionText, recordedTime, audioData, mimetype } = req.body;
+      const { userId, sessionId, questionNumber, questionText, recordedTime, audioData, mimetype } = req.body;
       
-      if (!sessionId || questionNumber === undefined || !audioData) {
+      if (!userId || !sessionId || questionNumber === undefined || !audioData) {
         return res.status(400).json({ 
           error: "Missing required fields",
           required: ["sessionId", "questionNumber", "audioData"]
@@ -440,21 +438,22 @@ exports.saveResponse = functions.https.onRequest((req, res) => {
       };
 
       // Save to Firebase
-      await db.ref(`interviews/${sessionId}/responses/${questionNumber}`).set(responseData);
+      await db.ref(`interviews/${userId}/${sessionId}/responses/${questionNumber}`).set(responseData);
       
       // Update session metadata
-      const snapshot = await db.ref(`interviews/${sessionId}/responses`).once("value");
+      const snapshot = await db.ref(`interviews/${userId}/${sessionId}/responses`).once("value");
       const questionsCompleted = snapshot.numChildren();
 
-      await db.ref(`interviews/${sessionId}/metadata`).update({
+      await db.ref(`interviews/${userId}/${sessionId}/metadata`).update({
         lastUpdated: admin.database.ServerValue.TIMESTAMP,
         questionsCompleted,
       });
 
-      console.log(`Successfully processed response for session ${sessionId}, question ${questionNumber}`);
+      console.log(`Successfully processed response for user ${userId} and session ${sessionId}, question ${questionNumber}`);
       
       return res.status(200).json({ 
         success: true, 
+        userId,
         sessionId, 
         questionNumber: parseInt(questionNumber),
         transcript,
@@ -466,7 +465,7 @@ exports.saveResponse = functions.https.onRequest((req, res) => {
       console.error("Unexpected error in saveResponse:", error);
       return res.status(500).json({ 
         error: "Internal server error", 
-        details: import.meta.env.NODE_ENV === 'development' ? error.message : undefined
+        details: error.message
       });
     }
   });
@@ -475,20 +474,21 @@ exports.saveResponse = functions.https.onRequest((req, res) => {
 
 
 // Get Interview Results Function
-exports.getInterviewResults = functions.https.onRequest((req, res) => {
+const getInterviewResults = functions.https.onRequest((req, res) => {
   return cors(req, res, async () => {
+
     try {
       if (req.method === "OPTIONS") {
         return res.status(204).send("");
       }
 
-      const { sessionId } = req.body.data || {};
+      const { userId, sessionId } = req.body || {};
       
-      if (!sessionId) {
+      if (!userId || !sessionId) {
         return res.status(400).json({ error: 'Session ID required' });
       }
 
-      const snapshot = await db.ref(`interviews/${sessionId}`).once('value');
+      const snapshot = await db.ref(`interviews/${userId}/${sessionId}`).once('value');
       const interviewData = snapshot.val();
 
       if (!interviewData) {
@@ -501,6 +501,7 @@ exports.getInterviewResults = functions.https.onRequest((req, res) => {
       return res.json({
         data: {
           success: true,
+          userId,
           sessionId,
           responses,
           metadata: interviewData.metadata || {},
@@ -521,3 +522,5 @@ exports.getInterviewResults = functions.https.onRequest((req, res) => {
     }
   });
 });
+
+module.exports = { generateQuestions, handleTextToSpeech, saveResponse, getInterviewResults };
