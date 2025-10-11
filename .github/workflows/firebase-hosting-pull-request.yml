@@ -26,6 +26,9 @@ jobs:
 
       # 3. Build Vite app
       - name: Build Vite app
+        env:
+            VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+            VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
         run: npm run build
 
       # 4. Deploy preview to Firebase
