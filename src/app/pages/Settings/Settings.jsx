@@ -39,7 +39,7 @@ export default function Settings() {
                 { id: 'lastName', label: 'Last Name', editable: true, type: 'text' },
                 { id: 'userId', label: 'User ID', editable: false, type: 'text' },
                 { id: 'email', label: 'Email', editable: true, type: 'text' },
-                { id: 'password', label: 'Password', editable: false, type: 'text' },
+                { id: 'password', label: 'Password', editable: true, type: 'password' },
                 { id: 'bio', label: 'Bio', editable: true, type: 'textarea' }
             ]
         },
@@ -279,6 +279,7 @@ export default function Settings() {
     const renderField = (field, sectionId, isEditingSection) => {
         const isTextarea = field.type === 'textarea';
         const isFile = field.type === 'file';
+        const isPassword = field.type === 'password';
         const isEditing = isEditingSection && field.editable;
 
         if (isFile) {
@@ -331,7 +332,7 @@ export default function Settings() {
                     )
                 ) : (
                     <div className={`form-display ${isTextarea ? 'textarea-display' : ''} ${!field.editable ? 'disabled' : ''}`}>
-                        {formData[field.id] || 'Not set'}
+                        {isPassword && formData[field.id] ? '••••••••' : (formData[field.id] || 'Not set')}
                     </div>
                 )}
             </div>
