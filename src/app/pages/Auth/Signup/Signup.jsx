@@ -5,6 +5,8 @@ import { motion } from 'framer-motion';
 import { Mail, Lock, Eye, EyeOff, User, ArrowLeft} from 'lucide-react';
 import { useNavigate } from "react-router-dom";
 import './Signup.css';
+import { ref, set } from "firebase/database";
+import {database} from '../../../../lib/firebase.jsx'
 
 
 const SignUp = () => {
@@ -48,6 +50,20 @@ const SignUp = () => {
 
       if (data?.user) {
         setError('A verification email has been sent. Please check your inbox.');
+        await set(ref(database, `users/${data.user.id}`), {
+          firstName: name,
+          lastName: "",
+          email: email,
+          password: password,
+          bio: "",
+          userId: data.user.id,
+          resume: "",
+          schoolYear: "",
+          school: "",
+          major: "",
+          minor: "",
+          currentJob: ""
+        });
       }
       console.log('User signed up:', data.user);
     } catch (err) {
@@ -56,7 +72,7 @@ const SignUp = () => {
     }
   };
 
-  const googleSignUp = async () => {
+  const handleGoogleSignUp = async () => {
     setError('');
     try {
       const { data, error } = await supabase.auth.signInWithOAuth({
@@ -67,6 +83,22 @@ const SignUp = () => {
       });
 
       if (error) throw error;
+      if (data?.user) {
+        await set(ref(database, `users/${data.user.id}`), {
+          firstName: name,
+          lastName: "",
+          email: email,
+          password: password,
+          bio: "",
+          userId: data.user.id,
+          resume: "",
+          schoolYear: "",
+          school: "",
+          major: "",
+          minor: "",
+          currentJob: ""
+        });
+      }
       console.log('Google OAuth initiated:', data);
     } catch (err) {
       console.error('Google sign-up error:', err);
@@ -98,7 +130,7 @@ const SignUp = () => {
         </button>
             <h1 className="auth-title">Sign Up</h1>
             <motion.div variants={itemVariants}>
-                <button className="google-sign-in-btn" onClick={googleSignUp}>
+                <button className="google-sign-in-btn" onClick={handleGoogleSignUp}>
                     <span className="google-icon-modern"></span>
                     <span>Continue with Google</span>
                 </button>
