@@ -263,12 +263,6 @@ const InterviewQuestions = ({questions}) => {
                     }
                 };
 
-                mediaRecorder.current.onstop = async () => {
-                    const audioBlob = new Blob(audioChunks.current, {type: selectedType});
-                    audioChunks.current = [];
-
-                };
-
                 // console.log("Audio recording initialized successfully");
             } catch (error) {
                 console.error("Error setting up audio recording:", error);
@@ -319,6 +313,7 @@ const InterviewQuestions = ({questions}) => {
             mediaRecorder.current.stop();
             setIsRecording(false);
             setIsProcessing(true);
+            setHasRecorded(true);
             // console.log("Recording stopped");
 
              if (recordInterval) {
@@ -326,13 +321,18 @@ const InterviewQuestions = ({questions}) => {
                 setRecordInterval(null);
             }
 
-            setAlertMessage("Processing your answer...");
-            setAlertSeverity("info");
+            // Show loading message immediately
+            setTranscript("Transcribing your answer...");
+
+            setAlertMessage("Answer recorded! Processing in background...");
+            setAlertSeverity("success");
             setShowAlert(true);
+            setTimeout(() => setShowAlert(false), 2000);
         }
     };
 
     const processAudioBlob = async (audioBlob, questionIndexAtRecordingStart, recordTime) => {
+    // Process in background without blocking UI
     try {
         // console.log('Processing audio blob:', {
         //     size: audioBlob.size,
@@ -355,8 +355,8 @@ const InterviewQuestions = ({questions}) => {
         const payload = {
             userId,
             sessionId,
-            questionNumber: currentQuestionIndex + 1,
-            questionText: questions[currentQuestionIndex],
+            questionNumber: questionIndexAtRecordingStart + 1,
+            questionText: questions[questionIndexAtRecordingStart],
             recordedTime: recordTime,
             audioData: base64Audio,
             mimetype: audioBlob.type || "audio/webm" // Use actual blob type
@@ -383,31 +383,32 @@ const InterviewQuestions = ({questions}) => {
 
         const data = await response.json();
         console.log("Transcription response:", data);
-        
+
         // Debug transcript specifically
         console.log("Transcript received:", data.transcript);
         console.log("Transcript length:", data.transcript?.length);
 
         if (data.success) {
-            setTranscript(data.transcript || "");
-            setHasRecorded(true);
-            setIsProcessing(false);
-
-            setAlertMessage("Answer recorded successfully!");
-            setAlertSeverity("success");
-            setShowAlert(true);
-            setTimeout(() => setShowAlert(false), 2000);
+            // Only update transcript if we're still on the same question
+            if (currentQuestionIndex === questionIndexAtRecordingStart) {
+                setTranscript(data.transcript || "Transcription completed.");
+                setIsProcessing(false);
+                console.log("Transcription completed successfully in background");
+            } else {
+                console.log("User moved to next question, skipping transcript update");
+            }
         } else {
             throw new Error(data.error || "Unknown error");
         }
 
     } catch (error) {
         console.error("Error processing audio:", error);
-        setIsProcessing(false);
 
-        setAlertMessage(`Error: ${error.message}`);
-        setAlertSeverity("error");
-        setShowAlert(true);
+        // Only show error if still on the same question
+        if (currentQuestionIndex === questionIndexAtRecordingStart) {
+            setTranscript(`Transcription error: ${error.message}. Your answer was still recorded.`);
+            setIsProcessing(false);
+        }
     }
 };
 
@@ -431,7 +432,7 @@ const InterviewQuestions = ({questions}) => {
         if (currentQuestionIndex < questions.length - 1) {
             setCurrentQuestionIndex(currentQuestionIndex + 1);
         } else {
-            const url = `/behavioral/results?userId=${encodeURIComponent(userId)}&sessionId=${encodeURIComponent(sessionId)}`;
+            const url = `/behavioral/results?userId=${encodeURIComponent(userId)}&sessionId=${encodeURIComponent(sessionId)}&expectedQuestions=${questions.length}`;
             sessionStorage.setItem("uesrId", userId);
             sessionStorage.setItem("interviewSessionId", sessionId);
             navigate(url);
@@ -575,12 +576,17 @@ const InterviewQuestions = ({questions}) => {
                     >
                         Transcript:
                     </Typography>
-                    <Typography
-                        variant="body2"
-                        className="simulation-transcript-text"
-                    >
-                        {transcript}
-                    </Typography>
+                    <Box style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+                        {isProcessing && (
+                            <CircularProgress size={16} />
+                        )}
+                        <Typography
+                            variant="body2"
+                            className="simulation-transcript-text"
+                        >
+                            {transcript}
+                        </Typography>
+                    </Box>
                 </Box>
             )}
 
@@ -588,17 +594,14 @@ const InterviewQuestions = ({questions}) => {
             <Box className="simulation-bottom-bar">
                 {/* Microphone button */}
                 <IconButton
-                    disabled={isProcessing || hasRecorded}
+                    disabled={hasRecorded}
                     onClick={isRecording ? stopRecording : startRecording}
                     className={`simulation-mic-btn ${
-                        isProcessing ? 'processing' :
                         hasRecorded ? 'recorded' :
                         isRecording ? 'recording' : 'idle'
                     }`}
                 >
-                    {isProcessing ? <CircularProgress size={24} className="simulation-loading-spinner"/> :
-                        isRecording ? <StopIcon /> :
-                            <MicIcon />}
+                    {isRecording ? <StopIcon /> : <MicIcon />}
                 </IconButton>                
 
                 {/* Next/Finish button */}
