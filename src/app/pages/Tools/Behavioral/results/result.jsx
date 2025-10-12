@@ -213,6 +213,8 @@ export default function InterviewResults() {
                 const params = new URLSearchParams(window.location.search);
                 const userId = params.get("userId");
                 const sessionId = params.get("sessionId");
+                const refresh = params.get("refresh"); // Check if we're coming back from a retry
+
                 if (!userId) {
                     throw new Error("No userId found in URL");
                 }
@@ -220,7 +222,7 @@ export default function InterviewResults() {
                 if (!sessionId) {
                     throw new Error("No sessionId found in URL");
                 }
-                
+
                 // Call the backend function
                  const res = await fetch(
                 "https://us-central1-wing-it-e6a3a.cloudfunctions.net/getInterviewResults",
@@ -228,9 +230,10 @@ export default function InterviewResults() {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ userId, sessionId }),
+                    cache: refresh ? 'no-cache' : 'default' // Force refresh if coming from retry
                 }
                 );
-                
+
 
                 if (!res.ok) {
                 throw new Error(`Server error: ${res.status}`);
@@ -241,6 +244,13 @@ export default function InterviewResults() {
 
                 if (result.data && result.data.success) {
                     setInterviewData(result.data);
+
+                    // Remove refresh parameter from URL to prevent re-triggering on page refresh
+                    if (refresh) {
+                        const newUrl = new URL(window.location.href);
+                        newUrl.searchParams.delete('refresh');
+                        window.history.replaceState({}, '', newUrl.toString());
+                    }
                     
                     // Calculate recorded times for backward compatibility
                     const responses = result.data.responses || [];
@@ -1010,16 +1020,45 @@ function escapeRegExp(s) {
                                                                     );
                                                                 }) || []}
                                                             </Box>
-                                                            <Typography sx={{
-                                                                fontSize: '1.5rem',
-                                                                fontWeight: 900,
-                                                                color: '#1f2937',
-                                                                fontFamily: 'Satoshi Black',
-                                                                lineHeight: 1.5,
-                                                                letterSpacing: '-0.02em'
-                                                            }}>
-                                                                {currentData.question}
-                                                            </Typography>
+                                                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 2 }}>
+                                                                <Typography sx={{
+                                                                    fontSize: '1.5rem',
+                                                                    fontWeight: 900,
+                                                                    color: '#1f2937',
+                                                                    fontFamily: 'Satoshi Black',
+                                                                    lineHeight: 1.5,
+                                                                    letterSpacing: '-0.02em',
+                                                                    flex: 1
+                                                                }}>
+                                                                    {currentData.question}
+                                                                </Typography>
+                                                                <motion.button
+                                                                    whileHover={{ scale: 1.05 }}
+                                                                    whileTap={{ scale: 0.95 }}
+                                                                    onClick={() => {
+                                                                        const params = new URLSearchParams(window.location.search);
+                                                                        const userId = params.get("userId");
+                                                                        const sessionId = params.get("sessionId");
+                                                                        navigate(`/behavioral/retry?userId=${userId}&sessionId=${sessionId}&questionNumber=${validSelectedQuestion}`);
+                                                                    }}
+                                                                    style={{
+                                                                        padding: '8px 16px',
+                                                                        borderRadius: '8px',
+                                                                        fontWeight: 600,
+                                                                        fontSize: '0.85rem',
+                                                                        fontFamily: 'Satoshi Medium',
+                                                                        background: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
+                                                                        color: 'white',
+                                                                        border: 'none',
+                                                                        boxShadow: '0 2px 8px rgba(59, 130, 246, 0.3)',
+                                                                        cursor: 'pointer',
+                                                                        transition: 'all 0.2s ease',
+                                                                        whiteSpace: 'nowrap'
+                                                                    }}
+                                                                >
+                                                                    🔄 Retry Question
+                                                                </motion.button>
+                                                            </Box>
                                                         </Box>
                                                     </Grid>
 
