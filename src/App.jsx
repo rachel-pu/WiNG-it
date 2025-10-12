@@ -6,7 +6,8 @@ import Signup from './app/pages/Auth/Signup/Signup.jsx';
 import Dashboard from './app/pages/Dashboard/Dashboard.jsx';
 import Behavioral from './app/pages/Tools/Behavioral/Behavioral.jsx';
 import InterviewResults from "./app/pages/Tools/Behavioral/results/result.jsx"
-import ProtectedRoute from './components/ProtectedRoute.jsx'; 
+import RetryQuestionPage from "./app/pages/Tools/Behavioral/components/RetryQuestionPage.jsx"
+import ProtectedRoute from './components/ProtectedRoute.jsx';
 import PublicRoute from './components/PublicRoute.jsx'; 
 
 function App() {
@@ -59,6 +60,13 @@ function App() {
           element={
             <ProtectedRoute>
               <InterviewResults />
+            </ProtectedRoute>
+          }
+        />
+        <Route path="/behavioral/retry"
+          element={
+            <ProtectedRoute>
+              <RetryQuestionPage />
             </ProtectedRoute>
           }
         />
