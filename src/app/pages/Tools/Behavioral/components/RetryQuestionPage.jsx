@@ -320,19 +320,25 @@ const RetryQuestionPage = () => {
             mediaRecorder.current.stop();
             setIsRecording(false);
             setIsProcessing(true);
+            setHasRecorded(true);
 
             if (recordInterval) {
                 clearInterval(recordInterval);
                 setRecordInterval(null);
             }
 
-            setAlertMessage("Processing your answer...");
-            setAlertSeverity("info");
+            // Show loading message immediately
+            setTranscript("Transcribing your answer...");
+
+            setAlertMessage("Answer recorded! Processing in background...");
+            setAlertSeverity("success");
             setShowAlert(true);
+            setTimeout(() => setShowAlert(false), 2000);
         }
     };
 
     const processAudioBlob = async (audioBlob, recordTime) => {
+        // Process in background without blocking UI
         try {
             const arrayBuffer = await audioBlob.arrayBuffer();
             const uint8Array = new Uint8Array(arrayBuffer);
@@ -353,6 +359,8 @@ const RetryQuestionPage = () => {
                 isRetry: true
             };
 
+            console.log("Sending audio for transcription...");
+
             const response = await fetch(
                 "https://us-central1-wing-it-e6a3a.cloudfunctions.net/saveResponse",
                 {
@@ -369,27 +377,20 @@ const RetryQuestionPage = () => {
             }
 
             const data = await response.json();
+            console.log("Transcription response:", data);
 
             if (data.success) {
-                setTranscript(data.transcript || "");
-                setHasRecorded(true);
+                setTranscript(data.transcript || "Transcription completed.");
                 setIsProcessing(false);
-
-                setAlertMessage("Answer recorded successfully!");
-                setAlertSeverity("success");
-                setShowAlert(true);
-                setTimeout(() => setShowAlert(false), 2000);
+                console.log("Transcription completed successfully in background");
             } else {
                 throw new Error(data.error || "Unknown error");
             }
 
         } catch (error) {
             console.error("Error processing audio:", error);
+            setTranscript(`Transcription error: ${error.message}. Your answer was still recorded.`);
             setIsProcessing(false);
-
-            setAlertMessage(`Error: ${error.message}`);
-            setAlertSeverity("error");
-            setShowAlert(true);
         }
     };
 
@@ -545,12 +546,17 @@ const RetryQuestionPage = () => {
                     >
                         Transcript:
                     </Typography>
-                    <Typography
-                        variant="body2"
-                        className="simulation-transcript-text"
-                    >
-                        {transcript}
-                    </Typography>
+                    <Box style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+                        {isProcessing && (
+                            <CircularProgress size={16} />
+                        )}
+                        <Typography
+                            variant="body2"
+                            className="simulation-transcript-text"
+                        >
+                            {transcript}
+                        </Typography>
+                    </Box>
                 </Box>
             )}
 
@@ -558,17 +564,14 @@ const RetryQuestionPage = () => {
             <Box className="simulation-bottom-bar">
                 {/* Microphone button */}
                 <IconButton
-                    disabled={isProcessing || hasRecorded}
+                    disabled={hasRecorded}
                     onClick={isRecording ? stopRecording : startRecording}
                     className={`simulation-mic-btn ${
-                        isProcessing ? 'processing' :
                         hasRecorded ? 'recorded' :
                         isRecording ? 'recording' : 'idle'
                     }`}
                 >
-                    {isProcessing ? <CircularProgress size={24} className="simulation-loading-spinner"/> :
-                        isRecording ? <StopIcon /> :
-                            <MicIcon />}
+                    {isRecording ? <StopIcon /> : <MicIcon />}
                 </IconButton>
 
                 {/* Finish button */}
