@@ -20,6 +20,11 @@ const InterviewQuestions = ({questions}) => {
     const containerRef = useRef(null);
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
     const [isRecording, setIsRecording] = useState(false);
+
+    // Keep ref in sync with currentQuestionIndex
+    useEffect(() => {
+        currentQuestionRef.current = currentQuestionIndex;
+    }, [currentQuestionIndex]);
     const [audioUrl, setAudioUrl] = useState(null);
     const [transcript, setTranscript] = useState("");
     const audioRef = useRef(null);
@@ -46,6 +51,9 @@ const InterviewQuestions = ({questions}) => {
     // Media recorder objects
     const mediaRecorder = useRef(null);
     const audioChunks = useRef([]);
+
+    // Track the current question to prevent stale updates
+    const currentQuestionRef = useRef(currentQuestionIndex);
 
     // Generate a session ID when the component mounts
     useEffect(() => {
@@ -389,13 +397,13 @@ const InterviewQuestions = ({questions}) => {
         console.log("Transcript length:", data.transcript?.length);
 
         if (data.success) {
-            // Only update transcript if we're still on the same question
-            if (currentQuestionIndex === questionIndexAtRecordingStart) {
+            // Only update transcript if we're still on the same question (using ref for immediate value)
+            if (currentQuestionRef.current === questionIndexAtRecordingStart) {
                 setTranscript(data.transcript || "Transcription completed.");
                 setIsProcessing(false);
                 console.log("Transcription completed successfully in background");
             } else {
-                console.log("User moved to next question, skipping transcript update");
+                console.log(`User moved to next question (was on ${questionIndexAtRecordingStart}, now on ${currentQuestionRef.current}), skipping transcript update`);
             }
         } else {
             throw new Error(data.error || "Unknown error");
@@ -404,8 +412,8 @@ const InterviewQuestions = ({questions}) => {
     } catch (error) {
         console.error("Error processing audio:", error);
 
-        // Only show error if still on the same question
-        if (currentQuestionIndex === questionIndexAtRecordingStart) {
+        // Only show error if still on the same question (using ref for immediate value)
+        if (currentQuestionRef.current === questionIndexAtRecordingStart) {
             setTranscript(`Transcription error: ${error.message}. Your answer was still recorded.`);
             setIsProcessing(false);
         }
@@ -429,6 +437,12 @@ const InterviewQuestions = ({questions}) => {
             setRecordInterval(null);
         }
         setRecordTime(0);
+
+        // Clear transcript and processing state immediately
+        setTranscript("");
+        setIsProcessing(false);
+        setHasRecorded(false);
+
         if (currentQuestionIndex < questions.length - 1) {
             setCurrentQuestionIndex(currentQuestionIndex + 1);
         } else {
@@ -437,8 +451,6 @@ const InterviewQuestions = ({questions}) => {
             sessionStorage.setItem("interviewSessionId", sessionId);
             navigate(url);
         }
-        setHasRecorded(false);
-        setTranscript("");
     };
 
     const toggleFullscreen = () => {
