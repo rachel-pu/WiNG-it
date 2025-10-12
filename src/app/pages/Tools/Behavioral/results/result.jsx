@@ -214,6 +214,7 @@ export default function InterviewResults() {
                 const userId = params.get("userId");
                 const sessionId = params.get("sessionId");
                 const refresh = params.get("refresh"); // Check if we're coming back from a retry
+                const expectedQuestions = parseInt(params.get("expectedQuestions")) || 0;
 
                 if (!userId) {
                     throw new Error("No userId found in URL");
@@ -223,24 +224,85 @@ export default function InterviewResults() {
                     throw new Error("No sessionId found in URL");
                 }
 
-                // Call the backend function
-                 const res = await fetch(
-                "https://us-central1-wing-it-e6a3a.cloudfunctions.net/getInterviewResults",
-                {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ userId, sessionId }),
-                    cache: refresh ? 'no-cache' : 'default' // Force refresh if coming from retry
-                }
-                );
+                // Poll for complete results if we know how many questions to expect
+                const pollForResults = async (maxAttempts = 30, delayMs = 2000) => {
+                    for (let attempt = 0; attempt < maxAttempts; attempt++) {
+                        const res = await fetch(
+                            "https://us-central1-wing-it-e6a3a.cloudfunctions.net/getInterviewResults",
+                            {
+                                method: "POST",
+                                headers: { "Content-Type": "application/json" },
+                                body: JSON.stringify({ userId, sessionId }),
+                                cache: 'no-cache'
+                            }
+                        );
 
+                        if (!res.ok) {
+                            throw new Error(`Server error: ${res.status}`);
+                        }
 
-                if (!res.ok) {
-                throw new Error(`Server error: ${res.status}`);
-                }
+                        const result = await res.json();
+                        console.log(`Polling attempt ${attempt + 1}: Backend response:`, result);
 
-                const result = await res.json();;
-                console.log("Backend response:", result);
+                        if (result.data && result.data.success) {
+                            const responses = result.data.responses || [];
+                            const validResponses = Array.isArray(responses)
+                                ? responses.filter(response => response !== null && response !== undefined)
+                                : Object.values(responses).filter(response => response !== null && response !== undefined);
+
+                            console.log(`Found ${validResponses.length} responses, expecting ${expectedQuestions}`);
+
+                            // If we have all expected responses or we don't know how many to expect, return
+                            if (expectedQuestions === 0 || validResponses.length >= expectedQuestions) {
+                                console.log("All responses received!");
+                                return result;
+                            }
+
+                            // Wait before next poll
+                            if (attempt < maxAttempts - 1) {
+                                console.log(`Waiting ${delayMs}ms before next poll...`);
+                                await new Promise(resolve => setTimeout(resolve, delayMs));
+                            }
+                        } else {
+                            throw new Error(result.error || "Unknown error");
+                        }
+                    }
+
+                    // If we've exhausted all attempts, return the last result anyway
+                    const finalRes = await fetch(
+                        "https://us-central1-wing-it-e6a3a.cloudfunctions.net/getInterviewResults",
+                        {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({ userId, sessionId }),
+                            cache: 'no-cache'
+                        }
+                    );
+                    return await finalRes.json();
+                };
+
+                // Use polling if we have expected questions, otherwise single fetch
+                const result = expectedQuestions > 0
+                    ? await pollForResults()
+                    : await (async () => {
+                        const res = await fetch(
+                            "https://us-central1-wing-it-e6a3a.cloudfunctions.net/getInterviewResults",
+                            {
+                                method: "POST",
+                                headers: { "Content-Type": "application/json" },
+                                body: JSON.stringify({ userId, sessionId }),
+                                cache: refresh ? 'no-cache' : 'default'
+                            }
+                        );
+
+                        if (!res.ok) {
+                            throw new Error(`Server error: ${res.status}`);
+                        }
+
+                        return await res.json();
+                    })();
+
+                console.log("Final backend response:", result);
 
                 if (result.data && result.data.success) {
                     setInterviewData(result.data);
@@ -439,18 +501,23 @@ export default function InterviewResults() {
             <Box sx={{ display: "flex" }}>
                 <CssBaseline />
                 <DefaultAppLayout>
-                    <Box sx={{ 
+                    <Box sx={{
                         position: 'fixed',
                         width: '100%',
                         minHeight: '100vh',
                         display: 'flex',
+                        flexDirection: 'column',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)'
+                        background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)',
+                        gap: 2
                     }}>
                         <CircularProgress size={60} />
-                        <Typography sx={{ ml: 2, fontSize: '1.2rem', color: '#374151', fontFamily: 'DM Sans' }}>
-                            Loading your results...
+                        <Typography sx={{ fontSize: '1.2rem', color: '#374151', fontFamily: 'DM Sans', fontWeight: 600 }}>
+                            Processing your interview responses...
+                        </Typography>
+                        <Typography sx={{ fontSize: '0.9rem', color: '#6b7280', fontFamily: 'DM Sans', textAlign: 'center', maxWidth: '400px' }}>
+                            This may take a few moments if some answers are still being transcribed. Please wait...
                         </Typography>
                     </Box>
                 </DefaultAppLayout>
