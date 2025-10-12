@@ -2,7 +2,6 @@
 import{ useState } from "react";
 import { cn } from "../lib/utils";
 import { Sidebar, SidebarBody, SidebarLink } from "../components/sidebar";
-import { GiFluffyWing } from "react-icons/gi";
 import { MdDashboard } from "react-icons/md";
 import { HiChatBubbleLeftRight } from "react-icons/hi2";
 import { IoMdSettings } from "react-icons/io";
@@ -61,7 +60,7 @@ const DefaultAppLayout = ({ children }) => {
   );
 };
 
-export const Logo = ({ open, onSignOut }) => {
+export const Logo = ({ open }) => {
   const navigate = useNavigate();
 
   const handleSignOut = async () => {
@@ -76,8 +75,13 @@ export const Logo = ({ open, onSignOut }) => {
   return (
     <div className="relative flex items-center justify-between w-full px-1">
       {/* Left side: Logo + Text */}
-      <div className="flex items-center">
-        <GiFluffyWing color="#324FD1" size={25} className="shrink-0" />
+      <div className="flex items-center gap-2">
+        <img
+          src="/static/icons/logos/blue-wingit.png"
+          alt="WiNG.it Logo"
+          className="shrink-0"
+          style={{ width: 23, height: 23 }}
+        />
         <motion.span
           onClick={() => navigate("/")}
           animate={{
