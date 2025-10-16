@@ -26,6 +26,12 @@
   text-align: center;
 }
 
+.privacy-term-text{
+  font-size: 15px;
+  color: #64748b;
+  text-align: center;
+}
+
 .auth-description {
   font-size: 15px;
   color: #64748b;

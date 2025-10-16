@@ -195,10 +195,12 @@ const SignUp = () => {
             <button className="primary-btn" onClick={handleSignUp}>
                 Continue
             </button>
-            <p
-              className="auth-description cursor-pointer"
-              onClick={() => navigate("/signin")}
-            >
+            <p className="privacy-term-text" style={{marginTop:10}}> By signing up, you are agreeing to our</p>
+            <p className="privacy-term-text">
+              <span className="auth-description cursor-pointer" onClick={() => navigate("/privacy")}> Privacy Policy</span> and {' '}
+              <span className="auth-description cursor-pointer" onClick={() => navigate("/terms")}> Terms of Service</span>
+              </p>
+            <p className="auth-description cursor-pointer" onClick={() => navigate("/signin")}>
               Have an account? Sign in instead.
             </p>
         </div>

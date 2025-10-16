@@ -1160,114 +1160,162 @@ export default function HomePage() {
     </Box>
 </Box>
 
-{/* ---------- getting started section ---------- */}
-<Box
-    id="getting-started"
-    sx={{
-        minHeight: '100vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        position: 'relative',
-        background: 'linear-gradient(135deg, #444465ff 0%, #33426aff 50%, #27548bff 100%)',
-        padding: { xs: '4rem 1rem', md: '6rem 2rem' },
-    }}
->
-    <Box sx={{ maxWidth: '1200px', width: '100%', zIndex: 2, position: 'relative', margin: '0 auto' }}>
-        <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-10%" }}
-            variants={staggerContainer}
-        >
-            {/* Main Header */}
-            <Box sx={{ textAlign: 'center' }}>
-                <motion.div variants={itemVariants}>
-                    <Typography
-                        sx={{
-                            fontSize: { xs: '2.5rem', md: '3.5rem', lg: '4.2rem' },
-                            fontWeight: 900,
-                            fontFamily: 'Satoshi Black, sans-serif',
-                            color: 'white',
-                            marginBottom: '1.5rem',
-                            letterSpacing: '-0.02em',
-                            textShadow: '0 4px 20px rgba(0,0,0,0.3)',
-                            background: 'linear-gradient(135deg, #ffffff 0%, #a8c7ed 100%)',
-                            WebkitBackgroundClip: 'text',
-                            WebkitTextFillColor: 'transparent',
-                            backgroundClip: 'text'
-                        }}
-                    >
-                        Ready to ace your next interview?
-                    </Typography>
-                    <Typography
-                        sx={{
-                            color: 'rgba(255, 255, 255, 0.85)',
-                            fontSize: '1.2rem',
-                            lineHeight: 1.6,
-                            fontFamily: 'DM Sans, sans-serif',
-                            maxWidth: '700px',
-                            margin: '0 auto 3rem auto'
-                        }}
-                    >
-                        Join us to improve your interview skills with WiNG.it
-                    </Typography>
-                </motion.div>
-
-                <motion.div variants={itemVariants}>
-                    <motion.a
-                        whileHover={{ scale: 1.05 }}
-                        transition={{ duration: 0.2 }}
-                        style={{ display: 'inline-block' }}
-                    >
-                        <button
-                            className="relative inline-flex overflow-hidden rounded-full p-[1px] focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 focus:ring-offset-slate-50 transition-all duration-300 hover:shadow-[0_0_40px_rgba(147,112,219,0.6)]"
-                            style={{ height: '64px' }}
-                            onClick={() => navigate('/signin')}
+                {/* ---------- getting started section ---------- */}
+                <Box
+                    id="getting-started"
+                    sx={{
+                        minHeight: '100vh',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        position: 'relative',
+                        background: 'linear-gradient(135deg, #444465ff 0%, #33426aff 50%, #27548bff 100%)',
+                        padding: { xs: '4rem 1rem', md: '6rem 2rem' },
+                    }}
+                >
+                    <Box sx={{ maxWidth: '1200px', width: '100%', zIndex: 2, position: 'relative', margin: '0 auto' }}>
+                        <motion.div
+                            initial="hidden"
+                            whileInView="visible"
+                            viewport={{ once: true, margin: "-10%" }}
+                            variants={staggerContainer}
                         >
-                            <span className="absolute inset-[-1000%] animate-[spin_2s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#E2CBFF_0%,#393BB2_50%,#E2CBFF_100%)]" />
-                            <span
-                                className="inline-flex h-full w-full cursor-pointer items-center justify-center rounded-full px-10 py-1 font-medium backdrop-blur-3xl"
-                                style={{
-                                    backgroundColor: '#0f172a',
-                                    color: 'white',
-                                    fontSize: '1.4rem',
-                                    fontFamily: 'Satoshi Bold, sans-serif',
-                                    gap: '12px',
-                                    display: 'flex',
-                                    alignItems: 'center'
-                                }}
-                            >
-                                Start Your Journey
-                                <svg
-                                    fill="none"
-                                    stroke="currentColor"
-                                    strokeWidth="2.5"
-                                    viewBox="0 0 24 24"
-                                    style={{ width: '24px', height: '24px' }}
-                                >
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14M12 5l7 7-7 7" />
-                                </svg>
-                            </span>
-                        </button>
-                    </motion.a>
 
-                    <Typography
-                        sx={{
-                            color: 'rgba(255, 255, 255, 0.7)',
-                            fontSize: '0.95rem',
-                            marginTop: '1.5rem',
-                            fontFamily: 'DM Sans, sans-serif'
-                        }}
-                    >
-                        Get started easily in less than 30 seconds!
-                    </Typography>
-                </motion.div>
+                            {/* Main Header */}
+                            <Box sx={{ textAlign: 'center' }}>
+                                <motion.div variants={itemVariants}>
+                                    <Typography
+                                        sx={{
+                                            fontSize: { xs: '2.5rem', md: '3.5rem', lg: '4.2rem' },
+                                            fontWeight: 900,
+                                            fontFamily: 'Satoshi Black, sans-serif',
+                                            color: 'white',
+                                            marginBottom: '1.5rem',
+                                            letterSpacing: '-0.02em',
+                                            textShadow: '0 4px 20px rgba(0,0,0,0.3)',
+                                            background: 'linear-gradient(135deg, #ffffff 0%, #a8c7ed 100%)',
+                                            WebkitBackgroundClip: 'text',
+                                            WebkitTextFillColor: 'transparent',
+                                            backgroundClip: 'text'
+                                        }}
+                                    >
+                                        Ready to ace your next interview?
+                                    </Typography>
+                                    <Typography
+                                        sx={{
+                                            color: 'rgba(255, 255, 255, 0.85)',
+                                            fontSize: '1.2rem',
+                                            lineHeight: 1.6,
+                                            fontFamily: 'DM Sans, sans-serif',
+                                            maxWidth: '700px',
+                                            margin: '0 auto 3rem auto'
+                                        }}
+                                    >
+                                        Join us to improve your interview skills with WiNG.it
+                                    </Typography>
+                                </motion.div>
+
+                                <motion.div variants={itemVariants}>
+                                    <motion.a
+                                        whileHover={{ scale: 1.05 }}
+                                        transition={{ duration: 0.2 }}
+                                        style={{ display: 'inline-block' }}
+                                    >
+                                        <button
+                                            className="relative inline-flex overflow-hidden rounded-full p-[1px] focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 focus:ring-offset-slate-50 transition-all duration-300 hover:shadow-[0_0_40px_rgba(147,112,219,0.6)]"
+                                            style={{ height: '64px' }}
+                                            onClick={() => navigate('/signin')}
+                                        >
+                                            <span className="absolute inset-[-1000%] animate-[spin_2s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#E2CBFF_0%,#393BB2_50%,#E2CBFF_100%)]" />
+                                            <span
+                                                className="inline-flex h-full w-full cursor-pointer items-center justify-center rounded-full px-10 py-1 font-medium backdrop-blur-3xl"
+                                                style={{
+                                                    backgroundColor: '#0f172a',
+                                                    color: 'white',
+                                                    fontSize: '1.4rem',
+                                                    fontFamily: 'Satoshi Bold, sans-serif',
+                                                    gap: '12px',
+                                                    display: 'flex',
+                                                    alignItems: 'center'
+                                                }}
+                                            >
+                                                Start Your Journey
+                                                <svg
+                                                    fill="none"
+                                                    stroke="currentColor"
+                                                    strokeWidth="2.5"
+                                                    viewBox="0 0 24 24"
+                                                    style={{ width: '24px', height: '24px' }}
+                                                >
+                                                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14M12 5l7 7-7 7" />
+                                                </svg>
+                                            </span>
+                                        </button>
+                                    </motion.a>
+
+                                    <Typography
+                                        sx={{
+                                            color: 'rgba(255, 255, 255, 0.7)',
+                                            fontSize: '0.95rem',
+                                            marginTop: '1.5rem',
+                                            fontFamily: 'DM Sans, sans-serif'
+                                        }}
+                                    >
+                                        Get started easily in less than 30 seconds!
+                                    </Typography>
+                                </motion.div>
+                            </Box>
+                        </motion.div>
+                    </Box>
+                    {/* ---------- Footer ---------- */}
+            <Box
+            sx={{
+                position: 'absolute',
+                bottom: 20,
+                left: 0,
+                width: '100%',
+                textAlign: 'center',
+                color: 'rgba(255, 255, 255, 0.7)',
+                fontFamily: 'DM Sans, sans-serif',
+                fontSize: '0.9rem',
+                
+            }}
+            >
+            <Typography component="span" sx={{ marginRight: '8px' }}>
+                Copyright © 2025 WiNG.it
+            </Typography>
+
+            <Typography
+                component="span"
+                className="cursor-pointer"
+                onClick={() => navigate('/terms')}
+                sx={{
+                marginX: '50px',
+                '&:hover': { color: 'white' },
+                cursor: 'pointer',
+                }}
+            >
+                Terms
+            </Typography>
+
+            <Typography
+                component="span"
+                className="cursor-pointer"
+                onClick={() => navigate('/privacy')}
+                sx={{
+                marginLeft: '8px',
+                '&:hover': { color: 'white' },
+                cursor: 'pointer',
+                }}
+            >
+                Privacy Policy
+            </Typography>
             </Box>
-        </motion.div>
-    </Box>
-</Box>
-        </Box>
+                </Box>
+                
+            </Box>
+            
+
         </Box>
     );
 }

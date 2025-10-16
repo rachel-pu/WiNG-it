@@ -52,7 +52,7 @@
   margin-bottom: 45px;
   padding: 25px;
   background: linear-gradient(135deg, #f5f5f6 0%, #edece9 100%);
-  box-shadow: rgb(141, 140, 140) 1px 5px 5px;
+  box-shadow: rgb(179, 175, 175) 1px 5px 5px;
   border-radius: 10px;
   border: 1px solid #e1e4e8;
   transition: box-shadow 0.3s ease;
@@ -107,7 +107,7 @@
 
 .definitions-list li {
   background: linear-gradient(135deg, #f5f5f6 0%, #edece9 100%);
-  box-shadow: rgb(192, 189, 189) 1px 5px 5px;
+  box-shadow: rgb(216, 211, 211) 1px 5px 5px;
   padding: 15px;
   margin-bottom: 20px;
   border-radius: 8px;
@@ -123,7 +123,6 @@
 
 .cookie-types-list li {
   background: linear-gradient(135deg, #f5f5f6 0%, #edece9 100%);
-  box-shadow: rgb(141, 140, 140) 1px 5px 5px;
   padding: 20px;
   margin-bottom: 15px;
   border-radius: 8px;
@@ -143,7 +142,7 @@
 .cookie-detail {
   margin: 8px 0;
   padding-left: 15px;
-  color: #555;
+  color: #9f9595;
   font-size: 0.95rem;
 }
 
