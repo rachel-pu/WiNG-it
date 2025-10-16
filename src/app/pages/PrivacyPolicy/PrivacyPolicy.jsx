@@ -4,7 +4,7 @@ import HomePageNavbar from "../../../components/HomePageNavbar";
 
 export default function PrivacyPolicy() {
   return (
-    <div>
+    <div style={{backgroundColor:"#f2f0e8"}}>
         <HomePageNavbar/>
         <Box className="privacy-policy-container">
         <div className="privacy-header">

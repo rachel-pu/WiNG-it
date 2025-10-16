@@ -1,4 +1,4 @@
-.privacy-policy-container {
+.term-container {
   max-width: 900px;
   margin: 0 auto;
   padding: 40px 20px;
@@ -9,14 +9,14 @@
   line-height: 1.7;
 }
 
-.privacy-header {
+.header {
   text-align: center;
   margin-bottom: 50px;
   padding-bottom: 30px;
   border-bottom: 3px solid #4a90e2;
 }
 
-.privacy-header h1 {
+.header h1 {
   font-size: 3rem;
   font-weight: 700;
   color: #1a1a1a;
@@ -30,13 +30,12 @@
   font-style: italic;
 }
 
-
 .intro-section {
-  background: linear-gradient(135deg, #f5f7fa 0%, #e8eef5 100%);
+  background: linear-gradient(135deg, #f5f5f6 0%, #edece9 100%);
+  box-shadow: rgb(141, 140, 140) 1px 5px 5px;
   padding: 30px;
   border-radius: 12px;
   margin-bottom: 40px;
-  border-left: 4px solid #4a90e2;
 }
 
 .intro-section p {
@@ -48,7 +47,7 @@
   margin-bottom: 0;
 }
 
-.policy-section {
+.term-section {
   margin-bottom: 45px;
   padding: 25px;
   background: linear-gradient(135deg, #f5f5f6 0%, #edece9 100%);
@@ -58,11 +57,11 @@
   transition: box-shadow 0.3s ease;
 }
 
-.policy-section:hover {
+.term-section:hover {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
-.policy-section h2 {
+.term-section h2 {
   font-size: 2rem;
   color: #2c3e50;
   margin-bottom: 20px;
@@ -72,7 +71,7 @@
   font-weight: 600;
 }
 
-.policy-section h3 {
+.term-section h3 {
   font-size: 1.5rem;
   color: #34495e;
   margin-top: 30px;
@@ -80,7 +79,7 @@
   font-weight: 600;
 }
 
-.policy-section h4 {
+.term-section h4 {
   font-size: 1.25rem;
   color: #455a64;
   margin-top: 25px;
@@ -88,37 +87,21 @@
   font-weight: 600;
 }
 
-.policy-section p {
+.term-section p {
   margin-bottom: 15px;
   font-size: 1rem;
   color: #444;
 }
 
-.policy-section ul {
+.term-section ul {
   margin: 20px 0;
   padding-left: 25px;
 }
 
-.policy-section li {
+.term-section li {
   margin-bottom: 12px;
   line-height: 1.7;
   color: #444;
-}
-
-.definitions-list li {
-  background: linear-gradient(135deg, #f5f5f6 0%, #edece9 100%);
-  box-shadow: rgb(192, 189, 189) 1px 5px 5px;
-  padding: 15px;
-  margin-bottom: 20px;
-  border-radius: 8px;
-  list-style: none;
-  margin-left: -25px;
-  padding-left: 20px;
-}
-
-.definitions-list strong {
-  color: #2c3e50;
-  font-size: 1.05rem;
 }
 
 .cookie-types-list li {
@@ -165,27 +148,27 @@ strong {
 
 /* Responsive Design */
 @media (max-width: 768px) {
-  .privacy-policy-container {
+  .term-container {
     padding: 30px 15px;
   }
 
-  .privacy-header h1 {
+  .header h1 {
     font-size: 2.2rem;
   }
 
-  .policy-section {
+  .term-section {
     padding: 20px 15px;
   }
 
-  .policy-section h2 {
+  .term-section h2 {
     font-size: 1.6rem;
   }
 
-  .policy-section h3 {
+  .term-section h3 {
     font-size: 1.3rem;
   }
 
-  .policy-section h4 {
+  .term-section h4 {
     font-size: 1.1rem;
   }
 
@@ -195,11 +178,11 @@ strong {
 }
 
 @media (max-width: 480px) {
-  .privacy-header h1 {
+  .header h1 {
     font-size: 1.8rem;
   }
 
-  .policy-section h2 {
+  .term-section h2 {
     font-size: 1.4rem;
   }
 }

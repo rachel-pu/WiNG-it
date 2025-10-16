@@ -8,6 +8,7 @@ import Behavioral from './app/pages/Tools/Behavioral/Behavioral.jsx';
 import InterviewResults from "./app/pages/Tools/Behavioral/results/result.jsx"
 import RetryQuestionPage from "./app/pages/Tools/Behavioral/components/RetryQuestionPage.jsx"
 import PrivacyPolicy from './app/pages/PrivacyPolicy/PrivacyPolicy.jsx'; 
+import TermsService from './app/pages/TermsService/TermsService.jsx'; 
 import ProtectedRoute from './components/ProtectedRoute.jsx';
 import PublicRoute from './components/PublicRoute.jsx'; 
 
@@ -17,6 +18,7 @@ function App() {
     <div>
       <Routes>
         <Route path="/privacy" element = {<PrivacyPolicy/>}/>
+        <Route path="/terms" element = {<TermsService/>}/>
         <Route path="/"
           element={
             <PublicRoute>
