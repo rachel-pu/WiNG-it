@@ -16,9 +16,9 @@ What sets WiNG.it apart is its student-centered design. WiNG.it was initially st
 WiNG.it applies learning engineering principles to help students build and track career readiness skills through authentic, AI-guided practice. Each student interaction such as interview responses, small talk exercises, reflection prompts, and feedback are stored in a Firebase database. Additionally, this data is used to generate structured insights on students’ development of professional competencies defined by the National Association of Colleges and Employers (NACE) such as critical thinking and communication. The data also powers continuous personalization, allowing the system to adapt feedback and challenges to each student’s progress. By aligning practice with NACE competencies, WiNG.it translates learning data into actionable guidance students can use to strengthen their professional skills. This approach creates a continuous improvement loop where students learn, receive feedback, and see measurable growth making career readiness more transparent, data-driven, and accessible.
 
 
-## Getting Started
 
-### Deploying Locally
+
+## Deploying Locally
 
 First, run the development server:
 
@@ -34,15 +34,6 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-Next run the backend server:
-
-```bash
-cd backend
-python3 app.py
-```
-
-## Deploying on Firebase
-🎉 Check out our deployment at https://wing-it-e6a3a.web.app/! 🎉
 
 Backend: Backend powered by Google Cloud Functions (Firebase)
 To update functions in the cloud:
@@ -51,4 +42,6 @@ To update functions in the cloud:
 firebase functions:delete saveResponse 
 firebase deploy --only functions:saveResponse
 ```
+
+🎉 Check out our deployment at https://wing-it.space/! 🎉
 
