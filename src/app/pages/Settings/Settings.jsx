@@ -35,9 +35,7 @@ export default function Settings() {
             title: 'Personal Information',
             deletable: false,
             fields: [
-                { id: 'firstName', label: 'First Name', editable: true, type: 'text' },
-                { id: 'lastName', label: 'Last Name', editable: true, type: 'text' },
-                { id: 'userId', label: 'User ID', editable: false, type: 'text' },
+                { id: 'fullName', label: 'Full Name', editable: true, type: 'text' },
                 { id: 'email', label: 'Email', editable: true, type: 'text' },
                 { id: 'password', label: 'Password', editable: true, type: 'password' },
                 { id: 'bio', label: 'Bio', editable: true, type: 'textarea' }
@@ -60,7 +58,7 @@ export default function Settings() {
             deletable: true,
             fields: [
                 { id: 'currentJob', label: 'Current Job/Position', editable: true, type: 'text' },
-                { id: 'resume', label: 'Resume', editable: false, type: 'file' }
+                // { id: 'resume', label: 'Resume', editable: false, type: 'file' }
             ]
         }
     ]);
@@ -129,7 +127,6 @@ export default function Settings() {
     };
 
     useEffect(() => {
-        // Helper to get a cookie value by name
         const getCookie = (name) => {
             const value = `; ${document.cookie}`;
             const parts = value.split(`; ${name}=`);
@@ -169,9 +166,29 @@ export default function Settings() {
         setEditingSection(section);
     };
 
-    const handleSaveSection = (section) => {
+    const handleSaveSection = async (sectionId) => {
         setEditingSection(null);
-        // Here you would typically save to backend
+        if (!formData.userId) {
+            alert("User ID not found!");
+            return;
+        }
+
+        try {
+
+            const section = sections.find(sec => sec.id === sectionId);
+            if (!section) return;
+
+            const updates = {};
+            section.fields.forEach(field => {
+                updates[field.id] = formData[field.id] || '';
+            });
+
+            await update(ref(database, `users/${formData.userId}`), updates);
+            alert('Section updated successfully!');
+        } catch (err) {
+            console.error('Error updating section:', err);
+            alert('Failed to update section.');
+        }
         console.log('Saved section:', section);
     };
 
@@ -282,22 +299,22 @@ export default function Settings() {
         const isPassword = field.type === 'password';
         const isEditing = isEditingSection && field.editable;
 
-        if (isFile) {
-            return (
-                <div className="form-field" key={field.id}>
-                    <label className="form-label">Resume</label>
-                    <div className="resume-section">
-                        <div className="resume-filename">{formData.resume}</div>
-                        <button className="button-upload">
-                            Upload New
-                        </button>
-                        <button className="button-download">
-                            Download
-                        </button>
-                    </div>
-                </div>
-            );
-        }
+        // if (isFile) {
+        //     return (
+        //         <div className="form-field" key={field.id}>
+        //             <label className="form-label">Resume</label>
+        //             <div className="resume-section">
+        //                 <div className="resume-filename">{formData.resume}</div>
+        //                 <button className="button-upload">
+        //                     Upload New
+        //                 </button>
+        //                 <button className="button-download">
+        //                     Download
+        //                 </button>
+        //             </div>
+        //         </div>
+        //     );
+        // }
 
         return (
             <div className="form-field" key={field.id}>
@@ -346,9 +363,20 @@ export default function Settings() {
                     <div className="settings-container">
                         <h1 className="settings-title">Settings</h1>
                         <p className="settings-subtitle">Manage your account information and preferences</p>
-
-                        {/* Dynamic Sections */}
-                        {sections.map(section => (
+                        
+                        
+                        {sections.slice(0, 1).map(section => (
+                            <div className="settings-card" key={section.id}>
+                                <h2>{section.title}</h2>
+                            <div className="settings-card-header"></div>
+                            {section.fields.map(field => (
+                            renderField(field, section.id, editingSection === section.id)
+                            ))}
+                           </div>  
+                        ))}
+                        
+                    
+                        {sections.slice(1).map(section => (
                             <div className="settings-card" key={section.id}>
                                 <div className="settings-card-header">
                                     <h2>{section.title}</h2>
