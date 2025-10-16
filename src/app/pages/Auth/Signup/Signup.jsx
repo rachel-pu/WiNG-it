@@ -51,8 +51,7 @@ const SignUp = () => {
       if (data?.user) {
         setError('A verification email has been sent. Please check your inbox.');
         await set(ref(database, `users/${data.user.id}`), {
-          firstName: name,
-          lastName: "",
+          fullName: name,
           email: email,
           password: password,
           bio: "",
@@ -85,8 +84,7 @@ const SignUp = () => {
       if (error) throw error;
       if (data?.user) {
         await set(ref(database, `users/${data.user.id}`), {
-          firstName: name,
-          lastName: "",
+          fullName: name,
           email: email,
           password: password,
           bio: "",
