@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import './Signup.css';
 import { ref, set } from "firebase/database";
 import {database} from '../../../../lib/firebase.jsx'
+import bcrypt from 'bcryptjs';
 
 
 const SignUp = () => {
@@ -47,13 +48,14 @@ const SignUp = () => {
       });
 
       if (error) throw error;
+      const hashedPassword = await bcrypt.hash(password, 10);
 
       if (data?.user) {
         setError('A verification email has been sent. Please check your inbox.');
         await set(ref(database, `users/${data.user.id}`), {
           fullName: name,
           email: email,
-          password: password,
+          password: hashedPassword,
           bio: "",
           userId: data.user.id,
           resume: "",
