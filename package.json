@@ -20,6 +20,7 @@
     "@tabler/icons-react": "^3.35.0",
     "@types/react": "^19.1.12",
     "@vitejs/plugin-react": "^5.0.4",
+    "bcryptjs": "^3.0.2",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cors": "^2.8.5",
