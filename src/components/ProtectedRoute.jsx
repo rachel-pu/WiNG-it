@@ -23,7 +23,7 @@ const ProtectedRoute = ({ children }) => {
     return () => listener.subscription.unsubscribe();
   }, []);
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <div></div>;
 
   // If no session → redirect to /signin
   if (!session) return <Navigate to="/" replace />;

@@ -23,8 +23,7 @@ const PublicRoute = ({ children }) => {
     return () => listener.subscription.unsubscribe();
   }, []);
 
-  if (loading) return <div>Loading...</div>;
-
+  if (loading) return <div></div>;
   // If session → redirect to /dashboard
   if (session) return <Navigate to="/dashboard" replace />;
 
