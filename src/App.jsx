@@ -1,4 +1,4 @@
-import { Routes, Route, Link } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 import Home from './app/pages/Home/Home.jsx';
 import Settings from './app/pages/Settings/Settings.jsx';
 import Signin from './app/pages/Auth/Signin/Signin.jsx';
@@ -11,7 +11,6 @@ import PrivacyPolicy from './app/pages/PrivacyPolicy/PrivacyPolicy.jsx';
 import TermsService from './app/pages/TermsService/TermsService.jsx'; 
 import ProtectedRoute from './components/ProtectedRoute.jsx';
 import PublicRoute from './components/PublicRoute.jsx'; 
-
 
 function App() {
   return (

@@ -1,9 +1,17 @@
 import Box from '@mui/material/Box';
 import "./PrivacyPolicy.css";
 import HomePageNavbar from "../../../components/HomePageNavbar";
+import { useEffect } from "react";
+import { useLocation } from "react-router-dom";
 
 export default function PrivacyPolicy() {
-  return (
+    const { pathname } = useLocation();
+
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, [pathname]);
+
+    return (
     <div style={{backgroundColor:"#f2f0e8"}}>
         <HomePageNavbar/>
         <Box className="privacy-policy-container">
