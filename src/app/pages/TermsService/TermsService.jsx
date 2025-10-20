@@ -1,11 +1,13 @@
 import Box from '@mui/material/Box';
 import "./TermsService.css";
-import HomePageNavbar from "../../../components/HomePageNavbar";
+import { ArrowLeft} from 'lucide-react';
 import { useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import Button from '@mui/material/Button';
 
 export default function TermsService() {
     const { pathname } = useLocation();
+    const navigate = useNavigate();
 
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -13,7 +15,15 @@ export default function TermsService() {
 
     return (
     <div style={{backgroundColor:"#f2f0e8"}}>
-        <HomePageNavbar/>
+        <Button
+            onClick={() => navigate('/')}
+            sx={{
+                position: 'fixed',
+                color: '#343b45ff',
+            }}
+            >
+            <ArrowLeft size={50}/>
+        </Button>
         <Box className="term-container">
         <div className="header">
             <h1>WiNG.it Terms of Service</h1>

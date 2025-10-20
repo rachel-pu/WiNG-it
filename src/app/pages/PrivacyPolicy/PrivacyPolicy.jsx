@@ -1,11 +1,13 @@
 import Box from '@mui/material/Box';
 import "./PrivacyPolicy.css";
-import HomePageNavbar from "../../../components/HomePageNavbar";
 import { useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { ArrowLeft} from 'lucide-react';
+import { useLocation, useNavigate } from "react-router-dom";
+import Button from '@mui/material/Button';
 
 export default function PrivacyPolicy() {
     const { pathname } = useLocation();
+    const navigate = useNavigate();
 
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -13,7 +15,15 @@ export default function PrivacyPolicy() {
 
     return (
     <div style={{backgroundColor:"#f2f0e8"}}>
-        <HomePageNavbar/>
+        <Button
+            onClick={() => navigate('/')}
+            sx={{
+                position: 'fixed',
+                color: '#343b45ff',
+            }}
+            >
+            <ArrowLeft size={50}/>
+        </Button>
         <Box className="privacy-policy-container">
         <div className="privacy-header">
             <h1>Privacy Policy</h1>
