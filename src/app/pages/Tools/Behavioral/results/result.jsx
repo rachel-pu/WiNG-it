@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect} from "react";
-import { Box, Typography, CircularProgress, Card, Grid, Chip, CssBaseline, Toolbar, Tabs, Tab } from "@mui/material";
+import { Box, Typography, CircularProgress, Card, Chip, CssBaseline, Toolbar, Tabs, Tab } from "@mui/material";
 import { motion, AnimatePresence } from "framer-motion";
 import DefaultAppLayout from "../../../../DefaultAppLayout.jsx";
 import { Link } from 'react-router-dom';
@@ -1052,94 +1052,96 @@ function escapeRegExp(s) {
                                                 exit={{ opacity: 0, x: -20 }}
                                                 transition={{ duration: 0.3 }}
                                             >
-                                                {/* Two Column Layout: Question + Statistics */}
-                                                <Grid container spacing={3} sx={{ mb: 3 }}>
-                                                    {/* Left Column: Question */}
-                                                    <Grid item xs={12} md={8}>
-                                                        <Box>
-                                                            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mb: 2 }}>
-                                                                {currentData.questionTypes?.map((type, index) => {
-                                                                    const colors = [
-                                                                        { bg: '#e0f2fe', text: '#0277bd', border: '#81d4fa' }, // Blue
-                                                                        { bg: '#f3e8ff', text: '#7c3aed', border: '#c4b5fd' }, // Purple
-                                                                        { bg: '#dcfce7', text: '#16a34a', border: '#86efac' }, // Green
-                                                                        { bg: '#fef3c7', text: '#d97706', border: '#fcd34d' }, // Yellow
-                                                                        { bg: '#fee2e2', text: '#dc2626', border: '#fca5a5' }, // Red
-                                                                        { bg: '#f0f9ff', text: '#0284c7', border: '#7dd3fc' }, // Sky
-                                                                        { bg: '#fdf4ff', text: '#c026d3', border: '#f0abfc' }, // Fuchsia
-                                                                        { bg: '#ecfdf5', text: '#059669', border: '#6ee7b7' }  // Emerald
-                                                                    ];
-                                                                    const colorSet = colors[index % colors.length];
-                                                                    return (
-                                                                        <Chip
-                                                                            key={index}
-                                                                            label={type}
-                                                                            size="small"
-                                                                            sx={{
-                                                                                backgroundColor: colorSet.bg,
-                                                                                color: colorSet.text,
-                                                                                fontWeight: 600,
-                                                                                fontSize: '0.75rem',
-                                                                                fontFamily: 'Satoshi Medium',
-                                                                                border: `1px solid ${colorSet.border}`
-                                                                            }}
-                                                                        />
-                                                                    );
-                                                                }) || []}
-                                                            </Box>
-                                                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 2 }}>
-                                                                <Typography sx={{
-                                                                    fontSize: '1.5rem',
-                                                                    fontWeight: 900,
-                                                                    color: '#1f2937',
-                                                                    fontFamily: 'Satoshi Black',
-                                                                    lineHeight: 1.5,
-                                                                    letterSpacing: '-0.02em',
-                                                                    flex: 1
-                                                                }}>
-                                                                    {currentData.question}
-                                                                </Typography>
-                                                                <motion.button
-                                                                    whileHover={{ scale: 1.05 }}
-                                                                    whileTap={{ scale: 0.95 }}
-                                                                    onClick={() => {
-                                                                        const params = new URLSearchParams(window.location.search);
-                                                                        const userId = params.get("userId");
-                                                                        const sessionId = params.get("sessionId");
-                                                                        navigate(`/behavioral/retry?userId=${userId}&sessionId=${sessionId}&questionNumber=${validSelectedQuestion}`);
-                                                                    }}
-                                                                    style={{
-                                                                        padding: '8px 16px',
-                                                                        borderRadius: '8px',
-                                                                        fontWeight: 600,
-                                                                        fontSize: '0.85rem',
-                                                                        fontFamily: 'Satoshi Medium',
-                                                                        background: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
-                                                                        color: 'white',
-                                                                        border: 'none',
-                                                                        boxShadow: '0 2px 8px rgba(59, 130, 246, 0.3)',
-                                                                        cursor: 'pointer',
-                                                                        transition: 'all 0.2s ease',
-                                                                        whiteSpace: 'nowrap'
-                                                                    }}
-                                                                >
-                                                                    🔄 Retry Question
-                                                                </motion.button>
-                                                            </Box>
+                                                {/* Question Header */}
+                                                <Box sx={{ mb: 3 }}>
+                                                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mb: 2, justifyContent: 'space-between', alignItems: 'center' }}>
+                                                        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+                                                            {currentData.questionTypes?.map((type, index) => {
+                                                                const colors = [
+                                                                    { bg: '#e0f2fe', text: '#0277bd', border: '#81d4fa' }, // Blue
+                                                                    { bg: '#f3e8ff', text: '#7c3aed', border: '#c4b5fd' }, // Purple
+                                                                    { bg: '#dcfce7', text: '#16a34a', border: '#86efac' }, // Green
+                                                                    { bg: '#fef3c7', text: '#d97706', border: '#fcd34d' }, // Yellow
+                                                                    { bg: '#fee2e2', text: '#dc2626', border: '#fca5a5' }, // Red
+                                                                    { bg: '#f0f9ff', text: '#0284c7', border: '#7dd3fc' }, // Sky
+                                                                    { bg: '#fdf4ff', text: '#c026d3', border: '#f0abfc' }, // Fuchsia
+                                                                    { bg: '#ecfdf5', text: '#059669', border: '#6ee7b7' }  // Emerald
+                                                                ];
+                                                                const colorSet = colors[index % colors.length];
+                                                                return (
+                                                                    <Chip
+                                                                        key={index}
+                                                                        label={type}
+                                                                        size="small"
+                                                                        sx={{
+                                                                            backgroundColor: colorSet.bg,
+                                                                            color: colorSet.text,
+                                                                            fontWeight: 600,
+                                                                            fontSize: '0.75rem',
+                                                                            fontFamily: 'Satoshi Medium',
+                                                                            border: `1px solid ${colorSet.border}`
+                                                                        }}
+                                                                    />
+                                                                );
+                                                            }) || []}
                                                         </Box>
-                                                    </Grid>
-
-                                                    {/* Right Column: Performance Score */}
-                                                    <Grid item xs={12} md={4}>
-                                                        <Box sx={{ display: 'flex', justifyContent: { xs: 'center', md: 'flex-end' } }}>
-                                                            <PerformanceIndicator score={currentData.score} />
-                                                        </Box>
-                                                    </Grid>
-                                                </Grid>
+                                                        <motion.button
+                                                            whileHover={{ scale: 1.05 }}
+                                                            whileTap={{ scale: 0.95 }}
+                                                            onClick={() => {
+                                                                const params = new URLSearchParams(window.location.search);
+                                                                const userId = params.get("userId");
+                                                                const sessionId = params.get("sessionId");
+                                                                navigate(`/behavioral/retry?userId=${userId}&sessionId=${sessionId}&questionNumber=${validSelectedQuestion}`);
+                                                            }}
+                                                            style={{
+                                                                padding: '8px 16px',
+                                                                borderRadius: '8px',
+                                                                fontWeight: 600,
+                                                                fontSize: '0.85rem',
+                                                                fontFamily: 'Satoshi Medium',
+                                                                background: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
+                                                                color: 'white',
+                                                                border: 'none',
+                                                                boxShadow: '0 2px 8px rgba(59, 130, 246, 0.3)',
+                                                                cursor: 'pointer',
+                                                                transition: 'all 0.2s ease',
+                                                                whiteSpace: 'nowrap'
+                                                            }}
+                                                        >
+                                                            🔄 Retry Question
+                                                        </motion.button>
+                                                    </Box>
+                                                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 2, flexWrap: 'wrap' }}>
+                                                        <Typography sx={{
+                                                            fontSize: '1.5rem',
+                                                            fontWeight: 900,
+                                                            color: '#1f2937',
+                                                            fontFamily: 'Satoshi Black',
+                                                            lineHeight: 1.5,
+                                                            letterSpacing: '-0.02em',
+                                                            flex: 1,
+                                                            minWidth: '200px'
+                                                        }}>
+                                                            {currentData.question}
+                                                        </Typography>
+                                                        <PerformanceIndicator score={currentData.score} />
+                                                    </Box>
+                                                </Box>
 
                                                 {/* Statistics Grid */}
-                                                <Grid container spacing={2} sx={{ mb: 4 }}>
-                                                    <Grid item xs={6} sm={3}>
+                                                <Box sx={{
+                                                    display: 'grid',
+                                                    gridTemplateColumns: {
+                                                        xs: 'repeat(2, 1fr)',
+                                                        sm: 'repeat(2, 1fr)',
+                                                        md: 'repeat(4, 1fr)'
+                                                    },
+                                                    gap: 2,
+                                                    mb: 4,
+                                                    width: '100%'
+                                                }}>
+                                                    <Box>
                                                         <MetricCard
                                                             icon={AccessTimeIcon}
                                                             label="Time"
@@ -1151,32 +1153,32 @@ function escapeRegExp(s) {
                                                             })()}
                                                             color="#8b5cf6"
                                                         />
-                                                    </Grid>
-                                                    <Grid item xs={6} sm={3}>
+                                                    </Box>
+                                                    <Box>
                                                         <MetricCard
                                                             icon={RecordVoiceOverIcon}
                                                             label="Word Count"
                                                             value={currentData.wordCount}
                                                             color="#f59e0b"
                                                         />
-                                                    </Grid>
-                                                    <Grid item xs={6} sm={3}>
+                                                    </Box>
+                                                    <Box>
                                                         <MetricCard
                                                             icon={TrendingUpIcon}
                                                             label="Action Words"
                                                             value={currentData.actionWords}
                                                             color="#10b981"
                                                         />
-                                                    </Grid>
-                                                    <Grid item xs={6} sm={3}>
+                                                    </Box>
+                                                    <Box>
                                                         <MetricCard
                                                             icon={BarChartIcon}
                                                             label="Statistics"
                                                             value={currentData.statsUsed}
                                                             color="#06b6d4"
                                                         />
-                                                    </Grid>
-                                                </Grid>
+                                                    </Box>
+                                                </Box>
 
                                                 {/* Response Section */}
                                                 <Box sx={{ mb: 4 }}>
@@ -1265,9 +1267,17 @@ function escapeRegExp(s) {
                                                 </Box>
 
                                                 {/* Advice Section */}
-                                                <Grid container spacing={3}>
+                                                <Box sx={{
+                                                    display: 'grid',
+                                                    gridTemplateColumns: {
+                                                        xs: '1fr',
+                                                        md: 'repeat(2, 1fr)'
+                                                    },
+                                                    gap: 3,
+                                                    width: '100%'
+                                                }}>
                                                     {/* Strengths */}
-                                                    <Grid item xs={12} md={6}>
+                                                    <Box>
                                                         <Box sx={{
                                                             p: 3,
                                                             borderRadius: '20px',
@@ -1360,9 +1370,9 @@ function escapeRegExp(s) {
                                                                 ))}
                                                             </Box>
                                                         </Box>
-                                                    </Grid>
+                                                    </Box>
                                                    {/* Tips & Advice */}
-                                                    <Grid item xs={12} md={6}>
+                                                    <Box>
                                                         <Box sx={{
                                                             p: 3,
                                                             borderRadius: '20px',
@@ -1457,8 +1467,8 @@ function escapeRegExp(s) {
                                                                 ))}
                                                             </Box>
                                                         </Box>
-                                                    </Grid>
-                                                </Grid>
+                                                    </Box>
+                                                </Box>
                                             </motion.div>
                                         </AnimatePresence>
                                     </Box>
