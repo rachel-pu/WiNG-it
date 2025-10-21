@@ -38,7 +38,6 @@ export default function Settings() {
                 { id: 'fullName', label: 'Full Name', editable: true, type: 'text' },
                 { id: 'email', label: 'Email', editable: true, type: 'text' },
                 { id: 'password', label: 'Password', editable: true, type: 'password' },
-                { id: 'bio', label: 'Bio', editable: true, type: 'textarea' }
             ]
         },
         {
@@ -46,6 +45,7 @@ export default function Settings() {
             title: 'Academic Information',
             deletable: true,
             fields: [
+                { id: 'bio', label: 'Bio', editable: true, type: 'textarea' },
                 { id: 'school', label: 'School', editable: true, type: 'text' },
                 { id: 'schoolYear', label: 'School Year', editable: true, type: 'text' },
                 { id: 'major', label: 'Major', editable: true, type: 'text' },
