@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import bcrypt from 'bcryptjs';
 import '../Signin/Signin.css';
 import { supabase } from '../../../../../supabase.js';
-import { ref, set } from "firebase/database";
+import { ref, update } from "firebase/database";
 import {database} from '../../../../lib/firebase.jsx'
 
 const UpdatePassword = () => {
@@ -37,7 +37,7 @@ const UpdatePassword = () => {
                 if (type !== 'recovery' || !accessToken) {
                     setError('Invalid or expired password reset link.');
                     setIsLoading(false);
-                    setTimeout(() => navigate('/signin'), 3000);
+                    handleBackToSignIn();
                     return;
                 }
 
@@ -46,7 +46,7 @@ const UpdatePassword = () => {
                 if (error || !user) {
                     setError('Invalid or expired password reset link.');
                     setIsLoading(false);
-                    setTimeout(() => navigate('/signin'), 3000);
+                    handleBackToSignIn();
                     return;
                 }
 
@@ -57,7 +57,7 @@ const UpdatePassword = () => {
                 console.error('Error checking recovery token:', err);
                 setError('An error occurred. Please try again.');
                 setIsLoading(false);
-                setTimeout(() => navigate('/signin'), 3000);
+                handleBackToSignIn();
             }
         };
 
@@ -103,7 +103,7 @@ const UpdatePassword = () => {
             
             const hashedPassword = await bcrypt.hash(newPassword, 10);
             if (data?.user) {
-                await set(ref(database, `users/${data.user.id}`), {
+                await update(ref(database, `users/${data.user.id}`), {
                     password: hashedPassword,
                 });
             }
