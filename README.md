@@ -21,13 +21,13 @@ This project follows an Agile development methodology using weekly sprints to en
 
 ### Sprint Structure
 
-Each sprint lasts 1 week, with clear goals and deliverables defined at the start. Tasks are organized and tracked through Jira, where each issue corresponds to a specific feature, enhancement, or bug fix. The Git repository is structured to align with Jira keys for easy traceability (e.g., feature/WINGIT-60-adding-timer-toggle-to-simulation ).
+Each sprint lasts 1 week, with clear goals and deliverables defined at the start. Tasks are organized and tracked through Jira, where each issue corresponds to a specific feature, enhancement, or bug fix. The Git repository is structured to align with Jira keys for easy traceability (e.g., feature/WINGIT-60-adding-timer-toggle-to-simulation).
 
 ### Workflow Overview
 
 #### Development:
 Developers create branches using the naming convention:
-<developer-id>/<JIRA-KEY>-<short-description>
+```<developer-id>/<JIRA-KEY>-<short-description>```
 
 #### Code Review & Integration:
 
