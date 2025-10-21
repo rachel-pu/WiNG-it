@@ -49,9 +49,8 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 
 Backend: Backend powered by Google Cloud Functions (Firebase)
-To update functions in the cloud:
+To update functions in the cloud, the following is an example of updating a cloud function:
 ```bash
-//Note this is an example of updating a cloud function, make sure you are logged in first
 firebase functions:delete saveResponse 
 firebase deploy --only functions:saveResponse
 ```
