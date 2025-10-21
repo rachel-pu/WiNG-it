@@ -16,6 +16,25 @@ What sets WiNG.it apart is its student-centered design. WiNG.it was initially st
 WiNG.it applies learning engineering principles to help students build and track career readiness skills through authentic, AI-guided practice. Each student interaction such as interview responses, small talk exercises, reflection prompts, and feedback are stored in a Firebase database. Additionally, this data is used to generate structured insights on students’ development of professional competencies defined by the National Association of Colleges and Employers (NACE) such as critical thinking and communication. The data also powers continuous personalization, allowing the system to adapt feedback and challenges to each student’s progress. By aligning practice with NACE competencies, WiNG.it translates learning data into actionable guidance students can use to strengthen their professional skills. This approach creates a continuous improvement loop where students learn, receive feedback, and see measurable growth making career readiness more transparent, data-driven, and accessible.
 
 
+## Agile Development Process
+This project follows an Agile development methodology using weekly sprints to ensure continuous progress and adaptability.
+
+### Sprint Structure
+
+Each sprint lasts 1 week, with clear goals and deliverables defined at the start. Tasks are organized and tracked through Jira, where each issue corresponds to a specific feature, enhancement, or bug fix. The Git repository is structured to align with Jira keys for easy traceability (e.g., feature/WINGIT-60-adding-timer-toggle-to-simulation ).
+
+### Workflow Overview
+
+#### Development:
+Developers create branches using the naming convention:
+<developer-id>/<JIRA-KEY>-<short-description>
+
+#### Code Review & Integration:
+
+All code changes are submitted via pull requests. Reviews and checks are performed before merging into the develop branch.
+
+<img width="1083" height="630" alt="Screenshot 2025-10-20 at 9 52 23 PM" src="https://github.com/user-attachments/assets/528eb86b-8881-4e20-99be-7a4be6ba362e" />
+<img width="1469" height="689" alt="Screenshot 2025-10-20 at 10 05 21 PM" src="https://github.com/user-attachments/assets/90da061e-3619-4f1e-9574-556810d8335a" />
 
 
 ## Deploying Locally
@@ -24,12 +43,6 @@ First, run the development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
