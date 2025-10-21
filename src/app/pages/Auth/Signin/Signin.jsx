@@ -21,7 +21,7 @@ const SignIn = () => {
 
     const handleSignIn = async () => {
         setError('');
-
+        console.log("email: ", email);
         if (!isValidEmail(email)) return setError('Please enter a valid email address.');
         if (!password.trim()) return setError('Please enter your password.');
 
@@ -41,6 +41,22 @@ const SignIn = () => {
                 setError("Invalid email or password. Please try again.");
             } else {
                 setError(err.message || "An unexpected error occurred during sign-in.");
+            }
+        }
+    };
+
+    const handleForgotPassword = async (email) => {
+        if (! email){
+            setError("Please enter your email address to reset your password");
+        }else {
+            try {
+                const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
+                redirectTo: `${window.location.origin}/update-password`,
+                });
+                if (error) throw error;
+                setError("Sent password reset link");
+            } catch (err) {
+                console.error('Error sending password reset email:', err.message);
             }
         }
     };
@@ -144,6 +160,13 @@ const SignIn = () => {
                 <button className="primary-btn" onClick={handleSignIn}>
                     Continue
                 </button>
+                <p
+                className="auth-description cursor-pointer"
+                style={{ marginTop: 10, color: "#2381edff", textDecoration: "underline" }}
+                onClick={() => handleForgotPassword(email)}
+                >
+                Forgot Password
+                </p>
                 <p
                 className="auth-description cursor-pointer"
                 style={{ marginTop: 10, color: "#2381edff", textDecoration: "underline" }}
