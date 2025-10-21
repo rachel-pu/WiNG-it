@@ -14,15 +14,30 @@ export default function PrivacyPolicy() {
     }, [pathname]);
 
     return (
-    <div style={{backgroundColor:"#f2f0e8"}}>
+    <div className="page-wrapper">
         <Button
-            onClick={() => navigate('/')}
+            onClick={() => navigate('/signup')}
             sx={{
-                position: 'fixed',
-                color: '#343b45ff',
+                position: 'absolute',
+                top: '80px',
+                left: '50%',
+                transform: 'translateX(calc(-50% - 540px))',
+                color: '#1e293b',
+                minWidth: 'auto',
+                padding: '12px',
+                backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+                borderRadius: '12px',
+                '&:hover': {
+                    backgroundColor: 'rgba(255, 255, 255, 1)',
+                    boxShadow: '0 6px 16px rgba(0, 0, 0, 0.2)',
+                    transform: 'translateX(calc(-50% - 540px)) scale(1.05)'
+                },
+                transition: 'all 0.3s ease',
+                zIndex: 1000
             }}
             >
-            <ArrowLeft size={50}/>
+            <ArrowLeft size={28}/>
         </Button>
         <Box className="privacy-policy-container">
         <div className="privacy-header">
@@ -33,7 +48,7 @@ export default function PrivacyPolicy() {
         <div className="privacy-content">
             <section className="intro-section">
             <p>
-                WiNG.it, LLC ("we”, “us”, or “our") provides this Privacy Policy to inform you of our policies and procedures regarding the collection, use and disclosure of personal information we may receive from users of our website (“Site”) and any other services offered by us in connection with our site (any and all of the foregoing the "Services").
+                WiNG.it, LLC ("we", "us", or "our") provides this Privacy Policy to inform you of our policies and procedures regarding the collection, use and disclosure of personal information we may receive from users of our website ("Site") and any other services offered by us in connection with our site (any and all of the foregoing the "Services").
             </p>
 
             <p>
@@ -42,6 +57,7 @@ export default function PrivacyPolicy() {
             </section>
 
             <section className="policy-section">
+            {/* Interpretation and Definitions */}
             <h2>Interpretation and Definitions</h2>
             
             <h3>Interpretation</h3>
@@ -86,9 +102,8 @@ export default function PrivacyPolicy() {
                 <strong>You</strong> means the individual accessing or using the Service, or the company, or other legal entity on behalf of which such individual is accessing or using the Service, as applicable.
                 </li>
             </ul>
-            </section>
 
-            <section className="policy-section">
+            {/* Collecting and Using Your Personal Data */}
             <h2>Collecting and Using Your Personal Data</h2>
             
             <h3>Types of Data Collected</h3>
@@ -96,9 +111,9 @@ export default function PrivacyPolicy() {
             <h4>Personal Data</h4>
             <p>While using Our Service, We may ask You to provide Us with certain personally identifiable information that can be used to contact or identify You. Personally identifiable information may include, but is not limited to:</p>
             <ul>
-                <li>Email address</li>
-                <li>First name and last name</li>
-                <li>Usage Data</li>
+                <li>• Email address</li>
+                <li>• First name and last name</li>
+                <li>• Usage Data</li>
             </ul>
 
             <h4>Usage Data</h4>
@@ -117,31 +132,30 @@ export default function PrivacyPolicy() {
             <p>Cookies can be "Persistent" or "Session" Cookies. Persistent Cookies remain on Your personal computer or mobile device when You go offline, while Session Cookies are deleted as soon as You close Your web browser. Learn more about cookies on the <a href="https://www.freeprivacypolicy.com/blog/sample-privacy-policy-template/#Use_Of_Cookies_And_Tracking" target="_blank">Free Privacy Policy website</a> article.</p>
             
             <p>We use both Session and Persistent Cookies for the purposes set out below:</p>
-            <ul className="cookie-types-list">
-                <li>
+            <div className="cookie-types-list">
+                <div className="cookie-item">
                 <strong>Necessary / Essential Cookies</strong>
                 <div className="cookie-detail">Type: Session Cookies</div>
                 <div className="cookie-detail">Administered by: Us</div>
                 <div className="cookie-detail">Purpose: These Cookies are essential to provide You with services available through the Website and to enable You to use some of its features. They help to authenticate users and prevent fraudulent use of user accounts. Without these Cookies, the services that You have asked for cannot be provided, and We only use these Cookies to provide You with those services.</div>
-                </li>
-                <li>
+                </div>
+                <div className="cookie-item">
                 <strong>Cookies Policy / Notice Acceptance Cookies</strong>
                 <div className="cookie-detail">Type: Persistent Cookies</div>
                 <div className="cookie-detail">Administered by: Us</div>
                 <div className="cookie-detail">Purpose: These Cookies identify if users have accepted the use of cookies on the Website.</div>
-                </li>
-                <li>
+                </div>
+                <div className="cookie-item">
                 <strong>Functionality Cookies</strong>
                 <div className="cookie-detail">Type: Persistent Cookies</div>
                 <div className="cookie-detail">Administered by: Us</div>
                 <div className="cookie-detail">Purpose: These Cookies allow us to remember choices You make when You use the Website, such as remembering your login details or language preference. The purpose of these Cookies is to provide You with a more personal experience and to avoid You having to re-enter your preferences every time You use the Website.</div>
-                </li>
-            </ul>
-            
-            <p>For more information about the cookies we use and your choices regarding cookies, please visit our Cookies Policy or the Cookies section of our Privacy Policy.</p>
-            </section>
+                </div>
+            </div>
 
-            <section className="policy-section">
+            <p>For more information about the cookies we use and your choices regarding cookies, please visit our Cookies Policy or the Cookies section of our Privacy Policy.</p>
+
+            {/* Use of Your Personal Data */}
             <h3>Use of Your Personal Data</h3>
             <p>The Company may use Personal Data for the following purposes:</p>
             <ul>
@@ -164,30 +178,26 @@ export default function PrivacyPolicy() {
                 <li><strong>With other users:</strong> when You share personal information or otherwise interact in the public areas with other users, such information may be viewed by all users and may be publicly distributed outside.</li>
                 <li><strong>With Your consent</strong>: We may disclose Your personal information for any other purpose with Your consent.</li>
             </ul>
-            </section>
 
-            <section className="policy-section">
+            {/* Retention of Your Personal Data */}
             <h3>Retention of Your Personal Data</h3>
             <p>The Company will retain Your Personal Data only for as long as is necessary for the purposes set out in this Privacy Policy. We will retain and use Your Personal Data to the extent necessary to comply with our legal obligations (for example, if we are required to retain your data to comply with applicable laws), resolve disputes, and enforce our legal agreements and policies.</p>
             <p>The Company will also retain Usage Data for internal analysis purposes. Usage Data is generally retained for a shorter period of time, except when this data is used to strengthen the security or to improve the functionality of Our Service, or We are legally obligated to retain this data for longer periods.</p>
-            </section>
 
-            <section className="policy-section">
+            {/* Transfer of Your Personal Data */}
             <h3>Transfer of Your Personal Data</h3>
             <p>Your information, including Personal Data, is processed at the Company's operating offices and in any other places where the parties involved in the processing are located. It means that this information may be transferred to — and maintained on — computers located outside of Your state, province, country or other governmental jurisdiction where the data protection laws may differ from those from Your jurisdiction.</p>
             <p>Your consent to this Privacy Policy followed by Your submission of such information represents Your agreement to that transfer.</p>
             <p>The Company will take all steps reasonably necessary to ensure that Your data is treated securely and in accordance with this Privacy Policy and no transfer of Your Personal Data will take place to an organization or a country unless there are adequate controls in place including the security of Your data and other personal information.</p>
-            </section>
 
-            <section className="policy-section">
+            {/* Delete Your Personal Data */}
             <h3>Delete Your Personal Data</h3>
             <p>You have the right to delete or request that We assist in deleting the Personal Data that We have collected about You.</p>
             <p>Our Service may give You the ability to delete certain information about You from within the Service.</p>
             <p>You may update, amend, or delete Your information at any time by signing in to Your Account, if you have one, and visiting the account settings section that allows you to manage Your personal information. You may also contact Us to request access to, correct, or delete any personal information that You have provided to Us.</p>
             <p>Please note, however, that We may need to retain certain information when we have a legal obligation or lawful basis to do so.</p>
-            </section>
 
-            <section className="policy-section">
+            {/* Disclosure of Your Personal Data */}
             <h3>Disclosure of Your Personal Data</h3>
             
             <h4>Business Transactions</h4>
@@ -199,20 +209,18 @@ export default function PrivacyPolicy() {
             <h4>Other legal requirements</h4>
             <p>The Company may disclose Your Personal Data in the good faith belief that such action is necessary to:</p>
             <ul>
-                <li>Comply with a legal obligation</li>
-                <li>Protect and defend the rights or property of the Company</li>
-                <li>Prevent or investigate possible wrongdoing in connection with the Service</li>
-                <li>Protect the personal safety of Users of the Service or the public</li>
-                <li>Protect against legal liability</li>
+                <li>• Comply with a legal obligation</li>
+                <li>• Protect and defend the rights or property of the Company</li>
+                <li>• Prevent or investigate possible wrongdoing in connection with the Service</li>
+                <li>• Protect the personal safety of Users of the Service or the public</li>
+                <li>• Protect against legal liability</li>
             </ul>
-            </section>
 
-            <section className="policy-section">
+            {/* Security of Your Personal Data */}
             <h3>Security of Your Personal Data</h3>
             <p>The security of Your Personal Data is important to Us, but remember that no method of transmission over the Internet, or method of electronic storage is 100% secure. While We strive to use commercially reasonable means to protect Your Personal Data, We cannot guarantee its absolute security.</p>
-            </section>
 
-            <section className="policy-section">
+            {/* Analytics and Data Tools */}
             <h2>Analytics and Data Tools</h2>
             <p>
                 We use third-party services such as <strong>Google Analytics</strong> and <strong>Firebase</strong> to monitor and analyze the use of our Service.
@@ -227,83 +235,74 @@ export default function PrivacyPolicy() {
                 <strong>Firebase:</strong> We use Firebase for analytics, authentication, cloud messaging, and crash reporting. Firebase may collect information such as app usage data, device information, and crash logs. You can learn more about how Google handles data in Firebase at <a href="https://firebase.google.com/support/privacy" target="_blank" rel="noopener noreferrer">Firebase Privacy</a>.
                 </li>
             </ul>
-            </section>
 
-            <section className="policy-section">
+            {/* Emails and Communication */}
             <h2>Emails and Communication</h2>
             <p>
-                We may use your email address to send you important updates, service announcements, and promotional content. You may opt out of non-essential communications at any time by clicking the “unsubscribe” link in our emails or by contacting us directly.
+                We may use your email address to send you important updates, service announcements, and promotional content. You may opt out of non-essential communications at any time by clicking the "unsubscribe" link in our emails or by contacting us directly.
             </p>
-            </section>
 
-            <section className="policy-section">
+            {/* Payments */}
             <h2>Payments</h2>
             <p>
                 We may provide paid products or services within the Service. In that case, we use third-party services for payment processing (e.g., Stripe or PayPal). We will not store or collect your payment card details. That information is provided directly to our third-party payment processors whose use of your personal information is governed by their Privacy Policy.
             </p>
-            </section>
 
-            <section className="policy-section">
+            {/* California Privacy Rights (CCPA and CPRA) */}
             <h2>California Privacy Rights (CCPA and CPRA)</h2>
             <p>
                 If you are a resident of California, you have certain rights under the California Consumer Privacy Act (CCPA) and the California Privacy Rights Act (CPRA). These include:
             </p>
             <ul>
-                <li>The right to know what personal information we collect, use, disclose, or sell.</li>
-                <li>The right to request deletion of personal information we hold about you.</li>
-                <li>The right to opt out of the sale or sharing of your personal information.</li>
-                <li>The right to non-discrimination for exercising your privacy rights.</li>
+                <li>• The right to know what personal information we collect, use, disclose, or sell.</li>
+                <li>• The right to request deletion of personal information we hold about you.</li>
+                <li>• The right to opt out of the sale or sharing of your personal information.</li>
+                <li>• The right to non-discrimination for exercising your privacy rights.</li>
             </ul>
-            </section>
 
-            <section className="policy-section">
+            {/* GDPR Compliance (European Union) */}
             <h2>GDPR Compliance (European Union)</h2>
             <p>
                 If you are located in the European Economic Area (EEA), the United Kingdom, or Switzerland, you have rights under the General Data Protection Regulation (GDPR), including:
             </p>
             <ul>
-                <li>The right to access, update, or delete your personal information.</li>
-                <li>The right to rectification if your data is inaccurate or incomplete.</li>
-                <li>The right to object to processing of your personal data.</li>
-                <li>The right to request restriction of processing.</li>
-                <li>The right to data portability.</li>
-                <li>The right to withdraw consent at any time where we rely on consent to process your information.</li>
+                <li>• The right to access, update, or delete your personal information.</li>
+                <li>• The right to rectification if your data is inaccurate or incomplete.</li>
+                <li>• The right to object to processing of your personal data.</li>
+                <li>• The right to request restriction of processing.</li>
+                <li>• The right to data portability.</li>
+                <li>• The right to withdraw consent at any time where we rely on consent to process your information.</li>
             </ul>
-            </section>
 
-            <section className="policy-section">
+            {/* CalOPPA Compliance */}
             <h2>CalOPPA Compliance</h2>
             <p>
                 In accordance with the California Online Privacy Protection Act (CalOPPA), we agree to the following:
             </p>
             <ul>
-                <li>Users can visit our site anonymously.</li>
-                <li>We will add a link to this Privacy Policy on our home page or as a minimum, on the first significant page after entering our website.</li>
-                <li>Our Privacy Policy link includes the word “Privacy” and can be easily found on the page specified above.</li>
-                </ul>
-            </section>
+                <li>• Users can visit our site anonymously.</li>
+                <li>• We will add a link to this Privacy Policy on our home page or as a minimum, on the first significant page after entering our website.</li>
+                <li>• Our Privacy Policy link includes the word "Privacy" and can be easily found on the page specified above.</li>
+            </ul>
 
-            <section className="policy-section">
+            {/* Children's Privacy */}
             <h2>Children's Privacy</h2>
             <p>Our Service does not address anyone under the age of 13. We do not knowingly collect personally identifiable information from anyone under the age of 13. If You are a parent or guardian and You are aware that Your child has provided Us with Personal Data, please contact Us. If We become aware that We have collected Personal Data from anyone under the age of 13 without verification of parental consent, We take steps to remove that information from Our servers.</p>
             <p>If We need to rely on consent as a legal basis for processing Your information and Your country requires consent from a parent, We may require Your parent's consent before We collect and use that information.</p>
-            </section>
 
-            <section className="policy-section">
+            {/* Links to Other Websites */}
             <h2>Links to Other Websites</h2>
             <p>Our Service may contain links to other websites that are not operated by Us. If You click on a third party link, You will be directed to that third party's site. We strongly advise You to review the Privacy Policy of every site You visit.</p>
             <p>We have no control over and assume no responsibility for the content, privacy policies or practices of any third party sites or services.</p>
-            </section>
 
-            <section className="policy-section">
+            {/* Changes to this Privacy Policy */}
             <h2>Changes to this Privacy Policy</h2>
             <p>We may update Our Privacy Policy from time to time. We will notify You of any changes by posting the new Privacy Policy on this page.</p>
             <p>We will let you know via email and/or a prominent notice on Our Service, prior to the change becoming effective and update the "Last updated" date at the top of this Privacy Policy.</p>
             <p>You are advised to review this Privacy Policy periodically for any changes. Changes to this Privacy Policy are effective when they are posted on this page.</p>
-            </section>
 
-            <section className="policy-section contact-section">
-            <h2>Contact Us</h2>
+            {/* Contact Us */}
+            <h2 className="contact-section">Contact Us</h2>
             <p>If you have any questions about this Privacy Policy, You can contact us:</p>
             <ul>
                 <li>By email: <a href="mailto:wingit.space@gmail.com">wingit.space@gmail.com</a></li>

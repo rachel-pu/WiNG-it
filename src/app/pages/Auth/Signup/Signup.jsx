@@ -2,12 +2,18 @@
 import { useState } from 'react';
 import { supabase } from '../../../../../supabase.js'
 import { motion } from 'framer-motion';
-import { Mail, Lock, Eye, EyeOff, User, ArrowLeft} from 'lucide-react';
+import { ArrowLeft} from 'lucide-react';
 import { useNavigate } from "react-router-dom";
 import './Signup.css';
 import { ref, set } from "firebase/database";
 import {database} from '../../../../lib/firebase.jsx'
 import bcrypt from 'bcryptjs';
+import { Box, TextField, InputAdornment, IconButton, Button } from '@mui/material';
+import AccountCircle from '@mui/icons-material/AccountCircle';
+import EmailIcon from '@mui/icons-material/Email';
+import LockIcon from '@mui/icons-material/Lock';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
 
 const SignUp = () => {
@@ -111,24 +117,34 @@ const SignUp = () => {
     <div>
         <div className="auth-page">
         <div className="auth-card">
-          <button
-            onClick={() => navigate('/')}
-            sx={{
-                color: '#64748b',
-                '&:hover': {
-                backgroundColor: 'rgba(100, 116, 139, 0.1)',
-                color: '#1e293b'
-                },
-                transition: 'all 0.3s ease',
-                textTransform: 'none',
-                fontFamily: 'DM Sans, sans-serif',
-                gap: '8px',
-                size: '20px'
-            }}
-            >
-            <ArrowLeft size={20} />
-        </button>
-            <h1 className="auth-title">Sign Up</h1>
+            <Button
+                onClick={() => navigate('/')}
+                sx={{
+                    position: 'absolute',
+                    top: '-35px',
+                    left: '0',
+                    color: '#cacacaff',
+                    minWidth: 'auto',
+                    padding: '2px 4px',
+                    backgroundColor: 'transparent',
+                    textTransform: 'none',
+                    fontFamily: 'DM Sans, sans-serif',
+                    fontSize: '13px',
+                    fontWeight: 500,
+                    gap: '6px',
+                    '&:hover': {
+                        color: '#a5b7f9ff'
+                    },
+                    transition: 'all 0.2s ease',
+                    zIndex: 10
+                }}
+                >
+                <ArrowLeft size={16} strokeWidth={2.5} />
+                <span>Back to Home</span>
+            </Button>
+            <h1 className="auth-title">Create Account</h1>
+            <p className="auth-subtitle">Start your journey with WiNG.it today</p>
+
             <motion.div variants={itemVariants}>
                 <button className="google-sign-in-btn" onClick={handleGoogleSignUp}>
                     <span className="google-icon-modern"></span>
@@ -141,67 +157,155 @@ const SignUp = () => {
                 <span className="divider-text">or</span>
                 <span className="divider-line"></span>
             </motion.div>
+
             {error && <div className="message-box error-box">{error}</div>}
 
-            <motion.div className="input-group" variants={itemVariants}>
-                    <label className="input-label">Full Name</label>
-                    <div className="input-wrapper">
-                        <User className="input-icon" />
-                        <input 
-                        type="name" 
-                        className="modern-input" 
-                        placeholder="John Doe" 
+            <motion.div variants={itemVariants}>
+                <Box sx={{ display: 'flex', alignItems: 'flex-end', mb: 3 }}>
+                    <AccountCircle sx={{ color: '#94a3b8', mr: 1.5, my: 0.5, fontSize: 28 }} />
+                    <TextField
+                        fullWidth
+                        label="Full Name"
+                        variant="standard"
                         value={name}
                         onChange={(e) => setName(e.target.value)}
-                        />
-                    </div>
-                </motion.div>
-                
-                <motion.div className="input-group" variants={itemVariants}>
-                    <label className="input-label">Email address</label>
-                    <div className="input-wrapper">
-                        <Mail className="input-icon" />
-                        <input 
-                        type="email" 
-                        className="modern-input" 
-                        placeholder="you@example.com" 
+                        sx={{
+                            '& .MuiInputLabel-root': {
+                                fontFamily: 'Satoshi Bold, sans-serif',
+                                color: '#94a3b8',
+                                fontSize: '14px'
+                            },
+                            '& .MuiInputLabel-root.Mui-focused': {
+                                color: '#2850d9'
+                            },
+                            '& .MuiInput-root': {
+                                fontFamily: 'DM Sans, sans-serif',
+                                fontSize: '16px',
+                                color: '#1a202c'
+                            },
+                            '& .MuiInput-underline:before': {
+                                borderBottomColor: '#e2e8f0',
+                                borderBottomWidth: '2px'
+                            },
+                            '& .MuiInput-underline:hover:not(.Mui-disabled):before': {
+                                borderBottomColor: '#cbd5e1',
+                                borderBottomWidth: '2px'
+                            },
+                            '& .MuiInput-underline:after': {
+                                borderBottomColor: '#2850d9',
+                                borderBottomWidth: '2px'
+                            }
+                        }}
+                    />
+                </Box>
+            </motion.div>
+
+            <motion.div variants={itemVariants}>
+                <Box sx={{ display: 'flex', alignItems: 'flex-end', mb: 3 }}>
+                    <EmailIcon sx={{ color: '#94a3b8', mr: 1.5, my: 0.5, fontSize: 28 }} />
+                    <TextField
+                        fullWidth
+                        label="Email Address"
+                        variant="standard"
+                        type="email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        />
-                    </div>
-                </motion.div>
+                        sx={{
+                            '& .MuiInputLabel-root': {
+                                fontFamily: 'Satoshi Bold, sans-serif',
+                                color: '#94a3b8',
+                                fontSize: '14px'
+                            },
+                            '& .MuiInputLabel-root.Mui-focused': {
+                                color: '#2850d9'
+                            },
+                            '& .MuiInput-root': {
+                                fontFamily: 'DM Sans, sans-serif',
+                                fontSize: '16px',
+                                color: '#1a202c'
+                            },
+                            '& .MuiInput-underline:before': {
+                                borderBottomColor: '#e2e8f0',
+                                borderBottomWidth: '2px'
+                            },
+                            '& .MuiInput-underline:hover:not(.Mui-disabled):before': {
+                                borderBottomColor: '#cbd5e1',
+                                borderBottomWidth: '2px'
+                            },
+                            '& .MuiInput-underline:after': {
+                                borderBottomColor: '#2850d9',
+                                borderBottomWidth: '2px'
+                            }
+                        }}
+                    />
+                </Box>
+            </motion.div>
 
-                <motion.div className="input-group" variants={itemVariants}>
-                    <label className="input-label">Password</label>
-                    <div className="input-wrapper">
-                        <Lock className="input-icon" />
-                        <input 
-                        type={showPassword ? "text" : "password"}
-                        className="modern-input password-input-field" 
-                        placeholder="Enter your password"
+            <motion.div variants={itemVariants}>
+                <Box sx={{ display: 'flex', alignItems: 'flex-end', mb: 3 }}>
+                    <LockIcon sx={{ color: '#94a3b8', mr: 1.5, my: 0.5, fontSize: 28 }} />
+                    <TextField
+                        fullWidth
+                        label="Password"
+                        variant="standard"
+                        type={showPassword ? 'text' : 'password'}
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
-                        />
-                        <button 
-                        type="button"
-                        className="password-toggle"
-                        onClick={() => setShowPassword(!showPassword)}
-                        >
-                        {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                        </button>
-                    </div>
-                </motion.div>
+                        InputProps={{
+                            endAdornment: (
+                                <InputAdornment position="end">
+                                    <IconButton
+                                        onClick={() => setShowPassword(!showPassword)}
+                                        edge="end"
+                                        size="small"
+                                        sx={{ color: '#64748b' }}
+                                    >
+                                        {showPassword ? <VisibilityOff fontSize="small" /> : <Visibility fontSize="small" />}
+                                    </IconButton>
+                                </InputAdornment>
+                            )
+                        }}
+                        sx={{
+                            '& .MuiInputLabel-root': {
+                                fontFamily: 'Satoshi Bold, sans-serif',
+                                color: '#94a3b8',
+                                fontSize: '14px'
+                            },
+                            '& .MuiInputLabel-root.Mui-focused': {
+                                color: '#2850d9'
+                            },
+                            '& .MuiInput-root': {
+                                fontFamily: 'DM Sans, sans-serif',
+                                fontSize: '16px',
+                                color: '#1a202c'
+                            },
+                            '& .MuiInput-underline:before': {
+                                borderBottomColor: '#e2e8f0',
+                                borderBottomWidth: '2px'
+                            },
+                            '& .MuiInput-underline:hover:not(.Mui-disabled):before': {
+                                borderBottomColor: '#cbd5e1',
+                                borderBottomWidth: '2px'
+                            },
+                            '& .MuiInput-underline:after': {
+                                borderBottomColor: '#2850d9',
+                                borderBottomWidth: '2px'
+                            }
+                        }}
+                    />
+                </Box>
+            </motion.div>
 
             <button className="primary-btn" onClick={handleSignUp}>
-                Continue
+                Create Account
             </button>
-            <p className="privacy-term-text" style={{marginTop:10}}> By signing up, you are agreeing to our</p>
-            <p className="privacy-term-text">
+            <p className="auth-description cursor-pointer" onClick={() => navigate("/signin")} style={{marginTop: 15}}>
+              Have an account? Sign in.
+            </p>
+            <p className="privacy-term-text" style={{marginTop:25, marginBottom: 0}}> By signing up, you are agreeing to our</p>
+            <p className="privacy-term-text" style={{marginTop: 0}}>
               <span className="auth-description cursor-pointer" onClick={() => navigate("/privacy")}> Privacy Policy</span> and {' '}
               <span className="auth-description cursor-pointer" onClick={() => navigate("/terms")}> Terms of Service</span>
-              </p>
-            <p className="auth-description cursor-pointer" onClick={() => navigate("/signin")}>
-              Have an account? Sign in instead.
             </p>
         </div>
       </div>

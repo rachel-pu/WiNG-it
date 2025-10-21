@@ -3,8 +3,13 @@ import { useState } from 'react';
 import './Signin.css';
 import { supabase } from '../../../../../supabase.js'
 import { motion } from 'framer-motion';
-import { Mail, Lock, Eye, EyeOff, ArrowLeft} from 'lucide-react';
+import { ArrowLeft} from 'lucide-react';
 import { useNavigate } from "react-router-dom";
+import { Box, TextField, InputAdornment, IconButton, Button } from '@mui/material';
+import EmailIcon from '@mui/icons-material/Email';
+import LockIcon from '@mui/icons-material/Lock';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
 const SignIn = () => {
     const [email, setEmail] = useState('');
@@ -88,24 +93,34 @@ const SignIn = () => {
         <div>
             <div className="auth-page">
             <div className="auth-card">
-                <button
+                <Button
                     onClick={() => navigate('/')}
                     sx={{
-                        color: '#64748b',
-                        '&:hover': {
-                        backgroundColor: 'rgba(100, 116, 139, 0.1)',
-                        color: '#1e293b'
-                        },
-                        transition: 'all 0.3s ease',
-                        textTransform: 'none',
-                        fontFamily: 'DM Sans, sans-serif',
-                        gap: '8px',
-                        size: '20px'
-                    }}
+                    position: 'absolute',
+                    top: '-35px',
+                    left: '0',
+                    color: '#cacacaff',
+                    minWidth: 'auto',
+                    padding: '2px 4px',
+                    backgroundColor: 'transparent',
+                    textTransform: 'none',
+                    fontFamily: 'DM Sans, sans-serif',
+                    fontSize: '13px',
+                    fontWeight: 500,
+                    gap: '6px',
+                    '&:hover': {
+                        color: '#a5b7f9ff'
+                    },
+                    transition: 'all 0.2s ease',
+                    zIndex: 10
+                }}
                     >
-                    <ArrowLeft size={20} />
-                </button>
+                    <ArrowLeft size={16} strokeWidth={2.5} />
+                    <span>Back to Home</span>
+                </Button>
                 <h1 className="auth-title">Welcome Back</h1>
+                <p className="auth-subtitle">Sign in to continue to WiNG.it</p>
+
                 <motion.div variants={itemVariants}>
                     <button className="google-sign-in-btn" onClick={googleSignIn}>
                         <span className="google-icon-modern"></span>
@@ -120,56 +135,117 @@ const SignIn = () => {
                 </motion.div>
 
                 {error && <div className="message-box error-box">{error}</div>}
-                
-                <motion.div className="input-group" variants={itemVariants}>
-                    <label className="input-label">Email address</label>
-                    <div className="input-wrapper">
-                        <Mail className="input-icon" />
-                        <input 
-                        type="email" 
-                        className="modern-input" 
-                        placeholder="you@example.com" 
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
+
+                <motion.div variants={itemVariants}>
+                    <Box sx={{ display: 'flex', alignItems: 'flex-end', mb: 3 }}>
+                        <EmailIcon sx={{ color: '#94a3b8', mr: 1.5, my: 0.5, fontSize: 28 }} />
+                        <TextField
+                            fullWidth
+                            label="Email Address"
+                            variant="standard"
+                            type="email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            sx={{
+                                '& .MuiInputLabel-root': {
+                                    fontFamily: 'Satoshi Bold, sans-serif',
+                                    color: '#94a3b8',
+                                    fontSize: '14px'
+                                },
+                                '& .MuiInputLabel-root.Mui-focused': {
+                                    color: '#2850d9'
+                                },
+                                '& .MuiInput-root': {
+                                    fontFamily: 'DM Sans, sans-serif',
+                                    fontSize: '16px',
+                                    color: '#1a202c'
+                                },
+                                '& .MuiInput-underline:before': {
+                                    borderBottomColor: '#e2e8f0',
+                                    borderBottomWidth: '2px'
+                                },
+                                '& .MuiInput-underline:hover:not(.Mui-disabled):before': {
+                                    borderBottomColor: '#cbd5e1',
+                                    borderBottomWidth: '2px'
+                                },
+                                '& .MuiInput-underline:after': {
+                                    borderBottomColor: '#2850d9',
+                                    borderBottomWidth: '2px'
+                                }
+                            }}
                         />
-                    </div>
+                    </Box>
                 </motion.div>
 
-                <motion.div className="input-group" variants={itemVariants}>
-                    <label className="input-label">Password</label>
-                    <div className="input-wrapper">
-                        <Lock className="input-icon" />
-                        <input 
-                        type={showPassword ? "text" : "password"}
-                        className="modern-input password-input-field" 
-                        placeholder="Enter your password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
+                <motion.div variants={itemVariants}>
+                    <Box sx={{ display: 'flex', alignItems: 'flex-end', mb: 3 }}>
+                        <LockIcon sx={{ color: '#94a3b8', mr: 1.5, my: 0.5, fontSize: 28 }} />
+                        <TextField
+                            fullWidth
+                            label="Password"
+                            variant="standard"
+                            type={showPassword ? 'text' : 'password'}
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            InputProps={{
+                                endAdornment: (
+                                    <InputAdornment position="end">
+                                        <IconButton
+                                            onClick={() => setShowPassword(!showPassword)}
+                                            edge="end"
+                                            size="small"
+                                            sx={{ color: '#64748b' }}
+                                        >
+                                            {showPassword ? <VisibilityOff fontSize="small" /> : <Visibility fontSize="small" />}
+                                        </IconButton>
+                                    </InputAdornment>
+                                )
+                            }}
+                            sx={{
+                                '& .MuiInputLabel-root': {
+                                    fontFamily: 'Satoshi Bold, sans-serif',
+                                    color: '#94a3b8',
+                                    fontSize: '14px'
+                                },
+                                '& .MuiInputLabel-root.Mui-focused': {
+                                    color: '#2850d9'
+                                },
+                                '& .MuiInput-root': {
+                                    fontFamily: 'DM Sans, sans-serif',
+                                    fontSize: '16px',
+                                    color: '#1a202c'
+                                },
+                                '& .MuiInput-underline:before': {
+                                    borderBottomColor: '#e2e8f0',
+                                    borderBottomWidth: '2px'
+                                },
+                                '& .MuiInput-underline:hover:not(.Mui-disabled):before': {
+                                    borderBottomColor: '#cbd5e1',
+                                    borderBottomWidth: '2px'
+                                },
+                                '& .MuiInput-underline:after': {
+                                    borderBottomColor: '#2850d9',
+                                    borderBottomWidth: '2px'
+                                }
+                            }}
                         />
-                        <button 
-                        type="button"
-                        className="password-toggle"
-                        onClick={() => setShowPassword(!showPassword)}
-                        >
-                        {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                        </button>
-                    </div>
+                    </Box>
                 </motion.div>
 
 
                 <button className="primary-btn" onClick={handleSignIn}>
-                    Continue
+                    Log In
                 </button>
                 <p
                 className="auth-description cursor-pointer"
-                style={{ marginTop: 10, color: "#2381edff", textDecoration: "underline" }}
+                style={{ marginTop: 10 }}
                 onClick={() => handleForgotPassword(email)}
                 >
                 Forgot Password
                 </p>
                 <p
                 className="auth-description cursor-pointer"
-                style={{ marginTop: 10, color: "#2381edff", textDecoration: "underline" }}
+                style={{ marginTop: 10 }}
                 onClick={() => navigate("/signup")}
                 >
                 Don't have an account? Sign up instead.

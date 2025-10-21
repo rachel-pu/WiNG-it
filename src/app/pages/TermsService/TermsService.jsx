@@ -14,15 +14,30 @@ export default function TermsService() {
     }, [pathname]);
 
     return (
-    <div style={{backgroundColor:"#f2f0e8"}}>
+    <div className="page-wrapper">
         <Button
-            onClick={() => navigate('/')}
+            onClick={() => navigate('/signup')}
             sx={{
-                position: 'fixed',
-                color: '#343b45ff',
+                position: 'absolute',
+                top: '80px',
+                left: '50%',
+                transform: 'translateX(calc(-50% - 540px))',
+                color: '#1e293b',
+                minWidth: 'auto',
+                padding: '12px',
+                backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+                borderRadius: '12px',
+                '&:hover': {
+                    backgroundColor: 'rgba(255, 255, 255, 1)',
+                    boxShadow: '0 6px 16px rgba(0, 0, 0, 0.2)',
+                    transform: 'translateX(calc(-50% - 540px)) scale(1.05)'
+                },
+                transition: 'all 0.3s ease',
+                zIndex: 1000
             }}
             >
-            <ArrowLeft size={50}/>
+            <ArrowLeft size={28}/>
         </Button>
         <Box className="term-container">
         <div className="header">
@@ -42,6 +57,7 @@ export default function TermsService() {
             </section>
 
             <section className="term-section">
+            {/* Use of Services */}
             <h2>Use of Services</h2>
             <p>
                 You agree that by using our Services, you have accepted these Terms and understand your obligations herein and under the Privacy Policies. You further agree that you are authorized to use our Services for your sole benefit. We reserve the right, at our sole discretion, to terminate any transactions or activities where we believe that the activities violate these Terms, Privacy Policies, or any laws. Notification of termination may be given at our discretion.
@@ -55,9 +71,8 @@ export default function TermsService() {
             <p>
                 You agree that by submitting any User Submitted Content to our Service platform, you grant us a worldwide, non-exclusive, royalty-free, perpetual, and irrevocable license to use, reproduce, modify, distribute, display, and perform it in connection with the Services platform, to commercially exploit all such User Submitted Content, and to use it for any other purposes, without restriction or compensation to you. You also understand and agree that this right will persist even if your User Submitted Content is subsequently removed by you or if you subsequently delete your account with our Service.
             </p>
-            </section>
 
-            <section className="term-section">
+            {/* Account Information */}
             <h2>Account Information</h2>
             <p>
                 <strong>Registration: </strong>We may ask you to register an account for the use of our services. In registering, you may elect to create an account with us or, if possible, create an account via a third party service such as Google. You understand and acknowledge that if you create an account using any third party services, you will be subject to those terms and conditions as well as privacy policies in connection with the use of our Services. You agree to familiarize yourself with any obligations under the conditions set forth by using the third party services as it relates to registration.
@@ -71,16 +86,14 @@ export default function TermsService() {
             <p>
                 <strong>Privacy: </strong>The terms of your account shall be protected by our privacy policy including any user generated material or confidential information provided as part of your account. To learn more about how we use your data, please refer to our privacy policy which is incorporated into this agreement by reference.
             </p>
-            </section>
 
-            <section className="term-section">
+            {/* Banking Activities */}
             <h2>Banking Activities</h2>
             <p>
                 We utilize third party services for the purposes of processing any funds as part of our services. We do not track or retain any information regarding the use of your banking information including but not limited to user names and passwords. We do not accept any liability or security for the use of our services as it relates to the protection of your banking information. Although we strive to protect your information, you use our services AS IS and accept all liability and risk of using our services and third party services. You have the sole responsibility of ensuring that you take necessary precautions to protect your private information.
             </p>
-            </section>
 
-            <section className="term-section">
+            {/* Warranties and Limitations on Liability */}
             <h2>Warranties and Limitations on Liability</h2>
             <p>
                 USE OF THE SERVICES IS AT YOUR OWN RISK. THE SERVICES ARE PROVIDED ON AN "AS IS" AND "AS AVAILABLE" BASIS. WE EXPRESSLY DISCLAIM ALL WARRANTIES OF ANY KIND, WHETHER EXPRESS OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF TITLE, MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT.
@@ -97,9 +110,8 @@ export default function TermsService() {
             <p>
                 CERTAIN STATE LAWS DO NOT ALLOW LIMITATIONS ON IMPLIED WARRANTIES OR THE EXCLUSION OR LIMITATION OF CERTAIN DAMAGES. IF THESE LAWS APPLY TO YOU, SOME OR ALL OF THE ABOVE DISCLAIMERS, EXCLUSIONS, OR LIMITATIONS MAY NOT APPLY TO YOU, AND YOU MIGHT HAVE ADDITIONAL RIGHTS.
             </p>
-            </section>
 
-            <section className="term-section">
+            {/* Dispute Resolution */}
             <h2>Dispute Resolution</h2>
             <p>
                 <strong>Procedure: </strong>You agree that any dispute shall be settled via arbitration and that arbitration will be administered by Judicial Arbitration & Mediation Services, Inc. (“JAMS”) pursuant to its Streamlined Arbitration Rules & Procedures (the “JAMS Rules”). You agree that the arbitrator shall have the power to decide any motions brought by any party to the arbitration, including motions for summary judgment and/or adjudication and motions to dismiss and demurrers applying the standards set forth under the California Code of Civil Procedure. You agree that the arbitrator shall issue a written decision on the merits. You also agree that the arbitrator shall have the final power to award any remedies available under applicable law, and that the arbitrator shall award Attorney’s fees and costs to the prevailing party where provided by applicable law. You agree that the decree or award rendered by the arbitrator may be entered as a final and binding judgment in any court having jurisdiction thereof. You agree that the arbitrator shall administer and conduct any arbitration in accordance with California LAW, including the California Code of Civil Procedure and the California evidence code, and that the arbitrator shall apply substantive and procedural California law to any dispute or claim, without reference to rules of conflict of law. To the extent that the JAMS Rules conflict with California law, California law shall take precedence. You further agree that any arbitration under this agreement shall be conducted in the City and County of Denver, California.
@@ -111,11 +123,10 @@ export default function TermsService() {
                 <strong>Remedy: </strong>Except as otherwise provided by law, the arbitrator shall be the sole, exclusive, and final remedy for any dispute between you and us. Neither you nor we will be permitted to pursue court action regarding claims that are subject to arbitration.
             </p>
             <p>
-                <strong>Class Action: </strong>Class Action. You and we agree that any and all claims may be brought solely in each other’s individual capacity and not in the capacity as a class for litigation purposes. You and we further agree that the arbitrator may not consolidate more than your or our claims specifically as they relate to one another.
+                <strong>Class Action: </strong>Class Action. You and we agree that any and all claims may be brought solely in each other's individual capacity and not in the capacity as a class for litigation purposes. You and we further agree that the arbitrator may not consolidate more than your or our claims specifically as they relate to one another.
             </p>
-            </section>
 
-            <section className="term-section">
+            {/* Miscellaneous */}
             <h2>Miscellaneous</h2>
             <p>
                 <strong>Governing Law; Consent to Personal Jurisdiction: </strong>This Agreement shall be governed by the laws of the State of California, without regard to the conflicts of law provisions of any jurisdiction. To the extent that any lawsuit is permitted under this Agreement, you hereby expressly consent to the personal and exclusive jurisdiction and venue of the state and federal courts located in Alameda County, California.
