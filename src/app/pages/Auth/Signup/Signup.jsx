@@ -8,7 +8,7 @@ import './Signup.css';
 import { ref, set } from "firebase/database";
 import {database} from '../../../../lib/firebase.jsx'
 import bcrypt from 'bcryptjs';
-import { Box, TextField, InputAdornment, IconButton } from '@mui/material';
+import { Box, TextField, InputAdornment, IconButton, Button } from '@mui/material';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import EmailIcon from '@mui/icons-material/Email';
 import LockIcon from '@mui/icons-material/Lock';
@@ -117,23 +117,31 @@ const SignUp = () => {
     <div>
         <div className="auth-page">
         <div className="auth-card">
-          <button
-            onClick={() => navigate('/')}
-            sx={{
-                color: '#64748b',
-                '&:hover': {
-                backgroundColor: 'rgba(100, 116, 139, 0.1)',
-                color: '#1e293b'
-                },
-                transition: 'all 0.3s ease',
-                textTransform: 'none',
-                fontFamily: 'DM Sans, sans-serif',
-                gap: '8px',
-                size: '20px'
-            }}
-            >
-            <ArrowLeft size={20} />
-        </button>
+            <Button
+                onClick={() => navigate('/')}
+                sx={{
+                    position: 'absolute',
+                    top: '-35px',
+                    left: '0',
+                    color: '#cacacaff',
+                    minWidth: 'auto',
+                    padding: '2px 4px',
+                    backgroundColor: 'transparent',
+                    textTransform: 'none',
+                    fontFamily: 'DM Sans, sans-serif',
+                    fontSize: '13px',
+                    fontWeight: 500,
+                    gap: '6px',
+                    '&:hover': {
+                        color: '#a5b7f9ff'
+                    },
+                    transition: 'all 0.2s ease',
+                    zIndex: 10
+                }}
+                >
+                <ArrowLeft size={16} strokeWidth={2.5} />
+                <span>Back to Home</span>
+            </Button>
             <h1 className="auth-title">Create Account</h1>
             <p className="auth-subtitle">Start your journey with WiNG.it today</p>
 

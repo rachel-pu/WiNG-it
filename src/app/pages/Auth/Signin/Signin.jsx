@@ -5,7 +5,7 @@ import { supabase } from '../../../../../supabase.js'
 import { motion } from 'framer-motion';
 import { ArrowLeft} from 'lucide-react';
 import { useNavigate } from "react-router-dom";
-import { Box, TextField, InputAdornment, IconButton } from '@mui/material';
+import { Box, TextField, InputAdornment, IconButton, Button } from '@mui/material';
 import EmailIcon from '@mui/icons-material/Email';
 import LockIcon from '@mui/icons-material/Lock';
 import Visibility from '@mui/icons-material/Visibility';
@@ -93,23 +93,31 @@ const SignIn = () => {
         <div>
             <div className="auth-page">
             <div className="auth-card">
-                <button
+                <Button
                     onClick={() => navigate('/')}
                     sx={{
-                        color: '#64748b',
-                        '&:hover': {
-                        backgroundColor: 'rgba(100, 116, 139, 0.1)',
-                        color: '#1e293b'
-                        },
-                        transition: 'all 0.3s ease',
-                        textTransform: 'none',
-                        fontFamily: 'DM Sans, sans-serif',
-                        gap: '8px',
-                        size: '20px'
-                    }}
+                    position: 'absolute',
+                    top: '-35px',
+                    left: '0',
+                    color: '#cacacaff',
+                    minWidth: 'auto',
+                    padding: '2px 4px',
+                    backgroundColor: 'transparent',
+                    textTransform: 'none',
+                    fontFamily: 'DM Sans, sans-serif',
+                    fontSize: '13px',
+                    fontWeight: 500,
+                    gap: '6px',
+                    '&:hover': {
+                        color: '#a5b7f9ff'
+                    },
+                    transition: 'all 0.2s ease',
+                    zIndex: 10
+                }}
                     >
-                    <ArrowLeft size={20} />
-                </button>
+                    <ArrowLeft size={16} strokeWidth={2.5} />
+                    <span>Back to Home</span>
+                </Button>
                 <h1 className="auth-title">Welcome Back</h1>
                 <p className="auth-subtitle">Sign in to continue to WiNG.it</p>
 
