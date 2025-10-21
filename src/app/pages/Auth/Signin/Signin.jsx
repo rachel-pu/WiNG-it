@@ -226,18 +226,18 @@ const SignIn = () => {
 
 
                 <button className="primary-btn" onClick={handleSignIn}>
-                    Continue
+                    Log In
                 </button>
                 <p
                 className="auth-description cursor-pointer"
-                style={{ marginTop: 10, color: "#2381edff", textDecoration: "underline" }}
+                style={{ marginTop: 10 }}
                 onClick={() => handleForgotPassword(email)}
                 >
                 Forgot Password
                 </p>
                 <p
                 className="auth-description cursor-pointer"
-                style={{ marginTop: 10, color: "#2381edff", textDecoration: "underline" }}
+                style={{ marginTop: 10 }}
                 onClick={() => navigate("/signup")}
                 >
                 Don't have an account? Sign up instead.

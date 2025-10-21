@@ -79,14 +79,15 @@ html, body {
 }
 
 .auth-description {
-  font-size: 15px;
-  color: #2850d9;
-  margin-bottom: 5px;
+  font-size: 13.5px !important;
+  color: #8d8d8d;
+  margin-bottom: 0px !important;
   text-align: center;
-  margin-top: 10px;
+  margin-top: 15px !important;
   text-decoration: underline;
   cursor: pointer;
-  transition: color 0.2s ease;
+  text-decoration: none !important;
+  transition: all 0.2s ease;
   font-family: 'DM Sans', sans-serif;
 }
 
@@ -106,14 +107,14 @@ html, body {
   cursor: pointer;
   margin-top: 10px;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 8px 24px rgba(40, 80, 217, 0.35);
+  box-shadow: 0 8px 24px rgba(40, 80, 217, 0.20);
   font-family: 'Satoshi Bold', sans-serif;
   letter-spacing: -0.01em;
 }
 
 .primary-btn:hover {
   transform: translateY(-3px);
-  box-shadow: 0 12px 32px rgba(40, 80, 217, 0.45);
+  box-shadow: 0 12px 32px rgba(40, 80, 217, 0.25);
 }
 
 .primary-btn:active {
