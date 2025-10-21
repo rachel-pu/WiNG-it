@@ -292,7 +292,7 @@ const SignUp = () => {
                 Create Account
             </button>
             <p className="auth-description cursor-pointer" onClick={() => navigate("/signin")} style={{marginTop: 15}}>
-              Have an account? Sign in instead.
+              Have an account? Sign in.
             </p>
             <p className="privacy-term-text" style={{marginTop:25, marginBottom: 0}}> By signing up, you are agreeing to our</p>
             <p className="privacy-term-text" style={{marginTop: 0}}>
