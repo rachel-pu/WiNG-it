@@ -33,7 +33,10 @@ jobs:
           VITE_PUBLIC_FIREBASE_PROJECT_ID: ${{ secrets.VITE_PUBLIC_FIREBASE_PROJECT_ID }}
           VITE_PUBLIC_FIREBASE_DATABASE_URL: ${{ secrets.VITE_PUBLIC_FIREBASE_DATABASE_URL }}
           NODE_ENV: production
-        run: rm -rf dist && npm run build
+        run: |
+          rm -rf dist
+          npm run build
+          cp googleb078385d045fc7ce.html dist/
         
 
       # 5. Deploy to Firebase
