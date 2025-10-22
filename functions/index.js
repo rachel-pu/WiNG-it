@@ -22,8 +22,8 @@ function extractQuestions(text, maxQuestions = 10) {
     .split(/\d+\.\s/)
     .filter(Boolean)
     .map(q => q.trim())
-    .filter(q => q.length > 10) // Filter out very short entries
-    .slice(0, maxQuestions); // Limit to requested number
+    .filter(q => q.length > 10)
+    .slice(0, maxQuestions);
     
   console.log(`Extracted ${questions.length} questions (max: ${maxQuestions})`);
   return questions;
