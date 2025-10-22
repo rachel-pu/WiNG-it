@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import { ArrowLeft} from 'lucide-react';
 import { useNavigate } from "react-router-dom";
 import './Signup.css';
-import { ref, set } from "firebase/database";
+import { ref, set , get} from "firebase/database";
 import {database} from '../../../../lib/firebase.jsx'
 import bcrypt from 'bcryptjs';
 import { Box, TextField, InputAdornment, IconButton, Button } from '@mui/material';
@@ -43,36 +43,50 @@ const SignUp = () => {
       );
 
     try {
-      // Create a new user in Supabase
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: { name },
-          emailRedirectTo: `${window.location.origin}/signin`,
-        },
-      });
+        const emailKey = email.replace(/\./g, '_');
+        const userSnapshot = await get(ref(database, `userEmails/${emailKey}`));
 
-      if (error) throw error;
-      const hashedPassword = await bcrypt.hash(password, 10);
+        if (userSnapshot.exists())
+            return setError('An account with this email already exists. Please sign in instead.');
 
-      if (data?.user) {
-        setError('A verification email has been sent. Please check your inbox.');
-        await set(ref(database, `users/${data.user.id}`), {
-          fullName: name,
-          email: email,
-          password: hashedPassword,
-          bio: "",
-          userId: data.user.id,
-          resume: "",
-          schoolYear: "",
-          school: "",
-          major: "",
-          minor: "",
-          currentJob: ""
+        // Create a new user in Supabase
+        const { data, error } = await supabase.auth.signUp({
+            email,
+            password,
+            options: {
+            data: { name },
+            emailRedirectTo: `${window.location.origin}/signin`,
+            },
         });
-      }
-      console.log('User signed up:', data.user);
+        if (error) 
+            throw error;
+
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        if (data?.user) {
+            setError('A verification email has been sent. Please check your inbox.');
+            await set(ref(database, `users/${data.user.id}`), {
+                userId: data.user.id,
+                personalInformation: {
+                    fullName: name,
+                    email: email,
+                    password: hashedPassword,
+                },
+                academicInformation: {
+                    bio: "",
+                    schoolYear: "",
+                    school: "",
+                    major: "",
+                    minor: "",
+                },
+                professionalInformation: {
+                    currentJob: ""
+                }
+            });
+            await set(ref(database, `userEmails/${emailKey}`), {
+                userId: data.user.id,
+            }); 
+        }
     } catch (err) {
       console.error("Sign-up error:", err);
       setError(err.message || 'An unexpected error occurred during sign up.');
