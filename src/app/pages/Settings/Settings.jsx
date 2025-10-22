@@ -166,6 +166,23 @@ export default function Settings() {
         setEditingSection(section);
     };
 
+    const handleSaveName = async () => {
+        if (!formData.userId) {
+            alert("User ID not found!");
+            return;
+        }
+
+        try {
+            await update(ref(database, `users/${formData.userId}`), {
+                fullName: formData.fullName || ''
+            });
+            alert('Name updated successfully!');
+        } catch (err) {
+            console.error('Error updating name:', err);
+            alert('Failed to update name.');
+        }
+    }
+
     const handleSaveSection = async (sectionId) => {
         setEditingSection(null);
         if (!formData.userId) {
@@ -272,12 +289,12 @@ export default function Settings() {
                 }
                 return section;
             }));
-            // Initialize the field in formData
             setFormData({ ...formData, [fieldId]: '' });
         }
     };
 
     const handleDeleteField = (sectionId, fieldId) => {
+        console.log('Deleting field:', fieldId, 'from section:', sectionId);
         setSections(sections.map(section => {
             if (section.id === sectionId) {
                 return {
@@ -364,16 +381,48 @@ export default function Settings() {
                         <h1 className="settings-title">Settings</h1>
                         <p className="settings-subtitle">Manage your account information and preferences</p>
                         
-                        
-                        {sections.slice(0, 1).map(section => (
-                            <div className="settings-card" key={section.id}>
-                                <h2>{section.title}</h2>
-                            <div className="settings-card-header"></div>
-                            {section.fields.map(field => (
-                            renderField(field, section.id, editingSection === section.id)
-                            ))}
-                           </div>  
-                        ))}
+                        <div className="settings-card" key="personal">
+                            <h2>Personal Information</h2>
+
+                            <div className="form-field">
+                                <label className="form-label" style={{marginTop:"15px"}}>Full Name</label>
+                                <div className="form-inline">
+                                    <input
+                                        type="text"
+                                        value={formData.fullName || ''}
+                                        onChange={(e) => handleChange('fullName', e.target.value)}
+                                        className="form-input"
+                                    />
+                                    <button
+                                        onClick={() => handleSaveName()}
+                                        className="button-save"
+                                    >
+                                        Save
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div className="form-field">
+                                <label className="form-label">Email</label>
+                                <input
+                                    type="text"
+                                    value={formData.email || ''}
+                                    readOnly
+                                    className="form-input"
+                                />
+                            </div>
+
+                            <div className="form-field">
+                                <label className="form-label">Password</label>
+                                <input
+                                    type="password"
+                                    value={formData.password || ''}
+                                    readOnly
+                                    className="form-input"
+                                />
+                            </div>
+                        </div>
+
                         
                     
                         {sections.slice(1).map(section => (

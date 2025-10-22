@@ -16,7 +16,7 @@ export default function TermsService() {
     return (
     <div className="page-wrapper">
         <Button
-            onClick={() => navigate('/signup')}
+            onClick={() => navigate('/')}
             sx={{
                 position: 'absolute',
                 top: '80px',
