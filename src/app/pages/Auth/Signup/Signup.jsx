@@ -62,11 +62,13 @@ const SignUp = () => {
             throw error;
 
         const hashedPassword = await bcrypt.hash(password, 10);
+        const passwordLength = password.length;
 
         if (data?.user) {
             setError('A verification email has been sent. Please check your inbox.');
             await set(ref(database, `users/${data.user.id}`), {
                 userId: data.user.id,
+                passwordLength: passwordLength,
                 personalInformation: {
                     fullName: name,
                     email: email,
@@ -92,40 +94,6 @@ const SignUp = () => {
       setError(err.message || 'An unexpected error occurred during sign up.');
     }
   };
-
-  const handleGoogleSignUp = async () => {
-    setError('');
-    try {
-      const { data, error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: {
-          redirectTo: `${window.location.origin}/signin`,
-        },
-      });
-
-      if (error) throw error;
-      if (data?.user) {
-        await set(ref(database, `users/${data.user.id}`), {
-          fullName: name,
-          email: email,
-          password: password,
-          bio: "",
-          userId: data.user.id,
-          resume: "",
-          schoolYear: "",
-          school: "",
-          major: "",
-          minor: "",
-          currentJob: ""
-        });
-      }
-      console.log('Google OAuth initiated:', data);
-    } catch (err) {
-      console.error('Google sign-up error:', err);
-      setError(err.message || 'An error occurred during Google sign-up.');
-    }
-  };
-
 
   return (
     <div>
@@ -158,19 +126,6 @@ const SignUp = () => {
             </Button>
             <h1 className="auth-title">Create Account</h1>
             <p className="auth-subtitle">Start your journey with WiNG.it today</p>
-
-            <motion.div variants={itemVariants}>
-                <button className="google-sign-in-btn" onClick={handleGoogleSignUp}>
-                    <span className="google-icon-modern"></span>
-                    <span>Continue with Google</span>
-                </button>
-            </motion.div>
-
-            <motion.div className="auth-divider" variants={itemVariants}>
-                <span className="divider-line"></span>
-                <span className="divider-text">or</span>
-                <span className="divider-line"></span>
-            </motion.div>
 
             {error && <div className="message-box error-box">{error}</div>}
 
