@@ -46,27 +46,6 @@ const SignIn = () => {
     };
 
 
-    const googleSignIn = async () => {
-        setError('');
-
-        try {
-            const { data, error } = await supabase.auth.signInWithOAuth({
-            provider: 'google',
-            options: {
-                redirectTo: `${window.location.origin}/dashboard`,
-            },
-            });
-
-            if (error) throw error;
-
-            console.log('Google OAuth initiated:', data);
-        } catch (err) {
-            console.error('Google sign-in error:', err);
-            setError(err.message || 'An error occurred during Google sign-in.');
-        }
-    };
-
-
 
     return (
         <div>
@@ -90,18 +69,7 @@ const SignIn = () => {
                     <ArrowLeft size={20} />
                 </button>
                 <h1 className="auth-title">Welcome Back</h1>
-                <motion.div variants={itemVariants}>
-                    <button className="google-sign-in-btn" onClick={googleSignIn}>
-                        <span className="google-icon-modern"></span>
-                        <span>Continue with Google</span>
-                    </button>
-                </motion.div>
-
-                <motion.div className="auth-divider" variants={itemVariants}>
-                    <span className="divider-line"></span>
-                    <span className="divider-text">or</span>
-                    <span className="divider-line"></span>
-                </motion.div>
+               
 
                 {error && <div className="message-box error-box">{error}</div>}
                 
