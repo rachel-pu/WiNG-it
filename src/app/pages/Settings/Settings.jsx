@@ -12,119 +12,48 @@ export default function Settings() {
     const [showAddSection, setShowAddSection] = useState(false);
     const [newSectionTitle, setNewSectionTitle] = useState('');
     const [selectedTemplate, setSelectedTemplate] = useState('');
-
-
     const [formData, setFormData] = useState({
-        firstName: '',
-        lastName: '',
-        email: '',
-        password: '',
-        bio: '',
-        userId: '',
-        resume: '',
-        schoolYear: '',
-        school: '',
-        major: '',
-        minor: '',
-        currentJob: ''
-    });
+        personalInformation: {
+            fullName: '',
+            email: '',
+            password: '',
+        },
+        academicInformation: {},
+        professionalInformation: {},
+        userId: '',}
+    );
 
-    const [sections, setSections] = useState([
-        {
-            id: 'personal',
-            title: 'Personal Information',
-            deletable: false,
-            fields: [
-                { id: 'fullName', label: 'Full Name', editable: true, type: 'text' },
-                { id: 'email', label: 'Email', editable: true, type: 'text' },
-                { id: 'password', label: 'Password', editable: true, type: 'password' },
-            ]
-        },
-        {
-            id: 'academic',
-            title: 'Academic Information',
-            deletable: true,
-            fields: [
-                { id: 'bio', label: 'Bio', editable: true, type: 'textarea' },
-                { id: 'school', label: 'School', editable: true, type: 'text' },
-                { id: 'schoolYear', label: 'School Year', editable: true, type: 'text' },
-                { id: 'major', label: 'Major', editable: true, type: 'text' },
-                { id: 'minor', label: 'Minor', editable: true, type: 'text' }
-            ]
-        },
-        {
-            id: 'professional',
-            title: 'Professional Information',
-            deletable: true,
-            fields: [
-                { id: 'currentJob', label: 'Current Job/Position', editable: true, type: 'text' },
-                // { id: 'resume', label: 'Resume', editable: false, type: 'file' }
-            ]
-        }
-    ]);
-
-        const sectionTemplates = {
-        'academic': {
-            title: 'Academic Information',
-            fields: [
-                { id: 'school', label: 'School', editable: true, type: 'text' },
-                { id: 'schoolYear', label: 'School Year', editable: true, type: 'text' },
-                { id: 'major', label: 'Major', editable: true, type: 'text' },
-                { id: 'minor', label: 'Minor', editable: true, type: 'text' },
-                { id: 'gpa', label: 'GPA', editable: true, type: 'text' },
-                { id: 'graduationDate', label: 'Graduation Date', editable: true, type: 'text' }
-            ]
-        },
-        'professional': {
-            title: 'Professional Information',
-            fields: [
-                { id: 'currentJob', label: 'Current Job/Position', editable: true, type: 'text' },
-                { id: 'company', label: 'Company', editable: true, type: 'text' },
-                { id: 'yearsOfExperience', label: 'Years of Experience', editable: true, type: 'text' },
-                { id: 'industry', label: 'Industry', editable: true, type: 'text' }
-            ]
-        },
-        'projects': {
-            title: 'Personal Projects',
-            fields: [
-                { id: 'projectName', label: 'Project Name', editable: true, type: 'text' },
-                { id: 'projectDescription', label: 'Description', editable: true, type: 'textarea' },
-                { id: 'projectLink', label: 'Project Link', editable: true, type: 'text' },
-                { id: 'githubLink', label: 'GitHub Repository', editable: true, type: 'text' }
-            ]
-        },
-        'certifications': {
-            title: 'Certifications',
-            fields: [
-                { id: 'certificationName', label: 'Certification Name', editable: true, type: 'text' },
-                { id: 'issuingOrganization', label: 'Issuing Organization', editable: true, type: 'text' },
-                { id: 'issueDate', label: 'Issue Date', editable: true, type: 'text' },
-                { id: 'certificationLink', label: 'Credential Link', editable: true, type: 'text' }
-            ]
-        },
-        'skills': {
-            title: 'Skills',
-            fields: [
-                { id: 'technicalSkills', label: 'Technical Skills', editable: true, type: 'textarea' },
-                { id: 'languages', label: 'Programming Languages', editable: true, type: 'text' },
-                { id: 'frameworks', label: 'Frameworks/Libraries', editable: true, type: 'text' },
-                { id: 'tools', label: 'Tools & Technologies', editable: true, type: 'text' }
-            ]
-        },
-        'volunteer': {
-            title: 'Volunteer Experience',
-            fields: [
-                { id: 'organization', label: 'Organization', editable: true, type: 'text' },
-                { id: 'role', label: 'Role', editable: true, type: 'text' },
-                { id: 'duration', label: 'Duration', editable: true, type: 'text' },
-                { id: 'volunteerDescription', label: 'Description', editable: true, type: 'textarea' }
-            ]
-        },
-        'custom': {
-            title: '',
-            fields: []
-        }
+    const formatLabel = (camelCase) => {
+        return camelCase
+            .replace(/([A-Z])/g, ' $1') 
+            .replace(/^./, str => str.toUpperCase());
     };
+    console.log("Form Data:", formData);
+    const sections = Object.keys(formData)
+    .filter((sectionKey) => sectionKey !== 'userId' && sectionKey !== 'resume')
+    .map((sectionKey) => {
+        const sectionData = formData[sectionKey] || {};
+
+        const fields = Object.keys(sectionData)
+            .map((fieldKey) => ({
+                id: fieldKey,
+                label: formatLabel(fieldKey),
+                editable:
+                    sectionKey === 'personalInformation'
+                        ? fieldKey === 'fullName' 
+                        : true,
+                type: fieldKey.toLowerCase().includes('password')
+                    ? 'password'
+                    : 'text',
+            }));
+
+        return {
+            id: sectionKey,
+            title: formatLabel(sectionKey),
+            deletable: false,
+            fields,
+        };
+    });
 
     useEffect(() => {
         const getCookie = (name) => {
@@ -173,8 +102,8 @@ export default function Settings() {
         }
 
         try {
-            await update(ref(database, `users/${formData.userId}`), {
-                fullName: formData.fullName || ''
+            await update(ref(database, `users/${formData.userId}/personalInformation`), {
+                fullName: formData.personalInformation.fullName || ''
             });
             alert('Name updated successfully!');
         } catch (err) {
@@ -191,14 +120,10 @@ export default function Settings() {
         }
 
         try {
-
-            const section = sections.find(sec => sec.id === sectionId);
-            if (!section) return;
-
-            const updates = {};
-            section.fields.forEach(field => {
-                updates[field.id] = formData[field.id] || '';
-            });
+            const sectionData = formData[sectionId] || {};
+            const updates = {
+                [sectionId]: sectionData 
+            };
 
             await update(ref(database, `users/${formData.userId}`), updates);
             alert('Section updated successfully!');
@@ -206,17 +131,23 @@ export default function Settings() {
             console.error('Error updating section:', err);
             alert('Failed to update section.');
         }
-        console.log('Saved section:', section);
     };
+
 
     const handleCancelSection = () => {
         setEditingSection(null);
-        // Here you would typically reset formData to previous values
     };
 
-    const handleChange = (field, value) => {
-        setFormData((prev) => ({ ...prev, [field]: value }));
+    const handleChange = (sectionId, fieldId, value) => {
+        setFormData(prev => ({
+            ...prev,
+            [sectionId]: {
+                ...prev[sectionId],
+                [fieldId]: value
+            }
+        }));
     };
+
 
     const handleDeleteSection = (sectionId) => {
         if (window.confirm('Are you sure you want to delete this section?')) {
@@ -295,6 +226,7 @@ export default function Settings() {
 
     const handleDeleteField = (sectionId, fieldId) => {
         console.log('Deleting field:', fieldId, 'from section:', sectionId);
+
         setSections(sections.map(section => {
             if (section.id === sectionId) {
                 return {
@@ -304,7 +236,17 @@ export default function Settings() {
             }
             return section;
         }));
+
+        setFormData(prev => {
+            if (!prev[sectionId]) return prev;
+            const {[fieldId]: _, ...restFields} = prev[sectionId]; 
+            return {
+                ...prev,
+                [sectionId]: restFields
+            };
+        });
     };
+
 
 
     if (error) return <p style={{ color: 'red' }}>{error}</p>;
@@ -315,23 +257,7 @@ export default function Settings() {
         const isFile = field.type === 'file';
         const isPassword = field.type === 'password';
         const isEditing = isEditingSection && field.editable;
-
-        // if (isFile) {
-        //     return (
-        //         <div className="form-field" key={field.id}>
-        //             <label className="form-label">Resume</label>
-        //             <div className="resume-section">
-        //                 <div className="resume-filename">{formData.resume}</div>
-        //                 <button className="button-upload">
-        //                     Upload New
-        //                 </button>
-        //                 <button className="button-download">
-        //                     Download
-        //                 </button>
-        //             </div>
-        //         </div>
-        //     );
-        // }
+        const fieldValue = formData[sectionId]?.[field.id] || ''; 
 
         return (
             <div className="form-field" key={field.id}>
@@ -352,21 +278,21 @@ export default function Settings() {
                 {isEditing ? (
                     isTextarea ? (
                         <textarea
-                            value={formData[field.id] || ''}
-                            onChange={(e) => handleChange(field.id, e.target.value)}
+                            value={fieldValue}
+                            onChange={(e) => handleChange(sectionId, field.id, e.target.value)}
                             className="form-textarea"
                         />
                     ) : (
                         <input
                             type="text"
-                            value={formData[field.id] || ''}
-                            onChange={(e) => handleChange(field.id, e.target.value)}
+                            value={fieldValue}
+                            onChange={(e) => handleChange(sectionId, field.id, e.target.value)}
                             className="form-input"
                         />
                     )
                 ) : (
                     <div className={`form-display ${isTextarea ? 'textarea-display' : ''} ${!field.editable ? 'disabled' : ''}`}>
-                        {isPassword && formData[field.id] ? '••••••••' : (formData[field.id] || 'Not set')}
+                        {isPassword && fieldValue ? '••••••••' : (fieldValue || 'Not set')}
                     </div>
                 )}
             </div>
@@ -389,8 +315,16 @@ export default function Settings() {
                                 <div className="form-inline">
                                     <input
                                         type="text"
-                                        value={formData.fullName || ''}
-                                        onChange={(e) => handleChange('fullName', e.target.value)}
+                                        value={formData.personalInformation?.fullName || ''}
+                                        onChange={(e) =>
+                                        setFormData(prev => ({
+                                            ...prev,
+                                            personalInformation: {
+                                                ...prev.personalInformation,
+                                                fullName: e.target.value
+                                            }
+                                        }))
+                                        }
                                         className="form-input"
                                     />
                                     <button
@@ -406,7 +340,7 @@ export default function Settings() {
                                 <label className="form-label">Email</label>
                                 <input
                                     type="text"
-                                    value={formData.email || ''}
+                                    value={formData.personalInformation?.email || ''}
                                     readOnly
                                     className="form-input"
                                 />
@@ -416,7 +350,7 @@ export default function Settings() {
                                 <label className="form-label">Password</label>
                                 <input
                                     type="password"
-                                    value={formData.password || ''}
+                                    value={formData.personalInformation?.password || ''}
                                     readOnly
                                     className="form-input"
                                 />
@@ -425,60 +359,46 @@ export default function Settings() {
 
                         
                     
-                        {sections.slice(1).map(section => (
+                       {sections
+                        .filter(section => section.id !== 'personalInformation')
+                        .map(section => (
                             <div className="settings-card" key={section.id}>
                                 <div className="settings-card-header">
-                                    <h2>{section.title}</h2>
-                                    <div className="button-group">
-                                        {editingSection === section.id ? (
-                                            <>
-                                                <button
-                                                    onClick={() => handleSaveSection(section.id)}
-                                                    className="button-save"
-                                                >
-                                                    Save Changes
-                                                </button>
-                                                <button
-                                                    onClick={handleCancelSection}
-                                                    className="button-cancel"
-                                                >
-                                                    Cancel
-                                                </button>
-                                            </>
-                                        ) : (
-                                            <>
-                                                <button
-                                                    onClick={() => handleEditSection(section.id)}
-                                                    className="button-edit"
-                                                >
-                                                    Edit
-                                                </button>
-                                                {section.deletable && (
-                                                    <button
-                                                        onClick={() => handleDeleteSection(section.id)}
-                                                        className="button-delete"
-                                                        title="Delete section"
-                                                    >
-                                                        Delete
-                                                    </button>
-                                                )}
-                                            </>
-                                        )}
-                                    </div>
+                                <h2>{section.title}</h2>
+                                <div className="button-group">
+                                    {editingSection === section.id ? (
+                                    <>
+                                        <button
+                                        onClick={() => handleSaveSection(section.id)}
+                                        className="button-save"
+                                        >
+                                        Save Changes
+                                        </button>
+                                        <button
+                                        onClick={handleCancelSection}
+                                        className="button-cancel"
+                                        >
+                                        Cancel
+                                        </button>
+                                    </>
+                                    ) : (
+                                    <>
+                                        <button
+                                        onClick={() => handleEditSection(section.id)}
+                                        className="button-edit"
+                                        >
+                                        Edit
+                                        </button>
+                                    </>
+                                    )}
+                                </div>
                                 </div>
 
                                 {section.fields.map(field => renderField(field, section.id, editingSection === section.id))}
-
-                                {editingSection === section.id && (
-                                    <button
-                                        onClick={() => handleAddField(section.id)}
-                                        className="button-add-field"
-                                    >
-                                        + Add Field
-                                    </button>
-                                )}
                             </div>
                         ))}
+                        
+
 
                         {/* Add New Section */}
                         {/* {showAddSection ? (
