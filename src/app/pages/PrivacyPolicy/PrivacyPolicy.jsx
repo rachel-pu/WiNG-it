@@ -223,18 +223,8 @@ export default function PrivacyPolicy() {
             {/* Analytics and Data Tools */}
             <h2>Analytics and Data Tools</h2>
             <p>
-                We use third-party services such as <strong>Google Analytics</strong> and <strong>Firebase</strong> to monitor and analyze the use of our Service.
+                We use third-party services such as <strong>Firebase</strong> for analytics, authentication, cloud messaging, and crash reporting. Firebase may collect information such as app usage data, device information, and crash logs. You can learn more about how Google handles data in Firebase at <a href="https://firebase.google.com/support/privacy" target="_blank" rel="noopener noreferrer">Firebase Privacy</a>.
             </p>
-
-            <ul>
-                <li>
-                <strong>Google Analytics:</strong> Google Analytics collects data on website usage to help us understand user behavior and improve the user experience. Google may use the collected data to contextualize and personalize ads of its own advertising network.  
-                You can opt out of Google Analytics by installing the <a href="https://tools.google.com/dlpage/gaoptout" target="_blank" rel="noopener noreferrer">Google Analytics opt-out browser add-on</a>.
-                </li>
-                <li>
-                <strong>Firebase:</strong> We use Firebase for analytics, authentication, cloud messaging, and crash reporting. Firebase may collect information such as app usage data, device information, and crash logs. You can learn more about how Google handles data in Firebase at <a href="https://firebase.google.com/support/privacy" target="_blank" rel="noopener noreferrer">Firebase Privacy</a>.
-                </li>
-            </ul>
 
             {/* Emails and Communication */}
             <h2>Emails and Communication</h2>
