@@ -1,15 +1,13 @@
 import { useState, useEffect} from 'react';
+import { ref, get, update } from "firebase/database";
+import {database} from '../../../lib/firebase.jsx'
 import Box from '@mui/material/Box';
 import DefaultAppLayout from "../../DefaultAppLayout.jsx";
 import "./Settings.css"
-import { ref, get, update } from "firebase/database";
-import {database} from '../../../lib/firebase.jsx'
 
 export default function Settings() {
     const [editingSection, setEditingSection] = useState(null);
     const [error, setError] = useState('');
-    const [newSectionTitle, setNewSectionTitle] = useState('');
-    const [selectedTemplate, setSelectedTemplate] = useState('');
     const [formData, setFormData] = useState({
         personalInformation: {
             fullName: '',
@@ -63,7 +61,7 @@ export default function Settings() {
     };
 
     const sections = Object.keys(formData)
-    .filter((sectionKey) => sectionKey !== 'userId' && sectionKey !== 'resume')
+    .filter((sectionKey) => sectionKey !== 'userId' && sectionKey !== 'resume' && sectionKey !== 'passwordLength')
     .map((sectionKey) => {
         const sectionData = formData[sectionKey] || {};
 
@@ -150,7 +148,6 @@ export default function Settings() {
 
     const renderField = (field, sectionId, isEditingSection) => {
         const isTextarea = field.type === 'textarea';
-        const isPassword = field.type === 'password';
         const isEditing = isEditingSection && field.editable;
         const fieldValue = formData[sectionId]?.[field.id] || ''; 
 
@@ -178,7 +175,7 @@ export default function Settings() {
                     )
                 ) : (
                     <div className={`form-display ${isTextarea ? 'textarea-display' : ''} ${!field.editable ? 'disabled' : ''}`}>
-                        {isPassword && fieldValue ? '••••••••' : (fieldValue || 'Not set')}
+                        {fieldValue || 'Not set'}
                     </div>
                 )}
             </div>
@@ -236,7 +233,7 @@ export default function Settings() {
                                 <label className="form-label">Password</label>
                                 <input
                                     type="password"
-                                    value={formData.personalInformation?.password || ''}
+                                    value={formData.passwordLength ? '•'.repeat(formData.passwordLength) : ''}
                                     readOnly
                                     className="form-input"
                                 />
