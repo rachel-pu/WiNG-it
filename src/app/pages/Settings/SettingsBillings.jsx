@@ -316,9 +316,9 @@ export default function SettingsBillings() {
 
                                 <div className="info-row">
                                     <div className="info-row-content">
-                                        <div className="info-field">
-                                            <label className="info-label">Auto-Pay</label>
-                                            <div className="info-description">
+                                        <div className="info-field-billing">
+                                            <label className="info-label-billing">Auto-Pay</label>
+                                            <div className="info-description-billing">
                                                 Automatically charge your default payment method
                                             </div>
                                         </div>
@@ -338,8 +338,8 @@ export default function SettingsBillings() {
                                 <div className="info-row">
                                     <div className="info-row-content">
                                         <div className="info-field">
-                                            <label className="info-label">Billing Cycle</label>
-                                            <div className="info-value">{formData.billingInformation.billingCycle}</div>
+                                            <label className="info-label-billing">Billing Cycle</label>
+                                            <div className="info-value-billing">{formData.billingInformation.billingCycle}</div>
                                         </div>
                                         <div className="info-spacer"></div>
                                     </div>
@@ -348,8 +348,8 @@ export default function SettingsBillings() {
                                 <div className="info-row info-row-last">
                                     <div className="info-row-content">
                                         <div className="info-field">
-                                            <label className="info-label">Next Billing Date</label>
-                                            <div className="info-value">{formData.billingInformation.nextBillingDate}</div>
+                                            <label className="info-label-billing">Next Billing Date</label>
+                                            <div className="info-value-billing">{formData.billingInformation.nextBillingDate}</div>
                                         </div>
                                         <div className="info-spacer"></div>
                                     </div>
@@ -362,7 +362,7 @@ export default function SettingsBillings() {
 
                                 {formData.billingInformation.billingHistory.map((transaction, index) => (
                                     <div 
-                                        className={`info-row ${index === formData.billingInformation.billingHistory.length - 1 ? 'info-row-last' : ''}`} 
+                                        className={`info-row-billing ${index === formData.billingInformation.billingHistory.length - 1 ? 'info-row-last' : ''}`} 
                                         key={transaction.id}
                                     >
                                         <div className="history-row-content">

@@ -22,7 +22,7 @@
     align-items: center;
 }
 
-.info-row {
+.info-row-billing {
     padding: 1rem 1.5rem;
     border-bottom: 1px solid #e5e7eb;
 }
@@ -37,25 +37,28 @@
     justify-content: space-between;
 }
 
-.info-field {
+.info-field-billing {
     flex: 1;
 }
 
-.info-label {
+.info-label-billing {
     display: block;
     font-size: 0.875rem;
     font-weight: 500;
     color: #6b7280;
     margin-bottom: 0.25rem;
+    margin-left: 20px;
 }
 
-.info-description {
+.info-description-billing {
     font-size: 0.875rem;
     color: #9ca3af;
+    margin-left: 20px;
 }
 
-.info-value {
+.info-value-billing{
     color: #111827;
+    margin-left: 20px;
 }
 
 .info-spacer {
@@ -264,7 +267,9 @@
 
 /* Toggle Switch */
 .toggle-container {
-    margin-left: 1rem;
+    display: flex;
+    right: 20px;
+    position: relative;
 }
 
 .toggle-switch {
