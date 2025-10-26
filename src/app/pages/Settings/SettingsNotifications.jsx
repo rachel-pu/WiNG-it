@@ -66,13 +66,14 @@ export default function SettingsNotifications() {
         const fetchNotificationPreferences = async () => {
             if (!formData.userId) return;
             try {
-                const snapshot = await get(ref(database, `users/${formData.userId}/notificationPreferences`));
-                if (snapshot.exists()) {
-                    setFormData(prev => ({
-                        ...prev,
-                        notificationPreferences: snapshot.val()
-                    }));
-                }
+                // const snapshot = await get(ref(database, `users/${formData.userId}/notificationPreferences`));
+                // if (snapshot.exists()) {
+                //     setFormData(prev => ({
+                //         ...prev,
+                //         notificationPreferences: snapshot.val()
+                //     }));
+                //     console.log("Fetched notificationPreferences:", data);
+                // }
             } catch (err) {
                 console.error('Error fetching notification preferences:', err);
                 setError('Failed to fetch notification preferences.');

@@ -170,6 +170,7 @@ export default function SettingsProfile() {
         const isTextarea = field.type === 'textarea';
         const isEditing = isEditingSection && field.editable;
         const fieldValue = formData[sectionId]?.[field.id] || ''; 
+        console.log(sectionId, field.id, formData[sectionId]?.[field.id]);
 
         return (
             <div className="form-field" key={field.id}>
@@ -194,7 +195,10 @@ export default function SettingsProfile() {
                         )
                     ) : (
                         <div className={`form-display ${isTextarea ? 'textarea-display' : ''} ${!field.editable ? 'disabled' : ''}`}>
-                            {fieldValue || 'Not set'}
+                            {typeof fieldValue === 'object'
+                            ? JSON.stringify(fieldValue)
+                            : fieldValue || 'Not set'}
+
                         </div>
                     )}
                 </div>
