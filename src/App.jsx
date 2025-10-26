@@ -1,6 +1,9 @@
 import { Routes, Route } from 'react-router-dom';
 import Home from './app/pages/Home/Home.jsx';
-import Settings from './app/pages/Settings/Settings.jsx';
+import SettingsProfile from './app/pages/Settings/SettingsProfile.jsx';
+import SettingsBillings from './app/pages/Settings/SettingsBillings.jsx';
+import SettingsPlan from './app/pages/Settings/SettingsPlan.jsx';
+import SettingsNotifications from './app/pages/Settings/SettingsNotifications.jsx';
 import Signin from './app/pages/Auth/Signin/Signin.jsx';
 import Signup from './app/pages/Auth/Signup/Signup.jsx';
 import Dashboard from './app/pages/Dashboard/Dashboard.jsx';
@@ -41,10 +44,31 @@ function App() {
             </PublicRoute>
           }
         />
-        <Route path="/settings"
+        <Route path="/settings/profile"
           element={
             <ProtectedRoute>
-              <Settings />
+              <SettingsProfile />
+            </ProtectedRoute>
+          }
+        />
+        <Route path="/settings/billings"
+          element={
+            <ProtectedRoute>
+              <SettingsBillings />
+            </ProtectedRoute>
+          }
+        />
+        <Route path="/settings/plan"
+          element={
+            <ProtectedRoute>
+              <SettingsPlan/>
+            </ProtectedRoute>
+          }
+        />
+        <Route path="/settings/notifications"
+          element={
+            <ProtectedRoute>
+              <SettingsNotifications />
             </ProtectedRoute>
           }
         />
