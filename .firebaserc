@@ -1,5 +1,15 @@
 {
   "projects": {
     "default": "wing-it-e6a3a"
-  }
+  },
+  "targets": {
+    "wing-it-e6a3a": {
+      "hosting": {
+        "wing-it.space": [
+          "wing-it-e6a3a"
+        ]
+      }
+    }
+  },
+  "etags": {}
 }

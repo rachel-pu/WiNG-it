@@ -15,6 +15,7 @@
     }
   ],
   "hosting": {
+    "target": "wing-it.space",
     "public": "dist",
     "ignore": [
       "firebase.json",
