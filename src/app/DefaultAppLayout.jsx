@@ -7,7 +7,7 @@ import { HiChatBubbleLeftRight } from "react-icons/hi2";
 import { IoMdSettings } from "react-icons/io";
 import { FaSignOutAlt } from "react-icons/fa";
 import { motion } from "motion/react";
-import { useNavigate } from "react-router-dom";
+import { useAsyncError, useNavigate } from "react-router-dom";
 import { supabase } from "../../supabase.js";
 
 
@@ -62,6 +62,18 @@ const DefaultAppLayout = ({ children }) => {
 
 export const Logo = ({ open }) => {
   const navigate = useNavigate();
+
+  // const token = await grecaptcha.execute("YOUR_SITE_KEY", { action: "signup" });
+  // const response = await fetch("/api/verify-recaptcha", {
+  //   method: "POST",
+  //   headers: { "Content-Type": "application/json" },
+  //   body: JSON.stringify({ token })
+  // });
+  // const data = await response.json();
+  // if (!data.success) {
+  //   setError("reCAPTCHA verification failed. Please try again.");
+  //   return;
+  // }
 
   const handleSignOut = async () => {
     const { error } = await supabase.auth.signOut();
