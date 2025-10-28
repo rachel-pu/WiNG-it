@@ -9,7 +9,6 @@ import { ChevronRight, Check, X } from 'lucide-react';
 export default function SettingsProfile() {
     const [editingSection, setEditingSection] = useState(null);
     const [error, setError] = useState('');
-    const [fieldErrors, setFieldErrors] = useState({});
     const [isEditingName, setIsEditingName] = useState(false);
     const [tempName, setTempName] = useState('');
     const [formData, setFormData] = useState({
@@ -62,10 +61,6 @@ export default function SettingsProfile() {
             .replace(/^./, str => str.toUpperCase());
     };
 
-    const sanitizeInput = (input) => input.replace(/[\0\x08\x09\x1a\n\r"'\\<>%]/g, "");
-    const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-    const isValidName = (name) => /^[a-zA-Z\s]{2,}$/.test(name);
-
     const sections = Object.keys(formData)
     .filter((sectionKey) => sectionKey !== 'userId' && sectionKey !== 'resume' && sectionKey !== 'passwordLength'  && sectionKey !== 'onboardingCompleted')
     .map((sectionKey) => {
@@ -108,25 +103,20 @@ export default function SettingsProfile() {
 
 
     const handleSaveName = async () => {
-        const sanitizedName = sanitizeInput(tempName.trim());
-        if (!sanitizedName) { setFieldErrors({ fullName: 'Name cannot be empty.' }); return; }
-        if (!isValidName(sanitizedName)) { setFieldErrors({ fullName: 'Invalid name. Only letters and spaces, min 2 chars.' }); return; }
-
         if (!formData.userId) {
             alert("User ID not found!");
             return;
         }
-        
 
         try {
              await update(ref(database, `users/${formData.userId}/personalInformation`), {
-                fullName: sanitizedName || ''
+                fullName: tempName || ''
             });
             setFormData(prev => ({
                 ...prev,
                 personalInformation: {
                     ...prev.personalInformation,
-                    fullName: sanitizedName
+                    fullName: tempName
                 }
             }));
             setIsEditingName(false);
@@ -138,34 +128,24 @@ export default function SettingsProfile() {
     }
 
     const handleSaveSection = async (sectionId) => {
-        if (!formData.userId) return setError("User ID not found.");
-
-        const sectionData = formData[sectionId] || {};
-        const sanitizedData = {};
-        const newFieldErrors = {};
-
-        for (const [key, value] of Object.entries(sectionData)) {
-            const sanitizedValue = sanitizeInput(value.toString().trim());
-
-            if (key.toLowerCase().includes('email') && !isValidEmail(sanitizedValue)) {
-                newFieldErrors[key] = 'Invalid email format.';
-            }
-            if (key.toLowerCase().includes('name') && !isValidName(sanitizedValue)) {
-                newFieldErrors[key] = 'Invalid name format.';
-            }
-
-            sanitizedData[key] = sanitizedValue;
+        setEditingSection(null);
+        if (!formData.userId) {
+            alert("User ID not found!");
+            return;
         }
 
-        if (Object.keys(newFieldErrors).length) { setFieldErrors(newFieldErrors); return; }
-
         try {
-            await update(ref(database, `users/${formData.userId}`), { [sectionId]: sanitizedData, onboardingCompleted: true });
-            setEditingSection(null);
-            setFieldErrors({});
+            const sectionData = formData[sectionId] || {};
+            const updates = {
+                [sectionId]: sectionData,
+                onboardingCompleted: true
+            };
+
+            await update(ref(database, `users/${formData.userId}`), updates);
+            alert('Section updated successfully!');
         } catch (err) {
-            console.error(err);
-            setError('Failed to update section.');
+            console.error('Error updating section:', err);
+            alert('Failed to update section.');
         }
     };
 
@@ -175,13 +155,13 @@ export default function SettingsProfile() {
     };
 
     const handleChange = (sectionId, fieldId, value) => {
-        const sanitizedValue = sanitizeInput(value);
         setFormData(prev => ({
             ...prev,
-            [sectionId]: { ...prev[sectionId], [fieldId]: sanitizedValue }
+            [sectionId]: {
+                ...prev[sectionId],
+                [fieldId]: value
+            }
         }));
-
-        setFieldErrors(prev => ({ ...prev, [fieldId]: '' }));
     };
 
     if (error) return <p style={{ color: 'red' }}>{error}</p>;
@@ -190,7 +170,7 @@ export default function SettingsProfile() {
     const renderField = (field, sectionId, isEditingSection) => {
         const isTextarea = field.type === 'textarea';
         const isEditing = isEditingSection && field.editable;
-        const fieldValue = formData[sectionId]?.[field.id] || ''; 
+        const fieldValue = formData[sectionId]?.[field.id] || '';
 
         return (
             <div className="form-field" key={field.id}>

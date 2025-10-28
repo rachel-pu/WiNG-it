@@ -13,10 +13,8 @@ export default function Onboarding() {
     const [error, setError] = useState('');
     const [formData, setFormData] = useState({
         userId: '',
-        personalInformation: {
-            bio: ''
-        },
         academicInformation: {
+            bio: '',
             school: '',
             schoolYear: '',
             major: '',
@@ -74,7 +72,7 @@ export default function Onboarding() {
 
     const validateStep = (step) => {
         if (step === 1) {
-            if (!formData.personalInformation.bio.trim()) {
+            if (!formData.academicInformation.bio.trim()) {
                 setError('Please tell us a bit about yourself');
                 return false;
             }
@@ -120,7 +118,6 @@ export default function Onboarding() {
 
         try {
             await update(ref(database, `users/${formData.userId}`), {
-                personalInformation: formData.personalInformation,
                 academicInformation: formData.academicInformation,
                 professionalInformation: formData.professionalInformation,
                 onboardingCompleted: true
@@ -157,14 +154,14 @@ export default function Onboarding() {
 
                         <div className="form-group">
                             <textarea
-                                value={formData.personalInformation.bio}
-                                onChange={(e) => handleChange('personalInformation', 'bio', e.target.value)}
+                                value={formData.academicInformation.bio}
+                                onChange={(e) => handleChange('academicInformation', 'bio', e.target.value)}
                                 placeholder="Tell us about your interests, goals, and what brings you here..."
                                 className="form-textarea-large"
                                 rows={6}
                             />
                             <div className="character-count">
-                                {formData.personalInformation.bio.length} / 500
+                                {formData.academicInformation.bio.length} / 500
                             </div>
                         </div>
                     </div>
