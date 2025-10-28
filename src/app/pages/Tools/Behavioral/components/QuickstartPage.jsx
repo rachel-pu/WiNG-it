@@ -1,9 +1,8 @@
 "use client";
 import "./QuickstartPage.css";
-import Toolbar from "@mui/material/Toolbar";
 import { useState, useEffect } from "react";
 import Box from "@mui/material/Box";
-import { Button, Typography, Switch, FormControlLabel, Alert, Fade, Tabs, Tab } from "@mui/material";
+import { Button, Typography, Alert, Fade, Tabs, Tab } from "@mui/material";
 import { motion } from "framer-motion";
 
 
@@ -171,7 +170,7 @@ const QuickstartPage = ({
                                     variants={itemVariants}
                                     className="step-item"
                                 >
-                                    <div className={`step-icon ${step.color}`}>
+                                    <div className={`step-icon-quickstart ${step.color}`}>
                                         <Icon />
                                     </div>
                                     <div className="step-content">

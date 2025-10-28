@@ -26,15 +26,27 @@ const SignIn = () => {
 
     const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
+    const sanitizeInput = (input) => input.replace(/[\0\x08\x09\x1a\n\r"'\\\%]/g, "");
+    const isValidPassword = (password) => {
+        // Must be at least 8 characters, alphanumeric + special characters
+        const regex = /^[\w!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]*$/;
+        return password.length >= 8 && regex.test(password);
+    };
+
+
+
     const handleSignIn = async () => {
         setError('');
-        if (!isValidEmail(email)) return setError('Please enter a valid email address.');
-        if (!password.trim()) return setError('Please enter your password.');
+        const sanitizedEmail = sanitizeInput(email.trim());
+        const sanitizedPassword = sanitizeInput(password);
+        if (!isValidEmail(sanitizedEmail)) return setError('Please enter a valid email address.');
+        if (!sanitizedPassword.trim()) return setError('Please enter your password.');
+        if (!isValidPassword(sanitizedPassword)) return setError('Password must be at least 8 characters and contain valid characters.');
 
         try {
             const { data, error } = await supabase.auth.signInWithPassword({
-                email,
-                password,
+                email: sanitizedEmail,
+                password: sanitizedPassword,
             });
             if (error) throw error;
 
