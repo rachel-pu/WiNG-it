@@ -121,7 +121,7 @@
     background-color: rgba(248, 250, 252, 0.5);
 }
 
-.step-icon {
+.step-icon-quickstart {
     padding: 0.75rem;
     border-radius: 0.75rem;
     display: flex;
@@ -131,25 +131,25 @@
     border: 1px solid;
 }
 
-.step-icon.blue {
+.step-icon-quickstart.blue {
     background-color: #dbeafe;
     color: #2563eb;
     border-color: #bfdbfe;
 }
 
-.step-icon.amber {
+.step-icon-quickstart.amber {
     background-color: #fef3c7;
     color: #d97706;
     border-color: #fde68a;
 }
 
-.step-icon.green {
+.step-icon-quickstart.green {
     background-color: #d1fae5;
     color: #059669;
     border-color: #a7f3d0;
 }
 
-.step-icon.purple {
+.step-icon-quickstart.purple {
     background-color: #ede9fe;
     color: #7c3aed;
     border-color: #c4b5fd;
