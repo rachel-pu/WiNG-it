@@ -1,21 +1,32 @@
 "use client";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
+import Fab from "@mui/material/Fab";
+import NavigationIcon from "@mui/icons-material/Navigation";
 import DefaultAppLayout from "../../DefaultAppLayout.jsx";
 import DashboardCard from './components/DashboardCard.jsx';
-import { supabase } from '../../../../supabase.js'
+import { supabase } from '../../../../supabase.js';
+import { database } from '../../../lib/firebase.jsx';
+import { ref, get } from "firebase/database";
 
 export default function Dashboard() {
-     useEffect(() => {
+    const [userId, setUserId] = useState(null);
+    const [onboardingCompleted, setOnboardingCompleted] = useState(null);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
         const setUserCookie = async () => {
         const { data, error } = await supabase.auth.getSession();
-        if (error || !data.session) return;
+        if (error || !data.session){
+            setLoading(false);
+            return;
+        };
 
         const userId = data.session.user.id;
+        setUserId(userId);
         document.cookie = `user_id=${userId}; path=/; max-age=604800; secure; samesite=strict`;
         };
-        console.log(document.cookie);
         setUserCookie();
     }, []);
 
@@ -32,6 +43,34 @@ export default function Dashboard() {
 
         return () => subscription.unsubscribe();
     }, []);
+
+    
+    useEffect(() => {
+        const fetchOnboardingStatus = async () => {
+            if (!userId) {
+            setLoading(false);
+            return;
+            }
+
+            try {
+            const userRef = ref(database, `users/${userId}/onboardingCompleted`);
+            const snapshot = await get(userRef);
+
+            if (snapshot.exists()) {
+                setOnboardingCompleted(snapshot.val());
+            } else {
+                setOnboardingCompleted(false);
+            }
+            } catch (error) {
+            console.error("Error fetching onboarding status:", error);
+            setOnboardingCompleted(false);
+            } finally {
+            setLoading(false);
+            }
+        };
+
+        fetchOnboardingStatus();
+    }, [userId]);
 
 
     return (
@@ -100,8 +139,33 @@ export default function Dashboard() {
                                 ]}
                             />
                         </Grid>
-
                     </Grid>
+
+                    {!loading && onboardingCompleted === false && (
+                    <div>
+                        <Fab
+                        variant="extended"
+                        color="primary"
+                        sx={{
+                            position: 'fixed',
+                            bottom: 24,
+                            right: 24,
+                            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                            color: 'white',
+                            fontWeight: 500,
+                            boxShadow: 3,
+                            '&:hover': {
+                            background: 'linear-gradient(135deg, #9aa2ebff 0%, #6b46c1 100%)',
+                            color: "#cdced8ff"
+                            },
+                        }}
+                        href="/onboarding"
+                        >
+                        <NavigationIcon sx={{ mr: 1 }} />
+                        Onboarding
+                        </Fab>
+                    </div>
+                    )}
                 </Box>
             </DefaultAppLayout>
         </Box>
