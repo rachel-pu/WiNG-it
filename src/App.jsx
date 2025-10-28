@@ -6,6 +6,7 @@ import SettingsPlan from './app/pages/Settings/SettingsPlan.jsx';
 import SettingsNotifications from './app/pages/Settings/SettingsNotifications.jsx';
 import Signin from './app/pages/Auth/Signin/Signin.jsx';
 import Signup from './app/pages/Auth/Signup/Signup.jsx';
+import Onboarding from './app/pages/Auth/Onboarding/Onboarding.jsx';
 import Dashboard from './app/pages/Dashboard/Dashboard.jsx';
 import Behavioral from './app/pages/Tools/Behavioral/Behavioral.jsx';
 import InterviewResults from "./app/pages/Tools/Behavioral/results/result.jsx"
@@ -42,6 +43,13 @@ function App() {
             <PublicRoute>
               <Signup />
             </PublicRoute>
+          }
+        />
+        <Route path="/onboarding"
+          element={
+            <ProtectedRoute>
+              <Onboarding />
+            </ProtectedRoute>
           }
         />
         <Route path="/settings/profile"

@@ -55,7 +55,7 @@ const SignUp = () => {
             password,
             options: {
             data: { name },
-            emailRedirectTo: `${window.location.origin}/signin`,
+            emailRedirectTo: `${window.location.origin}/onboarding`
             },
         });
         if (error) 

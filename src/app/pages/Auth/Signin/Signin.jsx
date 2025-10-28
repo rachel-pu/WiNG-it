@@ -5,6 +5,8 @@ import { supabase } from '../../../../../supabase.js'
 import { motion } from 'framer-motion';
 import { ArrowLeft} from 'lucide-react';
 import { useNavigate } from "react-router-dom";
+import {database} from '../../../../lib/firebase.jsx'
+import { ref, get} from "firebase/database";
 import { Box, TextField, InputAdornment, IconButton, Button } from '@mui/material';
 import EmailIcon from '@mui/icons-material/Email';
 import LockIcon from '@mui/icons-material/Lock';
@@ -26,7 +28,6 @@ const SignIn = () => {
 
     const handleSignIn = async () => {
         setError('');
-        console.log("email: ", email);
         if (!isValidEmail(email)) return setError('Please enter a valid email address.');
         if (!password.trim()) return setError('Please enter your password.');
 
@@ -37,9 +38,18 @@ const SignIn = () => {
             });
             if (error) throw error;
 
-            console.log('User signed in:', data.user);
+            const user = data.user;
+            if (!user) throw new Error("No user returned after sign-in.");
             setError('Successfully signed in!');
-            navigate('/dashboard')
+
+            const userRef = ref(database, `users/${user.id}/onboardingCompleted`);
+            const snapshot = await get(userRef);
+
+            if (snapshot.exists() && snapshot.val() === true) {
+                navigate('/dashboard');
+            } else {
+                navigate('/onboarding');
+            }
         } catch (err) {
             console.error("Sign-in error:", err);
             if (err.message.includes("Invalid login credentials")) {
@@ -49,6 +59,7 @@ const SignIn = () => {
             }
         }
     };
+
 
     const handleForgotPassword = async (email) => {
         if (! email){
