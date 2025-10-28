@@ -137,7 +137,8 @@ export default function SettingsProfile() {
         try {
             const sectionData = formData[sectionId] || {};
             const updates = {
-                [sectionId]: sectionData 
+                [sectionId]: sectionData,
+                onboardingCompleted: true
             };
 
             await update(ref(database, `users/${formData.userId}`), updates);
