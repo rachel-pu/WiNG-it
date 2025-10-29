@@ -205,6 +205,11 @@ const SignUp = () => {
           <p className="auth-description cursor-pointer" onClick={() => navigate("/signin")} style={{ marginTop: 15 }}>
             Have an account? Sign in.
           </p>
+          <p className="privacy-term-text" style={{marginTop:25, marginBottom: 0}}> By signing up, you are agreeing to our</p>
+            <p className="privacy-term-text" style={{marginTop: 0}}>
+              <span className="auth-description cursor-pointer" onClick={() => navigate("/privacy")}> Privacy Policy</span> and {' '}
+              <span className="auth-description cursor-pointer" onClick={() => navigate("/terms")}> Terms of Service</span>
+            </p>
         </div>
       </div>
     </div>
