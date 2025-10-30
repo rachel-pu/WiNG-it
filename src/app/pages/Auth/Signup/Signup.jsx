@@ -1,5 +1,5 @@
 "use client";
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { supabase } from '../../../../../supabase.js';
 import { motion } from 'framer-motion';
 import { ArrowLeft } from 'lucide-react';
@@ -27,7 +27,6 @@ const SignUp = () => {
     hidden: { opacity: 0, y: 10 },
     visible: { opacity: 1, y: 0 }
   };
-
   // Validation functions
   const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   const isStrongPassword = (password) =>
@@ -139,6 +138,8 @@ const SignUp = () => {
           </Button>
 
           <h1 className="auth-title">Create Account</h1>
+          <p>Origin: {window.location.origin}</p>
+
           <p className="auth-subtitle">Start your journey with WiNG.it today</p>
 
           {error && <div className="message-box error-box">{error}</div>}
