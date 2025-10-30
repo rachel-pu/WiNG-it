@@ -100,7 +100,6 @@ export default function SettingsNotifications() {
             }));
         } catch (err) {
             console.error('Error updating email notifications:', err);
-            alert('Failed to update email notifications.');
         }
     };
 
@@ -122,7 +121,6 @@ export default function SettingsNotifications() {
             }));
         } catch (err) {
             console.error('Error updating push notifications:', err);
-            alert('Failed to update push notifications.');
         }
     };
 
@@ -147,7 +145,6 @@ export default function SettingsNotifications() {
             }));
         } catch (err) {
             console.error('Error updating email type:', err);
-            alert('Failed to update notification preference.');
         }
     };
 
@@ -172,7 +169,6 @@ export default function SettingsNotifications() {
             }));
         } catch (err) {
             console.error('Error updating push type:', err);
-            alert('Failed to update notification preference.');
         }
     };
 
@@ -193,7 +189,6 @@ export default function SettingsNotifications() {
             }));
         } catch (err) {
             console.error('Error updating email frequency:', err);
-            alert('Failed to update email frequency.');
         }
     };
 
@@ -215,7 +210,6 @@ export default function SettingsNotifications() {
             }));
         } catch (err) {
             console.error('Error updating do not disturb:', err);
-            alert('Failed to update do not disturb setting.');
         }
     };
 
@@ -236,7 +230,6 @@ export default function SettingsNotifications() {
             }));
         } catch (err) {
             console.error('Error updating do not disturb time:', err);
-            alert('Failed to update do not disturb time.');
         }
     };
 

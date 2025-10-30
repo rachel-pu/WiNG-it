@@ -84,7 +84,6 @@ export default function SettingsBillings() {
             }));
         } catch (err) {
             console.error('Error updating auto-pay:', err);
-            alert('Failed to update auto-pay setting.');
         }
     };
 
@@ -108,7 +107,6 @@ export default function SettingsBillings() {
             }));
         } catch (err) {
             console.error('Error setting default card:', err);
-            alert('Failed to set default card.');
         }
     };
 
@@ -133,7 +131,6 @@ export default function SettingsBillings() {
             }));
         } catch (err) {
             console.error('Error deleting card:', err);
-            alert('Failed to delete payment method.');
         }
     };
 
@@ -150,7 +147,6 @@ export default function SettingsBillings() {
     const handleSaveNewCard = async () => {
         // Validate card data
         if (!tempCardData.cardNumber || !tempCardData.cardHolder || !tempCardData.expiryDate) {
-            alert('Please fill in all required fields.');
             return;
         }
 
@@ -182,7 +178,6 @@ export default function SettingsBillings() {
             setTempCardData({});
         } catch (err) {
             console.error('Error adding card:', err);
-            alert('Failed to add payment method.');
         }
     };
 
