@@ -11,6 +11,7 @@ import { FaPencilRuler } from "react-icons/fa";
 import { IoDocumentText } from "react-icons/io5";
 import { BiSolidMessageCheck } from "react-icons/bi";
 import HomePageNavbar from "../../../components/HomePageNavbar";
+import Footer from "../../../components/Footer";
 import { supabase } from '../../../../supabase.js'
 import { useNavigate } from "react-router-dom";
 import "./HomePage.css";
@@ -1268,63 +1269,8 @@ export default function HomePage() {
                         </motion.div>
                     </Box>
                     {/* ---------- Footer ---------- */}
-           <Box
-                sx={{
-                    position: 'absolute',
-                    bottom: 20,
-                    left: 0,
-                    width: '100%',
-                    textAlign: 'center',
-                    color: 'rgba(255, 255, 255, 0.7)',
-                    fontFamily: 'DM Sans, sans-serif',
-                    fontSize: '0.9rem',
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    gap: '24px', // spacing between items
-                }}
-            >
-                <Typography component="span">
-                    Copyright © 2025 WiNG.it
-                </Typography>
-
-                <Typography
-                    component="span"
-                    className="cursor-pointer"
-                    onClick={() => navigate('/terms')}
-                    sx={{
-                        '&:hover': { color: 'white' },
-                        cursor: 'pointer',
-                    }}
-                >
-                    Terms
-                </Typography>
-
-                <Typography
-                    component="span"
-                    className="cursor-pointer"
-                    onClick={() => navigate('/privacy')}
-                    sx={{
-                        '&:hover': { color: 'white' },
-                        cursor: 'pointer',
-                    }}
-                >
-                    Privacy Policy
-                </Typography>
-
-                <Typography
-                    component="span"
-                    className="cursor-pointer"
-                    onClick={() => window.location.href = "mailto:wingit.space@gmail.com"}
-                    sx={{
-                        '&:hover': { color: 'white' },
-                        cursor: 'pointer',
-                    }}
-                >
-                    Contact Us
-                </Typography>
-            </Box>
-            </Box>
+                    <Footer/>
+                </Box>
             </Box>
         </Box>
     );

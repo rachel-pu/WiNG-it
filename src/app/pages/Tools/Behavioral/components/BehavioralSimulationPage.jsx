@@ -604,6 +604,43 @@ const InterviewQuestions = ({questions}) => {
 
             {/* Zoom-like bottom control bar */}
             <Box className="simulation-bottom-bar">
+                {currentQuestionIndex === 0 && !hasRecorded && (
+                    <>
+                        <Typography
+                            variant="body2"
+                            style={{
+                                position: 'absolute',
+                                top: '-32px',
+                                fontFamily: 'Satoshi Medium',
+                                textAlign: 'center',
+                                color: '#e9ebf2ff',
+                                fontWeight: 500,
+                                backgroundColor: 'rgba(87, 179, 99, 0.9)',
+                                padding: '6px 12px',
+                                borderRadius: '8px',
+                                width: 'fit-content',
+                                fontSize: '0.875rem',
+                                letterSpacing: '0.3px',
+                                boxShadow: '0 2px 8px rgba(102, 126, 234, 0.12)',
+                                border: '1px solid rgba(102, 126, 234, 0.25)',
+                            }}
+                        >
+                            Tap the microphone to respond
+                        </Typography>
+                        <div
+                            style={{
+                                position: 'absolute',
+                                top: '2px',
+                                width: '0',
+                                height: '0',
+                                borderLeft: '6px solid transparent',
+                                borderRight: '6px solid transparent',
+                                borderTop: '8px solid rgba(87, 179, 99, 0.9)',
+                            }}
+                        />
+                    </>
+                )}
+                
                 {/* Microphone button */}
                 <IconButton
                     disabled={hasRecorded}
