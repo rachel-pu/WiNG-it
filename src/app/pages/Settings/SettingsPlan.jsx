@@ -141,11 +141,8 @@ export default function SettingsPlan() {
                     status: 'active'
                 }
             }));
-
-            alert(`Successfully ${newPlan === 'free' ? 'downgraded' : 'upgraded'} to ${plans[newPlan].name}!`);
         } catch (err) {
             console.error('Error changing plan:', err);
-            alert('Failed to change plan.');
         } finally {
             setIsChangingPlan(false);
         }
@@ -169,10 +166,8 @@ export default function SettingsPlan() {
                 }
             }));
 
-            alert('Subscription cancelled. You will have access until ' + formData.subscription.renewalDate);
         } catch (err) {
             console.error('Error cancelling subscription:', err);
-            alert('Failed to cancel subscription.');
         }
     };
 
@@ -193,7 +188,6 @@ export default function SettingsPlan() {
             }));
         } catch (err) {
             console.error('Error updating billing cycle:', err);
-            alert('Failed to update billing cycle.');
         }
     };
 

@@ -104,7 +104,6 @@ export default function SettingsProfile() {
 
     const handleSaveName = async () => {
         if (!formData.userId) {
-            alert("User ID not found!");
             return;
         }
 
@@ -120,17 +119,14 @@ export default function SettingsProfile() {
                 }
             }));
             setIsEditingName(false);
-            alert('Name updated successfully!');
         } catch (err) {
             console.error('Error updating name:', err);
-            alert('Failed to update name.');
         }
     }
 
     const handleSaveSection = async (sectionId) => {
         setEditingSection(null);
         if (!formData.userId) {
-            alert("User ID not found!");
             return;
         }
 
@@ -142,10 +138,8 @@ export default function SettingsProfile() {
             };
 
             await update(ref(database, `users/${formData.userId}`), updates);
-            alert('Section updated successfully!');
         } catch (err) {
             console.error('Error updating section:', err);
-            alert('Failed to update section.');
         }
     };
 
