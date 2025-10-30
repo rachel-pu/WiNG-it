@@ -5,6 +5,7 @@ import { Lock, Eye, EyeOff, CheckCircle } from 'lucide-react';
 import { useNavigate } from "react-router-dom";
 import bcrypt from 'bcryptjs';
 import '../Signin/Signin.css';
+import './UpdatePassword.css';
 import { supabase } from '../../../../../supabase.js';
 import { ref, update } from "firebase/database";
 import {database} from '../../../../lib/firebase.jsx'
@@ -178,13 +179,13 @@ const UpdatePassword = () => {
 
                 {error && <div className="message-box error-box">{error}</div>}
                 
-                <motion.div className="input-group" variants={itemVariants}>
-                    <label className="input-label">New Password</label>
-                    <div className="input-wrapper">
-                        <Lock className="input-icon" />
+                <motion.div className="update-input-group" variants={itemVariants}>
+                    <label className="update-input-label">New Password</label>
+                    <div className="update-input-wrapper">
+                        <Lock className="update-input-icon" />
                         <input 
                             type={showNewPassword ? "text" : "password"}
-                            className="modern-input password-input-field" 
+                            className="modern-update-input password-input-field" 
                             placeholder="Enter new password"
                             value={newPassword}
                             onChange={(e) => setNewPassword(e.target.value)}
@@ -194,18 +195,18 @@ const UpdatePassword = () => {
                             className="password-toggle"
                             onClick={() => setShowNewPassword(!showNewPassword)}
                         >
-                            {showNewPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                            {showNewPassword ? <EyeOff style={{marginLeft:'10px'}} size={18} /> : <Eye style={{marginLeft:'10px'}} size={18} />}
                         </button>
                     </div>
                 </motion.div>
 
-                <motion.div className="input-group" variants={itemVariants}>
-                    <label className="input-label">Confirm Password</label>
-                    <div className="input-wrapper">
-                        <Lock className="input-icon" />
+                <motion.div className="update-input-group" variants={itemVariants}>
+                    <label className="update-input-label">Confirm Password</label>
+                    <div className="update-input-wrapper">
+                        <Lock className="update-input-icon" />
                         <input 
                             type={showConfirmPassword ? "text" : "password"}
-                            className="modern-input password-input-field" 
+                            className="modern-update-input password-input-field" 
                             placeholder="Confirm new password"
                             value={confirmPassword}
                             onChange={(e) => setConfirmPassword(e.target.value)}
@@ -215,7 +216,7 @@ const UpdatePassword = () => {
                             className="password-toggle"
                             onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                         >
-                            {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                            {showConfirmPassword ? <EyeOff style={{marginLeft:'10px'}} size={18} /> : <Eye style={{marginLeft:'10px'}} size={18} />}
                         </button>
                     </div>
                 </motion.div>
@@ -226,7 +227,8 @@ const UpdatePassword = () => {
                     borderRadius: '8px',
                     marginBottom: '24px',
                     fontSize: '14px',
-                    color: '#64748b'
+                    color: '#64748b',
+                    boxShadow: '0 1px 3px rgba(0, 0, 0, 0.2)',
                 }}>
                     <p style={{ fontWeight: '600', marginBottom: '8px', color: '#1e293b' }}>
                         Password requirements:
@@ -242,11 +244,7 @@ const UpdatePassword = () => {
                     Update Password
                 </button>
 
-                <p
-                    className="auth-description cursor-pointer"
-                    style={{ marginTop: 16, color: "#2381edff", textDecoration: "underline" }}
-                    onClick={handleBackToSignIn}
-                >
+                <p className="auth-description cursor-pointer" onClick={handleBackToSignIn} style={{ marginTop: 15 }}>
                     Back to Sign In
                 </p>
             </div>
