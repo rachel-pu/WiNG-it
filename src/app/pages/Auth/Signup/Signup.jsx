@@ -58,13 +58,16 @@ const SignUp = () => {
       if (userSnapshot.exists())
         return setError('An account with this email already exists. Please sign in instead.');
 
+      console.log(window.location.origin);
+      console.log(`${window.location.origin}/onboarding`);
+      console.log(`${import.meta.env.VITE_NEXT_PUBLIC_APP_URL}/onboarding`);
       // Create new user in Supabase
       const { data, error } = await supabase.auth.signUp({
         email: sanitizedEmail,
         password: sanitizedPassword,
         options: {
           data: { name: sanitizedName },
-          emailRedirectTo: `${window.location.origin}/onboarding`
+          emailRedirectTo: `${import.meta.env.VITE_NEXT_PUBLIC_APP_URL}/onboarding`
         },
       });
       if (error) throw error;
