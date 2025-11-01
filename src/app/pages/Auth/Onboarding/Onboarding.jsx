@@ -123,6 +123,7 @@ export default function Onboarding() {
                 onboardingCompleted: true
             });
 
+            await supabase.auth.updateUser({ data: { onboarded: true } });
             // Redirect to dashboard or home page
             navigate('/dashboard');
         } catch (err) {

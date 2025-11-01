@@ -25,7 +25,14 @@ const PublicRoute = ({ children }) => {
 
   if (loading) return <div></div>;
   // If session → redirect to /dashboard
-  if (session) return <Navigate to="/dashboard" replace />;
+  if (session && session.user?.user_metadata?.onboarded) {
+    return <Navigate to="/dashboard" replace />;
+  }
+  // If session but not onboarded → redirect to /onboarding
+  if (session && !session.user?.user_metadata?.onboarded) {
+    return <Navigate to="/onboarding" replace />;
+  }
+
 
   // Otherwise, render protected page
   return children;
