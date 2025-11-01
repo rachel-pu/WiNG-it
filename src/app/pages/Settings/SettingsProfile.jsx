@@ -62,7 +62,7 @@ export default function SettingsProfile() {
     };
 
     const sections = Object.keys(formData)
-    .filter((sectionKey) => sectionKey !== 'userId' && sectionKey !== 'resume' && sectionKey !== 'passwordLength'  && sectionKey !== 'onboardingCompleted')
+    .filter((sectionKey) => sectionKey !== 'userId' && sectionKey !== 'resume' && sectionKey !== 'passwordLength'  && sectionKey !== 'onboardingCompleted' && sectionKey !== 'notificationPreferences')
     .map((sectionKey) => {
         const sectionData = formData[sectionKey] || {};
 
