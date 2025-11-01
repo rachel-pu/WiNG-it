@@ -5,6 +5,7 @@ import Box from '@mui/material/Box';
 import DefaultAppLayout from "../../DefaultAppLayout.jsx";
 import "./SettingsProfile.css"
 import { ChevronRight, Check, X } from 'lucide-react';
+import { uploadProfileImage } from '../../../../supabase.js';
 
 export default function SettingsProfile() {
     const [editingSection, setEditingSection] = useState(null);
@@ -217,81 +218,120 @@ export default function SettingsProfile() {
                             <div className="settings-content">
                                 <div className="settings-card" key="personal">
                                     <h2 style={{marginBottom:'20px'}}>Personal Information</h2>
-
-                                    <div className="info-row">
-                                        <div className="info-row-content">
-                                            <div className="info-field">
-                                                <label className="info-label">Full Name</label>
-                                                {isEditingName ? (
-                                                    <input
-                                                        type="text"
-                                                        value={tempName}
-                                                        onChange={(e) => setTempName(e.target.value)}
-                                                        className="info-input"
-                                                        autoFocus
+                                    <div className="personalInformation-section">
+                                        <div className="profile-photo-section">
+                                                <div className="profile-photo-container">
+                                                    <img
+                                                    src={formData.personalInformation?.profilePhoto || "../../../../public/static/images/blank_profile.png"}
+                                                    alt="Profile"
+                                                    className="profile-photo"
                                                     />
-                                                ) : (
-                                                    <div className="info-value">
-                                                        {formData.personalInformation?.fullName || 'Not set'}
+                                                </div>
+                                                <input
+                                                    type="file"
+                                                    accept="image/*"
+                                                    id="profile-upload"
+                                                    style={{ display: 'none' }}
+                                                    onChange={async (e) => {
+                                                    const file = e.target.files?.[0];
+                                                    if (!file || !formData.userId) return;
+                                                    try {
+                                                        const imageUrl = await uploadProfileImage(formData.userId, file);
+                                                        await update(ref(database, `users/${formData.userId}/personalInformation`), {
+                                                            profilePhoto: imageUrl,
+                                                        });
+                                                        setFormData(prev => ({
+                                                            ...prev,
+                                                            personalInformation: { ...prev.personalInformation, profilePhoto: imageUrl },
+                                                        }));
+                                                    } catch (err) {
+                                                        console.error("Error uploading profile photo:", err);
+                                                    }
+                                                    }}
+                                                />
+                                            <button
+                                                onClick={() => document.getElementById('profile-upload').click()}
+                                                className="upload-button"
+                                            >
+                                                Change Photo
+                                            </button>
+                                        </div>
+
+                                        <div className='personal-info-details'>
+                                            <div className="info-row">
+                                                <div className="info-row-content">
+                                                    <div className="info-field">
+                                                        <label className="info-label">Full Name</label>
+                                                        {isEditingName ? (
+                                                            <input
+                                                                type="text"
+                                                                value={tempName}
+                                                                onChange={(e) => setTempName(e.target.value)}
+                                                                className="info-input"
+                                                                autoFocus
+                                                            />
+                                                        ) : (
+                                                            <div className="info-value">
+                                                                {formData.personalInformation?.fullName || 'Not set'}
+                                                            </div>
+                                                        )}
                                                     </div>
-                                                )}
-                                            </div>
-                                            
-                                            <div className="info-actions">
-                                                {isEditingName ? (
-                                                    <>
-                                                        <button
-                                                            onClick={handleSaveName}
-                                                            className="action-button save-button"
-                                                            title="Save"
-                                                        >
-                                                            <Check size={20} />
-                                                        </button>
-                                                        <button
-                                                            onClick={handleCancelEdit}
-                                                            className="action-button cancel-button"
-                                                            title="Cancel"
-                                                        >
-                                                            <X size={20} />
-                                                        </button>
-                                                    </>
-                                                ) : (
-                                                    <button
-                                                        onClick={handleEditName}
-                                                        className="action-button edit-button"
-                                                        title="Edit name"
-                                                    >
-                                                        <ChevronRight size={20} />
-                                                    </button>
-                                                )}
-                                            </div>
-                                        </div>
-                                    </div>
-
-        
-                                    <div className="info-row">
-                                        <div className="info-row-content">
-                                            <div className="info-field">
-                            
-                                                <label className="info-label">Email</label>
-                                                <div className="info-value">
-                                                    {formData.personalInformation?.email || 'Not set'}
+                                                    
+                                                    <div className="info-actions">
+                                                        {isEditingName ? (
+                                                            <>
+                                                                <button
+                                                                    onClick={handleSaveName}
+                                                                    className="action-button save-button"
+                                                                    title="Save"
+                                                                >
+                                                                    <Check size={20} />
+                                                                </button>
+                                                                <button
+                                                                    onClick={handleCancelEdit}
+                                                                    className="action-button cancel-button"
+                                                                    title="Cancel"
+                                                                >
+                                                                    <X size={20} />
+                                                                </button>
+                                                            </>
+                                                        ) : (
+                                                            <button
+                                                                onClick={handleEditName}
+                                                                className="action-button edit-button"
+                                                                title="Edit name"
+                                                            >
+                                                                <ChevronRight size={20} />
+                                                            </button>
+                                                        )}
+                                                    </div>
                                                 </div>
                                             </div>
-                                            <div className="info-spacer"></div>
-                                        </div>
-                                    </div>
-
-                                    <div className="info-row info-row-last">
-                                        <div className="info-row-content">
-                                            <div className="info-field">
-                                                <label className="info-label">Password</label>
-                                                <div className="info-value info-value-password">
-                                                    {formData.passwordLength ? '•'.repeat(formData.passwordLength) : 'Not set'}
+                                            <div className="info-row">
+                                                <div className="info-row-content">
+                                                    <div className="info-field">
+                                    
+                                                        <label className="info-label">Email</label>
+                                                        <div className="info-value">
+                                                            {formData.personalInformation?.email || 'Not set'}
+                                                        </div>
+                                                    </div>
+                                                    <div className="info-spacer"></div>
                                                 </div>
                                             </div>
+
+                                            <div className="info-row info-row-last">
+                                                <div className="info-row-content">
+                                                    <div className="info-field">
+                                                        <label className="info-label">Password</label>
+                                                        <div className="info-value info-value-password">
+                                                            {formData.passwordLength ? '•'.repeat(formData.passwordLength) : 'Not set'}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div className="info-spacer"></div>
+                                            </div>
                                         </div>
-                                        <div className="info-spacer"></div>
                                     </div>
                                 </div>
                             
