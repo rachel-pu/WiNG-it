@@ -95,7 +95,8 @@ const SignUp = () => {
           },
           professionalInformation: {
             currentJob: ""
-          }
+          },
+          notificationPreferences: {}
         });
 
         // Store email lookup
