@@ -1,4 +1,3 @@
-/* Behavioral Simulation Page Styles */
 .behavioral-main-content {
     background-color: black;
     height: 100vh;
@@ -10,8 +9,6 @@
     overflow: auto;
     text-align: center;
 }
-
-
 
 .behavioral-loading-container {
     display: flex;
@@ -33,8 +30,6 @@
     font-size: 1.2rem !important;
     font-weight: 500 !important;
 }
-
-/* BehavioralSimulationPage Component Styles */
 
 .simulation-container {
     position: relative;
@@ -415,4 +410,90 @@
 
 .simulation-loading-spinner {
     color: white !important;
+}
+
+@keyframes fadeInSlide {
+    0% {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes glassyPulse {
+    0%, 100% {
+        box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.4),
+                    0 4px 12px rgba(87, 179, 99, 0.3);
+    }
+    50% {
+        box-shadow: 0 0 0 8px rgba(255, 255, 255, 0),
+                    0 4px 20px rgba(87, 179, 99, 0.5);
+    }
+}
+
+@keyframes glowPulse {
+    0%, 100% {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1.05);
+    }
+}
+
+.highlight-pulse {
+    animation: glassyPulse 2s ease-in-out infinite;
+}
+
+.highlight-pulse::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    border-radius: 50%;
+    background: linear-gradient(45deg, 
+        rgba(255, 255, 255, 0.3), 
+        rgba(87, 179, 99, 0.3));
+    filter: blur(8px);
+    opacity: 0;
+    animation: glowPulse 2s ease-in-out infinite;
+    z-index: -1;
+}
+
+.glass-prompt {
+    position: absolute;
+    top: -32px;
+    font-family: 'Satoshi Medium';
+    text-align: center;
+    color: #ffffff;
+    font-weight: 500;
+    background: rgba(0, 243, 93, 0.3);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    padding: 8px 16px;
+    border-radius: 12px;
+    width: fit-content;
+    font-size: 0.875rem;
+    letter-spacing: 0.3px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1), inset 0 1px 1px rgba(255, 255, 255, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    animation: fadeInSlide 0.5s ease-out;
+}
+
+.glass-prompt-arrow {
+    position: absolute;
+    top: 6px;
+    width: 0;
+    height: 0;
+    
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-top: 8px solid rgba(0, 243, 93, 0.3);
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
 }
