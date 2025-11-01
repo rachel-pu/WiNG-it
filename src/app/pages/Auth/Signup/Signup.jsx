@@ -57,16 +57,13 @@ const SignUp = () => {
       if (userSnapshot.exists())
         return setError('An account with this email already exists. Please sign in instead.');
 
-      console.log(window.location.origin);
-      console.log(`${window.location.origin}/onboarding`);
-      console.log(`${import.meta.env.VITE_NEXT_PUBLIC_APP_URL}/onboarding`);
       // Create new user in Supabase
       const { data, error } = await supabase.auth.signUp({
         email: sanitizedEmail,
         password: sanitizedPassword,
         options: {
           data: { name: sanitizedName },
-          emailRedirectTo: `${import.meta.env.VITE_NEXT_PUBLIC_APP_URL}/onboarding`
+          emailRedirectTo: `${window.location.origin}/onboarding`
         },
       });
       if (error) throw error;
@@ -138,7 +135,6 @@ const SignUp = () => {
           </Button>
 
           <h1 className="auth-title">Create Account</h1>
-          <p>Origin: {window.location.origin}</p>
 
           <p className="auth-subtitle">Start your journey with WiNG.it today</p>
 

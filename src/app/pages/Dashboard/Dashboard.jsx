@@ -45,7 +45,7 @@ export default function Dashboard() {
     }, []);
 
     
-    useEffect(() => {
+    useEffect(() => { 
         const fetchOnboardingStatus = async () => {
             if (!userId) {
             setLoading(false);
@@ -67,7 +67,7 @@ export default function Dashboard() {
             } finally {
             setLoading(false);
             }
-        };
+        };hn 
         fetchOnboardingStatus();
     }, [userId]);
 
