@@ -145,7 +145,6 @@ export default function SettingsNotifications() {
                                                 >
                                                     <option value="instant">Instant</option>
                                                     <option value="weekly">Weekly Digest</option>
-                                                    <option value="never">Never</option>
                                                 </select>
                                             </div>
                                         </div>

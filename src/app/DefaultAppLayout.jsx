@@ -96,7 +96,7 @@ const DefaultAppLayout = ({ children }) => {
               <img
                 src={profile.profilePhoto || "/static/images/blank_profile.png"}
                 alt="Profile"
-                className="w-10 h-10 rounded-full object-cover shrink-0"
+                className="w-10 h-10 rounded-full object-cover shrink-0 border-2 border-gray-400"
               />
               {open && (
                 <motion.span
