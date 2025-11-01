@@ -67,7 +67,7 @@ export default function Dashboard() {
             } finally {
             setLoading(false);
             }
-        };hn 
+        };
         fetchOnboardingStatus();
     }, [userId]);
 
