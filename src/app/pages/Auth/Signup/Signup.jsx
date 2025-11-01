@@ -62,7 +62,10 @@ const SignUp = () => {
         email: sanitizedEmail,
         password: sanitizedPassword,
         options: {
-          data: { name: sanitizedName },
+          data: { 
+            name: sanitizedName,
+            onboarded: false
+          },
           emailRedirectTo: `${window.location.origin}/onboarding`
         },
       });
