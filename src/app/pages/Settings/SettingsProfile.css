@@ -471,7 +471,6 @@
 .cancel-button:hover {
   background-color: #fef2f2;
 }
-
 .profile-photo-section {
   display: flex;
   align-items: center;
@@ -503,6 +502,7 @@
   cursor: pointer;
   font-weight: 500;
   transition: background 0.2s ease;
+  width: 150px;
 }
 
 .upload-button:hover {
@@ -521,4 +521,20 @@
   flex-direction: column;
   gap: 16px;
   flex: 1;  
+}
+
+.resume-upload-section {
+  margin-top: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.resume-display a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.resume-display a:hover {
+  text-decoration: underline;
 }
