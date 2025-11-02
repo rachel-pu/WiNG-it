@@ -1,5 +1,6 @@
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
+const fetch = require('node-fetch');
 const cors = require('cors')({ origin: true });
 const OpenAI = require('openai');
 require('dotenv').config();
@@ -28,6 +29,42 @@ function extractQuestions(text, maxQuestions = 10) {
   console.log(`Extracted ${questions.length} questions (max: ${maxQuestions})`);
   return questions;
 }
+
+const verifyRecaptcha = functions.https.onRequest(async (req, res) => {
+  console.log("Verifying Recaptcha...");
+  return cors(req, res, async () => {
+    if (req.method !== "POST") {
+      return res.status(405).send("Method Not Allowed");
+    }
+
+    const { token } = req.body;
+
+    if (!token) {
+      return res.status(400).json({ success: false, message: "Missing token" });
+    }
+
+    const secretKey = process.env.VITE_GOOGLE_RECAPTCHA_SECRET_KEY || '';
+
+    try {
+      const response = await fetch("https://www.google.com/recaptcha/api/siteverify", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: `secret=${secretKey}&response=${token}`,
+      });
+
+      const data = await response.json();
+
+      if (data.success && (data.score === undefined || data.score >= 0.5)) {
+        return res.json({ success: true, score: data.score });
+      } else {
+        return res.json({ success: false, message: "Failed verification", score: data.score });
+      }
+    } catch (error) {
+      console.error("Error verifying reCAPTCHA:", error);
+      return res.status(500).json({ success: false, message: "Internal server error" });
+    }
+  });
+});
 
 // Generate Questions Function
 const generateQuestions = functions.https.onRequest((req, res) => {
@@ -521,4 +558,4 @@ const getInterviewResults = functions.https.onRequest((req, res) => {
   });
 });
 
-module.exports = { generateQuestions, handleTextToSpeech, saveResponse, getInterviewResults };
+module.exports = { generateQuestions, handleTextToSpeech, saveResponse, getInterviewResults, verifyRecaptcha };
