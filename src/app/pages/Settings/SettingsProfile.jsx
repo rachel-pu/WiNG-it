@@ -375,10 +375,11 @@ export default function SettingsProfile() {
                                 ))}
                                 <div className="resume-upload-section">
                                 <h3>Resume</h3>
+                                
                                 {formData.resume ? (
                                     <div className="resume-display">
                                     <a href={formData.resume} target="_blank" rel="noopener noreferrer">
-                                        View Resume
+                                        {formData.personalInformation.fullName}'s Resume
                                     </a>
                                     </div>
                                 ) : (
