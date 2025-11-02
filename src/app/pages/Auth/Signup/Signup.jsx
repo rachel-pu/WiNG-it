@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
 import { supabase } from '../../../../../supabase.js';
 import { motion } from 'framer-motion';
 import { ArrowLeft } from 'lucide-react';
@@ -14,6 +14,8 @@ import EmailIcon from '@mui/icons-material/Email';
 import LockIcon from '@mui/icons-material/Lock';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import {Typography} from "@mui/material";
+
 
 const SignUp = () => {
   const [name, setName] = useState('');
@@ -22,22 +24,75 @@ const SignUp = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const navigate = useNavigate();
+  const RECAPTCHA_SITE_KEY = import.meta.env.VITE_GOOGLE_RECAPTCHA_SITE_KEY;
+
+  useEffect(() => {
+    const scriptId = "recaptcha-script";
+    if (document.getElementById(scriptId)) return;
+
+    const script = document.createElement("script");
+    script.id = scriptId;
+    script.src = "https://www.google.com/recaptcha/api.js?render=explicit";
+    script.async = true;
+    script.defer = true;
+
+    script.onload = () => {
+      window.grecaptcha.ready(() => {
+        window.grecaptcha.render("recaptcha-container", {
+          sitekey: RECAPTCHA_SITE_KEY,
+        });
+      });
+    };
+
+    document.body.appendChild(script);
+  }, []);
+
 
   const itemVariants = {
     hidden: { opacity: 0, y: 10 },
     visible: { opacity: 1, y: 0 }
   };
+
   // Validation functions
   const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-  const isStrongPassword = (password) =>
-    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(password);
-  
-  // Sanitize input to remove potentially dangerous characters
+  const isStrongPassword = (password) => /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(password);
   const sanitizeInput = (input) => input.replace(/[\0\x08\x09\x1a\n\r"'\\<>%]/g, "");
 
-  const handleSignUp = async () => {
-    setError('');
 
+  const handleSignUp = async () => {
+    setError("");
+
+    try {
+      const token = await new Promise((resolve, reject) => {
+        const check = () => {
+          const gre = window.grecaptcha;
+          if (gre && gre.ready && gre.execute) {
+            gre.ready(() => {
+              gre.execute(RECAPTCHA_SITE_KEY, { action: "signup" })
+                .then(resolve)
+                .catch(reject);
+            });
+          } else {
+            setTimeout(check, 200);
+          }
+        };
+        check();
+      });
+
+    // Verify the token with your backend
+    const verificationResponse = await fetch(
+      "https://us-central1-wing-it-e6a3a.cloudfunctions.net/verifyRecaptcha",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token }),
+      }
+    );
+
+    const result = await verificationResponse.json();
+    if (!result.success) throw new Error("Failed reCAPTCHA verification.");
+
+    // Continue with Supabase / Firebase user creation
     const sanitizedName = sanitizeInput(name.trim());
     const sanitizedEmail = sanitizeInput(email.trim());
     const sanitizedPassword = sanitizeInput(password);
@@ -108,7 +163,12 @@ const SignUp = () => {
       console.error("Sign-up error:", err);
       setError(err.message || 'An unexpected error occurred during sign up.');
     }
-  };
+
+  } catch (err) {
+    console.error("reCAPTCHA execution error:", err);
+    setError("Could not verify reCAPTCHA. Please try again.");
+  }
+};
 
   return (
     <div>
@@ -215,6 +275,38 @@ const SignUp = () => {
               <span className="auth-description cursor-pointer" onClick={() => navigate("/terms")}> Terms of Service</span>
             </p>
         </div>
+        <Typography
+            component="small"
+            sx={{
+                display: 'block',
+                marginTop: '10px',
+                fontSize: '0.75rem',
+                color: '#dddadaff',
+                textAlign: 'center'
+            }}
+        >
+            This site is protected by reCAPTCHA and the Google{' '}
+            <a
+                href="https://policies.google.com/privacy"
+                style={{ color: '#b7c8f9ff' }}
+                target="_blank"
+                rel="noopener noreferrer"
+            >
+            Privacy Policy
+            </a>{' '}
+
+            and{' '}
+            <a
+                href="https://policies.google.com/terms"
+                style={{ color: '#b7c8f9ff' }}
+                target="_blank"
+                rel="noopener noreferrer"
+            >
+            Terms of Service
+            </a>{' '}
+            apply.
+        </Typography>
+        <div id="recaptcha-container" style={{ display: "none" }}></div>
       </div>
     </div>
   );

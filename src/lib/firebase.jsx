@@ -23,6 +23,7 @@ export const generateQuestions = httpsCallable(functions, 'generateQuestions');
 export const handleTextToSpeech = httpsCallable(functions, 'handleTextToSpeech');
 export const saveResponse = httpsCallable(functions, 'saveResponse');
 export const getInterviewResults = httpsCallable(functions, 'getInterviewResults');
+export const verifyRecaptcha = httpsCallable(functions, 'verifyRecaptcha');
 export async function uploadResume(userId, file) {
   try {
     if (file.type !== "application/pdf") {
