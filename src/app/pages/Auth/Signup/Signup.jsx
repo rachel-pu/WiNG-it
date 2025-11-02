@@ -79,80 +79,80 @@ const SignUp = () => {
         check();
       });
 
-    // Verify the token with your backend
-    const verificationResponse = await fetch(
-      "https://us-central1-wing-it-e6a3a.cloudfunctions.net/verifyRecaptcha",
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ token }),
-      }
-    );
-
-    const result = await verificationResponse.json();
-    if (!result.success) throw new Error("Failed reCAPTCHA verification.");
-
-    // Continue with Supabase / Firebase user creation
-    const sanitizedName = sanitizeInput(name.trim());
-    const sanitizedEmail = sanitizeInput(email.trim());
-    const sanitizedPassword = sanitizeInput(password);
-
-    // Input validation
-    if (!sanitizedName) return setError('Please enter your name.');
-    if (!isValidEmail(sanitizedEmail)) return setError('Please enter a valid email address.');
-    if (!isStrongPassword(sanitizedPassword))
-      return setError(
-        'Password must be at least 8 characters long and include upper/lowercase letters, numbers, and special characters.'
+      // Verify the token with your backend
+      const verificationResponse = await fetch(
+        "https://us-central1-wing-it-e6a3a.cloudfunctions.net/verifyRecaptcha",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ token }),
+        }
       );
 
-    try {
-      // Check if email already exists in Firebase
-      const emailKey = sanitizedEmail.replace(/\./g, '_');
-      const userSnapshot = await get(ref(database, `userEmails/${emailKey}`));
-      if (userSnapshot.exists())
-        return setError('An account with this email already exists. Please sign in instead.');
+      const result = await verificationResponse.json();
+      if (!result.success) throw new Error("Failed reCAPTCHA verification.");
 
-      // Create new user in Supabase
-      const { data, error } = await supabase.auth.signUp({
-        email: sanitizedEmail,
-        password: sanitizedPassword,
-        options: {
-          data: { 
-            name: sanitizedName,
-            onboarded: false
-          },
-          emailRedirectTo: `${window.location.origin}/onboarding`
-        },
-      });
-      if (error) throw error;
+      // Continue with Supabase / Firebase user creation
+      const sanitizedName = sanitizeInput(name.trim());
+      const sanitizedEmail = sanitizeInput(email.trim());
+      const sanitizedPassword = sanitizeInput(password);
 
-      const hashedPassword = await bcrypt.hash(sanitizedPassword, 10);
-      const passwordLength = sanitizedPassword.length;
+      // Input validation
+      if (!sanitizedName) return setError('Please enter your name.');
+      if (!isValidEmail(sanitizedEmail)) return setError('Please enter a valid email address.');
+      if (!isStrongPassword(sanitizedPassword))
+        return setError(
+          'Password must be at least 8 characters long and include upper/lowercase letters, numbers, and special characters.'
+        );
 
-      if (data?.user) {
-        setError('A verification email has been sent. Please check your inbox.');
+      try {
+        // Check if email already exists in Firebase
+        const emailKey = sanitizedEmail.replace(/\./g, '_');
+        const userSnapshot = await get(ref(database, `userEmails/${emailKey}`));
+        if (userSnapshot.exists())
+          return setError('An account with this email already exists. Please sign in instead.');
 
-        // Save user info in Firebase
-        await set(ref(database, `users/${data.user.id}`), {
-          userId: data.user.id,
-          passwordLength,
-          personalInformation: {
-            fullName: sanitizedName,
-            email: sanitizedEmail,
-            password: hashedPassword,
+        // Create new user in Supabase
+        const { data, error } = await supabase.auth.signUp({
+          email: sanitizedEmail,
+          password: sanitizedPassword,
+          options: {
+            data: { 
+              name: sanitizedName,
+              onboarded: false
+            },
+            emailRedirectTo: `${window.location.origin}/onboarding`
           },
-          academicInformation: {
-            bio: "",
-            schoolYear: "",
-            school: "",
-            major: "",
-            minor: "",
-          },
-          professionalInformation: {
-            currentJob: ""
-          },
-          notificationPreferences: {}
         });
+        if (error) throw error;
+
+        const hashedPassword = await bcrypt.hash(sanitizedPassword, 10);
+        const passwordLength = sanitizedPassword.length;
+
+        if (data?.user) {
+          setError('A verification email has been sent. Please check your inbox.');
+
+          // Save user info in Firebase
+          await set(ref(database, `users/${data.user.id}`), {
+            userId: data.user.id,
+            passwordLength,
+            personalInformation: {
+              fullName: sanitizedName,
+              email: sanitizedEmail,
+              password: hashedPassword,
+            },
+            academicInformation: {
+              bio: "",
+              schoolYear: "",
+              school: "",
+              major: "",
+              minor: "",
+            },
+            professionalInformation: {
+              currentJob: ""
+            },
+            notificationPreferences: {}
+          });
 
         // Store email lookup
         await set(ref(database, `userEmails/${emailKey}`), {
