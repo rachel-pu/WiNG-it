@@ -1,6 +1,6 @@
 import { useState, useEffect} from 'react';
 import { ref, get, update } from "firebase/database";
-import {database} from '../../../lib/firebase.jsx'
+import {database, uploadResume} from '../../../lib/firebase.jsx'
 import Box from '@mui/material/Box';
 import DefaultAppLayout from "../../DefaultAppLayout.jsx";
 import "./SettingsProfile.css"
@@ -373,6 +373,44 @@ export default function SettingsProfile() {
                                         {section.fields.map(field => renderField(field, section.id, editingSection === section.id))}
                                     </div>
                                 ))}
+                                <div className="resume-upload-section">
+                                <h3>Resume</h3>
+                                {formData.resume ? (
+                                    <div className="resume-display">
+                                    <a href={formData.resume} target="_blank" rel="noopener noreferrer">
+                                        View Resume
+                                    </a>
+                                    </div>
+                                ) : (
+                                    <p>No resume uploaded</p>
+                                )}
+
+                                <input
+                                    type="file"
+                                    accept=".pdf,.doc,.docx"
+                                    id="resume-upload"
+                                    style={{ display: "none" }}
+                                    onChange={async (e) => {
+                                    const file = e.target.files?.[0];
+                                    if (!file || !formData.userId) return;
+
+                                    try {
+                                        const resumeUrl = await uploadResume(formData.userId, file);
+                                        await update(ref(database, `users/${formData.userId}`), { resume: resumeUrl });
+                                        setFormData((prev) => ({ ...prev, resume: resumeUrl }));
+                                    } catch (err) {
+                                        console.error("Error uploading resume:", err);
+                                        setError("Failed to upload resume.");
+                                    }
+                                    }}
+                                />
+                                <button
+                                    onClick={() => document.getElementById("resume-upload").click()}
+                                    className="upload-button"
+                                >
+                                    {formData.resume ? "Replace Resume" : "Upload Resume"}
+                                </button>
+                                </div>
                             </div>
                         </div>
                     </div>

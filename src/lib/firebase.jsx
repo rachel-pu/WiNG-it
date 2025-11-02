@@ -1,6 +1,7 @@
 import { initializeApp } from 'firebase/app';
 import { getDatabase } from 'firebase/database';
 import { getFunctions, httpsCallable } from 'firebase/functions';
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage"; 
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_PUBLIC_FIREBASE_API_KEY,
@@ -15,10 +16,22 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 export const database = getDatabase(app);
 export const functions = getFunctions(app);
+export const storage = getStorage(app); 
 
 // Callable functions
 export const generateQuestions = httpsCallable(functions, 'generateQuestions');
 export const handleTextToSpeech = httpsCallable(functions, 'handleTextToSpeech');
 export const saveResponse = httpsCallable(functions, 'saveResponse');
 export const getInterviewResults = httpsCallable(functions, 'getInterviewResults');
+export async function uploadResume(userId, file) {
+  try {
+    const resumeRef = ref(storage, `resumes/${userId}/${file.name}`);
+    await uploadBytes(resumeRef, file);
+    const downloadURL = await getDownloadURL(resumeRef);
+    return downloadURL;
+  } catch (error) {
+    console.error("Error uploading resume:", error);
+    throw error;
+  }
+}
 export default app;
