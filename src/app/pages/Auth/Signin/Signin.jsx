@@ -1,5 +1,5 @@
 "use client";
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import './Signin.css';
 import { supabase } from '../../../../../supabase.js'
 import { motion } from 'framer-motion';
@@ -327,6 +327,7 @@ const SignIn = () => {
                     </a>{' '}
                     apply.
                 </Typography>
+                <div id="recaptcha-container" style={{display:'none'}}></div>
             </div>
         </div>
     );
