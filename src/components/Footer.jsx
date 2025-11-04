@@ -9,7 +9,7 @@ export default function Footer() {
     return (
         <Box
             sx={{
-                position: 'absolute', // or 'sticky' if needed
+                position: 'absolute',
                 bottom: 20,
                 left: 0,
                 width: '100%',
@@ -18,9 +18,9 @@ export default function Footer() {
                 fontFamily: 'DM Sans, sans-serif',
                 fontSize: '0.9rem',
                 display: 'flex',
-                flexDirection: 'column', // stack items vertically
+                flexDirection: 'column',
                 alignItems: 'center',
-                gap: '8px', // spacing between main row and attribution
+                gap: '8px',
             }}
         >
             <Box sx={{ display: 'flex', gap: '24px', alignItems: 'center' }}>
@@ -30,7 +30,7 @@ export default function Footer() {
 
                 <Typography
                     component="span"
-                    onClick={() => navigate('/terms')}
+                    onClick={() => navigate('/terms', { state: { previousRoute: window.location.pathname }})}
                     sx={{ '&:hover': { color: 'white' }, cursor: 'pointer' }}
                 >
                     Terms
@@ -38,7 +38,7 @@ export default function Footer() {
 
                 <Typography
                     component="span"
-                    onClick={() => navigate('/privacy')}
+                    onClick={() => navigate('/privacy', { state: { previousRoute: window.location.pathname }})}
                     sx={{ '&:hover': { color: 'white' }, cursor: 'pointer' }}
                 >
                     Privacy Policy

@@ -1127,6 +1127,7 @@ function escapeRegExp(s) {
                                                         </Typography>
                                                         <PerformanceIndicator score={currentData.score} />
                                                     </Box>
+
                                                 </Box>
 
                                                 {/* Statistics Grid */}

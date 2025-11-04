@@ -7,16 +7,27 @@ import Button from '@mui/material/Button';
 
 export default function PrivacyPolicy() {
     const { pathname } = useLocation();
+    const location = useLocation();
     const navigate = useNavigate();
+    const previousRoute = location.state?.previousRoute || "";
 
     useEffect(() => {
         window.scrollTo(0, 0);
     }, [pathname]);
 
+    const handleBackClick = () => {
+        if (previousRoute && previousRoute.trim() !== "") {
+        navigate(previousRoute);
+        } else {
+        navigate("/");
+        }
+    };
+
+
     return (
     <div className="page-wrapper">
         <Button
-            onClick={() => navigate('/')}
+            onClick={handleBackClick}
             sx={{
                 position: 'absolute',
                 top: '80px',
