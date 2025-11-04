@@ -1,103 +1,116 @@
-/* Current Plan Card */
-.current-plan-card {
-    background-color: white;
-    border-radius: 0.5rem;
-    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-    border: 1px solid #e5e7eb;
-    margin-bottom: 2rem;
-    padding: 1.5rem;
+/* Settings Plan Content */
+.SettingsPlan-content {
+    max-width: 100%;
 }
 
-.current-plan-header {
+.SettingsPlan-field-row {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 2rem;
+    padding: 1.5rem 0;
+    border-bottom: 1px solid #f3f4f6;
+    align-items: start;
+}
+
+.SettingsPlan-field-row:last-child {
+    border-bottom: none;
+}
+
+.SettingsPlan-field-label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #374151;
+    font-family: "DM Sans", sans-serif;
+    padding-top: 0.5rem;
+}
+
+.SettingsPlan-field-input-wrapper {
     display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 1.5rem;
-    padding-bottom: 1.5rem;
-    border-bottom: 1px solid #e5e7eb;
+    flex-direction: column;
+    gap: 0.75rem;
+    flex: 1;
 }
 
-.current-plan-header h2 {
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: #1f2937;
-    margin: 0 0 0.5rem 0;
+.SettingsPlan-field-display {
+    padding: 0.625rem 0.875rem;
+    font-size: 0.875rem;
+    color: #374151;
+    font-family: "DM Sans", sans-serif;
 }
 
-.current-plan-name {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: #3b82f6;
+/* Current Plan Display */
+.SettingsPlan-current-plan {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
+    gap: 1rem;
+    padding: 0.625rem 0.875rem;
 }
 
-.current-plan-price {
-    font-size: 2rem;
-    font-weight: 700;
+.plan-name-large {
+    font-size: 1.125rem;
+    font-weight: 600;
     color: #111827;
+    font-family: "Satoshi Bold", sans-serif;
 }
 
-.price-period {
-    font-size: 1rem;
+.plan-price-large {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #667eea;
+    font-family: "Satoshi Bold", sans-serif;
+}
+
+.price-period-small {
+    font-size: 0.875rem;
     font-weight: 400;
     color: #6b7280;
 }
 
-.cancelled-badge {
-    background-color: #fee2e2;
-    color: #991b1b;
+.SettingsPlan-cancelled-badge {
     padding: 0.25rem 0.75rem;
-    border-radius: 9999px;
+    background-color: #fee2e2;
+    color: #dc2626;
+    border-radius: 12px;
     font-size: 0.75rem;
     font-weight: 500;
+    font-family: "DM Sans", sans-serif;
 }
 
 /* Billing Toggle */
-.billing-toggle {
+.SettingsPlan-billing-toggle {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
-    margin-left: 1rem;
+    gap: 1rem;
+    padding: 0.625rem 0.875rem;
 }
 
-.billing-toggle span {
+.SettingsPlan-billing-toggle span {
     font-size: 0.875rem;
     color: #6b7280;
-    transition: color 0.2s;
+    font-family: "DM Sans", sans-serif;
+    transition: all 0.2s;
 }
 
-.billing-toggle span.active {
+.SettingsPlan-billing-toggle span.active {
     color: #111827;
     font-weight: 600;
 }
 
-.save-badge {
-    background-color: #dcfce7;
-    color: #166534;
-    padding: 0.125rem 0.5rem;
-    border-radius: 9999px;
-    font-size: 0.75rem;
-    font-weight: 500;
-    margin-left: 0.25rem;
-}
-
-/* Toggle Switch (reused) */
-.toggle-switch {
+.SettingsPlan-toggle-switch {
     position: relative;
     display: inline-block;
-    width: 48px;
+    width: 44px;
     height: 24px;
+    cursor: pointer;
 }
 
-.toggle-switch input {
+.SettingsPlan-toggle-switch input {
     opacity: 0;
     width: 0;
     height: 0;
 }
 
-.toggle-slider {
+.SettingsPlan-toggle-slider {
     position: absolute;
     cursor: pointer;
     top: 0;
@@ -109,7 +122,7 @@
     border-radius: 24px;
 }
 
-.toggle-slider:before {
+.SettingsPlan-toggle-slider:before {
     position: absolute;
     content: "";
     height: 18px;
@@ -121,271 +134,240 @@
     border-radius: 50%;
 }
 
-.toggle-switch input:checked + .toggle-slider {
-    background-color: #3b82f6;
+.SettingsPlan-toggle-switch input:checked + .SettingsPlan-toggle-slider {
+    background-color: #667eea;
 }
 
-.toggle-switch input:checked + .toggle-slider:before {
-    transform: translateX(24px);
+.SettingsPlan-toggle-switch input:checked + .SettingsPlan-toggle-slider:before {
+    transform: translateX(20px);
 }
 
-/* Cancel Subscription Section */
-.cancel-subscription-section {
-    margin-top: 1.5rem;
-    padding-top: 1.5rem;
-    border-top: 1px solid #e5e7eb;
-    text-align: center;
+.SettingsPlan-save-badge {
+    padding: 0.125rem 0.5rem;
+    background-color: #dcfce7;
+    color: #16a34a;
+    border-radius: 8px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    font-family: "DM Sans", sans-serif;
+    margin-left: 0.5rem;
 }
 
-.button-cancel-subscription {
+/* Cancel Subscription Button */
+.SettingsPlan-btn-cancel-subscription {
     padding: 0.5rem 1rem;
-    background-color: transparent;
-    color: #ef4444;
-    border: 1px solid #ef4444;
-    border-radius: 0.375rem;
+    border-radius: 6px;
     font-size: 0.875rem;
     font-weight: 500;
+    font-family: "DM Sans", sans-serif;
     cursor: pointer;
     transition: all 0.2s;
+    background-color: white;
+    color: #dc2626;
+    border: 1px solid #dc2626;
 }
 
-.button-cancel-subscription:hover {
+.SettingsPlan-btn-cancel-subscription:hover {
     background-color: #fef2f2;
 }
 
-/* Plans Section */
-.plans-section {
+/* Available Plans Section */
+.SettingsPlan-section {
     margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 2px solid #e5e7eb;
 }
 
-.plans-section h2 {
-    font-size: 1.5rem;
-    font-weight: 700;
+.SettingsPlan-section-title {
+    font-size: 1.125rem;
+    font-weight: 600;
     color: #111827;
-    margin-bottom: 1.5rem;
+    margin: 0 0 1.5rem 0;
+    font-family: "Satoshi Bold", sans-serif;
 }
 
-.plans-grid {
+.SettingsPlan-plans-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: 1.5rem;
     margin-top: 1.5rem;
 }
 
-/* Plan Card */
-.plan-card {
+/* Plan Cards */
+.SettingsPlan-plan-card {
+    position: relative;
     background-color: white;
     border: 2px solid #e5e7eb;
-    border-radius: 0.75rem;
+    border-radius: 12px;
     padding: 1.5rem;
-    position: relative;
-    transition: all 0.3s;
     display: flex;
     flex-direction: column;
+    transition: all 0.2s;
 }
 
-.plan-card:hover {
-    border-color: #3b82f6;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+.SettingsPlan-plan-card:hover {
+    border-color: #667eea;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.1);
     transform: translateY(-2px);
 }
 
-.plan-card.current {
-    border-color: #3b82f6;
-    background-color: #eff6ff;
+.SettingsPlan-plan-card.current {
+    border-color: #667eea;
+    background-color: #f9fafb;
 }
 
-.plan-card.popular {
-    border-color: #f59e0b;
+.SettingsPlan-plan-card.popular {
+    border-color: #667eea;
+    border-width: 2px;
 }
 
-.popular-badge {
+.SettingsPlan-popular-badge {
     position: absolute;
     top: -12px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    right: 1.5rem;
+    padding: 0.25rem 0.75rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
-    padding: 0.25rem 1rem;
-    border-radius: 9999px;
+    border-radius: 12px;
     font-size: 0.75rem;
     font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
+    font-family: "DM Sans", sans-serif;
 }
 
-.plan-header {
-    text-align: center;
-    margin-bottom: 1.5rem;
+.SettingsPlan-plan-header {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
 }
 
-.plan-icon {
-    color: #3b82f6;
-    margin-bottom: 0.75rem;
-}
-
-.plan-card.current .plan-icon {
-    color: #3b82f6;
-}
-
-.plan-card.popular .plan-icon {
-    color: #f59e0b;
-}
-
-.plan-header h3 {
-    font-size: 1.5rem;
+.SettingsPlan-plan-header h4 {
+    font-size: 1.25rem;
     font-weight: 700;
     color: #111827;
-    margin: 0 0 0.5rem 0;
+    margin: 0;
+    font-family: "Satoshi Bold", sans-serif;
 }
 
-.plan-description {
+.SettingsPlan-plan-icon {
+    color: #667eea;
+    margin-bottom: 0.5rem;
+}
+
+.SettingsPlan-plan-description {
     font-size: 0.875rem;
     color: #6b7280;
     margin: 0;
+    font-family: "DM Sans", sans-serif;
 }
 
-.plan-price {
-    text-align: center;
+.SettingsPlan-plan-price {
+    display: flex;
+    align-items: baseline;
+    gap: 0.25rem;
     margin-bottom: 1.5rem;
-    padding-bottom: 1.5rem;
-    border-bottom: 1px solid #e5e7eb;
 }
 
 .price-amount {
-    font-size: 2.5rem;
+    font-size: 2rem;
     font-weight: 700;
     color: #111827;
+    font-family: "Satoshi Bold", sans-serif;
 }
 
-.plan-features {
-    flex: 1;
+.price-period {
+    font-size: 0.875rem;
+    color: #6b7280;
+    font-family: "DM Sans", sans-serif;
+}
+
+/* Plan Features */
+.SettingsPlan-plan-features {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
     margin-bottom: 1.5rem;
+    flex-grow: 1;
 }
 
-.feature-item {
+.SettingsPlan-feature-item {
     display: flex;
     align-items: flex-start;
-    gap: 0.75rem;
-    margin-bottom: 0.75rem;
-    font-size: 0.875rem;
-    color: #374151;
+    gap: 0.5rem;
 }
 
 .feature-check {
-    color: #10b981;
+    color: #16a34a;
     flex-shrink: 0;
     margin-top: 0.125rem;
 }
 
-.plan-button {
+.SettingsPlan-feature-item span {
+    font-size: 0.875rem;
+    color: #374151;
+    font-family: "DM Sans", sans-serif;
+}
+
+/* Plan Button */
+.SettingsPlan-plan-button {
     width: 100%;
     padding: 0.75rem 1.5rem;
-    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-    color: white;
-    border: none;
-    border-radius: 0.5rem;
+    border-radius: 8px;
     font-size: 0.875rem;
     font-weight: 600;
+    font-family: "DM Sans", sans-serif;
     cursor: pointer;
     transition: all 0.2s;
+    border: none;
+    background-color: #667eea;
+    color: white;
 }
 
-.plan-button:hover:not(:disabled) {
+.SettingsPlan-plan-button:hover:not(:disabled) {
+    background-color: #5568d3;
     transform: translateY(-1px);
-    box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.3);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
 }
 
-.plan-button:disabled {
-    opacity: 0.5;
+.SettingsPlan-plan-button:disabled {
     cursor: not-allowed;
+    opacity: 0.6;
 }
 
-.current-plan-button {
-    background: #e5e7eb;
+.SettingsPlan-plan-button.current-plan-button {
+    background-color: #f3f4f6;
     color: #6b7280;
+    border: 1px solid #d1d5db;
 }
 
-.current-plan-button:hover {
+.SettingsPlan-plan-button.current-plan-button:hover {
+    background-color: #f3f4f6;
     transform: none;
     box-shadow: none;
 }
 
-.plan-card.popular .plan-button:not(.current-plan-button) {
-    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-}
-
-/* Comparison Section */
-.comparison-section {
-    margin-top: 3rem;
-    text-align: center;
-}
-
-.comparison-section h2 {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: #111827;
-    margin-bottom: 0.75rem;
-}
-
-.comparison-note {
-    font-size: 0.875rem;
-    color: #6b7280;
-    max-width: 600px;
-    margin: 0 auto;
-}
-
-/* Info Row Styles (reused from other pages) */
-.info-row {
-    padding: 1rem 0;
-    border-bottom: 1px solid #e5e7eb;
-}
-
-.info-row-last {
-    border-bottom: none;
-}
-
-.info-row-content {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
-.info-field {
-    flex: 1;
-}
-
-.info-label {
-    display: block;
-    font-size: 0.875rem;
-    font-weight: 500;
-    color: #6b7280;
-    margin-bottom: 0.25rem;
-}
-
-.info-value {
-    color: #111827;
-}
-
-.info-spacer {
-    width: 2.5rem;
-    margin-left: 1rem;
-}
-
-/* Responsive Design */
+/* Responsive */
 @media (max-width: 768px) {
-    .plans-grid {
+    .SettingsPlan-field-row {
         grid-template-columns: 1fr;
+        gap: 0.75rem;
     }
 
-    .current-plan-header {
+    .SettingsPlan-field-label {
+        padding-top: 0;
+    }
+
+    .SettingsPlan-current-plan {
         flex-direction: column;
-        gap: 1rem;
+        align-items: flex-start;
+        gap: 0.5rem;
     }
 
-    .billing-toggle {
+    .SettingsPlan-billing-toggle {
         flex-wrap: wrap;
-        margin-left: 0;
-        margin-top: 0.5rem;
+    }
+
+    .SettingsPlan-plans-grid {
+        grid-template-columns: 1fr;
     }
 }
