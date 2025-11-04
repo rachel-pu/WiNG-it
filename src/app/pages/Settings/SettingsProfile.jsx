@@ -1,7 +1,7 @@
 import { useState, useEffect} from 'react';
 import { ref, get, update } from "firebase/database";
 import {database, uploadResume} from '../../../lib/firebase.jsx'
-import { ChevronRight, Check, X } from 'lucide-react';
+import { ChevronRight, Check, X, Mail, Upload } from 'lucide-react';
 import { uploadProfileImage } from '../../../../supabase.js';
 
 export default function SettingsProfile() {
@@ -14,11 +14,12 @@ export default function SettingsProfile() {
             fullName: '',
             email: '',
             password: '',
+            profilePhoto: '',
         },
         academicInformation: {},
         professionalInformation: {},
-        userId: '',}
-    );
+        userId: '',
+    });
 
     useEffect(() => {
         const getCookie = (name) => {
@@ -41,7 +42,8 @@ export default function SettingsProfile() {
             try {
                 const snapshot = await get(ref(database, `users/${formData.userId}`));
                 if (snapshot.exists()) {
-                    setFormData(snapshot.val());
+                    const userData = snapshot.val();
+                    setFormData(userData);
                 } else {
                     setError('User not found in database.');
                 }
@@ -55,12 +57,12 @@ export default function SettingsProfile() {
 
     const formatLabel = (camelCase) => {
         return camelCase
-            .replace(/([A-Z])/g, ' $1') 
+            .replace(/([A-Z])/g, ' $1')
             .replace(/^./, str => str.toUpperCase());
     };
 
     const sections = Object.keys(formData)
-    .filter((sectionKey) => sectionKey !== 'userId' && sectionKey !== 'resume' && sectionKey !== 'passwordLength'  && sectionKey !== 'onboardingCompleted' && sectionKey !== 'notificationPreferences')
+    .filter((sectionKey) => sectionKey !== 'userId' && sectionKey !== 'resume' && sectionKey !== 'passwordLength' && sectionKey !== 'onboardingCompleted' && sectionKey !== 'notificationPreferences' && sectionKey !== 'personalInformation')
     .map((sectionKey) => {
         const sectionData = formData[sectionKey] || {};
 
@@ -68,13 +70,8 @@ export default function SettingsProfile() {
             .map((fieldKey) => ({
                 id: fieldKey,
                 label: formatLabel(fieldKey),
-                editable:
-                    sectionKey === 'personalInformation'
-                        ? fieldKey === 'fullName' 
-                        : true,
-                type: fieldKey.toLowerCase().includes('password')
-                    ? 'password'
-                    : 'text',
+                editable: true,
+                type: fieldKey.toLowerCase().includes('password') ? 'password' : 'text',
             }));
 
         return {
@@ -89,7 +86,7 @@ export default function SettingsProfile() {
         setEditingSection(section);
     };
 
-     const handleEditName = () => {
+    const handleEditName = () => {
         setTempName(formData.personalInformation?.fullName || '');
         setIsEditingName(true);
     };
@@ -99,21 +96,20 @@ export default function SettingsProfile() {
         setTempName('');
     };
 
-
     const handleSaveName = async () => {
         if (!formData.userId) {
             return;
         }
 
         try {
-             await update(ref(database, `users/${formData.userId}/personalInformation`), {
-                fullName: tempName || ''
+            await update(ref(database, `users/${formData.userId}/personalInformation`), {
+                fullName: tempName,
             });
             setFormData(prev => ({
                 ...prev,
                 personalInformation: {
                     ...prev.personalInformation,
-                    fullName: tempName
+                    fullName: tempName,
                 }
             }));
             setIsEditingName(false);
@@ -141,7 +137,6 @@ export default function SettingsProfile() {
         }
     };
 
-
     const handleCancelSection = () => {
         setEditingSection(null);
     };
@@ -158,39 +153,37 @@ export default function SettingsProfile() {
 
     if (error) return <p style={{ color: 'red' }}>{error}</p>;
 
-
     const renderField = (field, sectionId, isEditingSection) => {
         const isTextarea = field.type === 'textarea';
         const isEditing = isEditingSection && field.editable;
         const fieldValue = formData[sectionId]?.[field.id] || '';
 
         return (
-            <div className="form-field" key={field.id}>
-                <div className="field-row">
-                    <label className="form-label">
-                        {field.label}
-                    </label>
+            <div className="SettingsProfile-field-row" key={field.id}>
+                <label className="SettingsProfile-field-label">
+                    {field.label}
+                </label>
+                <div className="SettingsProfile-field-input-wrapper">
                     {isEditing ? (
                         isTextarea ? (
                             <textarea
                                 value={fieldValue}
                                 onChange={(e) => handleChange(sectionId, field.id, e.target.value)}
-                                className="form-textarea"
+                                className="SettingsProfile-textarea"
                             />
                         ) : (
                             <input
                                 type="text"
                                 value={fieldValue}
                                 onChange={(e) => handleChange(sectionId, field.id, e.target.value)}
-                                className="form-input"
+                                className="SettingsProfile-field-input"
                             />
                         )
                     ) : (
-                        <div className={`form-display ${isTextarea ? 'textarea-display' : ''} ${!field.editable ? 'disabled' : ''}`}>
+                        <div className={`SettingsProfile-field-display ${!field.editable ? 'disabled' : ''}`}>
                             {typeof fieldValue === 'object'
                             ? JSON.stringify(fieldValue)
                             : fieldValue || 'Not set'}
-
                         </div>
                     )}
                 </div>
@@ -199,205 +192,202 @@ export default function SettingsProfile() {
     };
 
     return (
-        <div>
-            <div className="settings-content">
-                                <div className="settings-card" key="personal">
-                                    <h2 style={{marginBottom:'20px'}}>Personal Information</h2>
-                                    <div className="personalInformation-section">
-                                        <div className="profile-photo-section">
-                                                <div className="profile-photo-container">
-                                                    <img
-                                                    src={formData.personalInformation?.profilePhoto || "../../../../public/static/images/blank_profile.png"}
-                                                    alt="Profile"
-                                                    className="profile-photo"
-                                                    />
-                                                </div>
-                                                <input
-                                                    type="file"
-                                                    accept="image/*"
-                                                    id="profile-upload"
-                                                    style={{ display: 'none' }}
-                                                    onChange={async (e) => {
-                                                    const file = e.target.files?.[0];
-                                                    if (!file || !formData.userId) return;
-                                                    try {
-                                                        const imageUrl = await uploadProfileImage(formData.userId, file);
-                                                        await update(ref(database, `users/${formData.userId}/personalInformation`), {
-                                                            profilePhoto: imageUrl,
-                                                        });
-                                                        setFormData(prev => ({
-                                                            ...prev,
-                                                            personalInformation: { ...prev.personalInformation, profilePhoto: imageUrl },
-                                                        }));
-                                                    } catch (err) {
-                                                        console.error("Error uploading profile photo:", err);
-                                                    }
-                                                    }}
-                                                />
-                                            <button
-                                                onClick={() => document.getElementById('profile-upload').click()}
-                                                className="upload-button"
-                                            >
-                                                Change Photo
-                                            </button>
-                                        </div>
-
-                                        <div className='personal-info-details'>
-                                            <div className="info-row">
-                                                <div className="info-row-content">
-                                                    <div className="info-field">
-                                                        <label className="info-label">Full Name</label>
-                                                        {isEditingName ? (
-                                                            <input
-                                                                type="text"
-                                                                value={tempName}
-                                                                onChange={(e) => setTempName(e.target.value)}
-                                                                className="info-input"
-                                                                autoFocus
-                                                            />
-                                                        ) : (
-                                                            <div className="info-value">
-                                                                {formData.personalInformation?.fullName || 'Not set'}
-                                                            </div>
-                                                        )}
-                                                    </div>
-                                                    
-                                                    <div className="info-actions">
-                                                        {isEditingName ? (
-                                                            <>
-                                                                <button
-                                                                    onClick={handleSaveName}
-                                                                    className="action-button save-button"
-                                                                    title="Save"
-                                                                >
-                                                                    <Check size={20} />
-                                                                </button>
-                                                                <button
-                                                                    onClick={handleCancelEdit}
-                                                                    className="action-button cancel-button"
-                                                                    title="Cancel"
-                                                                >
-                                                                    <X size={20} />
-                                                                </button>
-                                                            </>
-                                                        ) : (
-                                                            <button
-                                                                onClick={handleEditName}
-                                                                className="action-button edit-button"
-                                                                title="Edit name"
-                                                            >
-                                                                <ChevronRight size={20} />
-                                                            </button>
-                                                        )}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div className="info-row">
-                                                <div className="info-row-content">
-                                                    <div className="info-field">
-                                    
-                                                        <label className="info-label">Email</label>
-                                                        <div className="info-value">
-                                                            {formData.personalInformation?.email || 'Not set'}
-                                                        </div>
-                                                    </div>
-                                                    <div className="info-spacer"></div>
-                                                </div>
-                                            </div>
-
-                                            <div className="info-row info-row-last">
-                                                <div className="info-row-content">
-                                                    <div className="info-field">
-                                                        <label className="info-label">Password</label>
-                                                        <div className="info-value info-value-password">
-                                                            {formData.passwordLength ? '•'.repeat(formData.passwordLength) : 'Not set'}
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div className="info-spacer"></div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            
-                            {sections
-                                .filter(section => section.id !== 'personalInformation')
-                                .map(section => (
-                                    <div className="settings-card" key={section.id}>
-                                        <div className="settings-card-header">
-                                        <h2>{section.title}</h2>
-                                        <div className="button-group">
-                                            {editingSection === section.id ? (
-                                            <>
-                                                <button
-                                                onClick={() => handleSaveSection(section.id)}
-                                                className="button-save"
-                                                >
-                                                Save Changes
-                                                </button>
-                                                <button
-                                                onClick={handleCancelSection}
-                                                className="button-cancel"
-                                                >
-                                                Cancel
-                                                </button>
-                                            </>
-                                            ) : (
-                                            <>
-                                                <button
-                                                onClick={() => handleEditSection(section.id)}
-                                                className="button-edit"
-                                                >
-                                                Edit
-                                                </button>
-                                            </>
-                                            )}
-                                        </div>
-                                        </div>
-
-                                        {section.fields.map(field => renderField(field, section.id, editingSection === section.id))}
-                                    </div>
-                                ))}
-                                <div className="resume-upload-section">
-                                <h3>Resume</h3>
-                                
-                                {formData.resume ? (
-                                    <div className="resume-display">
-                                    <a href={formData.resume} target="_blank" rel="noopener noreferrer">
-                                        {formData.personalInformation.fullName}'s Resume
-                                    </a>
-                                    </div>
-                                ) : (
-                                    <p>No resume uploaded</p>
-                                )}
-
-                                <input
-                                    type="file"
-                                    accept=".pdf,.doc,.docx"
-                                    id="resume-upload"
-                                    style={{ display: "none" }}
-                                    onChange={async (e) => {
-                                    const file = e.target.files?.[0];
-                                    if (!file || !formData.userId) return;
-
-                                    try {
-                                        const resumeUrl = await uploadResume(formData.userId, file);
-                                        await update(ref(database, `users/${formData.userId}`), { resume: resumeUrl });
-                                        setFormData((prev) => ({ ...prev, resume: resumeUrl }));
-                                    } catch (err) {
-                                        console.error("Error uploading resume:", err);
-                                        setError("Failed to upload resume.");
-                                    }
-                                    }}
-                                />
+        <div className="SettingsProfile-content">
+            {/* Name Field */}
+            <div className="SettingsProfile-field-row">
+                <label className="SettingsProfile-field-label">Name</label>
+                <div className="SettingsProfile-name-inputs">
+                    {isEditingName ? (
+                        <>
+                            <input
+                                type="text"
+                                value={tempName}
+                                onChange={(e) => setTempName(e.target.value)}
+                                placeholder="Full name"
+                                className="SettingsProfile-field-input"
+                                autoFocus
+                            />
+                            <div className="SettingsProfile-name-actions">
                                 <button
-                                    onClick={() => document.getElementById("resume-upload").click()}
-                                    className="upload-button"
+                                    onClick={handleSaveName}
+                                    className="SettingsProfile-icon-btn save"
+                                    title="Save"
                                 >
-                                    {formData.resume ? "Replace Resume" : "Upload Resume"}
+                                    <Check size={18} />
                                 </button>
-                                </div>
+                                <button
+                                    onClick={handleCancelEdit}
+                                    className="SettingsProfile-icon-btn cancel"
+                                    title="Cancel"
+                                >
+                                    <X size={18} />
+                                </button>
                             </div>
+                        </>
+                    ) : (
+                        <>
+                            <div className="SettingsProfile-field-input">
+                                {formData.personalInformation?.fullName || 'Full name'}
+                            </div>
+                            <button
+                                onClick={handleEditName}
+                                className="SettingsProfile-edit-btn"
+                                title="Edit name"
+                            >
+                                Edit
+                            </button>
+                        </>
+                    )}
+                </div>
+            </div>
+
+            {/* Email Field */}
+            <div className="SettingsProfile-field-row">
+                <label className="SettingsProfile-field-label">Email address</label>
+                <div className="SettingsProfile-field-input-wrapper">
+                    <div className="SettingsProfile-field-input with-icon">
+                        <Mail size={20} className="input-icon" />
+                        <span>{formData.personalInformation?.email || 'Not set'}</span>
+                    </div>
+                </div>
+            </div>
+
+            {/* Photo Upload */}
+            <div className="SettingsProfile-field-row">
+                <div className="SettingsProfile-field-label-group">
+                    <label className="SettingsProfile-field-label">Your photo</label>
+                    <p className="SettingsProfile-field-description">This will be displayed on your profile.</p>
+                </div>
+                <div className="SettingsProfile-photo-upload-section">
+                    <div className="SettingsProfile-photo-preview">
+                        <img
+                            src={formData.personalInformation?.profilePhoto || "/static/images/blank_profile.png"}
+                            alt="Profile"
+                            className="SettingsProfile-avatar"
+                        />
+                    </div>
+                    <div className="SettingsProfile-upload-area">
+                        <input
+                            type="file"
+                            accept="image/*"
+                            id="profile-upload"
+                            style={{ display: 'none' }}
+                            onChange={async (e) => {
+                                const file = e.target.files?.[0];
+                                if (!file || !formData.userId) return;
+                                try {
+                                    const imageUrl = await uploadProfileImage(formData.userId, file);
+                                    await update(ref(database, `users/${formData.userId}/personalInformation`), {
+                                        profilePhoto: imageUrl,
+                                    });
+                                    setFormData(prev => ({
+                                        ...prev,
+                                        personalInformation: { ...prev.personalInformation, profilePhoto: imageUrl },
+                                    }));
+                                } catch (err) {
+                                    console.error("Error uploading profile photo:", err);
+                                }
+                            }}
+                        />
+                        <div
+                            className="SettingsProfile-upload-box"
+                            onClick={() => document.getElementById('profile-upload').click()}
+                        >
+                            <Upload size={20} className="upload-icon" />
+                            <div>
+                                <span className="upload-text-primary">Click to upload</span>
+                                <span className="upload-text-secondary"> or drag and drop</span>
+                            </div>
+                            <p className="upload-text-hint">SVG, PNG, JPG or GIF (max. 800x400px)</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Password Field */}
+            <div className="SettingsProfile-field-row">
+                <label className="SettingsProfile-field-label">Password</label>
+                <div className="SettingsProfile-field-input-wrapper">
+                    <div className="SettingsProfile-field-input">
+                        {formData.passwordLength ? '•'.repeat(formData.passwordLength) : 'Not set'}
+                    </div>
+                </div>
+            </div>
+
+            {/* Additional Sections (Academic, Professional, etc.) */}
+            {sections.map(section => (
+                <div key={section.id} className="SettingsProfile-section">
+                    <div className="SettingsProfile-section-header-inline">
+                        <h3 className="SettingsProfile-section-title-inline">{section.title}</h3>
+                        <div className="SettingsProfile-section-actions">
+                            {editingSection === section.id ? (
+                                <>
+                                    <button
+                                        onClick={() => handleSaveSection(section.id)}
+                                        className="SettingsProfile-btn-small save"
+                                    >
+                                        Save
+                                    </button>
+                                    <button
+                                        onClick={handleCancelSection}
+                                        className="SettingsProfile-btn-small cancel"
+                                    >
+                                        Cancel
+                                    </button>
+                                </>
+                            ) : (
+                                <button
+                                    onClick={() => handleEditSection(section.id)}
+                                    className="SettingsProfile-btn-small edit"
+                                >
+                                    Edit
+                                </button>
+                            )}
+                        </div>
+                    </div>
+                    {section.fields.map(field => renderField(field, section.id, editingSection === section.id))}
+                </div>
+            ))}
+
+            {/* Resume Upload */}
+            <div className="SettingsProfile-field-row">
+                <label className="SettingsProfile-field-label">Resume</label>
+                <div className="SettingsProfile-field-input-wrapper">
+                    {formData.resume ? (
+                        <div className="SettingsProfile-resume-link">
+                            <a href={formData.resume} target="_blank" rel="noopener noreferrer">
+                                {formData.personalInformation.fullName}'s Resume
+                            </a>
+                        </div>
+                    ) : (
+                        <p className="SettingsProfile-field-placeholder">No resume uploaded</p>
+                    )}
+                    <input
+                        type="file"
+                        accept=".pdf,.doc,.docx"
+                        id="resume-upload"
+                        style={{ display: "none" }}
+                        onChange={async (e) => {
+                            const file = e.target.files?.[0];
+                            if (!file || !formData.userId) return;
+                            try {
+                                const resumeUrl = await uploadResume(formData.userId, file);
+                                await update(ref(database, `users/${formData.userId}`), { resume: resumeUrl });
+                                setFormData((prev) => ({ ...prev, resume: resumeUrl }));
+                            } catch (err) {
+                                console.error("Error uploading resume:", err);
+                                setError("Failed to upload resume.");
+                            }
+                        }}
+                    />
+                    <button
+                        onClick={() => document.getElementById("resume-upload").click()}
+                        className="SettingsProfile-btn-upload"
+                    >
+                        {formData.resume ? "Replace Resume" : "Upload Resume"}
+                    </button>
+                </div>
+            </div>
         </div>
     );
 }
