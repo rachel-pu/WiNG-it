@@ -1,9 +1,6 @@
 import { useState, useEffect} from 'react';
 import { ref, get, update } from "firebase/database";
 import {database, uploadResume} from '../../../lib/firebase.jsx'
-import Box from '@mui/material/Box';
-import DefaultAppLayout from "../../DefaultAppLayout.jsx";
-import "./SettingsProfile.css"
 import { ChevronRight, Check, X } from 'lucide-react';
 import { uploadProfileImage } from '../../../../supabase.js';
 
@@ -202,20 +199,8 @@ export default function SettingsProfile() {
     };
 
     return (
-        <Box>
-            <DefaultAppLayout>
-                <div className="settings-page">
-                    <div className="settings-container">
-                        <div className="glass-container">
-                            <div className='settings-navbar'>
-                                <a href="/settings/profile" className="settings-navlink">Profile</a>
-                                <a href="/settings/billings" className="settings-navlink">Billings</a>
-                                <a href="/settings/plan" className="settings-navlink">Plan</a>
-                                <a href="/settings/notifications" className="settings-navlink">Notifications</a>
-                            </div>
-                            <h1 className="settings-title-profile">Profile Settings</h1>
-                         
-                            <div className="settings-content">
+        <div>
+            <div className="settings-content">
                                 <div className="settings-card" key="personal">
                                     <h2 style={{marginBottom:'20px'}}>Personal Information</h2>
                                     <div className="personalInformation-section">
@@ -413,10 +398,6 @@ export default function SettingsProfile() {
                                 </button>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                </div>
-            </DefaultAppLayout>
-        </Box>
+        </div>
     );
 }

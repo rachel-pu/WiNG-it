@@ -1,8 +1,6 @@
 import { useState, useEffect } from 'react';
 import { ref, get, update } from "firebase/database";
 import { database } from '../../../lib/firebase.jsx';
-import Box from '@mui/material/Box';
-import DefaultAppLayout from "../../DefaultAppLayout.jsx";
 import { ChevronRight, Check, X, CreditCard, Plus, Trash2 } from 'lucide-react';
 import "./SettingsBillings.css";
 
@@ -189,18 +187,13 @@ export default function SettingsBillings() {
     if (error) return <p style={{ color: 'red' }}>{error}</p>;
 
     return (
-        <Box>
-            <DefaultAppLayout>
-                <div className="settings-page">
-                    <div className="settings-container">
-                        <div className="glass-container">
-                            <div className='settings-navbar'>
-                                <a href="/settings/profile" className="settings-navlink">Profile</a>
-                                <a href="/settings/billings" className="settings-navlink">Billings</a>
-                                <a href="/settings/plan" className="settings-navlink">Plan</a>
-                                <a href="/settings/notifications" className="settings-navlink">Notifications</a>
-                            </div>
-                            <h1 className="settings-title">Billing & Payments</h1>
+        <div>
+            <div className="SettingsProfile-section-header">
+                <div>
+                    <h2 className="SettingsProfile-section-title">Billing & Payments</h2>
+                    <p className="SettingsProfile-section-subtitle">Manage your payment methods and billing information.</p>
+                </div>
+            </div>
                             {/* Payment Methods Section */}
                             <div className="billing-card">
                                 <div className="billing-card-header">
@@ -370,10 +363,6 @@ export default function SettingsBillings() {
                                     </div>
                                 ))}
                             </div>
-                        </div>
-                    </div>
-                </div>
-            </DefaultAppLayout>
-        </Box>
+        </div>
     );
 }

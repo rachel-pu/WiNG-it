@@ -1,8 +1,6 @@
 import { useState, useEffect } from 'react';
 import { ref, get, update } from "firebase/database";
 import { database } from '../../../lib/firebase.jsx';
-import Box from '@mui/material/Box';
-import DefaultAppLayout from "../../DefaultAppLayout.jsx";
 import { Bell, Mail, TrendingUp, Shield } from 'lucide-react';
 import "./SettingsNotifications.css";
 
@@ -106,18 +104,13 @@ export default function SettingsNotifications() {
     ];
 
     return (
-        <Box>
-            <DefaultAppLayout>
-                <div className="settings-page">
-                    <div className="settings-container">
-                        <div className="glass-container">
-                            <div className='settings-navbar'>
-                                <a href="/settings/profile" className="settings-navlink">Profile</a>
-                                <a href="/settings/billings" className="settings-navlink">Billings</a>
-                                <a href="/settings/plan" className="settings-navlink">Plan</a>
-                                <a href="/settings/notifications" className="settings-navlink">Notifications</a>
-                            </div>
-                            <h1 className="settings-title-profile">Notification Settings</h1>
+        <div>
+            <div className="SettingsProfile-section-header">
+                <div>
+                    <h2 className="SettingsProfile-section-title">Notification Settings</h2>
+                    <p className="SettingsProfile-section-subtitle">Manage how you receive notifications.</p>
+                </div>
+            </div>
 
                             <div className="settings-content">
                                 <div className="notification-card">
@@ -177,10 +170,6 @@ export default function SettingsNotifications() {
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                </div>
-            </DefaultAppLayout>
-        </Box>
+        </div>
     );
 }

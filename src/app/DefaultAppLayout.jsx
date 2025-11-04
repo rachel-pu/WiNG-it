@@ -68,7 +68,7 @@ const DefaultAppLayout = ({ children }) => {
     // },
     {
       label: "Settings",
-      href: "/settings/profile",
+      href: "/settings",
       icon: <IoMdSettings className="h-6 w-6 shrink-0 text-black dark:text-black" />,
     },
   ];
