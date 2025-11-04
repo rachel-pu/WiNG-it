@@ -3,7 +3,7 @@ import{ useState, useEffect } from "react";
 import { cn } from "../lib/utils";
 import { Sidebar, SidebarBody, SidebarLink } from "../components/sidebar";
 import { MdDashboard } from "react-icons/md";
-import { HiChatBubbleLeftRight } from "react-icons/hi2";
+import { HiChatBubbleLeftRight, HiChartBar } from "react-icons/hi2";
 import { IoMdSettings } from "react-icons/io";
 import { FaSignOutAlt } from "react-icons/fa";
 import { motion } from "motion/react";
@@ -60,6 +60,11 @@ const DefaultAppLayout = ({ children }) => {
       label: "Behavioral Interview",
       href: "/behavioral",
       icon: <HiChatBubbleLeftRight className="h-6 w-6 shrink-0 text-neutral-700 dark:text-neutral-200" />,
+    },
+    {
+      label: "Statistics",
+      href: "/statistics",
+      icon: <HiChartBar className="h-6 w-6 shrink-0 text-neutral-700 dark:text-neutral-200" />,
     },
     {
       label: "Settings",
