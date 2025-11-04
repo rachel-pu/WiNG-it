@@ -104,72 +104,59 @@ export default function SettingsNotifications() {
     ];
 
     return (
-        <div>
-            <div className="SettingsProfile-section-header">
-                <div>
-                    <h2 className="SettingsProfile-section-title">Notification Settings</h2>
-                    <p className="SettingsProfile-section-subtitle">Manage how you receive notifications.</p>
+        <div className="SettingsNotifications-content">
+            {/* Email Frequency */}
+            <div className="SettingsNotifications-field-row">
+                <div className="SettingsNotifications-field-label-group">
+                    <label className="SettingsNotifications-field-label">Email Frequency</label>
+                    <p className="SettingsNotifications-field-description">
+                        How often you want to receive email notifications
+                    </p>
+                </div>
+                <div className="SettingsNotifications-field-input-wrapper">
+                    <select
+                        value={formData.notificationPreferences.email.frequency}
+                        onChange={(e) => handleChangeEmailFrequency(e.target.value)}
+                        className="SettingsNotifications-select"
+                    >
+                        <option value="instant">Instant</option>
+                        <option value="daily">Daily Digest</option>
+                        <option value="weekly">Weekly Digest</option>
+                    </select>
                 </div>
             </div>
 
-                            <div className="settings-content">
-                                <div className="notification-card">
-                                    <div className="notification-card-header">
-                                        <div className="header-with-icon">
-                                            <Mail size={24} className="section-icon" />
-                                            <div>
-                                                <h2>Email Notifications</h2>
-                                                <p className="section-description">Manage how you receive email notifications</p>
-                                            </div>
-                                        </div>
-                                    </div>
+            {/* Email Notification Types Section */}
+            <div className="SettingsNotifications-section">
+                <h3 className="SettingsNotifications-section-title">Email Notification Types</h3>
 
-                                    <div className="notification-section">
-                                        <div className="info-row">
-                                            <div className="info-row-content">
-                                                <div className="info-field">
-                                                    <label className="info-label">Email Frequency</label>
-                                                    <div className="info-description">How often you want to receive email notifications</div>
-                                                </div>
-                                                <select
-                                                    value={formData.notificationPreferences.email.frequency}
-                                                    onChange={(e) => handleChangeEmailFrequency(e.target.value)}
-                                                    className="frequency-select"
-                                                >
-                                                    <option value="instant">Instant</option>
-                                                    <option value="weekly">Weekly Digest</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div className="notification-types">
-                                        <h3>Email Types</h3>
-                                        {emailTypes.map((type) => {
-                                            const Icon = type.icon;
-                                            return (
-                                                <div className="notification-type-row" key={type.key}>
-                                                    <div className="type-content">
-                                                        <Icon size={20} className="type-icon" />
-                                                        <div className="type-info">
-                                                            <div className="type-label">{type.label}</div>
-                                                            <div className="type-description">{type.description}</div>
-                                                        </div>
-                                                    </div>
-                                                    <label className="toggle-switch-small">
-                                                        <input
-                                                            type="checkbox"
-                                                            checked={formData.notificationPreferences.email.types[type.key]}
-                                                            onChange={() => handleToggleEmailType(type.key)}
-                                                        />
-                                                        <span className="toggle-slider-small"></span>
-                                                    </label>
-                                                </div>
-                                            );
-                                        })}
-                                    </div>
+                {emailTypes.map((type) => {
+                    const Icon = type.icon;
+                    return (
+                        <div className="SettingsNotifications-field-row" key={type.key}>
+                            <div className="SettingsNotifications-field-label-group">
+                                <div className="SettingsNotifications-label-with-icon">
+                                    <Icon size={20} className="SettingsNotifications-icon" />
+                                    <label className="SettingsNotifications-field-label">{type.label}</label>
                                 </div>
+                                <p className="SettingsNotifications-field-description">
+                                    {type.description}
+                                </p>
                             </div>
+                            <div className="SettingsNotifications-field-input-wrapper">
+                                <label className="SettingsNotifications-toggle-switch">
+                                    <input
+                                        type="checkbox"
+                                        checked={formData.notificationPreferences.email.types[type.key]}
+                                        onChange={() => handleToggleEmailType(type.key)}
+                                    />
+                                    <span className="SettingsNotifications-toggle-slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                    );
+                })}
+            </div>
         </div>
     );
 }

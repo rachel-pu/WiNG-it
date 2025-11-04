@@ -187,182 +187,167 @@ export default function SettingsBillings() {
     if (error) return <p style={{ color: 'red' }}>{error}</p>;
 
     return (
-        <div>
-            <div className="SettingsProfile-section-header">
-                <div>
-                    <h2 className="SettingsProfile-section-title">Billing & Payments</h2>
-                    <p className="SettingsProfile-section-subtitle">Manage your payment methods and billing information.</p>
+        <div className="SettingsBillings-content">
+            {/* Auto-Pay */}
+            <div className="SettingsBillings-field-row">
+                <div className="SettingsBillings-field-label-group">
+                    <label className="SettingsBillings-field-label">Auto-Pay</label>
+                    <p className="SettingsBillings-field-description">
+                        Automatically charge your default payment method
+                    </p>
+                </div>
+                <div className="SettingsBillings-field-input-wrapper">
+                    <label className="SettingsBillings-toggle-switch">
+                        <input
+                            type="checkbox"
+                            checked={formData.billingInformation.autoPay}
+                            onChange={handleToggleAutoPay}
+                        />
+                        <span className="SettingsBillings-toggle-slider"></span>
+                    </label>
                 </div>
             </div>
-                            {/* Payment Methods Section */}
-                            <div className="billing-card">
-                                <div className="billing-card-header">
-                                    <h2>Payment Methods</h2>
-                                    <button onClick={handleAddCard} className="button-add">
-                                        <Plus size={18} />
-                                        Add Payment Method
-                                    </button>
-                                </div>
 
-                                {formData.billingInformation.paymentMethods.map(method => (
-                                    <div className="payment-method-row" key={method.id}>
-                                        <div className="payment-method-content">
-                                            <div className="payment-method-icon">
-                                                <CreditCard size={24} />
-                                            </div>
-                                            <div className="payment-method-details">
-                                                <div className="payment-method-number">
-                                                    {method.cardNumber}
-                                                </div>
-                                                <div className="payment-method-meta">
-                                                    {method.cardHolder} • Expires {method.expiryDate}
-                                                    {method.isDefault && (
-                                                        <span className="default-badge">Default</span>
-                                                    )}
-                                                </div>
-                                            </div>
-                                            <div className="payment-method-actions">
-                                                {!method.isDefault && (
-                                                    <button
-                                                        onClick={() => handleSetDefaultCard(method.id)}
-                                                        className="action-button-text"
-                                                    >
-                                                        Set as Default
-                                                    </button>
-                                                )}
-                                                <button
-                                                    onClick={() => handleDeleteCard(method.id)}
-                                                    className="action-button delete-button"
-                                                    title="Delete"
-                                                >
-                                                    <Trash2 size={18} />
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                ))}
+            {/* Billing Cycle */}
+            <div className="SettingsBillings-field-row">
+                <label className="SettingsBillings-field-label">Billing Cycle</label>
+                <div className="SettingsBillings-field-input-wrapper">
+                    <div className="SettingsBillings-field-display">
+                        {formData.billingInformation.billingCycle.charAt(0).toUpperCase() + formData.billingInformation.billingCycle.slice(1)}
+                    </div>
+                </div>
+            </div>
 
-                                {isAddingCard && (
-                                    <div className="add-card-form">
-                                        <div className="form-grid">
-                                            <div className="form-field-full">
-                                                <label className="form-label">Card Number</label>
-                                                <input
-                                                    type="text"
-                                                    placeholder="1234 5678 9012 3456"
-                                                    value={tempCardData.cardNumber || ''}
-                                                    onChange={(e) => setTempCardData({...tempCardData, cardNumber: e.target.value})}
-                                                    className="form-input"
-                                                />
-                                            </div>
-                                            <div className="form-field-full">
-                                                <label className="form-label">Cardholder Name</label>
-                                                <input
-                                                    type="text"
-                                                    placeholder="John Doe"
-                                                    value={tempCardData.cardHolder || ''}
-                                                    onChange={(e) => setTempCardData({...tempCardData, cardHolder: e.target.value})}
-                                                    className="form-input"
-                                                />
-                                            </div>
-                                            <div className="form-field-half">
-                                                <label className="form-label">Expiry Date</label>
-                                                <input
-                                                    type="text"
-                                                    placeholder="MM/YY"
-                                                    value={tempCardData.expiryDate || ''}
-                                                    onChange={(e) => setTempCardData({...tempCardData, expiryDate: e.target.value})}
-                                                    className="form-input"
-                                                />
-                                            </div>
-                                            <div className="form-field-half">
-                                                <label className="form-label">CVV</label>
-                                                <input
-                                                    type="text"
-                                                    placeholder="123"
-                                                    value={tempCardData.cvv || ''}
-                                                    onChange={(e) => setTempCardData({...tempCardData, cvv: e.target.value})}
-                                                    className="form-input"
-                                                />
-                                            </div>
-                                        </div>
-                                        <div className="form-actions">
-                                            <button onClick={handleSaveNewCard} className="button-save">
-                                                Save Card
-                                            </button>
-                                            <button onClick={handleCancelAddCard} className="button-cancel">
-                                                Cancel
-                                            </button>
-                                        </div>
-                                    </div>
+            {/* Next Billing Date */}
+            <div className="SettingsBillings-field-row">
+                <label className="SettingsBillings-field-label">Next Billing Date</label>
+                <div className="SettingsBillings-field-input-wrapper">
+                    <div className="SettingsBillings-field-display">
+                        {formData.billingInformation.nextBillingDate}
+                    </div>
+                </div>
+            </div>
+
+            {/* Payment Methods Section */}
+            <div className="SettingsBillings-section">
+                <div className="SettingsBillings-section-header">
+                    <h3 className="SettingsBillings-section-title">Payment Methods</h3>
+                    <button onClick={handleAddCard} className="SettingsBillings-btn-add">
+                        <Plus size={18} />
+                        Add Payment Method
+                    </button>
+                </div>
+
+                {formData.billingInformation.paymentMethods.map(method => (
+                    <div className="SettingsBillings-payment-card" key={method.id}>
+                        <div className="SettingsBillings-payment-icon">
+                            <CreditCard size={24} />
+                        </div>
+                        <div className="SettingsBillings-payment-details">
+                            <div className="SettingsBillings-payment-number">
+                                {method.cardNumber}
+                            </div>
+                            <div className="SettingsBillings-payment-meta">
+                                {method.cardHolder} • Expires {method.expiryDate}
+                                {method.isDefault && (
+                                    <span className="SettingsBillings-default-badge">Default</span>
                                 )}
                             </div>
+                        </div>
+                        <div className="SettingsBillings-payment-actions">
+                            {!method.isDefault && (
+                                <button
+                                    onClick={() => handleSetDefaultCard(method.id)}
+                                    className="SettingsBillings-btn-set-default"
+                                >
+                                    Set as Default
+                                </button>
+                            )}
+                            <button
+                                onClick={() => handleDeleteCard(method.id)}
+                                className="SettingsBillings-btn-delete"
+                                title="Delete"
+                            >
+                                <Trash2 size={18} />
+                            </button>
+                        </div>
+                    </div>
+                ))}
 
-                            {/* Billing Preferences Section */}
-                            <div className="billing-card">
-                                <h2 className="billing-subtitle">Billing Preferences</h2>
-
-                                <div className="info-row">
-                                    <div className="info-row-content">
-                                        <div className="info-field-billing">
-                                            <label className="info-label-billing">Auto-Pay</label>
-                                            <div className="info-description-billing">
-                                                Automatically charge your default payment method
-                                            </div>
-                                        </div>
-                                        <div className="toggle-container">
-                                            <label className="toggle-switch">
-                                                <input
-                                                    type="checkbox"
-                                                    checked={formData.billingInformation.autoPay}
-                                                    onChange={handleToggleAutoPay}
-                                                />
-                                                <span className="toggle-slider"></span>
-                                            </label>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div className="info-row">
-                                    <div className="info-row-content">
-                                        <div className="info-field">
-                                            <label className="info-label-billing">Billing Cycle</label>
-                                            <div className="info-value-billing">{formData.billingInformation.billingCycle}</div>
-                                        </div>
-                                        <div className="info-spacer"></div>
-                                    </div>
-                                </div>
-
-                                <div className="info-row info-row-last">
-                                    <div className="info-row-content">
-                                        <div className="info-field">
-                                            <label className="info-label-billing">Next Billing Date</label>
-                                            <div className="info-value-billing">{formData.billingInformation.nextBillingDate}</div>
-                                        </div>
-                                        <div className="info-spacer"></div>
-                                    </div>
-                                </div>
+                {isAddingCard && (
+                    <div className="SettingsBillings-add-card-form">
+                        <div className="SettingsBillings-form-grid">
+                            <div className="SettingsBillings-form-field-full">
+                                <label className="SettingsBillings-form-label">Card Number</label>
+                                <input
+                                    type="text"
+                                    placeholder="1234 5678 9012 3456"
+                                    value={tempCardData.cardNumber || ''}
+                                    onChange={(e) => setTempCardData({...tempCardData, cardNumber: e.target.value})}
+                                    className="SettingsBillings-form-input"
+                                />
                             </div>
-
-                            {/* Billing History Section */}
-                            <div className="billing-card">
-                                <h2 className="billing-subtitle">Billing History</h2>
-
-                                {formData.billingInformation.billingHistory.map((transaction, index) => (
-                                    <div 
-                                        className={`info-row-billing ${index === formData.billingInformation.billingHistory.length - 1 ? 'info-row-last' : ''}`} 
-                                        key={transaction.id}
-                                    >
-                                        <div className="history-row-content">
-                                            <div className="history-date">{transaction.date}</div>
-                                            <div className="history-amount">{transaction.amount}</div>
-                                            <div className={`history-status status-${transaction.status}`}>
-                                                {transaction.status}
-                                            </div>
-                                        </div>
-                                    </div>
-                                ))}
+                            <div className="SettingsBillings-form-field-full">
+                                <label className="SettingsBillings-form-label">Cardholder Name</label>
+                                <input
+                                    type="text"
+                                    placeholder="John Doe"
+                                    value={tempCardData.cardHolder || ''}
+                                    onChange={(e) => setTempCardData({...tempCardData, cardHolder: e.target.value})}
+                                    className="SettingsBillings-form-input"
+                                />
                             </div>
+                            <div className="SettingsBillings-form-field">
+                                <label className="SettingsBillings-form-label">Expiry Date</label>
+                                <input
+                                    type="text"
+                                    placeholder="MM/YY"
+                                    value={tempCardData.expiryDate || ''}
+                                    onChange={(e) => setTempCardData({...tempCardData, expiryDate: e.target.value})}
+                                    className="SettingsBillings-form-input"
+                                />
+                            </div>
+                            <div className="SettingsBillings-form-field">
+                                <label className="SettingsBillings-form-label">CVV</label>
+                                <input
+                                    type="text"
+                                    placeholder="123"
+                                    value={tempCardData.cvv || ''}
+                                    onChange={(e) => setTempCardData({...tempCardData, cvv: e.target.value})}
+                                    className="SettingsBillings-form-input"
+                                />
+                            </div>
+                        </div>
+                        <div className="SettingsBillings-form-actions">
+                            <button onClick={handleSaveNewCard} className="SettingsBillings-btn-save">
+                                Save Card
+                            </button>
+                            <button onClick={handleCancelAddCard} className="SettingsBillings-btn-cancel">
+                                Cancel
+                            </button>
+                        </div>
+                    </div>
+                )}
+            </div>
+
+            {/* Billing History Section */}
+            <div className="SettingsBillings-section">
+                <h3 className="SettingsBillings-section-title">Billing History</h3>
+                <div className="SettingsBillings-history-container">
+                    {formData.billingInformation.billingHistory.map((transaction, index) => (
+                        <div
+                            className={`SettingsBillings-history-row ${index === formData.billingInformation.billingHistory.length - 1 ? 'last' : ''}`}
+                            key={transaction.id}
+                        >
+                            <div className="SettingsBillings-history-date">{transaction.date}</div>
+                            <div className="SettingsBillings-history-amount">{transaction.amount}</div>
+                            <div className={`SettingsBillings-history-status status-${transaction.status}`}>
+                                {transaction.status}
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
         </div>
     );
 }
