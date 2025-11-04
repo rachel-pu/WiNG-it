@@ -16,6 +16,7 @@ import TermsService from './app/pages/TermsService/TermsService.jsx';
 import UpdatePassword from './app/pages/Auth/UpdatePassword/UpdatePassword.jsx'; 
 import ProtectedRoute from './components/ProtectedRoute.jsx';
 import PublicRoute from './components/PublicRoute.jsx'; 
+import Statistics from './App/Pages/Statistics/Statistics.jsx';
 
 function App() {
   return (
@@ -79,6 +80,13 @@ function App() {
               <SettingsNotifications />
             </ProtectedRoute>
           }
+        />
+        <Route path ="/statistics"
+        element={
+          <ProtectedRoute>
+              <Statistics />
+            </ProtectedRoute>
+        }
         />
         <Route path="/dashboard"
           element={
