@@ -267,3 +267,26 @@ body {
 .grecaptcha-badge {
     visibility: hidden;
 }
+
+/* Sidebar link styles */
+a[href^="/dashboard"],
+a[href^="/behavioral"],
+a[href^="/settings"],
+a[href^="/statistics"] {
+  color: black !important;
+  text-decoration: none !important;
+}
+
+a[href^="/dashboard"]:hover,
+a[href^="/behavioral"]:hover,
+a[href^="/settings"]:hover,
+a[href^="/statistics"]:hover {
+  color: black !important;
+}
+
+a[href^="/dashboard"] svg,
+a[href^="/behavioral"] svg,
+a[href^="/settings"] svg,
+a[href^="/statistics"] svg {
+  color: black !important;
+}

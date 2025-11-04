@@ -54,22 +54,22 @@ const DefaultAppLayout = ({ children }) => {
     {
       label: "Dashboard",
       href: "/dashboard",
-      icon: <MdDashboard className="h-6 w-6 shrink-0 text-neutral-700 dark:text-neutral-200" />,
+      icon: <MdDashboard className="h-6 w-6 shrink-0 text-black dark:text-black" />,
     },
     {
       label: "Behavioral Interview",
       href: "/behavioral",
-      icon: <HiChatBubbleLeftRight className="h-6 w-6 shrink-0 text-neutral-700 dark:text-neutral-200" />,
+      icon: <HiChatBubbleLeftRight className="h-6 w-6 shrink-0 text-black dark:text-black" />,
     },
     // {
     //   label: "Statistics",
     //   href: "/statistics",
-    //   icon: <HiChartBar className="h-6 w-6 shrink-0 text-neutral-700 dark:text-neutral-200" />,
+    //   icon: <HiChartBar className="h-6 w-6 shrink-0 text-black dark:text-black" />,
     // },
     {
       label: "Settings",
       href: "/settings/profile",
-      icon: <IoMdSettings className="h-6 w-6 shrink-0 text-neutral-700 dark:text-neutral-200" />,
+      icon: <IoMdSettings className="h-6 w-6 shrink-0 text-black dark:text-black" />,
     },
   ];
 

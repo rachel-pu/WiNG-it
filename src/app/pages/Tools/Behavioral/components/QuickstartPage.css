@@ -117,10 +117,6 @@
     transition: all 0.2s ease;
 }
 
-.step-item:hover {
-    background-color: rgba(248, 250, 252, 0.5);
-}
-
 .step-icon-quickstart {
     padding: 0.75rem;
     border-radius: 0.75rem;
