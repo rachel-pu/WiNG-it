@@ -1,291 +1,72 @@
-/* Billing Card */
-.billing-card {
-    background-color: white;
-    border-radius: 0.5rem;
-    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-    border: 1px solid #e5e7eb;
-    margin-bottom: 1.5rem;
+/* Settings Billings Content */
+.SettingsBillings-content {
+    max-width: 100%;
 }
 
-.billing-card h2 {
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: #1f2937;
+.SettingsBillings-field-row {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 2rem;
+    padding: 1.5rem 0;
+    border-bottom: 1px solid #f3f4f6;
+    align-items: start;
+}
+
+.SettingsBillings-field-row:last-child {
+    border-bottom: none;
+}
+
+.SettingsBillings-field-label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #374151;
+    font-family: "DM Sans", sans-serif;
+    padding-top: 0.5rem;
+}
+
+.SettingsBillings-field-label-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.SettingsBillings-field-description {
+    font-size: 0.875rem;
+    color: #6b7280;
+    font-family: "DM Sans", sans-serif;
     margin: 0;
 }
 
-.billing-card-header {
-    padding: 1rem 1.5rem;
-    border-bottom: 1px solid #e5e7eb;
+.SettingsBillings-field-input-wrapper {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.info-row-billing {
-    padding: 1rem 1.5rem;
-    border-bottom: 1px solid #e5e7eb;
-}
-
-.info-row-last {
-    border-bottom: none;
-}
-
-.info-row-content {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
-.info-field-billing {
-    flex: 1;
-}
-
-.info-label-billing {
-    display: block;
-    font-size: 0.875rem;
-    font-weight: 500;
-    color: #6b7280;
-    margin-bottom: 0.25rem;
-    margin-left: 20px;
-}
-
-.info-description-billing {
-    font-size: 0.875rem;
-    color: #9ca3af;
-    margin-left: 20px;
-}
-
-.info-value-billing{
-    color: #111827;
-    margin-left: 20px;
-}
-
-.info-spacer {
-    width: 2.5rem;
-    margin-left: 1rem;
-}
-
-/* Payment Method Row */
-.payment-method-row {
-    padding: 1rem 1.5rem;
-    border-bottom: 1px solid #e5e7eb;
-}
-
-.payment-method-row:last-of-type {
-    border-bottom: none;
-}
-
-.payment-method-content {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-}
-
-.payment-method-icon {
-    color: #6b7280;
-    display: flex;
-    align-items: center;
-}
-
-.payment-method-details {
-    flex: 1;
-}
-
-.payment-method-number {
-    font-family: monospace;
-    font-size: 1rem;
-    color: #111827;
-    font-weight: 500;
-}
-
-.payment-method-meta {
-    font-size: 0.875rem;
-    color: #6b7280;
-    margin-top: 0.25rem;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.default-badge {
-    background-color: #dbeafe;
-    color: #1e40af;
-    padding: 0.125rem 0.5rem;
-    border-radius: 9999px;
-    font-size: 0.75rem;
-    font-weight: 500;
-}
-
-.payment-method-actions {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-/* Buttons */
-.button-add {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.5rem 1rem;
-    background-color: #3b82f6;
-    color: white;
-    border: none;
-    border-radius: 0.375rem;
-    font-size: 0.875rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: background-color 0.2s;
-}
-
-.button-add:hover {
-    background-color: #2563eb;
-}
-
-.button-save {
-    padding: 0.5rem 1rem;
-    background-color: #10b981;
-    color: white;
-    border: none;
-    border-radius: 0.375rem;
-    font-size: 0.875rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: background-color 0.2s;
-}
-
-.button-save:hover {
-    background-color: #059669;
-}
-
-.button-cancel {
-    padding: 0.5rem 1rem;
-    background-color: #ef4444;
-    color: white;
-    border: none;
-    border-radius: 0.375rem;
-    font-size: 0.875rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: background-color 0.2s;
-}
-
-.button-cancel:hover {
-    background-color: #dc2626;
-}
-
-.action-button {
-    padding: 0.5rem;
-    border: none;
-    border-radius: 0.375rem;
-    cursor: pointer;
-    transition: all 0.2s;
-    background: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.action-button-text {
-    padding: 0.5rem 0.75rem;
-    border: 1px solid #d1d5db;
-    background-color: white;
-    color: #374151;
-    border-radius: 0.375rem;
-    font-size: 0.875rem;
-    cursor: pointer;
-    transition: all 0.2s;
-}
-
-.action-button-text:hover {
-    background-color: #f9fafb;
-    border-color: #9ca3af;
-}
-
-.delete-button {
-    color: #ef4444;
-}
-
-.delete-button:hover {
-    background-color: #fef2f2;
-}
-
-/* Add Card Form */
-.add-card-form {
-    padding: 1.5rem;
-    background-color: #f9fafb;
-    border-top: 1px solid #e5e7eb;
-}
-
-.form-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem;
-    margin-bottom: 1rem;
-}
-
-.form-field-full {
-    grid-column: 1 / -1;
-}
-
-.form-field-half {
-    grid-column: span 1;
-}
-
-.form-label {
-    display: block;
-    font-size: 0.875rem;
-    font-weight: 500;
-    color: #374151;
-    margin-bottom: 0.5rem;
-}
-
-.form-input {
-    width: 100%;
-    padding: 0.5rem 0.75rem;
-    border: 1px solid #d1d5db;
-    border-radius: 0.375rem;
-    font-size: 0.875rem;
-    outline: none;
-    transition: border-color 0.2s, box-shadow 0.2s;
-}
-
-.form-input:focus {
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-}
-
-.form-input::placeholder {
-    color: #9ca3af;
-}
-
-.form-actions {
-    display: flex;
+    flex-direction: column;
     gap: 0.75rem;
+    flex: 1;
+}
+
+.SettingsBillings-field-display {
+    padding: 0.625rem 0.875rem;
+    font-size: 0.875rem;
+    color: #374151;
+    font-family: "DM Sans", sans-serif;
 }
 
 /* Toggle Switch */
-.toggle-container {
-    display: flex;
-    right: 20px;
-    position: relative;
-}
-
-.toggle-switch {
+.SettingsBillings-toggle-switch {
     position: relative;
     display: inline-block;
-    width: 48px;
+    width: 44px;
     height: 24px;
+    cursor: pointer;
 }
 
-.toggle-switch input {
+.SettingsBillings-toggle-switch input {
     opacity: 0;
     width: 0;
     height: 0;
 }
 
-.toggle-slider {
+.SettingsBillings-toggle-slider {
     position: absolute;
     cursor: pointer;
     top: 0;
@@ -297,7 +78,7 @@
     border-radius: 24px;
 }
 
-.toggle-slider:before {
+.SettingsBillings-toggle-slider:before {
     position: absolute;
     content: "";
     height: 18px;
@@ -309,90 +90,349 @@
     border-radius: 50%;
 }
 
-.toggle-switch input:checked + .toggle-slider {
-    background-color: #3b82f6;
+.SettingsBillings-toggle-switch input:checked + .SettingsBillings-toggle-slider {
+    background-color: #667eea;
 }
 
-.toggle-switch input:checked + .toggle-slider:before {
-    transform: translateX(24px);
+.SettingsBillings-toggle-switch input:checked + .SettingsBillings-toggle-slider:before {
+    transform: translateX(20px);
+}
+
+/* Section Styling */
+.SettingsBillings-section {
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 2px solid #e5e7eb;
+}
+
+.SettingsBillings-section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.SettingsBillings-section-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: #111827;
+    margin: 0 0 1.5rem 0;
+    font-family: "Satoshi Bold", sans-serif;
+}
+
+/* Payment Cards */
+.SettingsBillings-payment-card {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.25rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    transition: all 0.2s;
+}
+
+.SettingsBillings-payment-card:hover {
+    border-color: #667eea;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.1);
+}
+
+.SettingsBillings-payment-icon {
+    color: #667eea;
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.SettingsBillings-payment-details {
+    flex: 1;
+}
+
+.SettingsBillings-payment-number {
+    font-family: monospace;
+    font-size: 1rem;
+    color: #111827;
+    font-weight: 600;
+    font-family: "DM Sans", sans-serif;
+}
+
+.SettingsBillings-payment-meta {
+    font-size: 0.875rem;
+    color: #6b7280;
+    margin-top: 0.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: "DM Sans", sans-serif;
+}
+
+.SettingsBillings-default-badge {
+    background-color: #e0e7ff;
+    color: #667eea;
+    padding: 0.125rem 0.5rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    font-family: "DM Sans", sans-serif;
+}
+
+.SettingsBillings-payment-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* Buttons */
+.SettingsBillings-btn-add {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background-color: #667eea;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    font-family: "DM Sans", sans-serif;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.SettingsBillings-btn-add:hover {
+    background-color: #5568d3;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.SettingsBillings-btn-set-default {
+    padding: 0.5rem 0.75rem;
+    border: 1px solid #d1d5db;
+    background-color: white;
+    color: #374151;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    font-family: "DM Sans", sans-serif;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.SettingsBillings-btn-set-default:hover {
+    background-color: #f9fafb;
+    border-color: #667eea;
+    color: #667eea;
+}
+
+.SettingsBillings-btn-delete {
+    padding: 0.5rem;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #dc2626;
+}
+
+.SettingsBillings-btn-delete:hover {
+    background-color: #fef2f2;
+}
+
+.SettingsBillings-btn-save {
+    padding: 0.5rem 1rem;
+    background-color: #667eea;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    font-family: "DM Sans", sans-serif;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.SettingsBillings-btn-save:hover {
+    background-color: #5568d3;
+}
+
+.SettingsBillings-btn-cancel {
+    padding: 0.5rem 1rem;
+    background-color: white;
+    color: #6b7280;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    font-family: "DM Sans", sans-serif;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.SettingsBillings-btn-cancel:hover {
+    background-color: #f9fafb;
+    border-color: #9ca3af;
+}
+
+/* Add Card Form */
+.SettingsBillings-add-card-form {
+    padding: 1.5rem;
+    background-color: #f9fafb;
+    border-radius: 8px;
+    margin-top: 1rem;
+    border: 1px solid #e5e7eb;
+}
+
+.SettingsBillings-form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.SettingsBillings-form-field-full {
+    grid-column: 1 / -1;
+}
+
+.SettingsBillings-form-field {
+    grid-column: span 1;
+}
+
+.SettingsBillings-form-label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #374151;
+    font-family: "DM Sans", sans-serif;
+    margin-bottom: 0.5rem;
+}
+
+.SettingsBillings-form-input {
+    width: 100%;
+    padding: 0.625rem 0.875rem;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    color: #111827;
+    font-family: "DM Sans", sans-serif;
+    outline: none;
+    transition: all 0.2s;
+    box-sizing: border-box;
+}
+
+.SettingsBillings-form-input:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.SettingsBillings-form-input::placeholder {
+    color: #9ca3af;
+}
+
+.SettingsBillings-form-actions {
+    display: flex;
+    gap: 0.75rem;
 }
 
 /* Billing History */
-.history-row-content {
+.SettingsBillings-history-container {
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.SettingsBillings-history-row {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 1rem;
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid #e5e7eb;
+    transition: background-color 0.2s;
 }
 
-.history-date {
+.SettingsBillings-history-row:hover {
+    background-color: #f9fafb;
+}
+
+.SettingsBillings-history-row.last {
+    border-bottom: none;
+}
+
+.SettingsBillings-history-date {
     flex: 1;
     color: #6b7280;
     font-size: 0.875rem;
+    font-family: "DM Sans", sans-serif;
 }
 
-.history-amount {
+.SettingsBillings-history-amount {
     font-weight: 600;
     color: #111827;
+    font-size: 0.875rem;
+    font-family: "DM Sans", sans-serif;
 }
 
-.history-status {
+.SettingsBillings-history-status {
     padding: 0.25rem 0.75rem;
-    border-radius: 9999px;
+    border-radius: 12px;
     font-size: 0.75rem;
-    font-weight: 500;
+    font-weight: 600;
+    font-family: "DM Sans", sans-serif;
     text-transform: uppercase;
 }
 
-.status-paid {
+.SettingsBillings-history-status.status-paid {
     background-color: #d1fae5;
     color: #065f46;
 }
 
-.status-pending {
+.SettingsBillings-history-status.status-pending {
     background-color: #fef3c7;
     color: #92400e;
 }
 
-.status-failed {
+.SettingsBillings-history-status.status-failed {
     background-color: #fee2e2;
     color: #991b1b;
 }
 
-/* Glass Container (from your existing styles) */
-.glass-container {
-    background: rgba(255, 255, 255, 0.9);
-    backdrop-filter: blur(10px);
-    border-radius: 1rem;
-    padding: 1.5rem;
-}
+/* Responsive */
+@media (max-width: 768px) {
+    .SettingsBillings-field-row {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+    }
 
-.settings-page {
-    min-height: 100vh;
-    padding: 2rem;
-}
+    .SettingsBillings-field-label {
+        padding-top: 0;
+    }
 
-.settings-container {
-    max-width: 900px;
-    margin: 0 auto;
-}
+    .SettingsBillings-section-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
 
-.settings-title {
-    font-size: 2rem;
-    font-weight: 700;
-    color: #111827;
-    position: relative;
-    margin-left: 30px;
-    top: -30px;
-    z-index: 20;
-}
+    .SettingsBillings-payment-card {
+        flex-direction: column;
+        align-items: flex-start;
+    }
 
-.billing-subtitle {
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: #1f2937;
-    padding:10px;
-    position: relative;
-    top: 10px;
-    left: 10px;
+    .SettingsBillings-payment-actions {
+        width: 100%;
+        justify-content: flex-end;
+    }
+
+    .SettingsBillings-form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .SettingsBillings-history-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
 }

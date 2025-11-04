@@ -1,8 +1,6 @@
 import { useState, useEffect } from 'react';
 import { ref, get, update } from "firebase/database";
 import { database } from '../../../lib/firebase.jsx';
-import Box from '@mui/material/Box';
-import DefaultAppLayout from "../../DefaultAppLayout.jsx";
 import { Check, Zap, Crown, Sparkles } from 'lucide-react';
 import "./SettingsPlan.css";
 
@@ -12,15 +10,14 @@ export default function SettingsPlan() {
     const [formData, setFormData] = useState({
         userId: '',
         subscription: {
-            currentPlan: 'pro', // 'free', 'pro', 'enterprise'
-            billingCycle: 'monthly', // 'monthly', 'annual'
+            currentPlan: 'pro',
+            billingCycle: 'monthly',
             startDate: '2025-09-26',
             renewalDate: '2025-11-26',
-            status: 'active' // 'active', 'cancelled', 'expired'
+            status: 'active'
         }
     });
 
-    // Plan definitions
     const plans = {
         free: {
             name: 'Free',
@@ -28,49 +25,36 @@ export default function SettingsPlan() {
             price: { monthly: 0, annual: 0 },
             description: 'Perfect for getting started',
             features: [
-                'Up to 5 projects',
-                'Basic templates',
-                'Community support',
-                '1 GB storage',
-                'Basic analytics'
-            ],
-            limitations: [
-                'Limited features',
-                'No priority support'
+                'Unlimited interviews',
+                'Ads supported',
+                'Sessions deleted after 30 days',
+                'Manual session deletion available'
             ]
         },
         pro: {
             name: 'Pro',
             icon: Zap,
-            price: { monthly: 29.99, annual: 299.99 },
-            description: 'For professionals and growing teams',
+            price: { monthly: 1.99, annual: 19.99 },
+            description: 'For serious interview prep',
             features: [
-                'Unlimited projects',
-                'Premium templates',
-                'Priority support',
-                '50 GB storage',
-                'Advanced analytics',
-                'Custom branding',
-                'API access',
-                'Team collaboration (up to 5 members)'
+                'Unlimited interviews',
+                'No ads',
+                'Sessions deleted after 30 days',
+                'Manual session deletion available'
             ],
             popular: true
         },
-        enterprise: {
-            name: 'Enterprise',
+        premium: {
+            name: 'Premium',
             icon: Crown,
-            price: { monthly: 99.99, annual: 999.99 },
-            description: 'For large organizations',
+            price: { monthly: 4.99, annual: 49.99 },
+            description: 'For comprehensive preparation',
             features: [
-                'Everything in Pro',
-                'Unlimited team members',
-                'Dedicated account manager',
-                'Unlimited storage',
-                'Custom integrations',
-                'SLA guarantee',
-                'Advanced security',
-                'Custom contracts',
-                'On-premise deployment option'
+                'Unlimited interviews',
+                'No ads',
+                'Keep all interviews forever',
+                'Extra tools and deeper analysis',
+                'Manual session deletion available'
             ]
         }
     };
@@ -85,8 +69,6 @@ export default function SettingsPlan() {
         const userId = getCookie('user_id');
         if (userId) {
             setFormData((prev) => ({ ...prev, userId }));
-        } else {
-            console.log('No user_id cookie found');
         }
     }, []);
 
@@ -109,10 +91,58 @@ export default function SettingsPlan() {
         fetchSubscription();
     }, [formData.userId]);
 
+    // Auto-migrate old plan names to new ones
+    useEffect(() => {
+        const migrateOldPlan = async () => {
+            if (!formData.userId || !formData.subscription.currentPlan) return;
+
+            // Map old plan names to new ones
+            const planMigrations = {
+                'enterprise': 'premium'
+            };
+
+            const oldPlan = formData.subscription.currentPlan;
+            const newPlan = planMigrations[oldPlan] || oldPlan;
+
+            // If plan doesn't exist in our plans object, migrate to free
+            if (!plans[newPlan]) {
+                try {
+                    await update(ref(database, `users/${formData.userId}/subscription`), {
+                        currentPlan: 'free'
+                    });
+                    setFormData(prev => ({
+                        ...prev,
+                        subscription: {
+                            ...prev.subscription,
+                            currentPlan: 'free'
+                        }
+                    }));
+                } catch (err) {
+                    console.error('Error migrating plan:', err);
+                }
+            } else if (oldPlan !== newPlan) {
+                // Migrate to mapped plan
+                try {
+                    await update(ref(database, `users/${formData.userId}/subscription`), {
+                        currentPlan: newPlan
+                    });
+                    setFormData(prev => ({
+                        ...prev,
+                        subscription: {
+                            ...prev.subscription,
+                            currentPlan: newPlan
+                        }
+                    }));
+                } catch (err) {
+                    console.error('Error migrating plan:', err);
+                }
+            }
+        };
+        migrateOldPlan();
+    }, [formData.userId, formData.subscription.currentPlan]);
+
     const handleChangePlan = async (newPlan) => {
-        if (newPlan === formData.subscription.currentPlan) {
-            return;
-        }
+        if (newPlan === formData.subscription.currentPlan) return;
 
         if (!confirm(`Are you sure you want to ${newPlan === 'free' ? 'downgrade' : 'upgrade'} to ${plans[newPlan].name}?`)) {
             return;
@@ -149,9 +179,7 @@ export default function SettingsPlan() {
     };
 
     const handleCancelSubscription = async () => {
-        if (!confirm('Are you sure you want to cancel your subscription? You will lose access to premium features at the end of your billing cycle.')) {
-            return;
-        }
+        if (!confirm('Are you sure you want to cancel your subscription?')) return;
 
         try {
             await update(ref(database, `users/${formData.userId}/subscription`), {
@@ -165,7 +193,6 @@ export default function SettingsPlan() {
                     status: 'cancelled'
                 }
             }));
-
         } catch (err) {
             console.error('Error cancelling subscription:', err);
         }
@@ -173,7 +200,7 @@ export default function SettingsPlan() {
 
     const handleToggleBillingCycle = async () => {
         const newCycle = formData.subscription.billingCycle === 'monthly' ? 'annual' : 'monthly';
-        
+
         try {
             await update(ref(database, `users/${formData.userId}/subscription`), {
                 billingCycle: newCycle
@@ -193,165 +220,141 @@ export default function SettingsPlan() {
 
     if (error) return <p style={{ color: 'red' }}>{error}</p>;
 
-    const currentPlan = formData.subscription.currentPlan;
+    const currentPlan = plans[formData.subscription.currentPlan]
+        ? formData.subscription.currentPlan
+        : 'free';
     const billingCycle = formData.subscription.billingCycle;
 
     return (
-        <Box>
-            <DefaultAppLayout>
-                <div className="settings-page">
-                    <div className="settings-container">
-                        <div className="glass-container">
-                            <div className='settings-navbar'>
-                                <a href="/settings/profile" className="settings-navlink">Profile</a>
-                                <a href="/settings/billings" className="settings-navlink">Billings</a>
-                                <a href="/settings/plan" className="settings-navlink">Plan</a>
-                                <a href="/settings/notifications" className="settings-navlink">Notifications</a>
-                            </div>
-                            <h1 className="settings-title-profile">Subscription Plan</h1>
-
-                            <div className="settings-content">
-                                {/* Current Plan Card */}
-                                <div className="current-plan-card">
-                                    <div className="current-plan-header">
-                                        <div>
-                                            <h2>Current Plan</h2>
-                                            <div className="current-plan-name">
-                                                {plans[currentPlan].name}
-                                                {formData.subscription.status === 'cancelled' && (
-                                                    <span className="cancelled-badge">Cancelled</span>
-                                                )}
-                                            </div>
-                                        </div>
-                                        <div className="current-plan-price">
-                                            ${plans[currentPlan].price[billingCycle]}
-                                            <span className="price-period">/{billingCycle === 'monthly' ? 'mo' : 'yr'}</span>
-                                        </div>
-                                    </div>
-
-                                    <div className="info-row">
-                                        <div className="info-row-content">
-                                            <div className="info-field">
-                                                <label className="info-label">Billing Cycle</label>
-                                                <div className="info-value">{billingCycle}</div>
-                                            </div>
-                                            <div className="billing-toggle">
-                                                <span className={billingCycle === 'monthly' ? 'active' : ''}>Monthly</span>
-                                                <label className="toggle-switch">
-                                                    <input
-                                                        type="checkbox"
-                                                        checked={billingCycle === 'annual'}
-                                                        onChange={handleToggleBillingCycle}
-                                                    />
-                                                    <span className="toggle-slider"></span>
-                                                </label>
-                                                <span className={billingCycle === 'annual' ? 'active' : ''}>
-                                                    Annual <span className="save-badge">Save 17%</span>
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div className="info-row">
-                                        <div className="info-row-content">
-                                            <div className="info-field">
-                                                <label className="info-label">Start Date</label>
-                                                <div className="info-value">{formData.subscription.startDate}</div>
-                                            </div>
-                                            <div className="info-spacer"></div>
-                                        </div>
-                                    </div>
-
-                                    <div className="info-row info-row-last">
-                                        <div className="info-row-content">
-                                            <div className="info-field">
-                                                <label className="info-label">
-                                                    {formData.subscription.status === 'cancelled' ? 'Access Until' : 'Next Renewal'}
-                                                </label>
-                                                <div className="info-value">{formData.subscription.renewalDate}</div>
-                                            </div>
-                                            <div className="info-spacer"></div>
-                                        </div>
-                                    </div>
-
-                                    {currentPlan !== 'free' && formData.subscription.status !== 'cancelled' && (
-                                        <div className="cancel-subscription-section">
-                                            <button 
-                                                onClick={handleCancelSubscription}
-                                                className="button-cancel-subscription"
-                                            >
-                                                Cancel Subscription
-                                            </button>
-                                        </div>
-                                    )}
-                                </div>
-
-                                {/* Available Plans */}
-                                <div className="plans-section">
-                                    <h2>Available Plans</h2>
-                                    <div className="plans-grid">
-                                        {Object.entries(plans).map(([planKey, plan]) => {
-                                            const Icon = plan.icon;
-                                            const isCurrentPlan = planKey === currentPlan;
-                                            
-                                            return (
-                                                <div 
-                                                    key={planKey} 
-                                                    className={`plan-card ${isCurrentPlan ? 'current' : ''} ${plan.popular ? 'popular' : ''}`}
-                                                >
-                                                    {plan.popular && (
-                                                        <div className="popular-badge">Most Popular</div>
-                                                    )}
-                                                    
-                                                    <div className="plan-header">
-                                                        <Icon className="plan-icon" size={32} />
-                                                        <h3>{plan.name}</h3>
-                                                        <p className="plan-description">{plan.description}</p>
-                                                    </div>
-
-                                                    <div className="plan-price">
-                                                        <span className="price-amount">
-                                                            ${plan.price[billingCycle]}
-                                                        </span>
-                                                        <span className="price-period">
-                                                            /{billingCycle === 'monthly' ? 'month' : 'year'}
-                                                        </span>
-                                                    </div>
-
-                                                    <div className="plan-features">
-                                                        {plan.features.map((feature, index) => (
-                                                            <div key={index} className="feature-item">
-                                                                <Check size={16} className="feature-check" />
-                                                                <span>{feature}</span>
-                                                            </div>
-                                                        ))}
-                                                    </div>
-
-                                                    <button
-                                                        onClick={() => handleChangePlan(planKey)}
-                                                        disabled={isCurrentPlan || isChangingPlan}
-                                                        className={`plan-button ${isCurrentPlan ? 'current-plan-button' : ''}`}
-                                                    >
-                                                        {isCurrentPlan ? 'Current Plan' : planKey === 'free' ? 'Downgrade' : 'Upgrade'}
-                                                    </button>
-                                                </div>
-                                            );
-                                        })}
-                                    </div>
-                                </div>
-
-                                {/* Plan Comparison */}
-                                <div className="comparison-section">
-                                    <h2>Compare Plans</h2>
-                                    <div className="comparison-note">
-                                        All plans include our core features with different limits and capabilities
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+        <div className="SettingsPlan-content">
+            {/* Current Plan */}
+            <div className="SettingsPlan-field-row">
+                <label className="SettingsPlan-field-label">Current Plan</label>
+                <div className="SettingsPlan-field-input-wrapper">
+                    <div className="SettingsPlan-current-plan">
+                        <span className="plan-name-large">{plans[currentPlan].name}</span>
+                        {formData.subscription.status === 'cancelled' && (
+                            <span className="SettingsPlan-cancelled-badge">Cancelled</span>
+                        )}
+                        <span className="plan-price-large">
+                            ${plans[currentPlan].price[billingCycle]}
+                            <span className="price-period-small">/{billingCycle === 'monthly' ? 'mo' : 'yr'}</span>
+                        </span>
                     </div>
                 </div>
-            </DefaultAppLayout>
-        </Box>
+            </div>
+
+            {/* Billing Cycle */}
+            <div className="SettingsPlan-field-row">
+                <label className="SettingsPlan-field-label">Billing Cycle</label>
+                <div className="SettingsPlan-field-input-wrapper">
+                    <div className="SettingsPlan-billing-toggle">
+                        <span className={billingCycle === 'monthly' ? 'active' : ''}>Monthly</span>
+                        <label className="SettingsPlan-toggle-switch">
+                            <input
+                                type="checkbox"
+                                checked={billingCycle === 'annual'}
+                                onChange={handleToggleBillingCycle}
+                            />
+                            <span className="SettingsPlan-toggle-slider"></span>
+                        </label>
+                        <span className={billingCycle === 'annual' ? 'active' : ''}>
+                            Annual <span className="SettingsPlan-save-badge">Save 17%</span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            {/* Start Date */}
+            <div className="SettingsPlan-field-row">
+                <label className="SettingsPlan-field-label">Start Date</label>
+                <div className="SettingsPlan-field-input-wrapper">
+                    <div className="SettingsPlan-field-display">
+                        {formData.subscription.startDate}
+                    </div>
+                </div>
+            </div>
+
+            {/* Next Renewal */}
+            <div className="SettingsPlan-field-row">
+                <label className="SettingsPlan-field-label">
+                    {formData.subscription.status === 'cancelled' ? 'Access Until' : 'Next Renewal'}
+                </label>
+                <div className="SettingsPlan-field-input-wrapper">
+                    <div className="SettingsPlan-field-display">
+                        {formData.subscription.renewalDate}
+                    </div>
+                </div>
+            </div>
+
+            {/* Cancel Subscription */}
+            {currentPlan !== 'free' && formData.subscription.status !== 'cancelled' && (
+                <div className="SettingsPlan-field-row">
+                    <label className="SettingsPlan-field-label"></label>
+                    <div className="SettingsPlan-field-input-wrapper">
+                        <button
+                            onClick={handleCancelSubscription}
+                            className="SettingsPlan-btn-cancel-subscription"
+                        >
+                            Cancel Subscription
+                        </button>
+                    </div>
+                </div>
+            )}
+
+            {/* Available Plans Section */}
+            <div className="SettingsPlan-section">
+                <h3 className="SettingsPlan-section-title">Available Plans</h3>
+                <div className="SettingsPlan-plans-grid">
+                    {Object.entries(plans).map(([planKey, plan]) => {
+                        const Icon = plan.icon;
+                        const isCurrentPlan = planKey === currentPlan;
+
+                        return (
+                            <div
+                                key={planKey}
+                                className={`SettingsPlan-plan-card ${isCurrentPlan ? 'current' : ''} ${plan.popular ? 'popular' : ''}`}
+                            >
+                                {plan.popular && (
+                                    <div className="SettingsPlan-popular-badge">Most Popular</div>
+                                )}
+
+                                <div className="SettingsPlan-plan-header">
+                                    <Icon className="SettingsPlan-plan-icon" size={32} />
+                                    <h4>{plan.name}</h4>
+                                    <p className="SettingsPlan-plan-description">{plan.description}</p>
+                                </div>
+
+                                <div className="SettingsPlan-plan-price">
+                                    <span className="price-amount">
+                                        ${plan.price[billingCycle]}
+                                    </span>
+                                    <span className="price-period">
+                                        /{billingCycle === 'monthly' ? 'month' : 'year'}
+                                    </span>
+                                </div>
+
+                                <div className="SettingsPlan-plan-features">
+                                    {plan.features.map((feature, index) => (
+                                        <div key={index} className="SettingsPlan-feature-item">
+                                            <Check size={16} className="feature-check" />
+                                            <span>{feature}</span>
+                                        </div>
+                                    ))}
+                                </div>
+
+                                <button
+                                    onClick={() => handleChangePlan(planKey)}
+                                    disabled={isCurrentPlan || isChangingPlan}
+                                    className={`SettingsPlan-plan-button ${isCurrentPlan ? 'current-plan-button' : ''}`}
+                                >
+                                    {isCurrentPlan ? 'Current Plan' : planKey === 'free' ? 'Downgrade' : 'Upgrade'}
+                                </button>
+                            </div>
+                        );
+                    })}
+                </div>
+            </div>
+        </div>
     );
 }

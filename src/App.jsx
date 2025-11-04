@@ -1,9 +1,6 @@
 import { Routes, Route } from 'react-router-dom';
 import Home from './app/pages/Home/Home.jsx';
-import SettingsProfile from './app/pages/Settings/SettingsProfile.jsx';
-import SettingsBillings from './app/pages/Settings/SettingsBillings.jsx';
-import SettingsPlan from './app/pages/Settings/SettingsPlan.jsx';
-import SettingsNotifications from './app/pages/Settings/SettingsNotifications.jsx';
+import SettingsPage from './app/pages/Settings/SettingsPage.jsx';
 import Signin from './app/pages/Auth/Signin/Signin.jsx';
 import Signup from './app/pages/Auth/Signup/Signup.jsx';
 import Onboarding from './app/pages/Auth/Onboarding/Onboarding.jsx';
@@ -11,11 +8,11 @@ import Dashboard from './app/pages/Dashboard/Dashboard.jsx';
 import Behavioral from './app/pages/Tools/Behavioral/Behavioral.jsx';
 import InterviewResults from "./app/pages/Tools/Behavioral/results/result.jsx"
 import RetryQuestionPage from "./app/pages/Tools/Behavioral/components/RetryQuestionPage.jsx"
-import PrivacyPolicy from './app/pages/PrivacyPolicy/PrivacyPolicy.jsx'; 
-import TermsService from './app/pages/TermsService/TermsService.jsx'; 
-import UpdatePassword from './app/pages/Auth/UpdatePassword/UpdatePassword.jsx'; 
+import PrivacyPolicy from './app/pages/PrivacyPolicy/PrivacyPolicy.jsx';
+import TermsService from './app/pages/TermsService/TermsService.jsx';
+import UpdatePassword from './app/pages/Auth/UpdatePassword/UpdatePassword.jsx';
 import ProtectedRoute from './components/ProtectedRoute.jsx';
-import PublicRoute from './components/PublicRoute.jsx'; 
+import PublicRoute from './components/PublicRoute.jsx';
 import Statistics from './app/pages/Statistics/Statistics.jsx';
 
 function App() {
@@ -53,31 +50,10 @@ function App() {
             </ProtectedRoute>
           }
         />
-        <Route path="/settings/profile"
+        <Route path="/settings"
           element={
             <ProtectedRoute>
-              <SettingsProfile />
-            </ProtectedRoute>
-          }
-        />
-        <Route path="/settings/billings"
-          element={
-            <ProtectedRoute>
-              <SettingsBillings />
-            </ProtectedRoute>
-          }
-        />
-        <Route path="/settings/plan"
-          element={
-            <ProtectedRoute>
-              <SettingsPlan/>
-            </ProtectedRoute>
-          }
-        />
-        <Route path="/settings/notifications"
-          element={
-            <ProtectedRoute>
-              <SettingsNotifications />
+              <SettingsPage />
             </ProtectedRoute>
           }
         />

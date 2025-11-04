@@ -1,132 +1,96 @@
-/* Notification Card */
-.notification-card {
-    background-color: white;
-    border-radius: 0.5rem;
-    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-    border: 1px solid #e5e7eb;
-    margin-bottom: 1.5rem;
+/* Settings Notifications Content */
+.SettingsNotifications-content {
+    max-width: 100%;
 }
 
-.notification-card-header {
-    padding: 1.5rem;
-    border-bottom: 1px solid #e5e7eb;
+.SettingsNotifications-field-row {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 2rem;
+    padding: 1.5rem 0;
+    border-bottom: 1px solid #f3f4f6;
+    align-items: start;
+}
+
+.SettingsNotifications-field-row:last-child {
+    border-bottom: none;
+}
+
+.SettingsNotifications-field-label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #374151;
+    font-family: "DM Sans", sans-serif;
+    padding-top: 0.5rem;
+}
+
+.SettingsNotifications-field-label-group {
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.SettingsNotifications-label-with-icon {
+    display: flex;
     align-items: center;
+    gap: 0.5rem;
 }
 
-.header-with-icon {
-    display: flex;
-    align-items: flex-start;
-    gap: 1rem;
-    flex: 1;
-}
-
-.section-icon {
-    color: #3b82f6;
+.SettingsNotifications-icon {
+    color: #667eea;
     flex-shrink: 0;
-    margin-top: 0.125rem;
 }
 
-.notification-card-header h2 {
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: #1f2937;
-    margin: 0 0 0.25rem 0;
-}
-
-.section-description {
+.SettingsNotifications-field-description {
     font-size: 0.875rem;
     color: #6b7280;
+    font-family: "DM Sans", sans-serif;
     margin: 0;
 }
 
-/* Notification Section */
-.notification-section {
-    padding: 1.5rem;
-}
-
-/* Notification Types */
-.notification-types {
-    padding: 1.5rem;
-    background-color: #f9fafb;
-}
-
-.notification-types h3 {
-    font-size: 0.875rem;
-    font-weight: 600;
-    color: #374151;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    margin: 0 0 1rem 0;
-}
-
-.notification-type-row {
+.SettingsNotifications-field-input-wrapper {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 1rem;
-    background-color: white;
-    border-radius: 0.5rem;
-    margin-bottom: 0.75rem;
-    transition: box-shadow 0.2s;
-    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
-}
-
-.notification-type-row:hover {
-    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
-}
-
-.notification-type-row:last-child {
-    margin-bottom: 0;
-}
-
-.type-content {
-    display: flex;
-    align-items: flex-start;
+    flex-direction: column;
     gap: 0.75rem;
     flex: 1;
 }
 
-.type-icon {
-    color: #6b7280;
-    flex-shrink: 0;
-    margin-top: 0.125rem;
-}
-
-.type-info {
-    flex: 1;
-}
-
-.type-label {
+/* Select Dropdown */
+.SettingsNotifications-select {
+    padding: 0.625rem 0.875rem;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
     font-size: 0.875rem;
-    font-weight: 500;
-    color: #111827;
-    margin-bottom: 0.25rem;
+    color: #374151;
+    font-family: "DM Sans", sans-serif;
+    background-color: white;
+    cursor: pointer;
+    outline: none;
+    transition: all 0.2s;
+    min-width: 200px;
 }
 
-.type-description {
-    font-size: 0.75rem;
-    color: #6b7280;
-    line-height: 1.5;
+.SettingsNotifications-select:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
-/* Toggle Switches */
-.toggle-switch {
+/* Toggle Switch */
+.SettingsNotifications-toggle-switch {
     position: relative;
     display: inline-block;
-    width: 48px;
+    width: 44px;
     height: 24px;
-    flex-shrink: 0;
+    cursor: pointer;
 }
 
-.toggle-switch input {
+.SettingsNotifications-toggle-switch input {
     opacity: 0;
     width: 0;
     height: 0;
 }
 
-.toggle-slider {
+.SettingsNotifications-toggle-slider {
     position: absolute;
     cursor: pointer;
     top: 0;
@@ -138,7 +102,7 @@
     border-radius: 24px;
 }
 
-.toggle-slider:before {
+.SettingsNotifications-toggle-slider:before {
     position: absolute;
     content: "";
     height: 18px;
@@ -150,187 +114,45 @@
     border-radius: 50%;
 }
 
-.toggle-switch input:checked + .toggle-slider {
-    background-color: #3b82f6;
+.SettingsNotifications-toggle-switch input:checked + .SettingsNotifications-toggle-slider {
+    background-color: #667eea;
 }
 
-.toggle-switch input:checked + .toggle-slider:before {
-    transform: translateX(24px);
-}
-
-/* Small Toggle Switch */
-.toggle-switch-small {
-    position: relative;
-    display: inline-block;
-    width: 40px;
-    height: 20px;
-    flex-shrink: 0;
-}
-
-.toggle-switch-small input {
-    opacity: 0;
-    width: 0;
-    height: 0;
-}
-
-.toggle-slider-small {
-    position: absolute;
-    cursor: pointer;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: #d1d5db;
-    transition: 0.3s;
-    border-radius: 20px;
-}
-
-.toggle-slider-small:before {
-    position: absolute;
-    content: "";
-    height: 14px;
-    width: 14px;
-    left: 3px;
-    bottom: 3px;
-    background-color: white;
-    transition: 0.3s;
-    border-radius: 50%;
-}
-
-.toggle-switch-small input:checked + .toggle-slider-small {
-    background-color: #3b82f6;
-}
-
-.toggle-switch-small input:checked + .toggle-slider-small:before {
+.SettingsNotifications-toggle-switch input:checked + .SettingsNotifications-toggle-slider:before {
     transform: translateX(20px);
 }
 
-/* Frequency Select */
-.frequency-select {
-    padding: 0.5rem 0.75rem;
-    border: 1px solid #d1d5db;
-    border-radius: 0.375rem;
-    font-size: 0.875rem;
-    color: #374151;
-    background-color: white;
-    cursor: pointer;
-    outline: none;
-    transition: border-color 0.2s;
-    min-width: 150px;
+/* Section Styling */
+.SettingsNotifications-section {
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 2px solid #e5e7eb;
 }
 
-.frequency-select:focus {
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-}
-
-/* Time Inputs */
-.time-inputs {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-}
-
-.time-input {
-    padding: 0.5rem 0.75rem;
-    border: 1px solid #d1d5db;
-    border-radius: 0.375rem;
-    font-size: 0.875rem;
-    color: #374151;
-    background-color: white;
-    cursor: pointer;
-    outline: none;
-    transition: border-color 0.2s;
-}
-
-.time-input:focus {
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-}
-
-.time-separator {
-    font-size: 0.875rem;
-    color: #6b7280;
-    font-weight: 500;
-}
-
-/* Info Row Styles (reused) */
-.info-row {
-    padding: 1rem 0;
-    border-bottom: 1px solid #e5e7eb;
-}
-
-.info-row:last-child {
-    border-bottom: none;
-}
-
-.info-row-content {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-}
-
-.info-field {
-    flex: 1;
-}
-
-.info-label {
-    display: block;
-    font-size: 0.875rem;
-    font-weight: 500;
-    color: #374151;
-    margin-bottom: 0.25rem;
-}
-
-.info-description {
-    font-size: 0.75rem;
-    color: #6b7280;
-    line-height: 1.5;
-}
-
-.info-value {
+.SettingsNotifications-section-title {
+    font-size: 1.125rem;
+    font-weight: 600;
     color: #111827;
+    margin: 0 0 1.5rem 0;
+    font-family: "Satoshi Bold", sans-serif;
 }
 
-/* Responsive Design */
+/* Responsive */
 @media (max-width: 768px) {
-    .notification-card-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 1rem;
+    .SettingsNotifications-field-row {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
     }
 
-    .header-with-icon {
+    .SettingsNotifications-field-label {
+        padding-top: 0;
+    }
+
+    .SettingsNotifications-select {
         width: 100%;
     }
 
-    .info-row-content {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
-    .time-inputs {
-        width: 100%;
+    .SettingsNotifications-label-with-icon {
         flex-wrap: wrap;
-    }
-
-    .time-input {
-        flex: 1;
-        min-width: 120px;
-    }
-
-    .frequency-select {
-        width: 100%;
-    }
-
-    .notification-type-row {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 1rem;
-    }
-
-    .toggle-switch-small {
-        align-self: flex-end;
     }
 }
