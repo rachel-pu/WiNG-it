@@ -141,24 +141,24 @@ const QuickstartPage = ({
     };
 
     return (
-        <Box component="main" className="quickstart-main-modern">
-            <div className="quickstart-content-grid">
+        <Box component="main" className="QuickStartPage-main-modern">
+            <div className="QuickStartPage-content-grid">
                 {/* Instructions Panel */}
                 <motion.div
                     initial="hidden"
                     animate="visible"
                     transition={{ delay: 0.2 }}
                     variants={itemVariants}
-                    className="quickstart-instructions-panel"
+                    className="QuickStartPage-instructions-panel"
                 >
-                    <div className="panel-header">
-                        <div className="panel-header-icon blue">
+                    <div className="QuickStartPage-panel-header">
+                        <div className="QuickStartPage-panel-header-icon blue">
                             <CheckCircleIcon />
                         </div>
-                        <Typography className="panel-title">How It Works</Typography>
+                        <Typography className="QuickStartPage-panel-title">How It Works</Typography>
                     </div>
-                    
-                    <div className="steps-container">
+
+                    <div className="QuickStartPage-steps-container">
                         {steps.map((step, index) => {
                             const Icon = step.icon;
                             return (
@@ -168,14 +168,14 @@ const QuickstartPage = ({
                                     animate="visible"
                                     transition={{ delay: 0.4 + index * 0.1 }}
                                     variants={itemVariants}
-                                    className="step-item"
+                                    className="QuickStartPage-step-item"
                                 >
-                                    <div className={`step-icon-quickstart ${step.color}`}>
+                                    <div className={`QuickStartPage-step-icon ${step.color}`}>
                                         <Icon />
                                     </div>
-                                    <div className="step-content">
-                                        <Typography className="step-title">{step.title}</Typography>
-                                        <Typography className="step-description">{step.description}</Typography>
+                                    <div className="QuickStartPage-step-content">
+                                        <Typography className="QuickStartPage-step-title">{step.title}</Typography>
+                                        <Typography className="QuickStartPage-step-description">{step.description}</Typography>
                                     </div>
                                 </motion.div>
                             );
@@ -187,13 +187,13 @@ const QuickstartPage = ({
                         animate="visible"
                         transition={{ delay: 0.8 }}
                         variants={itemVariants}
-                        className="pro-tip"
+                        className="QuickStartPage-pro-tip"
                     >
-                        <div className="pro-tip-header">
+                        <div className="QuickStartPage-pro-tip-header">
                             <AutoAwesomeIcon />
                             <span>Pro Tip</span>
                         </div>
-                        <Typography className="pro-tip-text">
+                        <Typography className="QuickStartPage-pro-tip-text">
                             Treat this as a real interview for maximum benefit. Practice your STAR method responses!
                         </Typography>
                     </motion.div>
@@ -202,14 +202,14 @@ const QuickstartPage = ({
                         animate="visible"
                         transition={{ delay: 0.8 }}
                         variants={itemVariants}
-                        className="winnie-intro"
+                        className="QuickStartPage-winnie-intro"
                     >
-                        <div className="winnie-intro-header">
+                        <div className="QuickStartPage-winnie-intro-header">
                             <Person3 />
                             <span>Winnie</span>
                         </div>
-                        <Typography className="winnie-intro-text">
-                            Winnie will be your virtual interviewer. She’s an objective evaluator who scores your answers purely by their stats: length, wording, and how closely they follow the STAR Method.                        </Typography>
+                        <Typography className="QuickStartPage-winnie-intro-text">
+                            Winnie will be your virtual interviewer. She's an objective evaluator who scores your answers purely by their stats: length, wording, and how closely they follow the STAR Method.                        </Typography>
                     </motion.div>
                 </motion.div>
 
@@ -219,13 +219,13 @@ const QuickstartPage = ({
                     animate="visible"
                     transition={{ delay: 0.3 }}
                     variants={itemVariants}
-                    className="quickstart-config-panel"
+                    className="QuickStartPage-config-panel"
                 >
-                    <div className="panel-header">
-                        <div className="panel-header-icon purple">
+                    <div className="QuickStartPage-panel-header">
+                        <div className="QuickStartPage-panel-header-icon purple">
                             <SettingsIcon />
                         </div>
-                        <Typography className="panel-title">Customize Your Interview</Typography>
+                        <Typography className="QuickStartPage-panel-title">Customize Your Interview</Typography>
                     </div>
 
                     {/* Tabs */}
@@ -266,43 +266,43 @@ const QuickstartPage = ({
                         />
                     </Tabs>
 
-                    <div className="config-form">
+                    <div className="QuickStartPage-config-form">
                         {/* AI-Generated Questions Tab */}
                         {selectedTab === 0 && (
                             <>
                                 {/* Job Role and Company Inputs - Side by Side */}
-                                <div className="form-group-row">
-                                    <div className="form-group-half">
-                                        <label className="form-label">Target Role</label>
+                                <div className="QuickStartPage-form-group-row">
+                                    <div className="QuickStartPage-form-group-half">
+                                        <label className="QuickStartPage-form-label">Target Role</label>
                                         <input
                                             type="text"
                                             value={jobRole}
                                             onChange={handleJobRoleChange}
                                             placeholder="e.g. Software Engineer"
-                                            className="form-input"
+                                            className="QuickStartPage-form-input"
                                         />
                                     </div>
-                                    <div className="form-group-half">
-                                        <label className="form-label">Company</label>
+                                    <div className="QuickStartPage-form-group-half">
+                                        <label className="QuickStartPage-form-label">Company</label>
                                         <input
                                             type="text"
                                             value={company}
                                             onChange={handleCompanyChange}
                                             placeholder="e.g. Google, Amazon"
-                                            className="form-input"
+                                            className="QuickStartPage-form-input"
                                         />
                                     </div>
                                 </div>
 
                                 {/* Number of Questions */}
-                                <div className="form-group">
-                                    <label className="form-label">Number of Questions</label>
-                                    <div className="number-selector">
+                                <div className="QuickStartPage-form-group">
+                                    <label className="QuickStartPage-form-label">Number of Questions</label>
+                                    <div className="QuickStartPage-number-selector">
                                         {[1, 2, 3, 4, 5].map((num) => (
                                             <button
                                                 key={num}
                                                 onClick={() => handleQuestionsChange({ target: { value: num } })}
-                                                className={`number-btn ${numQuestions === num ? 'active' : ''}`}
+                                                className={`QuickStartPage-number-btn ${numQuestions === num ? 'active' : ''}`}
                                             >
                                                 {num}
                                             </button>
@@ -311,9 +311,9 @@ const QuickstartPage = ({
                                 </div>
 
                                 {/* Question Types */}
-                                <div className="form-group">
-                                    <label className="form-label">Question Types</label>
-                                    <div className="question-types">
+                                <div className="QuickStartPage-form-group">
+                                    <label className="QuickStartPage-form-label">Question Types</label>
+                                    <div className="QuickStartPage-question-types">
                                         {questionTypeOptions.map((type) => {
                                             const Icon = type.icon;
                                             const currentTypes = Array.isArray(questionTypes) ? questionTypes : [];
@@ -323,7 +323,7 @@ const QuickstartPage = ({
                                                 <button
                                                     key={type.id}
                                                     onClick={() => handleQuestionTypeToggle(type.id)}
-                                                    className={`type-btn ${isSelected ? 'selected' : ''}`}
+                                                    className={`QuickStartPage-type-btn ${isSelected ? 'selected' : ''}`}
                                                 >
                                                     <Icon />
                                                     <span>{type.label}</span>
@@ -332,22 +332,22 @@ const QuickstartPage = ({
                                         })}
                                     </div>
                                     {(!questionTypes || (Array.isArray(questionTypes) && questionTypes.length === 0)) && (
-                                        <Typography className="helper-text">Leave empty for random selection</Typography>
+                                        <Typography className="QuickStartPage-helper-text">Leave empty for random selection</Typography>
                                     )}
                                 </div>
 
                                 {/* Interviewer Difficulty */}
-                                <div className="form-group">
-                                    <label className="form-label">Interviewer Style</label>
-                                    <div className="difficulty-options">
+                                <div className="QuickStartPage-form-group">
+                                    <label className="QuickStartPage-form-label">Interviewer Style</label>
+                                    <div className="QuickStartPage-difficulty-options">
                                         {difficultyLevels.map((level) => (
                                             <button
                                                 key={level.id}
                                                 onClick={() => handleInterviewerDifficultyChange(level.id)}
-                                                className={`difficulty-btn ${interviewerDifficulty === level.id ? 'active' : ''}`}
+                                                className={`QuickStartPage-difficulty-btn ${interviewerDifficulty === level.id ? 'active' : ''}`}
                                             >
-                                                <div className="difficulty-label">{level.label}</div>
-                                                <div className="difficulty-description">{level.description}</div>
+                                                <div className="QuickStartPage-difficulty-label">{level.label}</div>
+                                                <div className="QuickStartPage-difficulty-description">{level.description}</div>
                                             </button>
                                         ))}
                                     </div>
@@ -357,36 +357,36 @@ const QuickstartPage = ({
 
                         {/* Custom Questions Tab */}
                         {selectedTab === 1 && (
-                            <div className="custom-questions-container">
-                                <div className="form-group">
-                                    <label className="form-label">Enter Your Questions</label>
-                                    <Typography className="helper-text" sx={{ marginBottom: '0.75rem' }}>
+                            <div className="QuickStartPage-custom-questions-container">
+                                <div className="QuickStartPage-form-group">
+                                    <label className="QuickStartPage-form-label">Enter Your Questions</label>
+                                    <Typography className="QuickStartPage-helper-text" sx={{ marginBottom: '0.75rem' }}>
                                         Enter one question per line. You can add up to 5 questions.
                                     </Typography>
                                     <textarea
                                         value={customQuestions}
                                         onChange={handleCustomQuestionsInput}
                                         placeholder="e.g.&#10;Tell me about a time you faced a difficult challenge.&#10;Describe a situation where you had to work with a difficult team member.&#10;How do you handle tight deadlines?"
-                                        className="custom-questions-textarea"
+                                        className="QuickStartPage-custom-questions-textarea"
                                         rows={10}
                                     />
-                                    <Typography className="helper-text" sx={{ marginTop: '0.5rem', textAlign: 'right' }}>
+                                    <Typography className="QuickStartPage-helper-text" sx={{ marginTop: '0.5rem', textAlign: 'right' }}>
                                         {customQuestions.split('\n').filter(q => q.trim()).length} / 5 questions
                                     </Typography>
                                 </div>
 
                                 {/* Interviewer Difficulty for Custom Questions */}
-                                <div className="form-group">
-                                    <label className="form-label">Interviewer Style</label>
-                                    <div className="difficulty-options">
+                                <div className="QuickStartPage-form-group">
+                                    <label className="QuickStartPage-form-label">Interviewer Style</label>
+                                    <div className="QuickStartPage-difficulty-options">
                                         {difficultyLevels.map((level) => (
                                             <button
                                                 key={level.id}
                                                 onClick={() => handleInterviewerDifficultyChange(level.id)}
-                                                className={`difficulty-btn ${interviewerDifficulty === level.id ? 'active' : ''}`}
+                                                className={`QuickStartPage-difficulty-btn ${interviewerDifficulty === level.id ? 'active' : ''}`}
                                             >
-                                                <div className="difficulty-label">{level.label}</div>
-                                                <div className="difficulty-description">{level.description}</div>
+                                                <div className="QuickStartPage-difficulty-label">{level.label}</div>
+                                                <div className="QuickStartPage-difficulty-description">{level.description}</div>
                                             </button>
                                         ))}
                                     </div>
@@ -403,26 +403,26 @@ const QuickstartPage = ({
                 animate="visible"
                 transition={{ delay: 0.5 }}
                 variants={itemVariants}
-                className="start-button-container"
+                className="QuickStartPage-start-button-container"
             >
                 <Button
                     onClick={handleStartButtonClick}
-                    className="start-button"
+                    className="QuickStartPage-start-button"
                 >
                     <PlayArrowIcon />
                     Start Your Interview
                     <ArrowForwardIcon />
                 </Button>
-                
+
             </motion.div>
 
             {/* Top notification alert */}
             <Fade in={showAlert} timeout={300}>
-                <Box className="quickstart-alert-container">
+                <Box className="QuickStartPage-alert-container">
                     <Alert
                         severity={alertSeverity}
                         onClose={() => setShowAlert(false)}
-                        className="quickstart-alert"
+                        className="QuickStartPage-alert"
                         sx={{
                             '& .MuiAlert-message': {
                                 fontFamily: '"Satoshi Medium", sans-serif',
