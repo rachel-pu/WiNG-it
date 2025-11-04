@@ -4,7 +4,6 @@ import { useState, useEffect} from "react";
 import { Box, Typography, CircularProgress, Card, Chip, CssBaseline, Toolbar, Tabs, Tab } from "@mui/material";
 import { motion, AnimatePresence } from "framer-motion";
 import DefaultAppLayout from "../../../../DefaultAppLayout.jsx";
-import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import RecordVoiceOverIcon from '@mui/icons-material/RecordVoiceOver';
@@ -547,8 +546,9 @@ export default function InterviewResults() {
                             <Typography sx={{ color: '#6b7280', mb: 3, fontFamily: 'DM Sans' }}>
                                 {error}
                             </Typography>
-                            <Link href="/behavioral">
-                                <button style={{
+                            <button 
+                                onClick={() => navigate('/behavioral')}
+                                style={{
                                     padding: '12px 24px',
                                     borderRadius: '8px',
                                     background: '#3b82f6',
@@ -557,10 +557,9 @@ export default function InterviewResults() {
                                     cursor: 'pointer',
                                     fontSize: '1rem',
                                     fontWeight: 600
-                                }}>
-                                    Start New Interview
-                                </button>
-                            </Link>
+                            }}>
+                                Start New Interview
+                            </button>
                         </Box>
                     </Box>
                 </DefaultAppLayout>
