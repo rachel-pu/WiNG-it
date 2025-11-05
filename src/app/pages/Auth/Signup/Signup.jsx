@@ -29,7 +29,6 @@ const SignUp = () => {
   useEffect(() => {
     const scriptId = "recaptcha-script";
     if (document.getElementById(scriptId)) return;
-    console.log("Recaptcha Key:", RECAPTCHA_SITE_KEY);
 
     const script = document.createElement("script");
     script.id = scriptId;
