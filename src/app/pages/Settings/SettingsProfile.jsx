@@ -284,6 +284,7 @@ export default function SettingsProfile() {
                                         ...prev,
                                         personalInformation: { ...prev.personalInformation, profilePhoto: imageUrl },
                                     }));
+                                    window.location.reload();
                                 } catch (err) {
                                     console.error("Error uploading profile photo:", err);
                                 }
