@@ -100,9 +100,13 @@ const SignUp = () => {
       // Input validation
       if (!sanitizedName) return setError('Please enter your name.');
       if (!isValidEmail(sanitizedEmail)) return setError('Please enter a valid email address.');
+      if (sanitizedPassword.length < 8)
+        return setError(
+          'Password must be at least 8 characters long.'
+        );
       if (!isStrongPassword(sanitizedPassword))
         return setError(
-          'Password must be at least 8 characters long and include upper/lowercase letters, numbers, and special characters.'
+          'Password must include upper/lowercase letters, numbers, and special characters.'
         );
 
       try {
