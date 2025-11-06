@@ -9,6 +9,7 @@ export default function SettingsProfile() {
     const [error, setError] = useState('');
     const [isEditingName, setIsEditingName] = useState(false);
     const [tempName, setTempName] = useState('');
+    const [isDragging, setIsDragging] = useState(false);
     const [formData, setFormData] = useState({
         personalInformation: {
             fullName: '',
@@ -291,15 +292,44 @@ export default function SettingsProfile() {
                             }}
                         />
                         <div
-                            className="SettingsProfile-upload-box"
-                            onClick={() => document.getElementById('profile-upload').click()}
+                        className={`SettingsProfile-upload-box ${isDragging ? "drag-over" : ""}`}
+                        onClick={() => document.getElementById('profile-upload').click()}
+                        onDragOver={(e) => {
+                            e.preventDefault();
+                            setIsDragging(true); // Highlight the box
+                        }}
+                        onDragLeave={(e) => {
+                            e.preventDefault();
+                            setIsDragging(false); // Remove highlight
+                        }}
+                        onDrop={async (e) => {
+                            e.preventDefault();
+                            setIsDragging(false); // Remove highlight
+
+                            const file = e.dataTransfer.files?.[0];
+                            if (!file || !formData.userId) return;
+
+                            try {
+                            const imageUrl = await uploadProfileImage(formData.userId, file);
+                            await update(ref(database, `users/${formData.userId}/personalInformation`), {
+                                profilePhoto: imageUrl,
+                            });
+                            setFormData(prev => ({
+                                ...prev,
+                                personalInformation: { ...prev.personalInformation, profilePhoto: imageUrl },
+                            }));
+                            window.location.reload();
+                            } catch (err) {
+                            console.error("Error uploading profile photo:", err);
+                            }
+                        }}
                         >
-                            <Upload size={20} className="upload-icon" />
-                            <div>
-                                <span className="upload-text-primary">Click to upload</span>
-                                <span className="upload-text-secondary"> or drag and drop</span>
-                            </div>
-                            <p className="upload-text-hint">SVG, PNG, JPG or GIF (max. 800x400px)</p>
+                        <Upload size={20} className="upload-icon" />
+                        <div>
+                            <span className="upload-text-primary">Click to upload</span>
+                            <span className="upload-text-secondary"> or drag and drop</span>
+                        </div>
+                        <p className="upload-text-hint">SVG, PNG, JPG or GIF (max. 800x400px)</p>
                         </div>
                     </div>
                 </div>
