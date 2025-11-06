@@ -414,3 +414,7 @@
         flex-direction: column;
     }
 }
+.SettingsProfile-upload-box.drag-over {
+  border: 2px dashed #4a90e2;
+  background-color: rgba(74, 144, 226, 0.1);
+}
