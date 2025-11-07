@@ -189,7 +189,7 @@ const SignUp = () => {
               padding: '2px 4px',
               backgroundColor: 'transparent',
               textTransform: 'none',
-              fontFamily: 'DM Sans, sans-serif',
+              fontFamily: 'Satoshi Bold, sans-serif',
               fontSize: '13px',
               fontWeight: 500,
               gap: '6px',
@@ -218,6 +218,33 @@ const SignUp = () => {
                 variant="standard"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
+                sx={{
+                  '& .MuiInputLabel-root': {
+                      fontFamily: 'Satoshi Bold, sans-serif',
+                      color: '#94a3b8',
+                      fontSize: '14px'
+                  },
+                  '& .MuiInputLabel-root.Mui-focused': {
+                      color: '#2850d9'
+                  },
+                  '& .MuiInput-root': {
+                      fontFamily: 'Satoshi Bold, sans-serif',
+                      fontSize: '16px',
+                      color: '#1a202c'
+                  },
+                  '& .MuiInput-underline:before': {
+                      borderBottomColor: '#e2e8f0',
+                      borderBottomWidth: '2px'
+                  },
+                  '& .MuiInput-underline:hover:not(.Mui-disabled):before': {
+                      borderBottomColor: '#cbd5e1',
+                      borderBottomWidth: '2px'
+                  },
+                  '& .MuiInput-underline:after': {
+                      borderBottomColor: '#2850d9',
+                      borderBottomWidth: '2px'
+                  }
+              }}
               />
             </Box>
           </motion.div>
@@ -233,6 +260,33 @@ const SignUp = () => {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                sx={{
+                  '& .MuiInputLabel-root': {
+                      fontFamily: 'Satoshi Bold, sans-serif',
+                      color: '#94a3b8',
+                      fontSize: '14px'
+                  },
+                  '& .MuiInputLabel-root.Mui-focused': {
+                      color: '#2850d9'
+                  },
+                  '& .MuiInput-root': {
+                      fontFamily: 'Satoshi Bold, sans-serif',
+                      fontSize: '16px',
+                      color: '#1a202c'
+                  },
+                  '& .MuiInput-underline:before': {
+                      borderBottomColor: '#e2e8f0',
+                      borderBottomWidth: '2px'
+                  },
+                  '& .MuiInput-underline:hover:not(.Mui-disabled):before': {
+                      borderBottomColor: '#cbd5e1',
+                      borderBottomWidth: '2px'
+                  },
+                  '& .MuiInput-underline:after': {
+                      borderBottomColor: '#2850d9',
+                      borderBottomWidth: '2px'
+                  }
+              }}
               />
             </Box>
           </motion.div>
@@ -262,6 +316,33 @@ const SignUp = () => {
                     </InputAdornment>
                   )
                 }}
+                sx={{
+                  '& .MuiInputLabel-root': {
+                      fontFamily: 'Satoshi Bold, sans-serif',
+                      color: '#94a3b8',
+                      fontSize: '14px'
+                  },
+                  '& .MuiInputLabel-root.Mui-focused': {
+                      color: '#2850d9'
+                  },
+                  '& .MuiInput-root': {
+                      fontFamily: 'Satoshi Bold, sans-serif',
+                      fontSize: '16px',
+                      color: '#1a202c'
+                  },
+                  '& .MuiInput-underline:before': {
+                      borderBottomColor: '#e2e8f0',
+                      borderBottomWidth: '2px'
+                  },
+                  '& .MuiInput-underline:hover:not(.Mui-disabled):before': {
+                      borderBottomColor: '#cbd5e1',
+                      borderBottomWidth: '2px'
+                  },
+                  '& .MuiInput-underline:after': {
+                      borderBottomColor: '#2850d9',
+                      borderBottomWidth: '2px'
+                  }
+              }}
               />
             </Box>
           </motion.div>
@@ -273,7 +354,7 @@ const SignUp = () => {
           <p className="auth-description cursor-pointer" onClick={() => navigate("/signin")} style={{ marginTop: 15 }}>
             Have an account? Sign in.
           </p>
-          <p className="privacy-term-text" style={{marginTop:25, marginBottom: 0}}> By signing up, you are agreeing to our</p>
+          <p className="privacy-term-text" style={{marginTop:5, marginBottom: 0}}> By signing up, you are agreeing to our</p>
             <p className="privacy-term-text" style={{marginTop: 0}}>
               <span 
                 className="auth-description cursor-pointer" 
@@ -297,7 +378,8 @@ const SignUp = () => {
                 marginTop: '10px',
                 fontSize: '0.75rem',
                 color: '#dddadaff',
-                textAlign: 'center'
+                textAlign: 'center',
+                fontFamily: "Satoshi"
             }}
         >
             This site is protected by reCAPTCHA and the Google{' '}

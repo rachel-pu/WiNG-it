@@ -68,7 +68,7 @@
   fontSize: '16px';
   margin-bottom: 28px;
   margin-top: 4px;
-  font-family: 'DM Sans', sans-serif;
+  font-family: 'Satoshi', sans-serif;
   line-height: 1.5;
 }
 
@@ -77,7 +77,7 @@
   color: #64748b;
   text-align: center;
   line-height: 1.5;
-  font-family: 'DM Sans', sans-serif;
+  font-family: 'Satoshi', sans-serif;
   margin-bottom: 0;
 }
 
@@ -99,7 +99,7 @@
   text-decoration: none;
   cursor: pointer;
   transition: all 0.2s ease;
-  font-family: 'DM Sans', sans-serif;
+  font-family: 'Satoshi', sans-serif;
 }
 
 .auth-description:hover {

@@ -162,7 +162,7 @@ const SignIn = () => {
                         padding: '2px 4px',
                         backgroundColor: 'transparent',
                         textTransform: 'none',
-                        fontFamily: 'DM Sans, sans-serif',
+                        fontFamily: 'Satoshi Bold, sans-serif',
                         fontSize: '13px',
                         fontWeight: 500,
                         gap: '6px',
@@ -201,7 +201,7 @@ const SignIn = () => {
                                         color: '#2850d9'
                                     },
                                     '& .MuiInput-root': {
-                                        fontFamily: 'DM Sans, sans-serif',
+                                        fontFamily: 'Satoshi Bold, sans-serif',
                                         fontSize: '16px',
                                         color: '#1a202c'
                                     },
@@ -256,7 +256,7 @@ const SignIn = () => {
                                         color: '#2850d9'
                                     },
                                     '& .MuiInput-root': {
-                                        fontFamily: 'DM Sans, sans-serif',
+                                        fontFamily: 'Satoshi Bold, sans-serif',
                                         fontSize: '16px',
                                         color: '#1a202c'
                                     },
@@ -283,14 +283,14 @@ const SignIn = () => {
                     </button>
                     <p
                     className="auth-description cursor-pointer"
-                    style={{ marginTop: 10 }}
+                    style={{ marginTop: 10, fontFamily: "Satoshi"}}
                     onClick={() => handleForgotPassword(email)}
                     >
                     Forgot Password
                     </p>
                     <p
                     className="auth-description cursor-pointer"
-                    style={{ marginTop: 10 }}
+                    style={{ marginTop: 10, fontFamily: "Satoshi" }}
                     onClick={() => navigate("/signup")}
                     >
                     Don't have an account? Sign up instead.
@@ -303,7 +303,8 @@ const SignIn = () => {
                         marginTop: '10px',
                         fontSize: '0.75rem',
                         color: '#dddadaff',
-                        textAlign: 'center'
+                        textAlign: 'center',
+                        fontFamily: "Satoshi"
                     }}
                 >
                     This site is protected by reCAPTCHA and the Google{' '}

@@ -75,7 +75,7 @@ html, body {
   font-size: 16px;
   margin-bottom: 28px;
   margin-top: 4px;
-  font-family: 'DM Sans', sans-serif;
+  font-family: 'Satoshi', sans-serif;
   line-height: 1.5;
 }
 
@@ -89,7 +89,7 @@ html, body {
   cursor: pointer;
   text-decoration: none !important;
   transition: all 0.2s ease;
-  font-family: 'DM Sans', sans-serif;
+  font-family: 'Satoshi', sans-serif;
 }
 
 .auth-description:hover {
@@ -170,7 +170,7 @@ html, body {
 .cursor-pointer {
   cursor: pointer;
   transition: color 0.2s ease;
-  font-family: 'DM Sans', sans-serif;
+  font-family: 'Satoshi', sans-serif;
 }
 
 .cursor-pointer:hover {
