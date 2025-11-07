@@ -4,7 +4,11 @@ import { useState, useEffect } from "react";
 import Box from "@mui/material/Box";
 import { Button, Typography, Alert, Fade, Tabs, Tab } from "@mui/material";
 import { motion } from "framer-motion";
-
+import * as pdfjsLib from "pdfjs-dist";
+import "pdfjs-dist/build/pdf.worker.min.mjs";
+import { ref, get } from "firebase/database";
+import {database} from '../../../../../lib/firebase.jsx'
+import { useNavigate } from "react-router-dom";
 
 // Material-UI Icons
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
@@ -22,6 +26,7 @@ import BusinessCenterIcon from '@mui/icons-material/BusinessCenter';
 import BuildIcon from '@mui/icons-material/Build';
 import EditNoteIcon from '@mui/icons-material/EditNote';
 import AutoFixHighIcon from '@mui/icons-material/AutoFixHigh';
+import StickyNote2 from '@mui/icons-material/StickyNote2';
 
 const QuickstartPage = ({
     error,
@@ -31,6 +36,8 @@ const QuickstartPage = ({
     questionTypes,
     interviewerDifficulty,
     customQuestions,
+    setError,
+    setResume,
     handleQuestionsChange,
     handleJobRoleChange,
     handleCompanyChange,
@@ -43,6 +50,9 @@ const QuickstartPage = ({
     const [alertMessage, setAlertMessage] = useState("");
     const [alertSeverity, setAlertSeverity] = useState("error");
     const [selectedTab, setSelectedTab] = useState(0);
+    const [userId, setUserId] = useState("");
+    const [haveResume, setHaveResume] = useState(false);
+    const navigate = useNavigate();
 
     // Show alert when error prop changes
     useEffect(() => {
@@ -53,7 +63,66 @@ const QuickstartPage = ({
         }
     }, [error]);
 
-    // Auto-hide alert after 1.5 seconds
+    //grab resume
+    useEffect(() => {
+        const getCookie = (name) => {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
+        };
+
+        const userId = getCookie('user_id');
+        if (userId) {
+            setUserId(userId);
+        } else {
+            console.log('No user_id cookie found');
+        }
+    }, []);
+
+    useEffect(() => {
+        const fetchUser = async () => {
+            if (!userId) return;
+            try {
+                const snapshot = await get(ref(database, `users/${userId}`));
+                if (snapshot.exists()) {
+                    const userData = snapshot.val();
+                    try {
+                        if (userData.resume != ""){
+                            const text = await extractTextFromPDF(userData.resume);
+                            setResume(text);
+                            setHaveResume(true);
+                        }
+                    } catch (error) {
+                        console.log("User resume is not uploaded yet")
+                    }
+                } else {
+                    setError('User not found in database.');
+                }
+            } catch (err) {
+                console.error('Error fetching user:', err);
+                setError('Failed to fetch user data.');
+            }
+        };
+        fetchUser();
+    }, [userId]);
+
+    const extractTextFromPDF = async (url) => {
+        const loadingTask = pdfjsLib.getDocument(url);
+        const pdf = await loadingTask.promise;
+
+        let allText = "";
+
+        for (let i = 1; i <= pdf.numPages; i++) {
+            const page = await pdf.getPage(i);
+            const textContent = await page.getTextContent();
+            const pageText = textContent.items.map((item) => item.str).join(" ");
+            allText += pageText + "\n";
+        }
+
+        return allText;
+    };
+        
+
     useEffect(() => {
         if (showAlert) {
             const timer = setTimeout(() => {
@@ -264,6 +333,11 @@ const QuickstartPage = ({
                             iconPosition="start"
                             label="Custom Questions"
                         />
+                        <Tab
+                            icon={<StickyNote2 />}
+                            iconPosition="start"
+                            label="Resume Focused Questions"
+                        />
                     </Tabs>
 
                     <div className="QuickStartPage-config-form">
@@ -393,6 +467,82 @@ const QuickstartPage = ({
                                 </div>
                             </div>
                         )}
+
+                        {selectedTab === 2 && (
+                        haveResume ? (
+                            <>
+                                {/* Job Role and Company Inputs - Side by Side */}
+                                <div className="QuickStartPage-form-group-row">
+                                    <div className="QuickStartPage-form-group-half">
+                                        <label className="QuickStartPage-form-label">Target Role</label>
+                                        <input
+                                            type="text"
+                                            value={jobRole}
+                                            onChange={handleJobRoleChange}
+                                            placeholder="e.g. Software Engineer"
+                                            className="QuickStartPage-form-input"
+                                        />
+                                    </div>
+                                    <div className="QuickStartPage-form-group-half">
+                                        <label className="QuickStartPage-form-label">Company</label>
+                                        <input
+                                            type="text"
+                                            value={company}
+                                            onChange={handleCompanyChange}
+                                            placeholder="e.g. Google, Amazon"
+                                            className="QuickStartPage-form-input"
+                                        />
+                                    </div>
+                                </div>
+
+                                {/* Number of Questions */}
+                                <div className="QuickStartPage-form-group">
+                                    <label className="QuickStartPage-form-label">Number of Questions</label>
+                                    <div className="QuickStartPage-number-selector">
+                                        {[1, 2, 3, 4, 5].map((num) => (
+                                            <button
+                                                key={num}
+                                                onClick={() => handleQuestionsChange({ target: { value: num } })}
+                                                className={`QuickStartPage-number-btn ${numQuestions === num ? 'active' : ''}`}
+                                            >
+                                                {num}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                {/* Interviewer Difficulty */}
+                                <div className="QuickStartPage-form-group">
+                                    <label className="QuickStartPage-form-label">Interviewer Style</label>
+                                    <div className="QuickStartPage-difficulty-options">
+                                        {difficultyLevels.map((level) => (
+                                            <button
+                                                key={level.id}
+                                                onClick={() => handleInterviewerDifficultyChange(level.id)}
+                                                className={`QuickStartPage-difficulty-btn ${interviewerDifficulty === level.id ? 'active' : ''}`}
+                                            >
+                                                <div className="QuickStartPage-difficulty-label">{level.label}</div>
+                                                <div className="QuickStartPage-difficulty-description">{level.description}</div>
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+                            </>
+                            ) : (
+                                <div>
+                                    <Typography sx={{ fontFamily: 'Satoshi', marginTop: '1rem', textAlign: 'center', color: 'gray' }}>
+                                    Please upload your resume in the Settings page to use this feature.
+                                    </Typography>
+                                    <Button
+                                        onClick={() => navigate("/settings")}
+                                        className="QuickStartPage-start-button"
+                                        style={{top:'30px', height: '50px'}}
+                                    >
+                                        Navigate to Settings
+                                    </Button>
+                                </div>
+                            )
+                        )}
                     </div>
                 </motion.div>
             </div>
@@ -401,7 +551,7 @@ const QuickstartPage = ({
             <motion.div
                 initial="hidden"
                 animate="visible"
-                transition={{ delay: 0.5 }}
+                transition={{ delay: 0.7 }}
                 variants={itemVariants}
                 className="QuickStartPage-start-button-container"
             >
