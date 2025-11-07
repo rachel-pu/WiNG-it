@@ -7,7 +7,7 @@
 
   {
     "origin": ["https://wing-it.space"],
-    "method": ["GET", "HEAD", "OPTIONS"],
+    "method": ["GET", "HEAD", "PUT", "POST", "OPTIONS"],
     "maxAgeSeconds": 3600
   }
 ]

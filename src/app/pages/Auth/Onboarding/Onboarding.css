@@ -76,7 +76,7 @@
 .onboarding-card {
     background-color: white;
     border-radius: 1rem;
-    padding: 3rem;
+    padding: 2rem;
     box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
 }
 
@@ -89,8 +89,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 80px;
-    height: 80px;
+    width: 70px;
+    height: 70px;
     border-radius: 50%;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
@@ -98,7 +98,7 @@
 }
 
 .step-title {
-    font-size: 1.875rem;
+    font-size: 1.5rem;
     font-weight: 700;
     color: #111827;
     text-align: center;
@@ -141,7 +141,7 @@
     padding: 0.75rem 1rem;
     border: 2px solid #e5e7eb;
     border-radius: 0.5rem;
-    font-size: 1rem;
+    font-size: 0.9rem;
     color: #111827;
     outline: none;
     transition: all 0.2s;
