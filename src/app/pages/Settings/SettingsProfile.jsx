@@ -1,7 +1,7 @@
 import { useState, useEffect} from 'react';
 import { ref, get, update } from "firebase/database";
 import {database, uploadResume} from '../../../lib/firebase.jsx'
-import { ChevronRight, Check, X, Mail, Upload } from 'lucide-react';
+import { Check, X, Mail, Upload } from 'lucide-react';
 import { uploadProfileImage } from '../../../../supabase.js';
 
 export default function SettingsProfile() {

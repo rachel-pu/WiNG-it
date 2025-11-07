@@ -20,6 +20,7 @@ export const storage = getStorage(app);
 
 // Callable functions
 export const generateQuestions = httpsCallable(functions, 'generateQuestions');
+export const generateResumeQuestions = httpsCallable(functions, 'generateResumeQuestions');
 export const handleTextToSpeech = httpsCallable(functions, 'handleTextToSpeech');
 export const saveResponse = httpsCallable(functions, 'saveResponse');
 export const getInterviewResults = httpsCallable(functions, 'getInterviewResults');

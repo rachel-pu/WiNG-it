@@ -1,7 +1,5 @@
 "use client"
 import Box from "@mui/material/Box";
-import Toolbar from "@mui/material/Toolbar";
-import CssBaseline from "@mui/material/CssBaseline";
 import {useState} from "react";
 import Typography from "@mui/material/Typography";
 import QuickstartPage from "./components/QuickstartPage.jsx";
@@ -13,6 +11,7 @@ import "./components/BehavioralSimulationPage.css";
 export default function BehavioralInterviewSimulation() {
     const [questions, setQuestions] = useState([]);
     const [error, setError] = useState("");
+    const [resume, setResume] = useState("");
     const [jobRole, setJobRole] = useState("");
     const [company, setCompany] = useState("");
     const [numQuestions, setNumQuestions] = useState(3);
@@ -24,33 +23,62 @@ export default function BehavioralInterviewSimulation() {
 
 
     const fetchQuestions = async (isCustom = false, customQuestionsArray = []) => {
-    try {
-        const response = await fetch('https://us-central1-wing-it-e6a3a.cloudfunctions.net/generateQuestions', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            job_role: jobRole,
-            company,
-            numQuestions,
-            questionTypes,
-            interviewerDifficulty,
-            customQuestions: isCustom ? customQuestionsArray : null
-        }),
-        });
+        try {
+            const response = await fetch('https://us-central1-wing-it-e6a3a.cloudfunctions.net/generateQuestions', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                job_role: jobRole,
+                company,
+                numQuestions,
+                questionTypes,
+                interviewerDifficulty,
+                customQuestions: isCustom ? customQuestionsArray : null
+            }),
+            });
 
-        if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+            if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data = await response.json();
+            setQuestions(data.questions);
+            setShowSimulation(true);
+
+        } catch (error) {
+            console.error('Error generating questions:', error);
         }
+    };
 
-        const data = await response.json();
-        setQuestions(data.questions);
-        setShowSimulation(true);
+    const generateResumeQuestions = async (resume) => {
+        try {
+            const response = await fetch('https://us-central1-wing-it-e6a3a.cloudfunctions.net/generateResumeQuestions', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                job_role: jobRole,
+                company,
+                numQuestions,
+                interviewerDifficulty,
+                resume
+            }),
+            });
 
-    } catch (error) {
-        console.error('Error generating questions:', error);
-    }
+            if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data = await response.json();
+            setQuestions(data.questions);
+            setShowSimulation(true);
+
+        } catch (error) {
+            console.error('Error generating questions:', error);
+        }
     };
 
     const handleQuestionsChange = (event) => {
@@ -128,6 +156,14 @@ export default function BehavioralInterviewSimulation() {
                 fetchQuestions(true, customQuestionsArray);
             }
         }
+        // Tab 2: Resume Questions
+        else if(tabIndex === 2){
+             if (!error) {
+                setShowQuickstart(false);
+                // Send resume to backend
+                generateResumeQuestions(resume);
+            }
+        }
     }
 
     // Handles interviewer difficulty changes
@@ -149,6 +185,8 @@ export default function BehavioralInterviewSimulation() {
                         questionTypes={questionTypes}
                         interviewerDifficulty={interviewerDifficulty}
                         customQuestions={customQuestions}
+                        setError={setError}
+                        setResume={setResume}
                         handleJobRoleChange={handleJobRoleChange}
                         handleCompanyChange={handleCompanyChange}
                         handleQuestionsChange={handleQuestionsChange}

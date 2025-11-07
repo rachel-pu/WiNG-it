@@ -172,6 +172,98 @@ const generateQuestions = functions.https.onRequest((req, res) => {
   });
 });
 
+
+// Generate Questions Function
+const generateResumeQuestions = functions.https.onRequest((req, res) => {
+  console.log("Generating questions for provided resume...");
+  return cors(req, res, async () => {
+    try {
+      if (req.method === "OPTIONS") {
+        return res.status(204).send("");
+      }
+
+      if (req.method !== 'POST') {
+        return res.status(405).json({ error: 'Method Not Allowed' });
+      }
+
+      const { job_role, company, numQuestions, interviewerDifficulty, resume } = req.body;
+      console.log("Resume: ", resume);
+      const companyContext = company ? ` at ${company}` : '';
+      const prompt = `
+        Generate EXACTLY ${numQuestions} interview questions for a ${job_role || 'general'} job position ${companyContext}, given the following resume text.
+        Resume: ${resume}
+        IMPORTANT: Generate ONLY ${numQuestions} questions. No more, no less.
+
+        Rules:
+        - Format strictly as: "1. [Question]", "2. [Question]", etc.
+        - Do NOT include any introductory text, titles, or explanations outside the numbered format.
+        - Each question should only have one question mark max. There should be no multiple questions in one question. Make sure each question will not require the user to talk for over 5 minutes.
+        - For the questions, factor in the interviewerDifficulty level: ${interviewerDifficulty || 'medium'}.
+        - For example, if interviewerDifficulty is "Intense", include more challenging questions that require deep reflection and problem-solving and be more harsh in the question.
+        - If interviewerDifficulty is "Professional", include a balanced mix of common and moderately challenging questions and deliver them in a standard corporate interview style
+        - If interviewerDifficulty is "Easy-going", include more straightforward and common questions that are easier to answer and deliver them in a friendly and relaxed manner.
+        - Ensure questions are clear, concise, and relevant to the specified job role.
+        - Tailor your questions to the resume provided. For example, if they have worked on an algorithmn for a class, ask them technical questions about the specifics, challenges they faced, how they resolved them, and the outcome.
+      `;
+
+      console.log(prompt);
+
+      const completion = await openai.chat.completions.create({
+        model: "gpt-4o-mini",
+        messages: [{ role: "user", content: prompt }],
+        max_tokens: 500,
+        temperature: 1
+      });
+
+      // Calculate OpenAI cost (GPT-4o-mini: ~$0.0001/1K tokens)
+      const inputTokens = completion.usage.prompt_tokens;
+      const outputTokens = completion.usage.completion_tokens;
+      const totalTokens = completion.usage.total_tokens;
+      const estimatedCost = (totalTokens / 1000) * 0.0001;
+
+      console.log(`🔢 OpenAI API Call Cost:`);
+      console.log(`   Input tokens: ${inputTokens}`);
+      console.log(`   Output tokens: ${outputTokens}`);
+      console.log(`   Total tokens: ${totalTokens}`);
+      console.log(`   Estimated cost: $${estimatedCost.toFixed(6)}`);
+
+      const responseText = completion.choices[0].message.content;
+      console.log(`Raw OpenAI response: ${responseText.substring(0, 200)}...`);
+
+      const questions = extractQuestions(responseText, numQuestions);
+
+      if (!questions || questions.length === 0) {
+        return res.status(500).json({ error: 'No valid questions generated' });
+      }
+
+      // Ensure we have the exact number requested
+      const finalQuestions = questions.slice(0, numQuestions);
+
+      console.log(`Requested: ${numQuestions} questions, Generated: ${questions.length}, Returning: ${finalQuestions.length}`);
+
+      if (finalQuestions.length !== numQuestions) {
+        console.warn(`Warning: Requested ${numQuestions} questions but got ${finalQuestions.length}`);
+      }
+
+      return res.json({
+        questions: finalQuestions,
+        metadata: {
+          provider: 'openai',
+          tokens: completion.usage.total_tokens,
+          estimatedCost: estimatedCost,
+          requested: numQuestions,
+          generated: questions.length,
+          returned: finalQuestions.length
+        }
+      });
+
+    } catch (err) {
+      console.error('Error in generateResumeQuestions:', err);
+      return res.status(500).json({ error: err.message });
+    }
+  });
+});
+
 // Text to Speech Function using Lemonfox API
 const handleTextToSpeech = functions.https.onRequest((req, res) => {
   console.log("Converting text to speech with Lemonfox");
@@ -558,4 +650,4 @@ const getInterviewResults = functions.https.onRequest((req, res) => {
   });
 });
 
-module.exports = { generateQuestions, handleTextToSpeech, saveResponse, getInterviewResults, verifyRecaptcha };
+module.exports = { generateQuestions, generateResumeQuestions, handleTextToSpeech, saveResponse, getInterviewResults, verifyRecaptcha };
