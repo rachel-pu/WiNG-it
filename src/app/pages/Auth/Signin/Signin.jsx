@@ -304,7 +304,8 @@ const SignIn = () => {
                         fontSize: '0.75rem',
                         color: '#dddadaff',
                         textAlign: 'center',
-                        fontFamily: "Satoshi"
+                        fontFamily: "Satoshi",
+                        animation: 'slideUp 0.6s cubic-bezier(0.4, 0, 0.2, 1)'
                     }}
                 >
                     This site is protected by reCAPTCHA and the Google{' '}
