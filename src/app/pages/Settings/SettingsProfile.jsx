@@ -10,6 +10,7 @@ export default function SettingsProfile() {
     const [isEditingName, setIsEditingName] = useState(false);
     const [tempName, setTempName] = useState('');
     const [isDragging, setIsDragging] = useState(false);
+    const [loading, setLoading] = useState(true);
     const [formData, setFormData] = useState({
         personalInformation: {
             fullName: '',
@@ -51,6 +52,8 @@ export default function SettingsProfile() {
             } catch (err) {
                 console.error('Error fetching user:', err);
                 setError('Failed to fetch user data.');
+            } finally {
+                setLoading(false);
             }
         };
         fetchUser();
@@ -191,6 +194,14 @@ export default function SettingsProfile() {
             </div>
         );
     };
+
+    if (loading) {
+        return (<div className="SettingsProfile-spinner"></div>); 
+    }
+
+    if (error) {
+        return <p style={{ color: 'red' }}>{error}</p>;
+    }
 
     return (
         <div className="SettingsProfile-content">
