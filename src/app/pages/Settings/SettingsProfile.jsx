@@ -413,7 +413,9 @@ export default function SettingsProfile() {
                             const file = e.target.files?.[0];
                             if (!file || !formData.userId) return;
                             try {
+                                console.log("works here8");
                                 const resumeUrl = await uploadResume(formData.userId, file);
+                                console.log("works her9");
                                 await update(ref(database, `users/${formData.userId}`), { resume: resumeUrl });
                                 setFormData((prev) => ({ ...prev, resume: resumeUrl }));
                             } catch (err) {

@@ -201,7 +201,7 @@ const SignIn = () => {
                                         color: '#2850d9'
                                     },
                                     '& .MuiInput-root': {
-                                        fontFamily: 'Satoshi Bold, sans-serif',
+                                        fontFamily: 'Satoshi, sans-serif',
                                         fontSize: '16px',
                                         color: '#1a202c'
                                     },
@@ -256,7 +256,7 @@ const SignIn = () => {
                                         color: '#2850d9'
                                     },
                                     '& .MuiInput-root': {
-                                        fontFamily: 'Satoshi Bold, sans-serif',
+                                        fontFamily: 'Satoshi, sans-serif',
                                         fontSize: '16px',
                                         color: '#1a202c'
                                     },

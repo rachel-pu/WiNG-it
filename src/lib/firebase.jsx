@@ -1,7 +1,7 @@
 import { initializeApp } from 'firebase/app';
-import { getDatabase } from 'firebase/database';
+import { getDatabase, ref as dbRef, push } from 'firebase/database';
 import { getFunctions, httpsCallable } from 'firebase/functions';
-import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage"; 
+import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "firebase/storage"; 
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_PUBLIC_FIREBASE_API_KEY,
@@ -25,18 +25,22 @@ export const handleTextToSpeech = httpsCallable(functions, 'handleTextToSpeech')
 export const saveResponse = httpsCallable(functions, 'saveResponse');
 export const getInterviewResults = httpsCallable(functions, 'getInterviewResults');
 export const verifyRecaptcha = httpsCallable(functions, 'verifyRecaptcha');
+export const cleanupOldTier1Interviews = httpsCallable(functions, 'cleanupOldTier1Interviews');
+
 export async function uploadResume(userId, file) {
   try {
     if (file.type !== "application/pdf") {
       throw new Error("Only PDF files are allowed.");
     }
     const storage = getStorage();
-    const resumeRef = ref(storage, `resumes/${userId}/${userId}.pdf`);
-
+    console.log("works here1");
+    const resumeRef = storageRef(storage, `resumes/${userId}/${userId}.pdf`);
+    console.log("works here2");
     await uploadBytes(resumeRef, file);
-
+console.log("works here3");
     // Get the public URL
     const downloadURL = await getDownloadURL(resumeRef);
+    console.log("works here4");
     return downloadURL;
 
   } catch (error) {

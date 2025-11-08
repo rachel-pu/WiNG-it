@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import { ArrowLeft } from 'lucide-react';
 import { useNavigate } from "react-router-dom";
 import './Signup.css';
-import { ref, set, get } from "firebase/database";
+import { ref, set, get, update } from "firebase/database";
 import { database } from '../../../../lib/firebase.jsx';
 import bcrypt from 'bcryptjs';
 import { Box, TextField, InputAdornment, IconButton, Button } from '@mui/material';
@@ -24,6 +24,7 @@ const SignUp = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const navigate = useNavigate();
+  const defaultTier = "tier1";
   const RECAPTCHA_SITE_KEY = import.meta.env.VITE_GOOGLE_RECAPTCHA_SITE_KEY;
 
   useEffect(() => {
@@ -158,6 +159,10 @@ const SignUp = () => {
             notificationPreferences: {}
           });
 
+        await update(ref(database, `userTiers/${defaultTier}`), {
+          [data.user.id]: true
+        });
+
         // Store email lookup
         await set(ref(database, `userEmails/${emailKey}`), {
           userId: data.user.id,
@@ -228,7 +233,7 @@ const SignUp = () => {
                       color: '#2850d9'
                   },
                   '& .MuiInput-root': {
-                      fontFamily: 'Satoshi Bold, sans-serif',
+                      fontFamily: 'Satoshi, sans-serif',
                       fontSize: '16px',
                       color: '#1a202c'
                   },
@@ -270,7 +275,7 @@ const SignUp = () => {
                       color: '#2850d9'
                   },
                   '& .MuiInput-root': {
-                      fontFamily: 'Satoshi Bold, sans-serif',
+                      fontFamily: 'Satoshi , sans-serif',
                       fontSize: '16px',
                       color: '#1a202c'
                   },
@@ -326,7 +331,7 @@ const SignUp = () => {
                       color: '#2850d9'
                   },
                   '& .MuiInput-root': {
-                      fontFamily: 'Satoshi Bold, sans-serif',
+                      fontFamily: 'Satoshi, sans-serif',
                       fontSize: '16px',
                       color: '#1a202c'
                   },

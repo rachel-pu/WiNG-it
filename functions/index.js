@@ -5,6 +5,7 @@ const cors = require('cors')({ origin: true });
 const OpenAI = require('openai');
 require('dotenv').config();
 const { createClient } = require('@deepgram/sdk');
+const {onSchedule} = require("firebase-functions/scheduler");
 const { Readable } = require('stream');
 
 // Initialize Firebase Admin
@@ -552,21 +553,31 @@ const saveResponse = functions.https.onRequest((req, res) => {
         analysis: {
           totalWords,
           wordsPerMinute,
-          technology,
-          questionTypes,
-          strengths,
-          tips,
-          starAnswerParsed,
-          starAnswerParsedImproved,
-          improvedResponse
+          technology: technology || [],
+          questionTypes: questionTypes || [],
+          strengths: strengths || [],
+          tips: tips || [],
+          starAnswerParsed: starAnswerParsed || {},
+          starAnswerParsedImproved: starAnswerParsedImproved || {},
+          improvedResponse: improvedResponse || null
         },
         recordedTime: recordedTime || 0,
         timestamp: admin.database.ServerValue.TIMESTAMP,
       };
 
+
       // Save to Firebase
       await db.ref(`interviews/${userId}/${sessionId}/responses/${questionNumber}`).set(responseData);
-      
+     
+      const responsesRef = db.ref(`responses`);
+      const newResponseRef = responsesRef.push();
+
+      await newResponseRef.set({
+        userId: userId,
+        sessionId: sessionId,
+        timestamp: Date.now()
+      });
+
       // Update session metadata
       const snapshot = await db.ref(`interviews/${userId}/${sessionId}/responses`).once("value");
       const questionsCompleted = snapshot.numChildren();
@@ -650,4 +661,51 @@ const getInterviewResults = functions.https.onRequest((req, res) => {
   });
 });
 
-module.exports = { generateQuestions, generateResumeQuestions, handleTextToSpeech, saveResponse, getInterviewResults, verifyRecaptcha };
+const cleanupOldTier1Interviews = onSchedule("every day 00:00", async (event) => {
+  const now = Date.now();
+  const THIRTY_DAYS = 30 * 24 * 60 * 60 * 1000; // 30 days in ms
+
+  try {
+    const responsesSnapshot = await db.ref('responses').once('value');
+
+    if (!responsesSnapshot.exists()) {
+      console.log("No responses found.");
+      return null;
+    }
+
+    const responses = responsesSnapshot.val();
+    const deletions = {};
+
+    for (const [responseKey, responseData] of Object.entries(responses)) {
+      const { userId, sessionId, timestamp } = responseData;
+
+      if (!userId || !sessionId || !timestamp) {
+        console.warn(`Skipping invalid response entry: ${responseKey}`);
+        continue;
+      }
+
+      if (now - timestamp > THIRTY_DAYS) {
+        // Delete entire session in interviews
+        await db.ref(`interviews/${userId}/${sessionId}`).remove();
+        console.log(`Deleted session ${sessionId} for user ${userId}`);
+
+        // Optionally delete the response itself
+        deletions[responseKey] = null;
+      }
+    }
+
+    if (Object.keys(deletions).length > 0) {
+      await db.ref('responses').update(deletions);
+      console.log(`Deleted ${Object.keys(deletions).length} old response entries.`);
+    } else {
+      console.log("No responses older than 30 days found.");
+    }
+
+    return null;
+  } catch (error) {
+    console.error("Error cleaning up old interviews:", error);
+    return null;
+  }
+});
+
+module.exports = { generateQuestions, generateResumeQuestions, handleTextToSpeech, saveResponse, getInterviewResults, verifyRecaptcha, cleanupOldTier1Interviews };
