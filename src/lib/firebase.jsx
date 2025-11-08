@@ -36,7 +36,14 @@ export async function uploadResume(userId, file) {
     console.log("works here1");
     const resumeRef = storageRef(storage, `resumes/${userId}/${userId}.pdf`);
     console.log("works here2");
-    await uploadBytes(resumeRef, file);
+    try {
+  await uploadBytes(resumeRef, file);
+} catch (err) {
+  console.error("Upload failed:", err);
+  console.error("Error code:", err.code);       // Firebase Storage error code
+  console.error("Error message:", err.message); // Firebase Storage message
+}
+
 console.log("works here3");
     // Get the public URL
     const downloadURL = await getDownloadURL(resumeRef);
