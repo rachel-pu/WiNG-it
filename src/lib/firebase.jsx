@@ -33,21 +33,10 @@ export async function uploadResume(userId, file) {
       throw new Error("Only PDF files are allowed.");
     }
     const storage = getStorage();
-    console.log("works here1");
     const resumeRef = storageRef(storage, `resumes/${userId}/${userId}.pdf`);
-    console.log("works here2");
-    try {
-  await uploadBytes(resumeRef, file);
-} catch (err) {
-  console.error("Upload failed:", err);
-  console.error("Error code:", err.code);       // Firebase Storage error code
-  console.error("Error message:", err.message); // Firebase Storage message
-}
-
-console.log("works here3");
+    await uploadBytes(resumeRef, file);
     // Get the public URL
     const downloadURL = await getDownloadURL(resumeRef);
-    console.log("works here4");
     return downloadURL;
 
   } catch (error) {
