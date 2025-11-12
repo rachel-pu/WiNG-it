@@ -156,6 +156,9 @@ const SignUp = () => {
             professionalInformation: {
               currentJob: ""
             },
+            subscription: {
+              tier: "free"
+            },
             notificationPreferences: {}
           });
 

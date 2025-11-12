@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { ref, get, update } from "firebase/database";
 import { database } from '../../../lib/firebase.jsx';
-import { ChevronRight, Check, X, CreditCard, Plus, Trash2 } from 'lucide-react';
+import { ChevronRight, Check, X, CreditCard, Plus, Trash2, Receipt } from 'lucide-react';
 import "./SettingsBillings.css";
 
 export default function SettingsBillings() {
@@ -9,6 +9,7 @@ export default function SettingsBillings() {
     const [isEditingCard, setIsEditingCard] = useState(false);
     const [isAddingCard, setIsAddingCard] = useState(false);
     const [tempCardData, setTempCardData] = useState({});
+    const [billingHistory, setBillingHistory] = useState([]);
     const [formData, setFormData] = useState({
         userId: '',
         billingInformation: {
@@ -24,12 +25,7 @@ export default function SettingsBillings() {
             ],
             autoPay: true,
             billingCycle: 'monthly',
-            nextBillingDate: '2025-11-26',
-            billingHistory: [
-                { id: '1', date: '2025-10-26', amount: '$29.99', status: 'paid' },
-                { id: '2', date: '2025-09-26', amount: '$29.99', status: 'paid' },
-                { id: '3', date: '2025-08-26', amount: '$29.99', status: 'paid' }
-            ]
+            nextBillingDate: '2025-11-26'
         }
     });
 
@@ -65,6 +61,26 @@ export default function SettingsBillings() {
             }
         };
         fetchBillingData();
+    }, [formData.userId]);
+
+    useEffect(() => {
+        const fetchBillingHistory = async () => {
+            if (!formData.userId) return;
+            try {
+                const snapshot = await get(ref(database, `users/${formData.userId}/subscription/billingHistory`));
+                if (snapshot.exists()) {
+                    const historyData = snapshot.val();
+                    // Convert object to array and sort by date (newest first)
+                    const historyArray = Object.values(historyData).sort((a, b) => {
+                        return new Date(b.date) - new Date(a.date);
+                    });
+                    setBillingHistory(historyArray);
+                }
+            } catch (err) {
+                console.error('Error fetching billing history:', err);
+            }
+        };
+        fetchBillingHistory();
     }, [formData.userId]);
 
     const handleToggleAutoPay = async () => {
@@ -333,20 +349,36 @@ export default function SettingsBillings() {
             {/* Billing History Section */}
             <div className="SettingsBillings-section">
                 <h3 className="SettingsBillings-section-title">Billing History</h3>
-                <div className="SettingsBillings-history-container">
-                    {formData.billingInformation.billingHistory.map((transaction, index) => (
-                        <div
-                            className={`SettingsBillings-history-row ${index === formData.billingInformation.billingHistory.length - 1 ? 'last' : ''}`}
-                            key={transaction.id}
-                        >
-                            <div className="SettingsBillings-history-date">{transaction.date}</div>
-                            <div className="SettingsBillings-history-amount">{transaction.amount}</div>
-                            <div className={`SettingsBillings-history-status status-${transaction.status}`}>
-                                {transaction.status}
+                {billingHistory.length > 0 ? (
+                    <div className="SettingsBillings-history-container">
+                        {billingHistory.map((transaction, index) => (
+                            <div
+                                className={`SettingsBillings-history-row ${index === billingHistory.length - 1 ? 'last' : ''}`}
+                                key={transaction.id || index}
+                            >
+                                <div className="SettingsBillings-history-date">{transaction.date}</div>
+                                <div className="SettingsBillings-history-amount">{transaction.amount}</div>
+                                <div className={`SettingsBillings-history-status status-${transaction.status}`}>
+                                    {transaction.status}
+                                </div>
+                                {transaction.invoiceUrl && (
+                                    <a
+                                        href={transaction.invoiceUrl}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="SettingsBillings-btn-receipt"
+                                        title="View Receipt"
+                                    >
+                                        <Receipt size={16} />
+                                        Receipt
+                                    </a>
+                                )}
                             </div>
-                        </div>
-                    ))}
-                </div>
+                        ))}
+                    </div>
+                ) : (
+                    <p className="SettingsBillings-no-history">No billing history available.</p>
+                )}
             </div>
         </div>
     );

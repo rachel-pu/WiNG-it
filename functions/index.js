@@ -7,6 +7,7 @@ require('dotenv').config();
 const { createClient } = require('@deepgram/sdk');
 const {onSchedule} = require("firebase-functions/scheduler");
 const { Readable } = require('stream');
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
 // Initialize Firebase Admin
 admin.initializeApp();
@@ -708,4 +709,347 @@ const cleanupOldTier1Interviews = onSchedule("every day 00:00", async (event) =>
   }
 });
 
-module.exports = { generateQuestions, generateResumeQuestions, handleTextToSpeech, saveResponse, getInterviewResults, verifyRecaptcha, cleanupOldTier1Interviews };
+
+// Create Stripe Checkout Session
+const createCheckoutSession = functions.https.onRequest((req, res) => {
+  return cors(req, res, async () => {
+    try {
+      if (req.method === "OPTIONS") {
+        return res.status(204).send("");
+      }
+
+      if (req.method !== 'POST') {
+        return res.status(405).json({ error: 'Method Not Allowed' });
+      }
+
+      const { userId, priceId, planName } = req.body;
+
+      if (!userId || !priceId) {
+        return res.status(400).json({ error: 'Missing userId or priceId' });
+      }
+
+      // Get or create Stripe customer
+      const userRef = db.ref(`users/${userId}`);
+      const userSnapshot = await userRef.once('value');
+      const userData = userSnapshot.val();
+
+      // Determine if we're in test mode based on the API key
+      const isTestMode = process.env.STRIPE_SECRET_KEY.startsWith('sk_test_');
+      const customerIdField = isTestMode ? 'stripeCustomerIdTest' : 'stripeCustomerId';
+
+      let customerId = userData?.subscription?.[customerIdField];
+
+      // Verify customer exists in Stripe, create new one if not
+      if (customerId) {
+        try {
+          await stripe.customers.retrieve(customerId);
+        } catch (error) {
+          // Customer doesn't exist in this mode, create a new one
+          console.log(`Customer ${customerId} not found in ${isTestMode ? 'test' : 'live'} mode, creating new customer`);
+          customerId = null;
+        }
+      }
+
+      if (!customerId) {
+        // Create new Stripe customer
+        const customer = await stripe.customers.create({
+          email: userData?.personalInformation?.email,
+          metadata: {
+            firebaseUserId: userId,
+            mode: isTestMode ? 'test' : 'live'
+          }
+        });
+        customerId = customer.id;
+
+        // Save customer ID to Firebase under subscription object
+        await db.ref(`users/${userId}/subscription`).update({
+          [customerIdField]: customerId
+        });
+        console.log(`Created new ${isTestMode ? 'test' : 'live'} mode customer: ${customerId}`);
+      }
+
+      // Create checkout session
+      const session = await stripe.checkout.sessions.create({
+        customer: customerId,
+        payment_method_types: ['card'],
+        line_items: [
+          {
+            price: priceId,
+            quantity: 1,
+          },
+        ],
+        mode: 'subscription',
+        success_url: `${process.env.VITE_APP_URL || 'http://localhost:3000'}/settings?tab=plan&success=true`,
+        cancel_url: `${process.env.VITE_APP_URL || 'http://localhost:3000'}/settings?tab=plan&canceled=true`,
+        metadata: {
+          userId,
+          planName
+        }
+      });
+
+      return res.json({ sessionId: session.id, url: session.url });
+
+    } catch (error) {
+      console.error('Error creating checkout session:', error);
+      return res.status(500).json({ error: error.message });
+    }
+  });
+});
+
+// Stripe Webhook Handler
+const stripeWebhook = functions.https.onRequest(async (req, res) => {
+  const sig = req.headers['stripe-signature'];
+  const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+
+  console.log('Webhook received:', {
+    hasSignature: !!sig,
+    hasSecret: !!webhookSecret,
+    secretPrefix: webhookSecret?.substring(0, 10),
+    hasRawBody: !!req.rawBody,
+    rawBodyType: typeof req.rawBody
+  });
+
+  let event;
+
+  try {
+    event = stripe.webhooks.constructEvent(req.rawBody, sig, webhookSecret);
+  } catch (err) {
+    console.error('Webhook signature verification failed:', err.message);
+    return res.status(400).send(`Webhook Error: ${err.message}`);
+  }
+
+  try {
+    switch (event.type) {
+      case 'checkout.session.completed':
+        const session = await stripe.checkout.sessions.retrieve(
+          event.data.object.id,
+          { expand: ['subscription'] }
+        );
+        await handleCheckoutSessionCompleted(session);
+        break;
+
+      case 'customer.subscription.updated':
+        const updatedSubscription = event.data.object;
+        await handleSubscriptionUpdated(updatedSubscription);
+        break;
+
+      case 'customer.subscription.deleted':
+        const deletedSubscription = event.data.object;
+        await handleSubscriptionDeleted(deletedSubscription);
+        break;
+
+      case 'invoice.payment_succeeded':
+        const invoice = event.data.object;
+        await handleInvoicePaymentSucceeded(invoice);
+        break;
+
+      case 'invoice.payment_failed':
+        const failedInvoice = event.data.object;
+        await handleInvoicePaymentFailed(failedInvoice);
+        break;
+
+      default:
+        console.log(`Unhandled event type ${event.type}`);
+    }
+
+    res.json({ received: true });
+  } catch (error) {
+    console.error('Error handling webhook:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Helper function to handle successful checkout
+async function handleCheckoutSessionCompleted(session) {
+  const userId = session.metadata.userId;
+  const planName = session.metadata.planName;
+  const subscriptionId = typeof session.subscription === 'object' ? session.subscription.id : session.subscription;
+
+  console.log('Processing checkout for userId:', userId, 'planName:', planName, 'subscriptionId:', subscriptionId);
+
+  // Calculate renewal date (1 month from now for monthly, 1 year for annual)
+  const today = new Date();
+  const renewalDate = new Date(today);
+  renewalDate.setMonth(renewalDate.getMonth() + 1); // Assume monthly for now
+
+  await db.ref(`users/${userId}/subscription`).update({
+    tier: planName.toLowerCase(), // User's subscription tier (free, pro, premium)
+    stripeSubscriptionId: subscriptionId,
+    status: 'active',
+    billingCycle: 'monthly',
+    startDate: today.toISOString().split('T')[0],
+    renewalDate: renewalDate.toISOString().split('T')[0],
+  });
+
+  console.log(`✅ Subscription activated for user ${userId}, tier: ${planName}`);
+}
+
+// Helper function to handle subscription updates
+async function handleSubscriptionUpdated(subscription) {
+  const customerId = subscription.customer;
+
+  // Find user by Stripe customer ID (check both test and live)
+  const usersRef = db.ref('users');
+  let snapshot = await usersRef.orderByChild('subscription/stripeCustomerId').equalTo(customerId).once('value');
+
+  if (!snapshot.exists()) {
+    // Try test mode customer ID
+    snapshot = await usersRef.orderByChild('subscription/stripeCustomerIdTest').equalTo(customerId).once('value');
+  }
+
+  if (!snapshot.exists()) {
+    console.log('No user found for customer:', customerId);
+    return;
+  }
+
+  const userId = Object.keys(snapshot.val())[0];
+  const currentPeriodEnd = new Date(subscription.current_period_end * 1000);
+
+  await db.ref(`users/${userId}/subscription`).update({
+    status: subscription.status,
+    renewalDate: currentPeriodEnd.toISOString().split('T')[0],
+  });
+
+  console.log(`Subscription updated for user ${userId}`);
+}
+
+// Helper function to handle subscription deletion
+async function handleSubscriptionDeleted(subscription) {
+  const customerId = subscription.customer;
+
+  // Find user by Stripe customer ID (check both test and live)
+  const usersRef = db.ref('users');
+  let snapshot = await usersRef.orderByChild('subscription/stripeCustomerId').equalTo(customerId).once('value');
+
+  if (!snapshot.exists()) {
+    // Try test mode customer ID
+    snapshot = await usersRef.orderByChild('subscription/stripeCustomerIdTest').equalTo(customerId).once('value');
+  }
+
+  if (!snapshot.exists()) {
+    console.log('No user found for customer:', customerId);
+    return;
+  }
+
+  const userId = Object.keys(snapshot.val())[0];
+
+  await db.ref(`users/${userId}/subscription`).update({
+    tier: 'free', // Reset to free tier
+    status: 'cancelled',
+    stripeSubscriptionId: null,
+  });
+
+  console.log(`Subscription cancelled for user ${userId}, reset to free tier`);
+}
+
+// Helper function to handle successful payment
+async function handleInvoicePaymentSucceeded(invoice) {
+  const customerId = invoice.customer;
+
+  // Find user by Stripe customer ID (check both test and live)
+  const usersRef = db.ref('users');
+  let snapshot = await usersRef.orderByChild('subscription/stripeCustomerId').equalTo(customerId).once('value');
+
+  if (!snapshot.exists()) {
+    // Try test mode customer ID
+    snapshot = await usersRef.orderByChild('subscription/stripeCustomerIdTest').equalTo(customerId).once('value');
+  }
+
+  if (!snapshot.exists()) return;
+
+  const userId = Object.keys(snapshot.val())[0];
+  const billingHistoryRef = db.ref(`users/${userId}/subscription/billingHistory`);
+
+  // Add to billing history under subscription
+  await billingHistoryRef.push({
+    id: invoice.id,
+    date: new Date(invoice.created * 1000).toISOString().split('T')[0],
+    amount: `$${(invoice.amount_paid / 100).toFixed(2)}`,
+    status: 'paid',
+    invoiceUrl: invoice.hosted_invoice_url
+  });
+
+  console.log(`Payment succeeded for user ${userId}`);
+}
+
+// Helper function to handle failed payment
+async function handleInvoicePaymentFailed(invoice) {
+  const customerId = invoice.customer;
+
+  // Find user by Stripe customer ID (check both test and live)
+  const usersRef = db.ref('users');
+  let snapshot = await usersRef.orderByChild('subscription/stripeCustomerId').equalTo(customerId).once('value');
+
+  if (!snapshot.exists()) {
+    // Try test mode customer ID
+    snapshot = await usersRef.orderByChild('subscription/stripeCustomerIdTest').equalTo(customerId).once('value');
+  }
+
+  if (!snapshot.exists()) return;
+
+  const userId = Object.keys(snapshot.val())[0];
+
+  await db.ref(`users/${userId}/subscription`).update({
+    status: 'past_due',
+  });
+
+  console.log(`Payment failed for user ${userId}`);
+}
+
+// Cancel Subscription
+const cancelSubscription = functions.https.onRequest((req, res) => {
+  return cors(req, res, async () => {
+    try {
+      if (req.method === "OPTIONS") {
+        return res.status(204).send("");
+      }
+
+      if (req.method !== 'POST') {
+        return res.status(405).json({ error: 'Method Not Allowed' });
+      }
+
+      const { userId } = req.body;
+
+      if (!userId) {
+        return res.status(400).json({ error: 'Missing userId' });
+      }
+
+      const userRef = db.ref(`users/${userId}/subscription`);
+      const snapshot = await userRef.once('value');
+      const subscriptionData = snapshot.val();
+
+      if (!subscriptionData?.stripeSubscriptionId) {
+        return res.status(404).json({ error: 'No active subscription found' });
+      }
+
+      // Cancel at period end (user keeps access until end of billing period)
+      await stripe.subscriptions.update(subscriptionData.stripeSubscriptionId, {
+        cancel_at_period_end: true
+      });
+
+      await userRef.update({
+        tier: 'free',
+        status: 'cancelled'
+      });
+
+      return res.json({ success: true, message: 'Subscription will be cancelled at period end' });
+
+    } catch (error) {
+      console.error('Error cancelling subscription:', error);
+      return res.status(500).json({ error: error.message });
+    }
+  });
+});
+
+module.exports = {
+  generateQuestions,
+  generateResumeQuestions,
+  handleTextToSpeech,
+  saveResponse,
+  getInterviewResults,
+  verifyRecaptcha,
+  cleanupOldTier1Interviews,
+  createCheckoutSession,
+  stripeWebhook,
+  cancelSubscription
+};
