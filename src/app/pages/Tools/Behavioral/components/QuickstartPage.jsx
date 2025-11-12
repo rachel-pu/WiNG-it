@@ -329,14 +329,14 @@ const QuickstartPage = ({
                             label="AI-Generated Questions"
                         />
                         <Tab
-                            icon={<EditNoteIcon />}
-                            iconPosition="start"
-                            label="Custom Questions"
-                        />
-                        <Tab
                             icon={<StickyNote2 />}
                             iconPosition="start"
                             label="Resume Focused Questions"
+                        />
+                        <Tab
+                            icon={<EditNoteIcon />}
+                            iconPosition="start"
+                            label="Custom Questions"
                         />
                     </Tabs>
 
@@ -429,46 +429,7 @@ const QuickstartPage = ({
                             </>
                         )}
 
-                        {/* Custom Questions Tab */}
                         {selectedTab === 1 && (
-                            <div className="QuickStartPage-custom-questions-container">
-                                <div className="QuickStartPage-form-group">
-                                    <label className="QuickStartPage-form-label">Enter Your Questions</label>
-                                    <Typography className="QuickStartPage-helper-text" sx={{ marginBottom: '0.75rem' }}>
-                                        Enter one question per line. You can add up to 5 questions.
-                                    </Typography>
-                                    <textarea
-                                        value={customQuestions}
-                                        onChange={handleCustomQuestionsInput}
-                                        placeholder="e.g.&#10;Tell me about a time you faced a difficult challenge.&#10;Describe a situation where you had to work with a difficult team member.&#10;How do you handle tight deadlines?"
-                                        className="QuickStartPage-custom-questions-textarea"
-                                        rows={10}
-                                    />
-                                    <Typography className="QuickStartPage-helper-text" sx={{ marginTop: '0.5rem', textAlign: 'right' }}>
-                                        {customQuestions.split('\n').filter(q => q.trim()).length} / 5 questions
-                                    </Typography>
-                                </div>
-
-                                {/* Interviewer Difficulty for Custom Questions */}
-                                <div className="QuickStartPage-form-group">
-                                    <label className="QuickStartPage-form-label">Interviewer Style</label>
-                                    <div className="QuickStartPage-difficulty-options">
-                                        {difficultyLevels.map((level) => (
-                                            <button
-                                                key={level.id}
-                                                onClick={() => handleInterviewerDifficultyChange(level.id)}
-                                                className={`QuickStartPage-difficulty-btn ${interviewerDifficulty === level.id ? 'active' : ''}`}
-                                            >
-                                                <div className="QuickStartPage-difficulty-label">{level.label}</div>
-                                                <div className="QuickStartPage-difficulty-description">{level.description}</div>
-                                            </button>
-                                        ))}
-                                    </div>
-                                </div>
-                            </div>
-                        )}
-
-                        {selectedTab === 2 && (
                         haveResume ? (
                             <>
                                 {/* Job Role and Company Inputs - Side by Side */}
@@ -542,6 +503,45 @@ const QuickstartPage = ({
                                     </Button>
                                 </div>
                             )
+                        )}
+
+                        {/* Custom Questions Tab */}
+                        {selectedTab === 2 && (
+                            <div className="QuickStartPage-custom-questions-container">
+                                <div className="QuickStartPage-form-group">
+                                    <label className="QuickStartPage-form-label">Enter Your Questions</label>
+                                    <Typography className="QuickStartPage-helper-text" sx={{ marginBottom: '0.75rem' }}>
+                                        Enter one question per line. You can add up to 5 questions.
+                                    </Typography>
+                                    <textarea
+                                        value={customQuestions}
+                                        onChange={handleCustomQuestionsInput}
+                                        placeholder="e.g.&#10;Tell me about a time you faced a difficult challenge.&#10;Describe a situation where you had to work with a difficult team member.&#10;How do you handle tight deadlines?"
+                                        className="QuickStartPage-custom-questions-textarea"
+                                        rows={10}
+                                    />
+                                    <Typography className="QuickStartPage-helper-text" sx={{ marginTop: '0.5rem', textAlign: 'right' }}>
+                                        {customQuestions.split('\n').filter(q => q.trim()).length} / 5 questions
+                                    </Typography>
+                                </div>
+
+                                {/* Interviewer Difficulty for Custom Questions */}
+                                <div className="QuickStartPage-form-group">
+                                    <label className="QuickStartPage-form-label">Interviewer Style</label>
+                                    <div className="QuickStartPage-difficulty-options">
+                                        {difficultyLevels.map((level) => (
+                                            <button
+                                                key={level.id}
+                                                onClick={() => handleInterviewerDifficultyChange(level.id)}
+                                                className={`QuickStartPage-difficulty-btn ${interviewerDifficulty === level.id ? 'active' : ''}`}
+                                            >
+                                                <div className="QuickStartPage-difficulty-label">{level.label}</div>
+                                                <div className="QuickStartPage-difficulty-description">{level.description}</div>
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
                         )}
                     </div>
                 </motion.div>

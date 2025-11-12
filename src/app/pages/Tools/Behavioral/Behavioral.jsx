@@ -133,8 +133,8 @@ export default function BehavioralInterviewSimulation() {
                 fetchQuestions();
             }
         }
-        // Tab 1: Custom Questions
-        else if (tabIndex === 1) {
+        // Tab 2: Custom Questions
+        else if (tabIndex === 2) {
             const customQuestionsArray = customQuestions
                 .split('\n')
                 .map(q => q.trim())
@@ -156,8 +156,8 @@ export default function BehavioralInterviewSimulation() {
                 fetchQuestions(true, customQuestionsArray);
             }
         }
-        // Tab 2: Resume Questions
-        else if(tabIndex === 2){
+        // Tab 1: Resume Questions
+        else if(tabIndex === 1){
              if (!error) {
                 setShowQuickstart(false);
                 // Send resume to backend
