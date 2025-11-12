@@ -353,10 +353,6 @@
     transition: background-color 0.2s;
 }
 
-.SettingsBillings-history-row:hover {
-    background-color: #f9fafb;
-}
-
 .SettingsBillings-history-row.last {
     border-bottom: none;
 }
@@ -399,6 +395,42 @@
     color: #991b1b;
 }
 
+.SettingsBillings-btn-receipt {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.875rem;
+    background-color: #667eea;
+    color: white;
+    border: none;
+    border-radius: 18px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    font-family: "DM Sans", sans-serif;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+}
+
+.SettingsBillings-btn-receipt:hover {
+    background-color: #5568d3;
+    transform: translateY(-1px);
+    color: white !important;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    text-decoration: none !important;
+}
+
+.SettingsBillings-no-history {
+    padding: 2rem;
+    text-align: center;
+    color: #9ca3af;
+    font-size: 0.875rem;
+    font-family: "DM Sans", sans-serif;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    background-color: #f9fafb;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
     .SettingsBillings-field-row {
@@ -434,5 +466,10 @@
         flex-direction: column;
         align-items: flex-start;
         gap: 0.5rem;
+    }
+
+    .SettingsBillings-btn-receipt {
+        align-self: stretch;
+        justify-content: center;
     }
 }

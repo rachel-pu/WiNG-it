@@ -965,7 +965,8 @@ async function handleInvoicePaymentSucceeded(invoice) {
     id: invoice.id,
     date: new Date(invoice.created * 1000).toISOString().split('T')[0],
     amount: `$${(invoice.amount_paid / 100).toFixed(2)}`,
-    status: 'paid'
+    status: 'paid',
+    invoiceUrl: invoice.hosted_invoice_url
   });
 
   console.log(`Payment succeeded for user ${userId}`);
