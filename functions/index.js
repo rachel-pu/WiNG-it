@@ -1027,6 +1027,7 @@ const cancelSubscription = functions.https.onRequest((req, res) => {
       });
 
       await userRef.update({
+        tier: 'free',
         status: 'cancelled'
       });
 
