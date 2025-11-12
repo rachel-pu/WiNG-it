@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { ref, get, update } from "firebase/database";
 import { database } from '../../../lib/firebase.jsx';
 import { Check, Zap, Crown, Sparkles } from 'lucide-react';
+import { STRIPE_CONFIG } from '../../../config/stripe';
 import "./SettingsPlan.css";
 
 export default function SettingsPlan() {
@@ -144,47 +145,99 @@ export default function SettingsPlan() {
     const handleChangePlan = async (newPlan) => {
         if (newPlan === formData.subscription.currentPlan) return;
 
-        if (!confirm(`Are you sure you want to ${newPlan === 'free' ? 'downgrade' : 'upgrade'} to ${plans[newPlan].name}?`)) {
+        // Downgrade to free - no payment required
+        if (newPlan === 'free') {
+            if (!confirm('Are you sure you want to downgrade to the Free plan? You will lose access to premium features.')) {
+                return;
+            }
+
+            setIsChangingPlan(true);
+            try {
+                // Cancel the existing subscription through Firebase Function
+                const response = await fetch(`${STRIPE_CONFIG.functionsUrl}/cancelSubscription`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ userId: formData.userId })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to cancel subscription');
+                }
+
+                setFormData(prev => ({
+                    ...prev,
+                    subscription: {
+                        ...prev.subscription,
+                        currentPlan: 'free',
+                        status: 'cancelled'
+                    }
+                }));
+
+                alert('Your subscription will be downgraded to Free at the end of your billing period.');
+            } catch (err) {
+                console.error('Error downgrading plan:', err);
+                alert('Failed to downgrade plan. Please try again.');
+            } finally {
+                setIsChangingPlan(false);
+            }
+            return;
+        }
+
+        // Upgrade to paid plan - requires Stripe checkout
+        const currentBillingCycle = formData.subscription.billingCycle || 'monthly';
+        if (!confirm(`Upgrade to ${plans[newPlan].name} for $${plans[newPlan].price[currentBillingCycle]}/${currentBillingCycle === 'monthly' ? 'month' : 'year'}?`)) {
             return;
         }
 
         setIsChangingPlan(true);
         try {
-            const today = new Date();
-            const renewalDate = new Date(today);
-            renewalDate.setMonth(renewalDate.getMonth() + 1);
+            // Get the Stripe Price ID based on plan and billing cycle
+            const priceId = STRIPE_CONFIG.prices[newPlan][currentBillingCycle];
 
-            await update(ref(database, `users/${formData.userId}/subscription`), {
-                currentPlan: newPlan,
-                startDate: today.toISOString().split('T')[0],
-                renewalDate: renewalDate.toISOString().split('T')[0],
-                status: 'active'
+            if (!priceId) {
+                throw new Error('Price ID not configured for this plan');
+            }
+
+            // Create Stripe checkout session
+            const response = await fetch(`${STRIPE_CONFIG.functionsUrl}/createCheckoutSession`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    userId: formData.userId,
+                    priceId: priceId,
+                    planName: newPlan
+                })
             });
 
-            setFormData(prev => ({
-                ...prev,
-                subscription: {
-                    ...prev.subscription,
-                    currentPlan: newPlan,
-                    startDate: today.toISOString().split('T')[0],
-                    renewalDate: renewalDate.toISOString().split('T')[0],
-                    status: 'active'
-                }
-            }));
+            if (!response.ok) {
+                throw new Error('Failed to create checkout session');
+            }
+
+            const { url } = await response.json();
+
+            // Redirect to Stripe checkout
+            window.location.href = url;
+
         } catch (err) {
-            console.error('Error changing plan:', err);
-        } finally {
+            console.error('Error upgrading plan:', err);
+            alert('Failed to start checkout. Please try again.');
             setIsChangingPlan(false);
         }
     };
 
     const handleCancelSubscription = async () => {
-        if (!confirm('Are you sure you want to cancel your subscription?')) return;
+        if (!confirm('Are you sure you want to cancel your subscription? You will keep access until the end of your billing period.')) return;
 
         try {
-            await update(ref(database, `users/${formData.userId}/subscription`), {
-                status: 'cancelled'
+            const response = await fetch(`${STRIPE_CONFIG.functionsUrl}/cancelSubscription`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ userId: formData.userId })
             });
+
+            if (!response.ok) {
+                throw new Error('Failed to cancel subscription');
+            }
 
             setFormData(prev => ({
                 ...prev,
@@ -193,8 +246,11 @@ export default function SettingsPlan() {
                     status: 'cancelled'
                 }
             }));
+
+            alert('Your subscription has been cancelled. You will keep access until the end of your billing period.');
         } catch (err) {
             console.error('Error cancelling subscription:', err);
+            alert('Failed to cancel subscription. Please try again.');
         }
     };
 
