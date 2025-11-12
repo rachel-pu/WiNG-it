@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { ref, get, update } from "firebase/database";
 import { database } from '../../../lib/firebase.jsx';
-import { Check, Zap, Crown, Sparkles } from 'lucide-react';
+import { Check, Zap, Crown, Sparkles, AlertCircle, CheckCircle, X } from 'lucide-react';
 import { STRIPE_CONFIG } from '../../../config/stripe';
 import "./SettingsPlan.css";
 
@@ -11,13 +11,52 @@ export default function SettingsPlan() {
     const [formData, setFormData] = useState({
         userId: '',
         subscription: {
-            currentPlan: 'pro',
+            tier: 'free',
             billingCycle: 'monthly',
-            startDate: '2025-09-26',
-            renewalDate: '2025-11-26',
+            startDate: '',
+            renewalDate: '',
             status: 'active'
         }
     });
+    const [modal, setModal] = useState({
+        isOpen: false,
+        type: 'confirm', // 'confirm' or 'alert'
+        title: '',
+        message: '',
+        icon: null,
+        confirmText: 'Confirm',
+        cancelText: 'Cancel',
+        onConfirm: null,
+        onCancel: null
+    });
+
+    // Helper functions for modal
+    const showConfirm = (title, message, onConfirm, confirmText = 'Confirm', cancelText = 'Cancel', icon = 'alert') => {
+        setModal({
+            isOpen: true,
+            type: 'confirm',
+            title,
+            message,
+            icon,
+            confirmText,
+            cancelText,
+            onConfirm,
+            onCancel: () => setModal(prev => ({ ...prev, isOpen: false }))
+        });
+    };
+
+    const showAlert = (title, message, icon = 'success') => {
+        setModal({
+            isOpen: true,
+            type: 'alert',
+            title,
+            message,
+            icon,
+            confirmText: 'OK',
+            onConfirm: () => setModal(prev => ({ ...prev, isOpen: false })),
+            onCancel: null
+        });
+    };
 
     const plans = {
         free: {
@@ -95,27 +134,27 @@ export default function SettingsPlan() {
     // Auto-migrate old plan names to new ones
     useEffect(() => {
         const migrateOldPlan = async () => {
-            if (!formData.userId || !formData.subscription.currentPlan) return;
+            if (!formData.userId || !formData.subscription.tier) return;
 
             // Map old plan names to new ones
             const planMigrations = {
                 'enterprise': 'premium'
             };
 
-            const oldPlan = formData.subscription.currentPlan;
+            const oldPlan = formData.subscription.tier;
             const newPlan = planMigrations[oldPlan] || oldPlan;
 
             // If plan doesn't exist in our plans object, migrate to free
             if (!plans[newPlan]) {
                 try {
                     await update(ref(database, `users/${formData.userId}/subscription`), {
-                        currentPlan: 'free'
+                        tier: 'free'
                     });
                     setFormData(prev => ({
                         ...prev,
                         subscription: {
                             ...prev.subscription,
-                            currentPlan: 'free'
+                            tier: 'free'
                         }
                     }));
                 } catch (err) {
@@ -125,13 +164,13 @@ export default function SettingsPlan() {
                 // Migrate to mapped plan
                 try {
                     await update(ref(database, `users/${formData.userId}/subscription`), {
-                        currentPlan: newPlan
+                        tier: newPlan
                     });
                     setFormData(prev => ({
                         ...prev,
                         subscription: {
                             ...prev.subscription,
-                            currentPlan: newPlan
+                            tier: newPlan
                         }
                     }));
                 } catch (err) {
@@ -140,118 +179,139 @@ export default function SettingsPlan() {
             }
         };
         migrateOldPlan();
-    }, [formData.userId, formData.subscription.currentPlan]);
+    }, [formData.userId, formData.subscription.tier]);
 
     const handleChangePlan = async (newPlan) => {
-        if (newPlan === formData.subscription.currentPlan) return;
+        if (newPlan === formData.subscription.tier) return;
 
         // Downgrade to free - no payment required
         if (newPlan === 'free') {
-            if (!confirm('Are you sure you want to downgrade to the Free plan? You will lose access to premium features.')) {
-                return;
-            }
+            showConfirm(
+                'Downgrade to Free Plan',
+                'Are you sure you want to downgrade to the Free plan? You will lose access to premium features.',
+                async () => {
+                    setModal(prev => ({ ...prev, isOpen: false }));
+                    setIsChangingPlan(true);
+                    try {
+                        // Cancel the existing subscription through Firebase Function
+                        const response = await fetch(`${STRIPE_CONFIG.functionsUrl}/cancelSubscription`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ userId: formData.userId })
+                        });
 
-            setIsChangingPlan(true);
-            try {
-                // Cancel the existing subscription through Firebase Function
-                const response = await fetch(`${STRIPE_CONFIG.functionsUrl}/cancelSubscription`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ userId: formData.userId })
-                });
+                        if (!response.ok) {
+                            throw new Error('Failed to cancel subscription');
+                        }
 
-                if (!response.ok) {
-                    throw new Error('Failed to cancel subscription');
-                }
+                        setFormData(prev => ({
+                            ...prev,
+                            subscription: {
+                                ...prev.subscription,
+                                tier: 'free',
+                                status: 'cancelled'
+                            }
+                        }));
 
-                setFormData(prev => ({
-                    ...prev,
-                    subscription: {
-                        ...prev.subscription,
-                        currentPlan: 'free',
-                        status: 'cancelled'
+                        showAlert('Subscription Downgraded', 'Your subscription will be downgraded to Free at the end of your billing period.', 'success');
+                    } catch (err) {
+                        console.error('Error downgrading plan:', err);
+                        showAlert('Downgrade Failed', 'Failed to downgrade plan. Please try again.', 'error');
+                    } finally {
+                        setIsChangingPlan(false);
                     }
-                }));
-
-                alert('Your subscription will be downgraded to Free at the end of your billing period.');
-            } catch (err) {
-                console.error('Error downgrading plan:', err);
-                alert('Failed to downgrade plan. Please try again.');
-            } finally {
-                setIsChangingPlan(false);
-            }
+                },
+                'Downgrade',
+                'Cancel',
+                'alert'
+            );
             return;
         }
 
         // Upgrade to paid plan - requires Stripe checkout
         const currentBillingCycle = formData.subscription.billingCycle || 'monthly';
-        if (!confirm(`Upgrade to ${plans[newPlan].name} for $${plans[newPlan].price[currentBillingCycle]}/${currentBillingCycle === 'monthly' ? 'month' : 'year'}?`)) {
-            return;
-        }
+        showConfirm(
+            `Upgrade to ${plans[newPlan].name}`,
+            `Upgrade to ${plans[newPlan].name} for $${plans[newPlan].price[currentBillingCycle]}/${currentBillingCycle === 'monthly' ? 'month' : 'year'}?`,
+            async () => {
+                setModal(prev => ({ ...prev, isOpen: false }));
+                setIsChangingPlan(true);
+                try {
+                    // Get the Stripe Price ID based on plan and billing cycle
+                    const priceId = STRIPE_CONFIG.prices[newPlan][currentBillingCycle];
 
-        setIsChangingPlan(true);
-        try {
-            // Get the Stripe Price ID based on plan and billing cycle
-            const priceId = STRIPE_CONFIG.prices[newPlan][currentBillingCycle];
+                    if (!priceId) {
+                        throw new Error('Price ID not configured for this plan');
+                    }
 
-            if (!priceId) {
-                throw new Error('Price ID not configured for this plan');
-            }
+                    // Create Stripe checkout session
+                    const response = await fetch(`${STRIPE_CONFIG.functionsUrl}/createCheckoutSession`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            userId: formData.userId,
+                            priceId: priceId,
+                            planName: newPlan
+                        })
+                    });
 
-            // Create Stripe checkout session
-            const response = await fetch(`${STRIPE_CONFIG.functionsUrl}/createCheckoutSession`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    userId: formData.userId,
-                    priceId: priceId,
-                    planName: newPlan
-                })
-            });
+                    if (!response.ok) {
+                        throw new Error('Failed to create checkout session');
+                    }
 
-            if (!response.ok) {
-                throw new Error('Failed to create checkout session');
-            }
+                    const { url } = await response.json();
 
-            const { url } = await response.json();
+                    // Redirect to Stripe checkout
+                    window.location.href = url;
 
-            // Redirect to Stripe checkout
-            window.location.href = url;
-
-        } catch (err) {
-            console.error('Error upgrading plan:', err);
-            alert('Failed to start checkout. Please try again.');
-            setIsChangingPlan(false);
-        }
+                } catch (err) {
+                    console.error('Error upgrading plan:', err);
+                    showAlert('Upgrade Failed', 'Failed to start checkout. Please try again.', 'error');
+                    setIsChangingPlan(false);
+                }
+            },
+            'Upgrade',
+            'Cancel',
+            'alert'
+        );
     };
 
     const handleCancelSubscription = async () => {
-        if (!confirm('Are you sure you want to cancel your subscription? You will keep access until the end of your billing period.')) return;
+        showConfirm(
+            'Cancel Subscription',
+            'Are you sure you want to cancel your subscription? You will keep access until the end of your billing period.',
+            async () => {
+                setModal(prev => ({ ...prev, isOpen: false }));
+                try {
+                    const response = await fetch(`${STRIPE_CONFIG.functionsUrl}/cancelSubscription`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ userId: formData.userId })
+                    });
 
-        try {
-            const response = await fetch(`${STRIPE_CONFIG.functionsUrl}/cancelSubscription`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ userId: formData.userId })
-            });
+                    if (!response.ok) {
+                        throw new Error('Failed to cancel subscription');
+                    }
 
-            if (!response.ok) {
-                throw new Error('Failed to cancel subscription');
-            }
+                    setFormData(prev => ({
+                        ...prev,
+                        subscription: {
+                            ...prev.subscription,
+                            tier: 'free',
+                            status: 'cancelled'
+                        }
+                    }));
 
-            setFormData(prev => ({
-                ...prev,
-                subscription: {
-                    ...prev.subscription,
-                    status: 'cancelled'
+                    showAlert('Subscription Cancelled', 'Your subscription has been cancelled. You will keep access until the end of your billing period.', 'success');
+                } catch (err) {
+                    console.error('Error cancelling subscription:', err);
+                    showAlert('Cancellation Failed', 'Failed to cancel subscription. Please try again.', 'error');
                 }
-            }));
-
-            alert('Your subscription has been cancelled. You will keep access until the end of your billing period.');
-        } catch (err) {
-            console.error('Error cancelling subscription:', err);
-            alert('Failed to cancel subscription. Please try again.');
-        }
+            },
+            'Cancel Subscription',
+            'Keep Subscription',
+            'alert'
+        );
     };
 
     const handleToggleBillingCycle = async () => {
@@ -276,8 +336,8 @@ export default function SettingsPlan() {
 
     if (error) return <p style={{ color: 'red' }}>{error}</p>;
 
-    const currentPlan = plans[formData.subscription.currentPlan]
-        ? formData.subscription.currentPlan
+    const currentPlan = plans[formData.subscription.tier]
+        ? formData.subscription.tier
         : 'free';
     const billingCycle = formData.subscription.billingCycle;
 
@@ -404,13 +464,60 @@ export default function SettingsPlan() {
                                     disabled={isCurrentPlan || isChangingPlan}
                                     className={`SettingsPlan-plan-button ${isCurrentPlan ? 'current-plan-button' : ''}`}
                                 >
-                                    {isCurrentPlan ? 'Current Plan' : planKey === 'free' ? 'Downgrade' : 'Upgrade'}
+                                    {isCurrentPlan ? 'Selected' : planKey === 'free' ? 'Downgrade' : 'Upgrade'}
                                 </button>
                             </div>
                         );
                     })}
                 </div>
             </div>
+
+            {/* Custom Modal */}
+            {modal.isOpen && (
+                <div className="SettingsPlan-modal-overlay" onClick={modal.onCancel}>
+                    <div className="SettingsPlan-modal" onClick={(e) => e.stopPropagation()}>
+                        <button className="SettingsPlan-modal-close" onClick={modal.onCancel}>
+                            <X size={20} />
+                        </button>
+
+                        <div className="SettingsPlan-modal-icon">
+                            {modal.icon === 'success' && <CheckCircle size={48} className="icon-success" />}
+                            {modal.icon === 'error' && <AlertCircle size={48} className="icon-error" />}
+                            {modal.icon === 'alert' && <AlertCircle size={48} className="icon-alert" />}
+                        </div>
+
+                        <h3 className="SettingsPlan-modal-title">{modal.title}</h3>
+                        <p className="SettingsPlan-modal-message">{modal.message}</p>
+
+                        <div className="SettingsPlan-modal-buttons">
+                            {modal.type === 'confirm' && (
+                                <>
+                                    <button
+                                        className="SettingsPlan-modal-btn-secondary"
+                                        onClick={modal.onCancel}
+                                    >
+                                        {modal.cancelText}
+                                    </button>
+                                    <button
+                                        className="SettingsPlan-modal-btn-primary"
+                                        onClick={modal.onConfirm}
+                                    >
+                                        {modal.confirmText}
+                                    </button>
+                                </>
+                            )}
+                            {modal.type === 'alert' && (
+                                <button
+                                    className="SettingsPlan-modal-btn-primary"
+                                    onClick={modal.onConfirm}
+                                >
+                                    {modal.confirmText}
+                                </button>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

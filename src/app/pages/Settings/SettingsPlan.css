@@ -213,7 +213,9 @@
 
 .SettingsPlan-plan-card.current {
     border-color: #667eea;
-    background-color: #f9fafb;
+    background: linear-gradient(135deg, #f0f4ff 0%, #f9fafb 100%);
+    box-shadow: 0 4px 16px rgba(102, 126, 234, 0.2);
+    border-width: 3px;
 }
 
 .SettingsPlan-plan-card.popular {
@@ -346,6 +348,151 @@
     box-shadow: none;
 }
 
+/* Custom Modal */
+.SettingsPlan-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    backdrop-filter: blur(4px);
+    animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.SettingsPlan-modal {
+    background: white;
+    border-radius: 16px;
+    padding: 2rem;
+    max-width: 440px;
+    width: 90%;
+    position: relative;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.SettingsPlan-modal-close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: #9ca3af;
+    padding: 0.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    transition: all 0.2s;
+}
+
+.SettingsPlan-modal-close:hover {
+    background-color: #f3f4f6;
+    color: #6b7280;
+}
+
+.SettingsPlan-modal-icon {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 1rem;
+}
+
+.icon-success {
+    color: #16a34a;
+}
+
+.icon-error {
+    color: #dc2626;
+}
+
+.icon-alert {
+    color: #f59e0b;
+}
+
+.SettingsPlan-modal-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #111827;
+    margin: 0 0 0.75rem 0;
+    text-align: center;
+    font-family: "Satoshi Bold", sans-serif;
+}
+
+.SettingsPlan-modal-message {
+    font-size: 0.9375rem;
+    color: #6b7280;
+    line-height: 1.6;
+    margin: 0 0 1.75rem 0;
+    text-align: center;
+    font-family: "DM Sans", sans-serif;
+}
+
+.SettingsPlan-modal-buttons {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: center;
+}
+
+.SettingsPlan-modal-btn-primary,
+.SettingsPlan-modal-btn-secondary {
+    padding: 0.75rem 1.75rem;
+    border-radius: 8px;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    font-family: "DM Sans", sans-serif;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none;
+    flex: 1;
+    max-width: 180px;
+}
+
+.SettingsPlan-modal-btn-primary {
+    background-color: #667eea;
+    color: white;
+}
+
+.SettingsPlan-modal-btn-primary:hover {
+    background-color: #5568d3;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.SettingsPlan-modal-btn-secondary {
+    background-color: #f3f4f6;
+    color: #374151;
+    border: 1px solid #e5e7eb;
+}
+
+.SettingsPlan-modal-btn-secondary:hover {
+    background-color: #e5e7eb;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
     .SettingsPlan-field-row {
@@ -369,5 +516,19 @@
 
     .SettingsPlan-plans-grid {
         grid-template-columns: 1fr;
+    }
+
+    .SettingsPlan-modal {
+        padding: 1.5rem;
+        width: 95%;
+    }
+
+    .SettingsPlan-modal-buttons {
+        flex-direction: column;
+    }
+
+    .SettingsPlan-modal-btn-primary,
+    .SettingsPlan-modal-btn-secondary {
+        max-width: 100%;
     }
 }
