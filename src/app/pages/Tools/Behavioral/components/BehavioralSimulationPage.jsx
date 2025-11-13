@@ -16,7 +16,7 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { useNavigate } from "react-router-dom";
 
 
-const InterviewQuestions = ({questions}) => {
+const InterviewQuestions = ({questions, interviewerDifficulty}) => {
     const containerRef = useRef(null);
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
     const [isRecording, setIsRecording] = useState(false);
@@ -367,7 +367,8 @@ const InterviewQuestions = ({questions}) => {
             questionText: questions[questionIndexAtRecordingStart],
             recordedTime: recordTime,
             audioData: base64Audio,
-            mimetype: audioBlob.type || "audio/webm" // Use actual blob type
+            mimetype: audioBlob.type || "audio/webm", // Use actual blob type
+            interviewerDifficulty: interviewerDifficulty || 'easy-going-personality'
         };
 
         console.log('Payload size:', JSON.stringify(payload).length);

@@ -66,7 +66,17 @@ export default function SettingsProfile() {
     };
 
     const sections = Object.keys(formData)
-    .filter((sectionKey) => sectionKey !== 'userId' && sectionKey !== 'resume' && sectionKey !== 'passwordLength' && sectionKey !== 'onboardingCompleted' && sectionKey !== 'notificationPreferences' && sectionKey !== 'personalInformation' && sectionKey !== 'subscription' && sectionKey !== 'billingInformation')
+    .filter((sectionKey) =>
+        sectionKey !== 'userId' &&
+        sectionKey !== 'resume' &&
+        sectionKey !== 'passwordLength' &&
+        sectionKey !== 'onboardingCompleted' &&
+        sectionKey !== 'notificationPreferences' &&
+        sectionKey !== 'personalInformation' &&
+        sectionKey !== 'subscription' &&
+        sectionKey !== 'billingInformation' &&
+        !sectionKey.toLowerCase().includes('stripe')
+    )
     .map((sectionKey) => {
         const sectionData = formData[sectionKey] || {};
 

@@ -312,25 +312,25 @@ export default function InterviewResults() {
                         newUrl.searchParams.delete('refresh');
                         window.history.replaceState({}, '', newUrl.toString());
                     }
-                    
+
                     // Calculate recorded times for backward compatibility
                     const responses = result.data.responses || [];
                     // Filter out null responses and map to times array
-                    const validResponses = Array.isArray(responses) 
+                    const validResponses = Array.isArray(responses)
                         ? responses.filter(response => response !== null && response !== undefined)
                         : Object.values(responses).filter(response => response !== null && response !== undefined);
-                    
+
                     const times = validResponses.map((data, index) => ({
                         questionNumber: data?.questionNumber || (index + 1),
                         recordedTime: data?.recordedTime || null,
                     }));
 
                     setRecordedTimes(times);
-                    
+
                     if (times.length > 0) {
                         const timesArray = times.map(t => t.recordedTime || 0);
                         const avgSeconds = timesArray.reduce((acc, curr) => acc + curr, 0) / timesArray.length;
-                        
+
                         const totalSeconds = Math.round(avgSeconds);
                         const minutes = Math.floor(totalSeconds / 60);
                         const seconds = String(totalSeconds % 60).padStart(2, "0");
@@ -354,47 +354,47 @@ export default function InterviewResults() {
     // Process real interview data into the expected format
     const processInterviewData = (data) => {
         if (!data || !data.responses) return {};
-        
+
         const processedData = {};
-        
+
         // Filter out null responses and convert array to entries
         const validResponses = data.responses.filter(response => response !== null && response !== undefined);
-        
+
         validResponses.forEach((response, index) => {
             // Use the response's questionNumber if available, otherwise use 1-based index
             const questionNumber = response?.questionNumber || (index + 1);
             const analysis = response?.analysis || {};
-            
-            // Calculate performance score using the existing function
+
+            // Extract action words and stats from transcript first
+            const transcript = response?.transcript || "";
+            const actionWordsList = extractActionWords(transcript);
+            const fillerWordsList = extractFillerWords(transcript);
+            const statsUsedList = extractStats(transcript);
+
+            // Calculate performance score using the existing function with extracted metrics
             const score = calculatePerformanceScoreDiminishing({
                 starAnswerParsed: analysis?.starAnswerParsed,
                 responseTime: response.recordedTime || 0,
                 wordCount: analysis?.totalWords || 0,
-                fillerWords: analysis?.fillerWordCount || 0,
-                actionWords: 0,
-                statsUsed: 0,
+                fillerWords: fillerWordsList.length,
+                actionWords: actionWordsList.length,
+                statsUsed: statsUsedList.length,
                 interviewerDifficulty: data?.interviewerDifficulty || response?.interviewerDifficulty || 'easy-going-personality'
             });
 
-            // Extract action words and stats from transcript
-            const transcript = response?.transcript || "";
-            const actionWordsList = extractActionWords(transcript);
-            const fillerWordsList = extractFillerWords(transcript);
-            const statsUsed = extractStats(transcript);
-            
             processedData[questionNumber] = {
                 question: response?.questionText || `Question ${questionNumber}`,
                 responseTime: analysis?.recordedTime || 0,
                 wordCount: analysis?.totalWords || 0,
                 fillerWords: fillerWordsList.length,
                 actionWords: actionWordsList.length,
-                statsUsed: statsUsed.length,
+                statsUsed: statsUsedList.length,
                 transcript: transcript,
                 questionTypes: analysis?.questionTypes,
                 fillerWordsList: fillerWordsList,
                 actionWordsList: actionWordsList,
                 score: score,
-                strengths: analysis?.strengths || generateStrengths(analysis, actionWordsList.length, statsUsed.length),
+                strengths: analysis?.strengths || generateStrengths(analysis, actionWordsList.length, statsUsedList.length),
                 improvements:  analysis?.improvements || generateImprovements(analysis),
                 tips: analysis?.tips ||generateTips(analysis),
                 improvedResponse: analysis?.improvedResponse,
@@ -402,7 +402,7 @@ export default function InterviewResults() {
                 starAnswerParsedImproved: analysis?.starAnswerParsedImproved
             };
         });
-        
+
         return processedData;
     };
 

@@ -27,9 +27,183 @@ function extractQuestions(text, maxQuestions = 10) {
     .map(q => q.trim())
     .filter(q => q.length > 10)
     .slice(0, maxQuestions);
-    
+
   console.log(`Extracted ${questions.length} questions (max: ${maxQuestions})`);
   return questions;
+}
+
+// Helper function to extract action words from transcript
+function extractActionWords(text) {
+  const commonActionWords = [
+    "achieved", "analyzed", "built", "collaborated", "created", "delivered", "developed",
+    "directed", "implemented", "improved", "increased", "led", "managed", "organized",
+    "resolved", "worked", "decided", "approached", "mentored", "refactored", "organize",
+    "resolve", "work", "decide", "approach", "mentor", "implement", "refactor", "develop",
+    "deliver", "achieve", "analyze", "build", "collaborate", "create", "direct"
+  ];
+
+  const words = text.toLowerCase().match(/\b\w+\b/g) || [];
+  return commonActionWords.filter(actionWord => words.includes(actionWord));
+}
+
+// Helper function to extract filler words from transcript
+function extractFillerWords(text) {
+  const commonFillerWords = [
+    "um", "uh", "uhm", "hmm", "like", "you know", "actually", "i think", "guess",
+    "basically", "literally", "so", "well", "kind of", "sort of", "maybe",
+    "er", "ah", "huh", "right", "okay", "alright", "just", "anyway", "I mean",
+    "sorta", "kinda", "like I said", "you see", "as I said", "or something",
+    "if that makes sense", "you know what I mean", "let's see", "so yeah", "so basically"
+  ];
+
+  const words = text.toLowerCase().match(/\b\w+\b/g) || [];
+  return commonFillerWords.filter(fillerWord => words.includes(fillerWord));
+}
+
+// Helper function to extract statistics/numbers from transcript
+function extractStats(text) {
+  const numberPattern = /\b\d+(?:\.\d+)?(?:%|percent|million|billion|thousand|k|m|b)?\b/gi;
+  return text.match(numberPattern) || [];
+}
+
+// Helper function for harmonic points calculation
+function harmonicPoints(count) {
+  let points = 0;
+  for (let i = 1; i <= count; i++) {
+    points += 1 / i;
+  }
+  return points;
+}
+
+// Calculate performance score using diminishing returns algorithm
+function calculatePerformanceScore({starAnswerParsed, responseTime, wordCount, fillerWords, actionWords, statsUsed, interviewerDifficulty = 'easy-going-personality'}) {
+  // Input validation
+  if (!starAnswerParsed || !responseTime || !wordCount || fillerWords < 0 || actionWords < 0 || statsUsed < 0) {
+    return 0;
+  }
+
+  // Hard penalize little to no response
+  if (wordCount < 10) {
+    return Math.round((wordCount * 1.5) * 0.6);
+  }
+
+  let score = 100;
+
+  // Difficulty multipliers
+  const getDifficultyMultipliers = (difficulty) => {
+    switch (difficulty) {
+      case 'challenging-personality':
+        return { penaltyMultiplier: 1.4, bonusMultiplier: 0.8, baseThreshold: 0.9 };
+      case 'moderate-personality':
+        return { penaltyMultiplier: 1.2, bonusMultiplier: 0.9, baseThreshold: 0.95 };
+      case 'easy-going-personality':
+      default:
+        return { penaltyMultiplier: 1.0, bonusMultiplier: 1.0, baseThreshold: 1.0 };
+    }
+  };
+
+  const { penaltyMultiplier, bonusMultiplier, baseThreshold } = getDifficultyMultipliers(interviewerDifficulty);
+
+  // Penalize extremely long response
+  if (responseTime > 300) {
+    score -= Math.min((responseTime - 300) * 0.05 * penaltyMultiplier, 10 * penaltyMultiplier);
+  }
+
+  // Response time penalty
+  const minResponseTime = 20 * baseThreshold;
+  if (responseTime < minResponseTime) {
+    const deduction = Math.min((60 - responseTime) * 0.2 * penaltyMultiplier, 12 * penaltyMultiplier);
+    score -= deduction;
+  }
+
+  // Word count penalty
+  const minWordCount = 50 * baseThreshold;
+  if (wordCount < minWordCount) {
+    const deduction = Math.min((100 - wordCount) * 0.07 * penaltyMultiplier, 7 * penaltyMultiplier);
+    score -= deduction;
+  }
+
+  // Filler words penalty
+  if (wordCount > 0) {
+    const ratio = fillerWords / wordCount;
+    const fillerThreshold = 0.05 * baseThreshold;
+    if (ratio > fillerThreshold) {
+      const excess = ratio - fillerThreshold;
+      const deduction = Math.min(Math.pow(excess * 100, 1.2) * penaltyMultiplier, 15 * penaltyMultiplier);
+      score -= deduction;
+    }
+  }
+
+  // Long response penalty
+  if (wordCount > 300) {
+    const deduction = Math.min((wordCount - 300) * 0.05 * penaltyMultiplier, 5 * penaltyMultiplier);
+    score -= deduction;
+  }
+
+  // Action words points
+  score += harmonicPoints(actionWords) * 1.2 * bonusMultiplier;
+
+  // Stats used points
+  score += harmonicPoints(statsUsed) * bonusMultiplier;
+
+  // Time efficiency bonus
+  if (responseTime >= 60 && responseTime <= 180) {
+    const bonus = ((responseTime - 60) / (180 - 60)) * 5 * bonusMultiplier;
+    score += bonus;
+  }
+
+  // Words per second consistency penalty
+  const wordsPerSecond = wordCount / responseTime;
+  if (wordsPerSecond < 1) {
+    score -= Math.min((1 - wordsPerSecond) * 20 * penaltyMultiplier, 10 * penaltyMultiplier);
+  } else if (wordsPerSecond > 4) {
+    score -= Math.min((wordsPerSecond - 4) * 10 * penaltyMultiplier, 10 * penaltyMultiplier);
+  }
+
+  // Cap score between 0 and 100
+  score = Math.max(0, Math.min(100, score));
+
+  // Scale score to be out of 60
+  score = Math.round(score * 0.6);
+
+  // Calculate STAR component scores
+  let situationScore = starAnswerParsed.situation ? 10 : 0;
+  if (starAnswerParsed.situation) {
+    const situationWordCount = starAnswerParsed.situation.trim().split(/\s+/).length;
+    if (situationWordCount < 20) {
+      situationScore -= (20 - situationWordCount);
+      situationScore = Math.max(situationScore, 0);
+    }
+  }
+
+  let taskScore = starAnswerParsed.task ? 10 : 0;
+  if (starAnswerParsed.task) {
+    const taskWordCount = starAnswerParsed.task.trim().split(/\s+/).length;
+    if (taskWordCount < 20) {
+      taskScore -= (20 - taskWordCount);
+      taskScore = Math.max(taskScore, 0);
+    }
+  }
+
+  let actionScore = starAnswerParsed.action ? 10 : 0;
+  if (starAnswerParsed.action) {
+    const actionWordCount = starAnswerParsed.action.trim().split(/\s+/).length;
+    if (actionWordCount < 20) {
+      actionScore -= (20 - actionWordCount);
+      actionScore = Math.max(actionScore, 0);
+    }
+  }
+
+  let resultScore = starAnswerParsed.result ? 10 : 0;
+  if (starAnswerParsed.result) {
+    const resultWordCount = starAnswerParsed.result.trim().split(/\s+/).length;
+    if (resultWordCount < 20) {
+      resultScore -= (20 - resultWordCount);
+      resultScore = Math.max(resultScore, 0);
+    }
+  }
+
+  return score + situationScore + taskScore + actionScore + resultScore;
 }
 
 const verifyRecaptcha = functions.https.onRequest(async (req, res) => {
@@ -372,7 +546,7 @@ const saveResponse = functions.https.onRequest((req, res) => {
         return res.status(405).json({ error: "Method not allowed" });
       }
 
-      const { userId, sessionId, questionNumber, questionText, recordedTime, audioData, mimetype } = req.body;
+      const { userId, sessionId, questionNumber, questionText, recordedTime, audioData, mimetype, interviewerDifficulty } = req.body;
       
       if (!userId || !sessionId || questionNumber === undefined || !audioData) {
         return res.status(400).json({ 
@@ -546,6 +720,26 @@ const saveResponse = functions.https.onRequest((req, res) => {
       const durationSeconds = recordedTime / 1000;
       const wordsPerMinute = durationSeconds > 0 ? Math.round((totalWords / durationSeconds) * 60) : 0;
 
+      // Extract action words, filler words, and stats from transcript
+      const actionWordsList = extractActionWords(transcript);
+      const fillerWordsList = extractFillerWords(transcript);
+      const statsUsedList = extractStats(transcript);
+
+      console.log(`Metrics extracted - Action words: ${actionWordsList.length}, Filler words: ${fillerWordsList.length}, Stats: ${statsUsedList.length}`);
+
+      // Calculate overall performance score
+      const overallScore = calculatePerformanceScore({
+        starAnswerParsed: starAnswerParsed || {},
+        responseTime: durationSeconds,
+        wordCount: totalWords,
+        fillerWords: fillerWordsList.length,
+        actionWords: actionWordsList.length,
+        statsUsed: statsUsedList.length,
+        interviewerDifficulty: interviewerDifficulty || 'easy-going-personality'
+      });
+
+      console.log(`Overall score calculated: ${overallScore}`);
+
       // Prepare response data
       const responseData = {
         questionNumber: parseInt(questionNumber),
@@ -560,7 +754,11 @@ const saveResponse = functions.https.onRequest((req, res) => {
           tips: tips || [],
           starAnswerParsed: starAnswerParsed || {},
           starAnswerParsedImproved: starAnswerParsedImproved || {},
-          improvedResponse: improvedResponse || null
+          improvedResponse: improvedResponse || null,
+          overallScore: overallScore,
+          actionWordCount: actionWordsList.length,
+          fillerWordCount: fillerWordsList.length,
+          statsUsedCount: statsUsedList.length
         },
         recordedTime: recordedTime || 0,
         timestamp: admin.database.ServerValue.TIMESTAMP,

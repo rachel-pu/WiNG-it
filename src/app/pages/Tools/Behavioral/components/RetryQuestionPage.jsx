@@ -31,6 +31,7 @@ const RetryQuestionPage = () => {
     const [userId, setUserId] = useState("");
     const [questionNumber, setQuestionNumber] = useState(null);
     const [questionText, setQuestionText] = useState("");
+    const [interviewerDifficulty, setInterviewerDifficulty] = useState("easy-going-personality");
     const [loading, setLoading] = useState(true);
     const [alertMessage, setAlertMessage] = useState("");
     const [alertSeverity, setAlertSeverity] = useState("info");
@@ -56,11 +57,15 @@ const RetryQuestionPage = () => {
         const userIdParam = searchParams.get("userId");
         const sessionIdParam = searchParams.get("sessionId");
         const questionNumberParam = searchParams.get("questionNumber");
+        const interviewerDifficultyParam = searchParams.get("interviewerDifficulty");
 
         if (userIdParam && sessionIdParam && questionNumberParam) {
             setUserId(userIdParam);
             setSessionId(sessionIdParam);
             setQuestionNumber(parseInt(questionNumberParam));
+            if (interviewerDifficultyParam) {
+                setInterviewerDifficulty(interviewerDifficultyParam);
+            }
         }
     }, [searchParams]);
 
@@ -356,7 +361,8 @@ const RetryQuestionPage = () => {
                 recordedTime: recordTime,
                 audioData: base64Audio,
                 mimetype: audioBlob.type || "audio/webm",
-                isRetry: true
+                isRetry: true,
+                interviewerDifficulty: interviewerDifficulty || 'easy-going-personality'
             };
 
             console.log("Sending audio for transcription...");
