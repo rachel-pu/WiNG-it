@@ -11,6 +11,7 @@ const Statistics = () => {
   const [loading, setLoading] = useState(true);
   const [behavioralData, setBehavioralData] = useState(null);
   const [expandedSessions, setExpandedSessions] = useState({});
+  const [notification, setNotification] = useState('');
 
   // Get user ID from cookie
   useEffect(() => {
@@ -59,6 +60,14 @@ const Statistics = () => {
 
         const allResponses = responsesSnapshot.val();
         console.log('All responses data:', allResponses);
+
+        const userTierSnapshot = await get(ref(database, `userTiers/free/${userId}`));
+
+        if (userTierSnapshot.exists()) {
+          setNotification("Interviews older than 30 days will be deleted. Upgrade to Pro or Premium to retain all sessions.");
+        }
+
+        setLoading(false);
 
         // Filter responses by userId and group by sessionId
         const sessionMap = {};
@@ -316,7 +325,9 @@ const Statistics = () => {
       <div className="statistics-page">
         <div className="statistics-header">
           <h1>Your Statistics</h1>
-          <p>Track your progress and performance in behavioral interviews</p>
+          <p>
+            {notification ? notification : "Track your progress and performance in behavioral interview simulations"}
+          </p>
         </div>
 
         <div className="statistics-content">
