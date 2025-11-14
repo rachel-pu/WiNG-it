@@ -3,24 +3,24 @@ import Box from '@mui/material/Box';
 import {Typography} from "@mui/material";
 import { useNavigate } from 'react-router-dom';
 
-export default function Footer() {
+export default function Footer({ position = 'absolute' , textColor= 'rgba(255, 255, 255, 0.7)'} ) {
     const navigate = useNavigate();
 
     return (
         <Box
             sx={{
-                position: 'absolute',
+                position: position,
                 bottom: 20,
                 left: 0,
                 width: '100%',
                 textAlign: 'center',
-                color: 'rgba(255, 255, 255, 0.7)',
-                fontFamily: 'DM Sans, sans-serif',
+                color: textColor,
+                fontFamily: 'Satoshi, sans-serif',
                 fontSize: '0.9rem',
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
-                gap: '8px',
+                gap: '8px'
             }}
         >
             <Box sx={{ display: 'flex', gap: '24px', alignItems: 'center' }}>
@@ -43,6 +43,14 @@ export default function Footer() {
                 >
                     Privacy Policy
                 </Typography>
+                
+                <Typography
+                    component="span"
+                    onClick={() => navigate('/pricing', { state: { previousRoute: window.location.pathname }})}
+                    sx={{ '&:hover': { color: 'white' }, cursor: 'pointer' }}
+                >
+                    Pricing
+                </Typography>
 
                 <Typography
                     component="span"
@@ -60,8 +68,9 @@ export default function Footer() {
                     display: 'block',
                     marginTop: '8px',
                     fontSize: '0.75rem',
-                    color: '#dddadaff',
-                    textAlign: 'center'
+                    color: textColor,
+                    textAlign: 'center',
+                    fontFamily: 'Satoshi'
                 }}
             >
                 This site is protected by reCAPTCHA and the Google{' '}

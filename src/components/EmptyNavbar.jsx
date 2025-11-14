@@ -54,61 +54,6 @@ export default function HomePagenNavbar() {
                                     p: 1
                                 }}
                             >
-                                <Button
-                                    color="inherit"
-                                    sx={{
-                                        fontSize: '1.05rem',
-                                        fontFamily: 'Satoshi Bold',
-                                        textTransform: 'none',
-                                        color: 'black',
-                                        letterSpacing: '-0.01px',
-                                        px: 2,
-                                    }}
-                                >
-                                    <Link
-                                        activeClass="active"
-                                        to="why-wing-it"
-                                        offset={-50}
-                                        duration={500}
-                                        style={{
-                                            fontSize: '1.05rem',
-                                            fontFamily: 'Satoshi Medium',
-                                            textTransform: 'none',
-                                            color: 'black',
-                                            letterSpacing: '-0.01px',
-                                        }}
-                                    >
-                                        Why WiNG.it
-                                    </Link>
-                                </Button>
-
-                                <Button
-                                    color="inherit"
-                                    sx={{
-                                        fontSize: '1.05rem',
-                                        fontFamily: 'Satoshi Medium',
-                                        textTransform: 'none',
-                                        color: 'black',
-                                        letterSpacing: '-0.01px',
-                                        px: 2,
-                                    }}
-                                >
-                                    <Link
-                                        activeClass="active"
-                                        to="about-us"
-                                        offset={-50}
-                                        duration={500}
-                                        style={{
-                                            fontSize: '1.05rem',
-                                            fontFamily: 'Satoshi Medium',
-                                            textTransform: 'none',
-                                            color: 'black',
-                                            letterSpacing: '-0.01px',
-                                        }}
-                                    >
-                                        Our Story
-                                    </Link>
-                                </Button>
 
                                 <Button
                                     color="inherit"
@@ -155,28 +100,6 @@ export default function HomePagenNavbar() {
 
                     {/* desktop navigation on the right */}
                     <Box sx={{ display: { xs: 'none', md: 'flex' }, gap:1.5}}>
-                        <Button color='inherit' sx={{fontSize: '1.05rem', fontFamily: 'Satoshi Bold', textTransform: 'none', color:  'black', letterSpacing: '-0.01px', borderRadius: '12px', paddingX: 2, '&:hover': { backgroundColor: 'rgba(40, 80, 217, 0.08)' }}}>
-                            <Link
-                                activeClass="active"
-                                to="why-wing-it"
-                                offset={-50}
-                                duration={500}
-                                style={{fontSize: '1.05rem', fontFamily: 'Satoshi Bold', textTransform: 'none', color: 'black', letterSpacing: '-0.01px', borderRadius: '12px', paddingX: 2 }}
-                            >
-                                Why WiNG.it
-                            </Link>
-                        </Button>
-                        <Button color='inherit' sx={{fontSize: '1.05rem', fontFamily: 'Satoshi Bold', textTransform: 'none', color: 'black', letterSpacing: '-0.01px',borderRadius: '12px',paddingX: 2, '&:hover': { backgroundColor: 'rgba(40, 80, 217, 0.08)' }}}>
-                            <Link
-                                activeClass="active"
-                                to="about-us"
-                                offset={-50}
-                                duration={500}
-                                style={{ fontSize: '1.05rem', fontFamily: 'Satoshi Bold', textTransform: 'none', color: 'black', letterSpacing: '-0.01px', borderRadius: '12px', paddingX: 2 }}
-                            >
-                                Our Story
-                            </Link>
-                        </Button>
                         <Button 
                             color='inherit' 
                             href='/signin'

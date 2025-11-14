@@ -3,6 +3,7 @@ import Home from './app/pages/Home/Home.jsx';
 import SettingsPage from './app/pages/Settings/SettingsPage.jsx';
 import Signin from './app/pages/Auth/Signin/Signin.jsx';
 import Signup from './app/pages/Auth/Signup/Signup.jsx';
+import Pricing from './app/pages/Pricing/Pricing.jsx';
 import Onboarding from './app/pages/Auth/Onboarding/Onboarding.jsx';
 import Dashboard from './app/pages/Dashboard/Dashboard.jsx';
 import Behavioral from './app/pages/Tools/Behavioral/Behavioral.jsx';
@@ -40,6 +41,13 @@ function App() {
           element={
             <PublicRoute>
               <Signup />
+            </PublicRoute>
+          }
+        />
+        <Route path="/pricing"
+          element={
+            <PublicRoute>
+              <Pricing />
             </PublicRoute>
           }
         />

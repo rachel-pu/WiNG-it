@@ -1,0 +1,241 @@
+.PricingPlan-container {
+  background: linear-gradient(135deg, #F3F1EA 0%, #E8E6D9 100%);
+  padding: 60px 20px;
+  font-family: 'Satoshi ', sans-serif;
+}
+
+.PricingPlan-header {
+  text-align: center;
+  margin-bottom: 60px;
+  max-width: 700px;
+  margin: 0 auto 60px;
+}
+
+.PricingPlan-title {
+  font-size: 3rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 16px;
+  letter-spacing: -0.02em;
+}
+
+.PricingPlan-subtitle {
+  font-size: 1.125rem;
+  color: #64748b;
+  line-height: 1.6;
+}
+
+.PricingPlan-cardsContainer {
+  display: flex;
+  gap: 24px;
+  justify-content: center;
+  flex-wrap: wrap;
+  max-width: 1200px;
+  margin: 0 auto 80px;
+  padding: 0 20px;
+}
+
+.PricingPlan-card {
+  background: rgb(243, 241, 241);
+  border-radius: 20px;
+  padding: 32px;
+  width: 320px;
+  position: relative;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05), 0 10px 20px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+  border: 1px solid #e2e8f0;
+  cursor: pointer;
+}
+
+.PricingPlan-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
+}
+
+.PricingPlan-popularCard {
+  transform: scale(1.05);
+  border: 2px solid #667eea;
+  box-shadow: 0 10px 30px rgba(102, 126, 234, 0.2), 0 20px 40px rgba(0, 0, 0, 0.1);
+}
+
+.PricingPlan-popularCard:hover {
+  transform: scale(1.05) translateY(-5px);
+}
+
+.PricingPlan-popularBadge {
+  position: absolute;
+  top: -12px;
+  right: 20px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.PricingPlan-cardHeader {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.PricingPlan-iconWrapper {
+  width: 64px;
+  height: 64px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 20px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+.PricingPlan-planName {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #1a202c;
+  margin-bottom: 8px;
+}
+
+.PricingPlan-planDescription {
+  font-size: 0.95rem;
+  color: #64748b;
+  margin-bottom: 20px;
+}
+
+.PricingPlan-priceContainer {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 4px;
+}
+
+.PricingPlan-currency {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #475569;
+}
+
+.PricingPlan-price {
+  font-size: 3rem;
+  font-weight: 800;
+  color: #1a202c;
+  line-height: 1;
+}
+
+.PricingPlan-period {
+  font-size: 1rem;
+  color: #64748b;
+}
+
+.PricingPlan-featuresList {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 32px 0;
+}
+
+.PricingPlan-featureItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 14px;
+  font-size: 0.95rem;
+  color: #475569;
+  line-height: 1.5;
+}
+
+.PricingPlan-checkIcon {
+  color: #10b981;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.PricingPlan-comparisonSection {
+  max-width: 1000px;
+  margin: 0 auto;
+  background: rgb(243, 241, 241);
+  border-radius: 20px;
+  padding: 40px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05), 0 10px 20px rgba(0, 0, 0, 0.05);
+}
+
+.PricingPlan-comparisonTitle {
+  font-size: 2rem;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 32px;
+  color: #1a202c;
+}
+
+.PricingPlan-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.PricingPlan-tableHeaderFirst {
+  padding: 16px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: #1a202c;
+
+  border-bottom: 2px solid #e2e8f0;
+  border-top-left-radius: 12px;
+}
+
+.PricingPlan-tableHeader {
+  padding: 16px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: #1a202c;
+  
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.PricingPlan-tableFeature {
+  padding: 16px;
+  font-weight: 500;
+  color: #475569;
+  border-bottom: 1px solid #e2e8f0;
+  vertical-align: middle;
+}
+
+.PricingPlan-tableCell {
+  padding: 16px;
+  text-align: left;
+  color: #64748b;
+  border-bottom: 1px solid #e2e8f0;
+  vertical-align: middle;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+  .PricingPlan-title {
+    font-size: 2rem;
+  }
+
+  .PricingPlan-cardsContainer {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .PricingPlan-popularCard {
+    transform: scale(1);
+  }
+
+  .PricingPlan-comparisonSection {
+    padding: 20px;
+  }
+
+  .PricingPlan-comparisonTitle {
+    font-size: 1.5rem;
+  }
+}
