@@ -24,7 +24,6 @@ const SignUp = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const navigate = useNavigate();
-  const defaultTier = "tier1";
   const RECAPTCHA_SITE_KEY = import.meta.env.VITE_GOOGLE_RECAPTCHA_SITE_KEY;
 
   useEffect(() => {
@@ -162,7 +161,7 @@ const SignUp = () => {
             notificationPreferences: {}
           });
 
-        await update(ref(database, `userTiers/${defaultTier}`), {
+        await update(ref(database, `userTiers/free`), {
           [data.user.id]: true
         });
 

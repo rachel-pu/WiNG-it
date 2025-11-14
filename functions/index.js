@@ -1239,6 +1239,7 @@ const cancelSubscription = functions.https.onRequest((req, res) => {
   });
 });
 
+
 module.exports = {
   generateQuestions,
   generateResumeQuestions,

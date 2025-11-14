@@ -26,6 +26,9 @@ export const saveResponse = httpsCallable(functions, 'saveResponse');
 export const getInterviewResults = httpsCallable(functions, 'getInterviewResults');
 export const verifyRecaptcha = httpsCallable(functions, 'verifyRecaptcha');
 export const cleanupOldTier1Interviews = httpsCallable(functions, 'cleanupOldTier1Interviews');
+export const createCheckoutSession = httpsCallable(functions, 'createCheckoutSession');
+export const stripeWebhook = httpsCallable(functions, 'stripeWebhook');
+export const cancelSubscription = httpsCallable(functions, 'cancelSubscription');
 
 export async function uploadResume(userId, file) {
   try {
