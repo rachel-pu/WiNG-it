@@ -42,6 +42,7 @@ jobs:
           VITE_STRIPE_PRICE_PRO_ANNUAL: ${{ secrets.VITE_STRIPE_PRICE_PRO_ANNUAL }}
           VITE_STRIPE_PRICE_PREMIUM_MONTHLY: ${{ secrets.VITE_STRIPE_PRICE_PREMIUM_MONTHLY }}
           VITE_STRIPE_PRICE_PREMIUM_ANNUAL: ${{ secrets.VITE_STRIPE_PRICE_PREMIUM_ANNUAL }}
+          VITE_FIREBASE_FUNCTIONS_URL: ${{ secrets.VITE_FIREBASE_FUNCTIONS_URL }}
 
           NODE_ENV: production
         run: rm -rf dist && npm run build
