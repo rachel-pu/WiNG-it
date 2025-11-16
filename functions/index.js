@@ -1203,10 +1203,30 @@ const cancelSubscription = functions.https.onRequest((req, res) => {
         return res.status(405).json({ error: 'Method Not Allowed' });
       }
 
+      // Verify auth token
+      const authHeader = req.headers.authorization;
+      if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        return res.status(401).json({ error: 'Unauthorized - No auth token provided' });
+      }
+
+      const idToken = authHeader.split('Bearer ')[1];
+      let decodedToken;
+      try {
+        decodedToken = await admin.auth().verifyIdToken(idToken);
+      } catch (authError) {
+        console.error('Auth verification failed:', authError);
+        return res.status(401).json({ error: 'Unauthorized - Invalid auth token' });
+      }
+
       const { userId } = req.body;
 
       if (!userId) {
         return res.status(400).json({ error: 'Missing userId' });
+      }
+
+      // Verify the authenticated user matches the userId
+      if (decodedToken.uid !== userId) {
+        return res.status(403).json({ error: 'Forbidden - User ID mismatch' });
       }
 
       const userRef = db.ref(`users/${userId}/subscription`);
