@@ -1191,12 +1191,22 @@ async function handleInvoicePaymentFailed(invoice) {
 }
 
 // Cancel Subscription
-const cancelSubscription = functions.https.onCall(async (data, context) => {
+const cancelSubscription = functions.https.onRequest((req, res) => {
+  console.log("Cancelling subscription...");
+  return cors(req, res, async () => {
     try {
-      const { userId } = data;
+      if (req.method === "OPTIONS") {
+        return res.status(204).send("");
+      }
+
+      if (req.method !== 'POST') {
+        return res.status(405).json({ error: 'Method Not Allowed' });
+      }
+
+      const { userId } = req.body;
 
       if (!userId) {
-        throw new functions.https.HttpsError('invalid-argument', 'Missing userId');
+        return res.status(400).json({ error: 'Missing userId' });
       }
 
       const userRef = db.ref(`users/${userId}/subscription`);
@@ -1204,7 +1214,7 @@ const cancelSubscription = functions.https.onCall(async (data, context) => {
       const subscriptionData = snapshot.val();
 
       if (!subscriptionData?.stripeSubscriptionId) {
-        throw new functions.https.HttpsError('not-found', 'No active subscription found');
+        return res.status(404).json({ error: 'No active subscription found' });
       }
 
       // Cancel at period end (user keeps access until end of billing period)
@@ -1217,12 +1227,13 @@ const cancelSubscription = functions.https.onCall(async (data, context) => {
         status: 'cancelled'
       });
 
-      return { success: true, message: 'Subscription will be cancelled at period end' };
+      return res.json({ success: true, message: 'Subscription will be cancelled at period end' });
 
     } catch (error) {
       console.error('Error cancelling subscription:', error);
-      throw new functions.https.HttpsError('internal', error.message);
+      return res.status(500).json({ error: error.message });
     }
+  });
 });
 
 
