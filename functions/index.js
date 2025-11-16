@@ -911,9 +911,13 @@ const cleanupOldTier1Interviews = onSchedule("every day 00:00", async (event) =>
 // Create Stripe Checkout Session
 const createCheckoutSession = functions.https.onCall(async (data, context) => {
     try {
+      console.log('createCheckoutSession called with data:', JSON.stringify(data));
+      console.log('context.auth:', context?.auth);
+
       const { userId, priceId, planName } = data;
 
       if (!userId || !priceId) {
+        console.error('Missing required fields. userId:', userId, 'priceId:', priceId);
         throw new functions.https.HttpsError('invalid-argument', 'Missing userId or priceId');
       }
 
