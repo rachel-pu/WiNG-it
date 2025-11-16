@@ -332,7 +332,7 @@ export default function SettingsPlan() {
     const currentPlan = plans[formData.subscription.tier]
         ? formData.subscription.tier
         : 'free';
-    const billingCycle = formData.subscription.billingCycle;
+    const billingCycle = formData.subscription.billingCycle || 'monthly';
 
     return (
         <div className="SettingsPlan-content">
