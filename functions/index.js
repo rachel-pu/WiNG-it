@@ -983,8 +983,9 @@ const createCheckoutSession = functions.https.onCall(async (data, context) => {
       return { sessionId: session.id, url: session.url };
 
     } catch (error) {
-      console.error('Error creating checkout session:', error);
-      throw new functions.https.HttpsError('internal', error.message);
+      console.error('Error creating checkout session:', error.message || 'Unknown error');
+      const errorMessage = error.message || 'Failed to create checkout session';
+      throw new functions.https.HttpsError('internal', errorMessage);
     }
 });
 
