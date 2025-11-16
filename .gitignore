@@ -39,3 +39,6 @@ next-env.d.ts
 #
 config/mercurial-idiom-451220-i3.jsonfunctions/.env
 firebase-debug.log
+
+# Firebase
+.firebase/

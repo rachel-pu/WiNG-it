@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { ref, get, update } from "firebase/database";
-import { database } from '../../../lib/firebase.jsx';
+import { database, createCheckoutSession, cancelSubscription } from '../../../lib/firebase.jsx';
 import { Check, Zap, Crown, Sparkles, AlertCircle, CheckCircle, X } from 'lucide-react';
 import { STRIPE_CONFIG } from '../../../config/stripe';
 import "./SettingsPlan.css";
@@ -194,15 +194,7 @@ export default function SettingsPlan() {
                     setIsChangingPlan(true);
                     try {
                         // Cancel the existing subscription through Firebase Function
-                        const response = await fetch(`${STRIPE_CONFIG.functionsUrl}/cancelSubscription`, {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ userId: formData.userId })
-                        });
-
-                        if (!response.ok) {
-                            throw new Error('Failed to cancel subscription');
-                        }
+                        await cancelSubscription({ userId: formData.userId });
 
                         setFormData(prev => ({
                             ...prev,
@@ -245,21 +237,13 @@ export default function SettingsPlan() {
                     }
 
                     // Create Stripe checkout session
-                    const response = await fetch(`${STRIPE_CONFIG.functionsUrl}/createCheckoutSession`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            userId: formData.userId,
-                            priceId: priceId,
-                            planName: newPlan
-                        })
+                    const result = await createCheckoutSession({
+                        userId: formData.userId,
+                        priceId: priceId,
+                        planName: newPlan
                     });
 
-                    if (!response.ok) {
-                        throw new Error('Failed to create checkout session');
-                    }
-
-                    const { url } = await response.json();
+                    const { url } = result.data;
 
                     // Redirect to Stripe checkout
                     window.location.href = url;
@@ -283,15 +267,7 @@ export default function SettingsPlan() {
             async () => {
                 setModal(prev => ({ ...prev, isOpen: false }));
                 try {
-                    const response = await fetch(`${STRIPE_CONFIG.functionsUrl}/cancelSubscription`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ userId: formData.userId })
-                    });
-
-                    if (!response.ok) {
-                        throw new Error('Failed to cancel subscription');
-                    }
+                    await cancelSubscription({ userId: formData.userId });
 
                     setFormData(prev => ({
                         ...prev,
