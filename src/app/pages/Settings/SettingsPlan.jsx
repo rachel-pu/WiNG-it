@@ -58,6 +58,23 @@ export default function SettingsPlan() {
         });
     };
 
+    // Check for success/cancel parameters from Stripe redirect
+    useEffect(() => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const success = urlParams.get('success');
+        const canceled = urlParams.get('canceled');
+
+        if (success === 'true') {
+            showAlert('Payment Successful!', 'Your subscription has been activated. Thank you for upgrading!', 'success');
+            // Clean up URL
+            window.history.replaceState({}, '', window.location.pathname + '?tab=plan');
+        } else if (canceled === 'true') {
+            showAlert('Payment Canceled', 'Your payment was canceled. No charges were made.', 'error');
+            // Clean up URL
+            window.history.replaceState({}, '', window.location.pathname + '?tab=plan');
+        }
+    }, []);
+
     const plans = {
         free: {
             name: 'Free',
