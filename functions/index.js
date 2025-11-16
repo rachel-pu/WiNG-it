@@ -909,21 +909,12 @@ const cleanupOldTier1Interviews = onSchedule("every day 00:00", async (event) =>
 
 
 // Create Stripe Checkout Session
-const createCheckoutSession = functions.https.onRequest((req, res) => {
-  return cors(req, res, async () => {
+const createCheckoutSession = functions.https.onCall(async (data, context) => {
     try {
-      if (req.method === "OPTIONS") {
-        return res.status(204).send("");
-      }
-
-      if (req.method !== 'POST') {
-        return res.status(405).json({ error: 'Method Not Allowed' });
-      }
-
-      const { userId, priceId, planName } = req.body;
+      const { userId, priceId, planName } = data;
 
       if (!userId || !priceId) {
-        return res.status(400).json({ error: 'Missing userId or priceId' });
+        throw new functions.https.HttpsError('invalid-argument', 'Missing userId or priceId');
       }
 
       // Get or create Stripe customer
@@ -985,13 +976,12 @@ const createCheckoutSession = functions.https.onRequest((req, res) => {
         }
       });
 
-      return res.json({ sessionId: session.id, url: session.url });
+      return { sessionId: session.id, url: session.url };
 
     } catch (error) {
       console.error('Error creating checkout session:', error);
-      return res.status(500).json({ error: error.message });
+      throw new functions.https.HttpsError('internal', error.message);
     }
-  });
 });
 
 // Stripe Webhook Handler
@@ -1195,21 +1185,12 @@ async function handleInvoicePaymentFailed(invoice) {
 }
 
 // Cancel Subscription
-const cancelSubscription = functions.https.onRequest((req, res) => {
-  return cors(req, res, async () => {
+const cancelSubscription = functions.https.onCall(async (data, context) => {
     try {
-      if (req.method === "OPTIONS") {
-        return res.status(204).send("");
-      }
-
-      if (req.method !== 'POST') {
-        return res.status(405).json({ error: 'Method Not Allowed' });
-      }
-
-      const { userId } = req.body;
+      const { userId } = data;
 
       if (!userId) {
-        return res.status(400).json({ error: 'Missing userId' });
+        throw new functions.https.HttpsError('invalid-argument', 'Missing userId');
       }
 
       const userRef = db.ref(`users/${userId}/subscription`);
@@ -1217,7 +1198,7 @@ const cancelSubscription = functions.https.onRequest((req, res) => {
       const subscriptionData = snapshot.val();
 
       if (!subscriptionData?.stripeSubscriptionId) {
-        return res.status(404).json({ error: 'No active subscription found' });
+        throw new functions.https.HttpsError('not-found', 'No active subscription found');
       }
 
       // Cancel at period end (user keeps access until end of billing period)
@@ -1230,13 +1211,12 @@ const cancelSubscription = functions.https.onRequest((req, res) => {
         status: 'cancelled'
       });
 
-      return res.json({ success: true, message: 'Subscription will be cancelled at period end' });
+      return { success: true, message: 'Subscription will be cancelled at period end' };
 
     } catch (error) {
       console.error('Error cancelling subscription:', error);
-      return res.status(500).json({ error: error.message });
+      throw new functions.https.HttpsError('internal', error.message);
     }
-  });
 });
 
 
