@@ -1288,7 +1288,8 @@ const uploadResume = functions.https.onRequest((req, res) => {
       // Make file public
       await fileRef.makePublic();
 
-      const downloadURL = `https://storage.googleapis.com/${bucket.name}/${filePath}`;
+      const timestamp = Date.now();
+      const downloadURL = `https://storage.googleapis.com/${bucket.name}/${filePath}?t=${timestamp}`;
 
       return res.status(200).json({ downloadURL });
 

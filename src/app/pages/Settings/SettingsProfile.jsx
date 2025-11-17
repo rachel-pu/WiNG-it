@@ -3,6 +3,7 @@ import { ref, get, update } from "firebase/database";
 import {database} from '../../../lib/firebase.jsx'
 import { Check, X, Mail, Upload } from 'lucide-react';
 import { uploadProfileImage } from '../../../../supabase.js';
+import Swal from 'sweetalert2';
 
 export default function SettingsProfile() {
     const [editingSection, setEditingSection] = useState(null);
@@ -452,6 +453,11 @@ export default function SettingsProfile() {
                                 const { downloadURL } = await res.json();
                                 await update(ref(database, `users/${userId}`), { resume: downloadURL });
                                 setFormData((prev) => ({ ...prev, resume: downloadURL }));
+
+                                Swal.fire({
+                                    title: "Resume successfully uploaded!",
+                                    icon: "success"
+                                });
                             } catch (err) {
                                 console.error("Error uploading resume:", err);
                                 setError("Failed to upload resume.");
