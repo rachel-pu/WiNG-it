@@ -91,7 +91,7 @@ export default function SettingsPlan() {
         pro: {
             name: 'Pro',
             icon: Zap,
-            price: { monthly: 1.99, annual: 19.99 },
+            price: { monthly: 1.99, annual: 14.99 },
             description: 'For serious interview prep',
             features: [
                 'Unlimited interviews',
@@ -104,7 +104,7 @@ export default function SettingsPlan() {
         premium: {
             name: 'Premium',
             icon: Crown,
-            price: { monthly: 4.99, annual: 49.99 },
+            price: { monthly: 4.99, annual: 39.99 },
             description: 'For comprehensive preparation',
             features: [
                 'Unlimited interviews',

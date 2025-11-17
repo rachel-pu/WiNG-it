@@ -3,8 +3,7 @@ import './SettingsNav.css';
 const SettingsNav = ({ currentTab, onTabChange }) => {
     const tabs = [
         { id: 'profile', label: 'My details' },
-        { id: 'plan', label: 'Plan' },
-        { id: 'billings', label: 'Billing' },
+        { id: 'billing-subscription', label: 'Plan & Billing' },
         { id: 'notifications', label: 'Notifications' },
     ];
 
