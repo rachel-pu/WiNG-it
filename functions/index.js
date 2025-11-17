@@ -59,29 +59,60 @@ function extractActionWords(text) {
     "deliver", "achieve", "analyze", "build", "collaborate", "create", "direct"
   ];
 
-  const words = text.toLowerCase().match(/\b\w+\b/g) || [];
-  return commonActionWords.filter(actionWord => words.includes(actionWord));
+  const lower = text.toLowerCase();
+  const results = [];
+
+  for (const word of commonActionWords) {
+    // Escape any regex characters
+    const escaped = word.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+    // Global regex for all occurrences
+    const regex = new RegExp(`\\b${escaped}\\b`, "g");
+
+    const matches = lower.match(regex);
+    if (matches) {
+      results.push(...matches);
+    }
+  }
+
+  return results;
 }
 
 // Helper function to extract filler words from transcript
 function extractFillerWords(text) {
-  const commonFillerWords = [
+  const fillerWords = [
     "um", "uh", "uhm", "hmm", "like", "you know", "actually", "i think", "guess",
     "basically", "literally", "so", "well", "kind of", "sort of", "maybe",
-    "er", "ah", "huh", "right", "okay", "alright", "just", "anyway", "I mean",
-    "sorta", "kinda", "like I said", "you see", "as I said", "or something",
-    "if that makes sense", "you know what I mean", "let's see", "so yeah", "so basically"
+    "er", "ah", "huh", "right", "okay", "alright", "just", "anyway", "i mean",
+    "sorta", "kinda", "like i said", "you see", "as i said", "or something",
+    "if that makes sense", "you know what i mean", "let's see", "so yeah", "so basically"
   ];
 
-  const words = text.toLowerCase().match(/\b\w+\b/g) || [];
-  return commonFillerWords.filter(fillerWord => words.includes(fillerWord));
+  const lower = text.toLowerCase();
+  const results = [];
+
+  for (const filler of fillerWords) {
+    // Escape filler text for regex
+    const escaped = filler.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+    // Global regex to find *all* matches
+    const regex = new RegExp(`\\b${escaped}\\b`, "g");
+
+    const matches = lower.match(regex);
+    if (matches) {
+      results.push(...matches);
+    }
+  }
+
+  return results;
 }
 
-// Helper function to extract statistics/numbers from transcript
 function extractStats(text) {
   const numberPattern = /\b\d+(?:\.\d+)?(?:%|percent|million|billion|thousand|k|m|b)?\b/gi;
-  return text.match(numberPattern) || [];
+  const matches = text.match(numberPattern);
+  return matches || [];
 }
+
 
 // Helper function for harmonic points calculation
 function harmonicPoints(count) {
@@ -636,15 +667,14 @@ const saveResponse = functions.https.onRequest((req, res) => {
       console.log('Transcript:', transcript.substring(0, 100));
 
       const prompt = `
-          Generate a JSON object with the keys: technology, questionTypes, strengths, tips, starAnswerParsed, starAnswerParsedImproved, improvedResponse.
+          Generate a JSON object with the keys: questionTypes, strengths, tips, starAnswerParsed, starAnswerParsedImproved, improvedResponse.
           Using the following:
 
           Transcript: ${transcript}
           Question: ${questionText}
 
           Instructions:
-          - Identify any technology, programming languages, and tools mentioned in the transcript, add them as an array to technology.
-          - Categorize the question as any of: Situational, Problem-solving, Technical, Leadership, Teamwork (can be multiple).
+          - Categorize the question as any of: Situational, Problem-solving, Leadership, Teamwork (can be multiple).
           - Provide 1-2 bullet points of specific tips to improve the answer (provide as an array).
           - Provide 1-2 bullet points of strengths to improve the answer (provide as an array).
           - For the improvedResponse variable, according to everything analyzed, rewrite the response to be a better answer to the question provided. Respond ONLY with valid JSON. Do NOT include any explanation or text outside the JSON.
@@ -726,7 +756,6 @@ const saveResponse = functions.https.onRequest((req, res) => {
       // Extract individual fields
       const questionTypes = aiResults.questionTypes;
       const tips = aiResults.tips;
-      const technology = aiResults.technology;
       const strengths = aiResults.strengths;
       const starAnswerParsedImproved = aiResults.starAnswerParsedImproved;
       const starAnswerParsed = aiResults.starAnswerParsed;
@@ -765,7 +794,6 @@ const saveResponse = functions.https.onRequest((req, res) => {
         analysis: {
           totalWords,
           wordsPerMinute,
-          technology: technology || [],
           questionTypes: questionTypes || [],
           strengths: strengths || [],
           tips: tips || [],
@@ -773,9 +801,10 @@ const saveResponse = functions.https.onRequest((req, res) => {
           starAnswerParsedImproved: starAnswerParsedImproved || {},
           improvedResponse: improvedResponse || null,
           overallScore: overallScore,
-          actionWordCount: actionWordsList.length,
-          fillerWordCount: fillerWordsList.length,
-          statsUsedCount: statsUsedList.length
+          fillerWordList: fillerWordsList,
+          actionWordList: actionWordsList,
+          statsUsedCount: statsUsedList,
+
         },
         recordedTime: recordedTime || 0,
         timestamp: admin.database.ServerValue.TIMESTAMP,
