@@ -7,7 +7,24 @@ require('dotenv').config();
 const { createClient } = require('@deepgram/sdk');
 const {onSchedule} = require("firebase-functions/scheduler");
 const { Readable } = require('stream');
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+const {defineSecret} = require('firebase-functions/params');
+
+// Define secrets for Stripe
+const stripeSecretKey = defineSecret('STRIPE_SECRET_KEY');
+const stripeWebhookSecret = defineSecret('STRIPE_WEBHOOK_SECRET');
+
+// Lazy initialization of Stripe - secrets are only available inside functions
+let stripe;
+function getStripe() {
+  if (!stripe) {
+    const apiKey = process.env.STRIPE_SECRET_KEY;
+    if (!apiKey) {
+      throw new Error('STRIPE_SECRET_KEY not configured');
+    }
+    stripe = require('stripe')(apiKey);
+  }
+  return stripe;
+}
 
 // Initialize Firebase Admin
 admin.initializeApp();
@@ -909,7 +926,9 @@ const cleanupOldTier1Interviews = onSchedule("every day 00:00", async (event) =>
 
 
 // Create Stripe Checkout Session
-const createCheckoutSession = functions.https.onCall(async (data, context) => {
+const createCheckoutSession = functions.https.onCall(
+  { secrets: [stripeSecretKey] },
+  async (data, context) => {
     try {
       console.log('createCheckoutSession called');
       console.log('context.auth:', context?.auth);
@@ -936,7 +955,7 @@ const createCheckoutSession = functions.https.onCall(async (data, context) => {
       // Verify customer exists in Stripe, create new one if not
       if (customerId) {
         try {
-          await stripe.customers.retrieve(customerId);
+          await getStripe().customers.retrieve(customerId);
         } catch (error) {
           // Customer doesn't exist in this mode, create a new one
           console.log(`Customer ${customerId} not found in ${isTestMode ? 'test' : 'live'} mode, creating new customer`);
@@ -946,7 +965,7 @@ const createCheckoutSession = functions.https.onCall(async (data, context) => {
 
       if (!customerId) {
         // Create new Stripe customer
-        const customer = await stripe.customers.create({
+        const customer = await getStripe().customers.create({
           email: userData?.personalInformation?.email,
           metadata: {
             firebaseUserId: userId,
@@ -963,7 +982,7 @@ const createCheckoutSession = functions.https.onCall(async (data, context) => {
       }
 
       // Create checkout session
-      const session = await stripe.checkout.sessions.create({
+      const session = await getStripe().checkout.sessions.create({
         customer: customerId,
         payment_method_types: ['card'],
         line_items: [
@@ -991,22 +1010,42 @@ const createCheckoutSession = functions.https.onCall(async (data, context) => {
 });
 
 // Stripe Webhook Handler
-const stripeWebhook = functions.https.onRequest(async (req, res) => {
+const stripeWebhook = functions.https.onRequest(
+  { secrets: [stripeSecretKey, stripeWebhookSecret] },
+  async (req, res) => {
   const sig = req.headers['stripe-signature'];
   const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+
+  // Get the raw body - Firebase Cloud Functions provides it as req.rawBody
+  let rawBody;
+  if (req.rawBody) {
+    // rawBody is already available (Firebase Cloud Functions)
+    rawBody = req.rawBody;
+  } else if (Buffer.isBuffer(req.body)) {
+    // Body is already a Buffer
+    rawBody = req.body;
+  } else if (typeof req.body === 'string') {
+    // Body is a string, convert to Buffer
+    rawBody = Buffer.from(req.body);
+  } else {
+    // Body was parsed as JSON, this won't work for webhook verification
+    console.error('Request body was parsed as JSON. Stripe webhooks require raw body.');
+    return res.status(400).send('Webhook Error: Invalid body format');
+  }
 
   console.log('Webhook received:', {
     hasSignature: !!sig,
     hasSecret: !!webhookSecret,
     secretPrefix: webhookSecret?.substring(0, 10),
-    hasRawBody: !!req.rawBody,
-    rawBodyType: typeof req.rawBody
+    rawBodyLength: rawBody?.length,
+    rawBodyType: typeof rawBody,
+    isBuffer: Buffer.isBuffer(rawBody)
   });
 
   let event;
 
   try {
-    event = stripe.webhooks.constructEvent(req.rawBody, sig, webhookSecret);
+    event = getStripe().webhooks.constructEvent(rawBody, sig, webhookSecret);
   } catch (err) {
     console.error('Webhook signature verification failed:', err.message);
     return res.status(400).send(`Webhook Error: ${err.message}`);
@@ -1015,7 +1054,7 @@ const stripeWebhook = functions.https.onRequest(async (req, res) => {
   try {
     switch (event.type) {
       case 'checkout.session.completed':
-        const session = await stripe.checkout.sessions.retrieve(
+        const session = await getStripe().checkout.sessions.retrieve(
           event.data.object.id,
           { expand: ['subscription'] }
         );
@@ -1055,27 +1094,73 @@ const stripeWebhook = functions.https.onRequest(async (req, res) => {
 
 // Helper function to handle successful checkout
 async function handleCheckoutSessionCompleted(session) {
-  const userId = session.metadata.userId;
-  const planName = session.metadata.planName;
-  const subscriptionId = typeof session.subscription === 'object' ? session.subscription.id : session.subscription;
+  console.log('🔵 handleCheckoutSessionCompleted V3 - START');
+  try {
+    const userId = session.metadata.userId;
+    const planName = session.metadata.planName;
+    const subscriptionId = typeof session.subscription === 'object' ? session.subscription.id : session.subscription;
 
-  console.log('Processing checkout for userId:', userId, 'planName:', planName, 'subscriptionId:', subscriptionId);
+    console.log('🔵 V3 Processing checkout for userId:', userId, 'planName:', planName, 'subscriptionId:', subscriptionId);
 
-  // Calculate renewal date (1 month from now for monthly, 1 year for annual)
-  const today = new Date();
-  const renewalDate = new Date(today);
-  renewalDate.setMonth(renewalDate.getMonth() + 1); // Assume monthly for now
+    // Fetch the full subscription object
+    console.log('🔵 V3 Fetching subscription from Stripe...');
+    const subscription = await getStripe().subscriptions.retrieve(subscriptionId, {
+      expand: ['items.data.price']
+    });
+    console.log('🔵 V3 Subscription fetched');
 
-  await db.ref(`users/${userId}/subscription`).update({
-    tier: planName.toLowerCase(), // User's subscription tier (free, pro, premium)
-    stripeSubscriptionId: subscriptionId,
-    status: 'active',
-    billingCycle: 'monthly',
-    startDate: today.toISOString().split('T')[0],
-    renewalDate: renewalDate.toISOString().split('T')[0],
-  });
+    // Determine billing cycle from the subscription interval
+    const interval = subscription.items.data[0].price.recurring.interval;
+    const billingCycle = interval === 'year' ? 'annual' : 'monthly';
 
-  console.log(`✅ Subscription activated for user ${userId}, tier: ${planName}`);
+    // Use subscription dates if available, otherwise calculate from session
+    let startTimestamp, endTimestamp;
+
+    if (subscription.current_period_start && subscription.current_period_end) {
+      console.log('🔵 V3 Using subscription period dates');
+      startTimestamp = subscription.current_period_start;
+      endTimestamp = subscription.current_period_end;
+    } else {
+      console.log('🔵 V3 Subscription dates not available, calculating from session created time');
+      // Use session created time as start, calculate end based on interval
+      startTimestamp = session.created;
+      const startDate = new Date(startTimestamp * 1000);
+
+      // Calculate renewal date based on billing cycle
+      if (interval === 'year') {
+        startDate.setFullYear(startDate.getFullYear() + 1);
+      } else {
+        startDate.setMonth(startDate.getMonth() + 1);
+      }
+
+      endTimestamp = Math.floor(startDate.getTime() / 1000);
+    }
+
+    console.log('🔵 V3 Dates - start:', startTimestamp, 'end:', endTimestamp);
+
+    const startDate = new Date(startTimestamp * 1000);
+    const renewalDate = new Date(endTimestamp * 1000);
+
+    const startDateStr = startDate.toISOString().split('T')[0];
+    const renewalDateStr = renewalDate.toISOString().split('T')[0];
+
+    console.log('🔵 V3 Formatted dates - start:', startDateStr, 'renewal:', renewalDateStr);
+
+    await db.ref(`users/${userId}/subscription`).update({
+      tier: planName.toLowerCase(),
+      stripeSubscriptionId: subscriptionId,
+      stripeCustomerId: subscription.customer,
+      status: 'active',
+      billingCycle: billingCycle,
+      startDate: startDateStr,
+      renewalDate: renewalDateStr,
+    });
+
+    console.log(`✅ V3 Subscription activated for user ${userId}, tier: ${planName}, billingCycle: ${billingCycle}, renewalDate: ${renewalDateStr}`);
+  } catch (error) {
+    console.error('🔴 V3 Error in handleCheckoutSessionCompleted:', error);
+    throw error;
+  }
 }
 
 // Helper function to handle subscription updates
@@ -1191,7 +1276,9 @@ async function handleInvoicePaymentFailed(invoice) {
 }
 
 // Cancel Subscription
-const cancelSubscription = functions.https.onRequest((req, res) => {
+const cancelSubscription = functions.https.onRequest(
+  { secrets: [stripeSecretKey] },
+  (req, res) => {
   console.log("Cancelling subscription...");
   return cors(req, res, async () => {
     try {
@@ -1218,7 +1305,7 @@ const cancelSubscription = functions.https.onRequest((req, res) => {
       }
 
       // Cancel at period end (user keeps access until end of billing period)
-      await stripe.subscriptions.update(subscriptionData.stripeSubscriptionId, {
+      await getStripe().subscriptions.update(subscriptionData.stripeSubscriptionId, {
         cancel_at_period_end: true
       });
 
