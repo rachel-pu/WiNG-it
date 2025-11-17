@@ -1,6 +1,6 @@
 import { useState, useEffect} from 'react';
 import { ref, get, update } from "firebase/database";
-import {database, uploadResume} from '../../../lib/firebase.jsx'
+import {database} from '../../../lib/firebase.jsx'
 import { Check, X, Mail, Upload } from 'lucide-react';
 import { uploadProfileImage } from '../../../../supabase.js';
 
@@ -422,9 +422,24 @@ export default function SettingsProfile() {
                         onChange={async (e) => {
                             const file = e.target.files?.[0];
                             if (!file || !formData.userId) return;
+                            const userId = formData.userId;
                             try {
-                                const resumeUrl = await uploadResume(formData.userId, file);
-                                await update(ref(database, `users/${formData.userId}`), { resume: resumeUrl });
+                                 const payload = {
+                                    userId,
+                                    file
+                                };
+                                const resumeUrl = await fetch(
+                                    "https://us-central1-wing-it-e6a3a.cloudfunctions.net/uploadResume",
+                                    {
+                                        method: "POST",
+                                        headers: {
+                                            "Content-Type": "application/json"
+                                        },
+                                        body: JSON.stringify(payload)
+                                    }
+                                );
+
+                                await update(ref(database, `users/${userId}`), { resume: resumeUrl });
                                 setFormData((prev) => ({ ...prev, resume: resumeUrl }));
                             } catch (err) {
                                 console.error("Error uploading resume:", err);

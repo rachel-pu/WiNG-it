@@ -1253,6 +1253,29 @@ const cancelSubscription = functions.https.onCall(async (data, context) => {
     }
 });
 
+const uploadResume = functions.https.onRequest(async (req, res) => {
+  console.log("Uploading Resume...");
+  return cors(req, res, async () => {
+    if (req.method !== "POST")
+      return res.status(405).send("Method Not Allowed");
+    try{
+      const { userId, file } = req.body;
+      if (file.type !== "application/pdf")
+        throw new Error("Only PDF files are allowed.");
+      const storage = getStorage();
+      const resumeRef = storageRef(storage, `resumes/${userId}/${userId}.pdf`);
+      await uploadBytes(resumeRef, file);
+      // Get the public URL
+      const downloadURL = await getDownloadURL(resumeRef);
+      return downloadURL;
+
+    } catch (error) {
+      console.error("Error uploading resume:", error);
+      throw error;
+    }
+  });
+});
+
 
 module.exports = {
   generateQuestions,
@@ -1264,5 +1287,6 @@ module.exports = {
   cleanupOldTier1Interviews,
   createCheckoutSession,
   stripeWebhook,
-  cancelSubscription
+  cancelSubscription,
+  uploadResume,
 };
