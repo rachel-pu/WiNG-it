@@ -30,17 +30,14 @@ const Statistics = () => {
   useEffect(() => {
     const fetchBehavioralData = async () => {
       if (!userId) {
-        console.log('No userId available yet');
         return;
       }
 
-      console.log('Fetching data for userId:', userId);
       setLoading(true);
       try {
         const interviewsSnapshot = await get(ref(database, `interviews/${userId}`));
         
         if (!interviewsSnapshot.exists()) {
-          console.log('No interviews found');
           setBehavioralData({
             totalSessions: 0,
             totalQuestions: 0,
@@ -243,10 +240,6 @@ const Statistics = () => {
       [sessionId]: !prev[sessionId]
     }));
   };
-
-  useEffect(() => {
-    console.log("Behavioral Data: ", behavioralData);
-  }, [behavioralData]);
 
   const COLORS = ['#2850d9', '#60a5fa', '#34d399', '#fbbf24', '#f87171'];
 

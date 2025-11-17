@@ -1,13 +1,7 @@
 [
   {
-    "origin": ["http://localhost:3000"],
-    "method": ["GET", "HEAD", "OPTIONS"],
-    "maxAgeSeconds": 3600
-  },
-  {
-    "origin": ["https://wing-it.space"],
-    "method": ["GET", "HEAD", "PUT", "POST", "OPTIONS"],
-    "responseHeader": ["Content-Type", "Authorization", "x-goog-resumable"],
+    "origin": ["*"],
+    "method": ["GET"],
     "maxAgeSeconds": 3600
   }
 ]
