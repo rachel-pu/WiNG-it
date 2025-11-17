@@ -423,12 +423,23 @@ export default function SettingsProfile() {
                             const file = e.target.files?.[0];
                             if (!file || !formData.userId) return;
                             const userId = formData.userId;
+
+                            const toBase64 = file =>
+                                new Promise((resolve, reject) => {
+                                    const reader = new FileReader();
+                                    reader.readAsDataURL(file);
+                                    reader.onload = () => resolve(reader.result);
+                                    reader.onerror = reject;
+                                });
+
+                            const base64File = await toBase64(file);
+                            
                             try {
                                  const payload = {
                                     userId,
-                                    file
+                                    file: base64File
                                 };
-                                const resumeUrl = await fetch(
+                                const res = await fetch(
                                     "https://us-central1-wing-it-e6a3a.cloudfunctions.net/uploadResume",
                                     {
                                         method: "POST",
@@ -438,9 +449,9 @@ export default function SettingsProfile() {
                                         body: JSON.stringify(payload)
                                     }
                                 );
-
-                                await update(ref(database, `users/${userId}`), { resume: resumeUrl });
-                                setFormData((prev) => ({ ...prev, resume: resumeUrl }));
+                                const { downloadURL } = await res.json();
+                                await update(ref(database, `users/${userId}`), { resume: downloadURL });
+                                setFormData((prev) => ({ ...prev, resume: downloadURL }));
                             } catch (err) {
                                 console.error("Error uploading resume:", err);
                                 setError("Failed to upload resume.");

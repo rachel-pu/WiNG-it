@@ -12,6 +12,7 @@ const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 // Initialize Firebase Admin
 admin.initializeApp();
 const db = admin.database();
+const storage = admin.storage();
 
 // Initialize OpenAI
 const openai = new OpenAI({
@@ -1253,25 +1254,47 @@ const cancelSubscription = functions.https.onCall(async (data, context) => {
     }
 });
 
-const uploadResume = functions.https.onRequest(async (req, res) => {
-  console.log("Uploading Resume...");
+const uploadResume = functions.https.onRequest((req, res) => {
+
   return cors(req, res, async () => {
-    if (req.method !== "POST")
-      return res.status(405).send("Method Not Allowed");
-    try{
+
+    if (req.method !== "POST") {
+      return res.status(405).json({ error: "Method Not Allowed" });
+    }
+
+    try {
       const { userId, file } = req.body;
-      if (file.type !== "application/pdf")
-        throw new Error("Only PDF files are allowed.");
-      const storage = getStorage();
-      const resumeRef = storageRef(storage, `resumes/${userId}/${userId}.pdf`);
-      await uploadBytes(resumeRef, file);
-      // Get the public URL
-      const downloadURL = await getDownloadURL(resumeRef);
-      return downloadURL;
+
+      if (!file) return res.status(400).json({ error: "Missing file" });
+
+      const matches = file.match(/^data:(.+);base64,(.+)$/);
+      if (!matches) return res.status(400).json({ error: "Invalid file format" });
+
+      const mimeType = matches[1];
+      const base64Data = matches[2];
+
+      if (mimeType !== "application/pdf") {
+        return res.status(400).json({ error: "Only PDF files are allowed." });
+      }
+
+      const buffer = Buffer.from(base64Data, "base64");
+
+      const bucket = admin.storage().bucket();
+      const filePath = `resumes/${userId}/${userId}.pdf`;
+      const fileRef = bucket.file(filePath);
+
+      await fileRef.save(buffer, { metadata: { contentType: mimeType } });
+
+      // Make file public
+      await fileRef.makePublic();
+
+      const downloadURL = `https://storage.googleapis.com/${bucket.name}/${filePath}`;
+
+      return res.status(200).json({ downloadURL });
 
     } catch (error) {
       console.error("Error uploading resume:", error);
-      throw error;
+      return res.status(500).json({ error: error.message });
     }
   });
 });
