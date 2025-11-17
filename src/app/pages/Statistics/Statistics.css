@@ -1,3 +1,11 @@
+* {
+  font-family: 'Satoshi', sans-serif;
+}
+
+.bold, h1, h2, h3, h4, h5, h6, strong, b {
+  font-family: 'Satoshi-Bold', sans-serif;
+}
+
 /* Statistics Page Container */
 .statistics-page {
   min-height: 100vh;
@@ -352,7 +360,7 @@
   background: #f1f5f9;
   padding: 0.25rem 0.5rem;
   border-radius: 0.25rem;
-  font-family: monospace;
+  font-family: "Satoshi";
 }
 
 /* Badge Styles */
