@@ -10,7 +10,13 @@ export default function SettingsBillingSubscription() {
     const [isChangingPlan, setIsChangingPlan] = useState(false);
     const [billingHistory, setBillingHistory] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
-    const [viewingCycle, setViewingCycle] = useState('monthly'); // Separate state for viewing toggle
+    const [showFilters, setShowFilters] = useState(false);
+    const [statusFilters, setStatusFilters] = useState({
+        paid: true,
+        success: true,
+        processing: true,
+        cancelled: true
+    });
     const [formData, setFormData] = useState({
         userId: '',
         subscription: {
@@ -82,7 +88,7 @@ export default function SettingsBillingSubscription() {
             badge: 'FREE',
             badgeColor: '#ef4444',
             icon: Sparkles,
-            price: { monthly: 0, annual: 0 },
+            price: 0,
             description: 'Perfect for getting started',
             features: [
                 'Unlimited interviews',
@@ -96,7 +102,7 @@ export default function SettingsBillingSubscription() {
             badge: 'PRO',
             badgeColor: '#f97316',
             icon: Zap,
-            price: { monthly: 1.99, annual: 14.99 },
+            price: 1.99,
             description: 'For serious interview prep',
             features: [
                 'Unlimited interviews',
@@ -111,7 +117,7 @@ export default function SettingsBillingSubscription() {
             badge: 'PREMIUM',
             badgeColor: '#10b981',
             icon: Crown,
-            price: { monthly: 4.99, annual: 39.99 },
+            price: 4.99,
             description: 'For comprehensive preparation',
             features: [
                 'Unlimited interviews',
@@ -175,11 +181,8 @@ export default function SettingsBillingSubscription() {
     }, [formData.userId]);
 
     const handleChangePlan = async (newPlan) => {
-        // Only return if both tier AND billing cycle match (truly current plan)
-        if (newPlan === formData.subscription.tier && viewingCycle === actualBillingCycle) return;
-
-        // Check if this is a billing cycle switch (same tier, different cycle)
-        const isBillingCycleSwitch = newPlan === formData.subscription.tier && viewingCycle !== actualBillingCycle;
+        // Don't allow changing to the same plan
+        if (newPlan === formData.subscription.tier) return;
 
         if (newPlan === 'free') {
             showConfirm(
@@ -213,64 +216,15 @@ export default function SettingsBillingSubscription() {
             return;
         }
 
-        if (isBillingCycleSwitch) {
-            // Handle billing cycle switch
-            const cycleLabel = viewingCycle === 'annual' ? 'yearly' : 'monthly';
-            showConfirm(
-                `Switch to ${cycleLabel.charAt(0).toUpperCase() + cycleLabel.slice(1)} Billing`,
-                `Your current ${actualBillingCycle === 'annual' ? 'yearly' : 'monthly'} subscription will be cancelled at the end of the billing period, and you'll be redirected to checkout for the new ${cycleLabel} plan at $${plans[newPlan].price[viewingCycle]}/${viewingCycle === 'monthly' ? 'month' : 'year'}.`,
-                async () => {
-                    setModal(prev => ({ ...prev, isOpen: false }));
-                    setIsChangingPlan(true);
-                    try {
-                        // Cancel current subscription
-                        await cancelSubscription({ userId: formData.userId });
-
-                        // Create checkout for new billing cycle
-                        const priceId = STRIPE_CONFIG.prices[newPlan][viewingCycle];
-                        if (!priceId) {
-                            throw new Error('Price ID not configured for this plan');
-                        }
-                        const result = await createCheckoutSession({
-                            userId: formData.userId,
-                            priceId: priceId,
-                            planName: newPlan
-                        });
-                        const { url } = result.data;
-
-                        // Show info before redirect
-                        showAlert(
-                            'Switching Billing Cycle',
-                            `Your current subscription will end at the period end. Complete checkout to activate your new ${cycleLabel} subscription.`,
-                            'success'
-                        );
-
-                        // Small delay to show the alert before redirect
-                        setTimeout(() => {
-                            window.location.href = url;
-                        }, 2000);
-                    } catch (err) {
-                        console.error('Error switching billing cycle:', err);
-                        showAlert('Switch Failed', 'Failed to switch billing cycle. Please try again.', 'error');
-                        setIsChangingPlan(false);
-                    }
-                },
-                'Switch',
-                'Cancel',
-                'alert'
-            );
-            return;
-        }
-
-        // Regular plan upgrade
+        // Plan upgrade - always use monthly pricing
         showConfirm(
             `Upgrade to ${plans[newPlan].name}`,
-            `Upgrade to ${plans[newPlan].name} for $${plans[newPlan].price[viewingCycle]}/${viewingCycle === 'monthly' ? 'month' : 'year'}?`,
+            `Upgrade to ${plans[newPlan].name} for $${plans[newPlan].price}/month?`,
             async () => {
                 setModal(prev => ({ ...prev, isOpen: false }));
                 setIsChangingPlan(true);
                 try {
-                    const priceId = STRIPE_CONFIG.prices[newPlan][viewingCycle];
+                    const priceId = STRIPE_CONFIG.prices[newPlan].monthly;
                     if (!priceId) {
                         throw new Error('Price ID not configured for this plan');
                     }
@@ -293,11 +247,6 @@ export default function SettingsBillingSubscription() {
         );
     };
 
-    const handleToggleBillingCycle = () => {
-        // Just toggle the viewing state, don't update database
-        setViewingCycle(prev => prev === 'monthly' ? 'annual' : 'monthly');
-    };
-
     const handleExportHistory = () => {
         // Convert billing history to CSV
         const headers = ['Plan Name', 'Amount', 'Purchase Date', 'End Date', 'Status'];
@@ -317,16 +266,29 @@ export default function SettingsBillingSubscription() {
         window.URL.revokeObjectURL(url);
     };
 
+    const toggleStatusFilter = (status) => {
+        setStatusFilters(prev => ({
+            ...prev,
+            [status]: !prev[status]
+        }));
+    };
+
     if (error) return <p style={{ color: 'red' }}>{error}</p>;
 
     const currentPlan = plans[formData.subscription.tier] ? formData.subscription.tier : 'free';
-    const actualBillingCycle = formData.subscription.billingCycle || 'monthly';
 
-    const filteredHistory = billingHistory.filter(item =>
-        item.amount?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        item.date?.includes(searchTerm) ||
-        item.status?.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    const filteredHistory = billingHistory.filter(item => {
+        // Apply search filter
+        const matchesSearch = item.amount?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            item.date?.includes(searchTerm) ||
+            item.status?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            item.planName?.toLowerCase().includes(searchTerm.toLowerCase());
+
+        // Apply status filter
+        const matchesStatus = statusFilters[item.status?.toLowerCase()];
+
+        return matchesSearch && matchesStatus;
+    });
 
     return (
         <div className="BillingSubscription-container">
@@ -335,22 +297,8 @@ export default function SettingsBillingSubscription() {
                 <div className="BillingSubscription-header-text">
                     <h2 className="BillingSubscription-title">Billing & Subscription</h2>
                     <p className="BillingSubscription-subtitle">
-                        Keep track of your subscription details, update your billing information, and control your account's payment
+                        Choose from our monthly plans and manage your subscription
                     </p>
-                </div>
-                <div className="BillingSubscription-billing-toggle">
-                    <button
-                        className={`BillingSubscription-toggle-btn ${viewingCycle === 'monthly' ? 'active' : ''}`}
-                        onClick={() => viewingCycle !== 'monthly' && handleToggleBillingCycle()}
-                    >
-                        Monthly
-                    </button>
-                    <button
-                        className={`BillingSubscription-toggle-btn ${viewingCycle === 'annual' ? 'active' : ''}`}
-                        onClick={() => viewingCycle !== 'annual' && handleToggleBillingCycle()}
-                    >
-                        Yearly
-                    </button>
                 </div>
             </div>
 
@@ -358,22 +306,12 @@ export default function SettingsBillingSubscription() {
             <div className="BillingSubscription-plans-grid">
                 {Object.entries(plans).map(([planKey, plan]) => {
                     const isPremiumPlan = planKey === 'premium';
-
-                    // For free tier, always highlight if user is on free (regardless of billing cycle view)
-                    // For paid tiers, only highlight when both tier AND billing cycle match
-                    const isCurrentPlan = planKey === 'free'
-                        ? currentPlan === 'free'
-                        : (planKey === currentPlan && viewingCycle === actualBillingCycle);
-
-                    // Free tier never has "switch to yearly/monthly" option since it's just free
-                    const isSameTierDifferentCycle = planKey !== 'free' && planKey === currentPlan && viewingCycle !== actualBillingCycle;
+                    const isCurrentPlan = planKey === currentPlan;
 
                     // Determine button text
                     let buttonText = 'Upgrade Plan';
                     if (isCurrentPlan) {
                         buttonText = 'Current Plan';
-                    } else if (isSameTierDifferentCycle) {
-                        buttonText = viewingCycle === 'annual' ? 'Switch to Yearly' : 'Switch to Monthly';
                     } else if (planKey === 'free') {
                         buttonText = 'Downgrade Plan';
                     }
@@ -394,29 +332,10 @@ export default function SettingsBillingSubscription() {
                                     </span>
                                 </div>
                                 <div className="BillingSubscription-plan-price">
-                                    {viewingCycle === 'annual' && planKey !== 'free' ? (
-                                        <>
-                                            <span className="price-strikethrough">${plan.price.monthly.toFixed(2)}</span>
-                                            <span className="price-currency">$</span>
-                                            <span className="price-amount price-amount-highlighted">{(plan.price.annual / 12).toFixed(2)}</span>
-                                            <span className="price-period">/month (USD)</span>
-                                        </>
-                                    ) : (
-                                        <>
-                                            <span className="price-currency">$</span>
-                                            <span className="price-amount">{plan.price[viewingCycle].toFixed(2)}</span>
-                                            <span className="price-period">/{viewingCycle === 'monthly' ? 'month' : 'year'}</span>
-                                        </>
-                                    )}
+                                    <span className="price-currency">$</span>
+                                    <span className="price-amount">{typeof plan.price === 'number' ? plan.price.toFixed(2) : '0.00'}</span>
+                                    <span className="price-period">/month</span>
                                 </div>
-                                {viewingCycle === 'annual' && planKey !== 'free' && (
-                                    <div className="BillingSubscription-plan-billed-yearly">
-                                        ${plan.price.annual.toFixed(2)} billed yearly
-                                        <span className="savings-percentage">
-                                            ({Math.round(((plan.price.monthly * 12 - plan.price.annual) / (plan.price.monthly * 12)) * 100)}% off)
-                                        </span>
-                                    </div>
-                                )}
                             </div>
 
                             <button
@@ -455,10 +374,52 @@ export default function SettingsBillingSubscription() {
                                 className="BillingSubscription-search-input"
                             />
                         </div>
-                        <button className="BillingSubscription-action-btn">
-                            <Filter size={18} />
-                            Filter
-                        </button>
+                        <div style={{ position: 'relative' }}>
+                            <button
+                                className="BillingSubscription-action-btn"
+                                onClick={() => setShowFilters(!showFilters)}
+                            >
+                                <Filter size={18} />
+                                Filter
+                            </button>
+                            {showFilters && (
+                                <div className="filter-dropdown">
+                                    <div className="filter-dropdown-header">Filter by Status</div>
+                                    <label className="filter-option">
+                                        <input
+                                            type="checkbox"
+                                            checked={statusFilters.paid}
+                                            onChange={() => toggleStatusFilter('paid')}
+                                        />
+                                        <span>Paid</span>
+                                    </label>
+                                    <label className="filter-option">
+                                        <input
+                                            type="checkbox"
+                                            checked={statusFilters.success}
+                                            onChange={() => toggleStatusFilter('success')}
+                                        />
+                                        <span>Success</span>
+                                    </label>
+                                    <label className="filter-option">
+                                        <input
+                                            type="checkbox"
+                                            checked={statusFilters.processing}
+                                            onChange={() => toggleStatusFilter('processing')}
+                                        />
+                                        <span>Processing</span>
+                                    </label>
+                                    <label className="filter-option">
+                                        <input
+                                            type="checkbox"
+                                            checked={statusFilters.cancelled}
+                                            onChange={() => toggleStatusFilter('cancelled')}
+                                        />
+                                        <span>Cancelled</span>
+                                    </label>
+                                </div>
+                            )}
+                        </div>
                         <button
                             className="BillingSubscription-action-btn"
                             onClick={handleExportHistory}
