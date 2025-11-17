@@ -18,6 +18,7 @@
     "@google-cloud/speech": "^6.0.0",
     "@google-cloud/text-to-speech": "^5.0.0",
     "@google/generative-ai": "^0.21.0",
+    "@supabase/supabase-js": "^2.81.1",
     "cors": "^2.8.5",
     "dotenv": "^16.0.0",
     "firebase-admin": "^11.8.0",
