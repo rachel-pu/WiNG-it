@@ -29,22 +29,5 @@ export const cleanupOldTier1Interviews = httpsCallable(functions, 'cleanupOldTie
 export const createCheckoutSession = httpsCallable(functions, 'createCheckoutSession');
 export const stripeWebhook = httpsCallable(functions, 'stripeWebhook');
 export const cancelSubscription = httpsCallable(functions, 'cancelSubscription');
-
-export async function uploadResume(userId, file) {
-  try {
-    if (file.type !== "application/pdf") {
-      throw new Error("Only PDF files are allowed.");
-    }
-    const storage = getStorage();
-    const resumeRef = storageRef(storage, `resumes/${userId}/${userId}.pdf`);
-    await uploadBytes(resumeRef, file);
-    // Get the public URL
-    const downloadURL = await getDownloadURL(resumeRef);
-    return downloadURL;
-
-  } catch (error) {
-    console.error("Error uploading resume:", error);
-    throw error;
-  }
-}
+export const uploadResume = httpsCallable(functions, 'uploadResume');
 export default app;
