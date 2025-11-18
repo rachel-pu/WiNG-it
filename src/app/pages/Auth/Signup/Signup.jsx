@@ -23,6 +23,7 @@ const SignUp = () => {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
   const navigate = useNavigate();
   const RECAPTCHA_SITE_KEY = import.meta.env.VITE_GOOGLE_RECAPTCHA_SITE_KEY;
 
@@ -134,7 +135,7 @@ const SignUp = () => {
         const passwordLength = sanitizedPassword.length;
 
         if (data?.user) {
-          setError('A verification email has been sent. Please check your inbox.');
+          setSuccess('A verification email has been sent. Please check your inbox.');
 
           // Save user info in Firebase
           await set(ref(database, `users/${data.user.id}`), {
@@ -220,6 +221,7 @@ const SignUp = () => {
           <p className="auth-subtitle">Start your journey with WiNG.it today</p>
 
           {error && <div className="message-box error-box">{error}</div>}
+          {success && <div className="message-box success-box">{success}</div>}
 
           {/* Name Input */}
           <motion.div variants={itemVariants}>

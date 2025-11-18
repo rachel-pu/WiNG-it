@@ -6,6 +6,7 @@ import DefaultAppLayout from "../../DefaultAppLayout.jsx";
 import Box from '@mui/material/Box';
 import { database } from '../../../lib/firebase.jsx';
 import { ref, get } from "firebase/database";
+import { Link } from 'react-router-dom';
 
 const Statistics = () => {
   const [userId, setUserId] = useState('');
@@ -607,10 +608,13 @@ const Statistics = () => {
                           </span>
                         </td>
                         <td>
-                          <button className="view-results-btn">
+                          <Link
+                            to={`/behavioral/results?userId=${userId}&sessionId=${session.sessionId}&expectedQuestions=${session.responseCount}`}
+                            className="view-results-btn"
+                          >
                             <ExternalLink size={16} />
                             View Results
-                          </button>
+                          </Link>
                         </td>
                       </tr>
                       {expandedSessions[session.sessionId] && (
