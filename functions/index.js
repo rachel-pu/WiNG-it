@@ -12,7 +12,6 @@ const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 // Initialize Firebase Admin
 admin.initializeApp();
 const db = admin.database();
-const storage = admin.storage();
 
 // Initialize OpenAI
 const openai = new OpenAI({
