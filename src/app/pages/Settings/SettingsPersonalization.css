@@ -1,0 +1,364 @@
+/* ============================================
+   REFINED PERSONALIZATION STYLES
+   ============================================ */
+
+/* Main Container */
+.Personalization-container-refined {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0;
+}
+
+/* Intro Section */
+.Personalization-intro {
+    margin-bottom: 40px;
+}
+
+.Personalization-intro-text {
+    font-size: 15px !important;
+    font-family: "Satoshi", sans-serif !important;
+    font-style: italic !important;
+    color: #64748b !important;
+    line-height: 1.6 !important;
+    margin: 0 !important;
+}
+
+/* Section Styles */
+.Personalization-section {
+    margin-bottom: 48px;
+}
+
+.Personalization-section-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 32px;
+}
+
+.Personalization-section-title {
+    font-size: 24px !important;
+    font-family: "Satoshi Bold", sans-serif !important;
+    color: #1e293b !important;
+    margin: 0 !important;
+    font-weight: 700 !important;
+    white-space: nowrap;
+}
+
+.Personalization-section-divider {
+    flex: 1;
+    height: 2px;
+    margin-bottom: 30px;
+    background: linear-gradient(to right, #e2e8f0 0%, #e2e8f0 50%, transparent 100%);
+}
+
+/* Alert Messages */
+.Personalization-validation-error {
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    color: #dc2626;
+    padding: 14px 18px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-family: "Satoshi Medium", sans-serif;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.Personalization-validation-error::before {
+    content: "⚠";
+    font-size: 18px;
+}
+
+.Personalization-success-message {
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    color: #16a34a;
+    padding: 14px 18px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-family: "Satoshi Medium", sans-serif;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Form Layout */
+.Personalization-form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-bottom: 20px;
+}
+
+.Personalization-form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.Personalization-form-label {
+    font-family: "Satoshi Bold", sans-serif;
+    color: #374151;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+}
+
+/* Text Input */
+.Personalization-form-input {
+    width: 100%;
+    padding: 12px 16px;
+    border-radius: 10px;
+    border: 1.5px solid #e5e7eb;
+    background: #ffffff;
+    font-family: "DM Sans", sans-serif;
+    font-size: 14px;
+    transition: all 0.2s ease;
+    box-sizing: border-box;
+    color: #1e293b;
+}
+
+.Personalization-form-input:hover {
+    border-color: #cbd5e1;
+}
+
+.Personalization-form-input:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.Personalization-form-input::placeholder {
+    color: #94a3b8;
+}
+
+/* Number Selector */
+.Personalization-number-selector {
+    display: flex;
+    gap: 8px;
+    width: 100%;
+}
+
+.Personalization-number-btn {
+    flex: 1;
+    padding: 12px 16px;
+    border-radius: 8px;
+    border: 1.5px solid #e5e7eb;
+    background: #ffffff;
+    color: #64748b;
+    font-family: "Satoshi Medium", sans-serif;
+    font-weight: 600;
+    font-size: 15px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.Personalization-number-btn:hover {
+    background: #f8fafc;
+    border-color: #cbd5e1;
+    transform: translateY(-1px);
+}
+
+.Personalization-number-btn.active {
+    background: #2563eb;
+    color: white;
+    border-color: #2563eb;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+    transform: translateY(-1px);
+}
+
+.Personalization-number-btn:active {
+    transform: translateY(0);
+}
+
+/* Question Types Grid */
+.Personalization-question-types-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    width: 100%;
+}
+
+.Personalization-type-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    border-radius: 10px;
+    border: 1.5px solid #e5e7eb;
+    background: #ffffff;
+    color: #64748b;
+    font-family: "Satoshi Medium", sans-serif;
+    font-weight: 500;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-sizing: border-box;
+    justify-content: flex-start;
+}
+
+.Personalization-type-btn:hover {
+    background: #f8fafc;
+    border-color: #cbd5e1;
+    transform: translateX(2px);
+}
+
+.Personalization-type-btn.selected {
+    background: #dbeafe;
+    border-color: #3b82f6;
+    color: #1e40af;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15);
+}
+
+.Personalization-type-btn svg {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+}
+
+.Personalization-helper-text {
+    font-family: "DM Sans", sans-serif !important;
+    color: #94a3b8 !important;
+    font-size: 13px !important;
+    margin: 4px 0 0 0 !important;
+    font-style: italic;
+}
+
+/* Difficulty/Interviewer Style Options */
+.Personalization-difficulty-options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.Personalization-difficulty-btn {
+    width: 100%;
+    text-align: left;
+    padding: 14px 16px;
+    border-radius: 10px;
+    border: 1.5px solid #e5e7eb;
+    background: #ffffff;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-sizing: border-box;
+}
+
+.Personalization-difficulty-btn:hover {
+    background: #f8fafc;
+    border-color: #cbd5e1;
+    transform: translateX(3px);
+}
+
+.Personalization-difficulty-btn.active {
+    background: #dbeafe;
+    border-color: #3b82f6;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15);
+}
+
+.Personalization-difficulty-label {
+    font-family: "Satoshi Bold", sans-serif;
+    color: #1e293b;
+    font-size: 14px;
+    margin-bottom: 4px;
+    font-weight: 600;
+}
+
+.Personalization-difficulty-description {
+    font-family: "DM Sans", sans-serif;
+    color: #64748b;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+/* Save Button */
+.Personalization-save-btn {
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    color: white;
+    border: none;
+    padding: 14px 32px;
+    border-radius: 10px;
+    font-family: "Satoshi Bold", sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 16px rgba(37, 99, 235, 0.3);
+}
+
+.Personalization-save-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(37, 99, 235, 0.4);
+}
+
+.Personalization-save-btn:active {
+    transform: translateY(0);
+}
+
+/* Responsive Design */
+@media (max-width: 992px) {
+    .Personalization-form-row {
+        grid-template-columns: 1fr;
+        gap: 24px;
+    }
+}
+
+@media (max-width: 768px) {
+    .Personalization-section-title {
+        font-size: 20px !important;
+    }
+
+    .Personalization-question-types-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .Personalization-intro-text {
+        font-size: 14px !important;
+    }
+}
+
+/* Focus States for Accessibility */
+.Personalization-form-input:focus,
+.Personalization-number-btn:focus,
+.Personalization-type-btn:focus,
+.Personalization-difficulty-btn:focus,
+.Personalization-save-btn:focus {
+    outline: 2px solid #3b82f6;
+    outline-offset: 2px;
+}
+
+/* ============================================
+   LEGACY STYLES (keep for backwards compat)
+   ============================================ */
+
+.SettingsProfile-btn-toggle {
+    padding: 6px 14px;
+    margin: 4px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    background: white;
+    cursor: pointer;
+}
+
+.SettingsProfile-btn-toggle.active {
+    background: #4f46e5;
+    color: white;
+    border-color: #4f46e5;
+}
+
+.SettingsProfile-spinner {
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #3b82f6;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+    margin: 100px auto;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}

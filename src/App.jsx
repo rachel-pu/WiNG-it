@@ -68,8 +68,8 @@ function App() {
         <Route path ="/statistics"
         element={
           <ProtectedRoute>
-              <Statistics />
-            </ProtectedRoute>
+            <Statistics />
+          </ProtectedRoute>
         }
         />
         <Route path="/dashboard"
