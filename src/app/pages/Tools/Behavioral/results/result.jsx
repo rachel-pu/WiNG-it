@@ -1250,19 +1250,44 @@ function escapeRegExp(s) {
                                                     )}
 
                                                     {activeTab === 1 && (
-                                                        <div style={contentBoxStyle}>
-                                                        <div
-                                                            style={textStyle}
-                                                            dangerouslySetInnerHTML={{
-                                                             __html: highlightText(
-                                                                currentData.improvedResponse,
-                                                                [],
-                                                                currentData.actionWordsList,
-                                                                currentData.starAnswerParsedImproved,
-                                                                )
-                                                            }}
-                                                        />
-                                                        </div>
+                                                        <>
+                                                            {/* TEXT BOX */}
+                                                            <div style={contentBoxStyle}>
+                                                                <div
+                                                                    style={textStyle}
+                                                                    dangerouslySetInnerHTML={{
+                                                                        __html: highlightText(
+                                                                            currentData.improvedResponse,
+                                                                            [],
+                                                                            currentData.actionWordsList,
+                                                                            currentData.starAnswerParsedImproved
+                                                                        )
+                                                                    }}
+                                                                />
+                                                            </div>
+
+                                                            {/* LEGEND OUTSIDE THE BOX */}
+                                                            <div style={legendStyle}>
+                                                                <div style={{ fontSize: '0.8rem', fontWeight: '600', marginBottom: '8px', color: '#374151' }}>
+                                                                    Highlight Legend:
+                                                                </div>
+
+                                                                <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap', alignItems: 'center' }}>
+
+                                                                    <div style={legendItemStyle}>
+                                                                        <div style={colorBoxStyle('#C7DDFC', '#6ea7e4ff')} />
+                                                                        <span style={{ fontSize: '0.75rem', color: '#325274' }}>Numbers/Stats</span>
+                                                                    </div>
+
+                                                                    <div style={{ fontSize: '0.8rem', fontWeight: '600' }}>
+                                                                        <span style={{ borderBottom: '3px solid #FBBF24' }}>Situation </span>
+                                                                        <span style={{ borderBottom: '3px solid #3B82F6' }}>Task </span>
+                                                                        <span style={{ borderBottom: '3px solid #FB923C' }}>Action </span>
+                                                                        <span style={{ borderBottom: '3px solid #8B5CF6' }}>Result </span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </>
                                                     )}
                                                 </Box>
 
