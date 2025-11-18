@@ -6,6 +6,7 @@ const SettingsNav = ({ currentTab, onTabChange }) => {
         { id: 'plan', label: 'Plan' },
         { id: 'billings', label: 'Billing' },
         { id: 'notifications', label: 'Notifications' },
+        { id: 'personalization', label: 'Personalization' },
     ];
 
     return (

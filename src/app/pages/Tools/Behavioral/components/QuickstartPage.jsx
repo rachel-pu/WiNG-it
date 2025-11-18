@@ -52,6 +52,7 @@ const QuickstartPage = ({
     const [selectedTab, setSelectedTab] = useState(0);
     const [userId, setUserId] = useState("");
     const [haveResume, setHaveResume] = useState(false);
+    const [preferencesLoaded, setPreferencesLoaded] = useState(false);
     const navigate = useNavigate();
 
     // Show alert when error prop changes
@@ -63,7 +64,7 @@ const QuickstartPage = ({
         }
     }, [error]);
 
-    //grab resume
+    // Get user ID from cookie
     useEffect(() => {
         const getCookie = (name) => {
             const value = `; ${document.cookie}`;
@@ -79,6 +80,7 @@ const QuickstartPage = ({
         }
     }, []);
 
+    // Fetch user data (resume + interview preferences)
     useEffect(() => {
         const fetchUser = async () => {
             if (!userId) return;
@@ -86,14 +88,53 @@ const QuickstartPage = ({
                 const snapshot = await get(ref(database, `users/${userId}`));
                 if (snapshot.exists()) {
                     const userData = snapshot.val();
+                    
+                    // Handle resume
                     try {
-                        if (userData.resume != ""){
+                        if (userData.resume && userData.resume !== "") {
                             const text = await extractTextFromPDF(userData.resume);
                             setResume(text);
                             setHaveResume(true);
                         }
                     } catch (error) {
-                        console.log("User resume is not uploaded yet")
+                        console.log("User resume is not uploaded yet");
+                    }
+
+                    // Load interview preferences
+                    if (userData.interviewPreferences && !preferencesLoaded) {
+                        const prefs = userData.interviewPreferences;
+                        
+                        // Set number of questions
+                        if (prefs.numQuestions) {
+                            handleQuestionsChange({ target: { value: prefs.numQuestions } });
+                        }
+                        
+                        // Set question types
+                        if (prefs.questionTypes && Array.isArray(prefs.questionTypes)) {
+                            // Filter out "randomize" if it's in the array
+                            const filteredTypes = prefs.questionTypes.filter(type => type !== "randomize");
+                            handleQuestionTypesChange({ target: { value: filteredTypes } });
+                        }
+                        
+                        // Set interviewer style - map from settings format to quickstart format
+                        if (prefs.interviewerStyle) {
+                            // Map the interviewer style from settings to the format expected by quickstart
+                            const styleMapping = {
+                                "easy-going": "easy-going-personality",
+                                "professional": "professional-personality",
+                                "intense": "intense-personality",
+                                "randomize": "randomize-personality"
+                            };
+                            const mappedStyle = styleMapping[prefs.interviewerStyle] || "easy-going-personality";
+                            handleInterviewerDifficultyChange(mappedStyle);
+                        }
+                        
+                        // Set target role
+                        if (prefs.targetRole) {
+                            handleJobRoleChange({ target: { value: prefs.targetRole } });
+                        }
+                        
+                        setPreferencesLoaded(true);
                     }
                 } else {
                     setError('User not found in database.');
@@ -104,7 +145,7 @@ const QuickstartPage = ({
             }
         };
         fetchUser();
-    }, [userId]);
+    }, [userId, preferencesLoaded]);
 
     const extractTextFromPDF = async (url) => {
         const loadingTask = pdfjsLib.getDocument(url);

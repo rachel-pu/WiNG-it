@@ -158,7 +158,13 @@ const SignUp = () => {
             subscription: {
               tier: "free"
             },
-            notificationPreferences: {}
+            notificationPreferences: {},
+            interviewPreferences: {
+              numQuestions: 3,
+              questionTypes: [],
+              interviewerStyle: "easy-going",
+              targetRole: ""
+            },
           });
 
         await update(ref(database, `userTiers/free`), {

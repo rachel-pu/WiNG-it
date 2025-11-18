@@ -164,6 +164,12 @@
   color: #dc2626;
 }
 
+.error-box {
+  background: linear-gradient(135deg, #f5fef2 0%, #e4fee2 100%);
+  border: 1px solid #ade0aa;
+  color: #0a7b26;
+}
+
 @media (max-width: 480px) {
   .auth-card {
     padding: 40px 28px;
