@@ -5,8 +5,10 @@ import './Statistics.css';
 import DefaultAppLayout from "../../DefaultAppLayout.jsx";
 import Box from '@mui/material/Box';
 import { database } from '../../../lib/firebase.jsx';
-import { ref, get } from "firebase/database";
+import { ref, get, remove } from "firebase/database";
 import { Link } from 'react-router-dom';
+import Swal from 'sweetalert2';
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 
 const Statistics = () => {
   const [userId, setUserId] = useState('');
@@ -234,6 +236,33 @@ const Statistics = () => {
     };
     fetchBehavioralData();
   }, [userId]);
+
+  const handleDelete = async (sessionId) => {
+  const result = await Swal.fire({
+    title: "Delete this session's results?",
+    showCancelButton: true,
+    confirmButtonText: "Confirm",
+    cancelButtonText: "Cancel"
+  });
+
+  if (!result.isConfirmed) return;
+
+  try {
+    await remove(ref(database, `interviews/${userId}/${sessionId}`));
+
+    setBehavioralData(prev => ({
+      ...prev,
+      sessionHistory: prev.sessionHistory.filter(s => s.sessionId !== sessionId)
+    }));
+
+    
+    Swal.fire("Deleted!", "The session results were removed.", "success");
+  } catch (err) {
+    console.error(err);
+    Swal.fire("Error", "Could not delete results.", "error");
+  }
+};
+
 
   const toggleSession = (sessionId) => {
     setExpandedSessions(prev => ({
@@ -566,7 +595,6 @@ const Statistics = () => {
                     <th>Session ID</th>
                     <th>Questions</th>
                     <th>Avg Score</th>
-                    <th>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -615,6 +643,14 @@ const Statistics = () => {
                             <ExternalLink size={16} />
                             View Results
                           </Link>
+                        </td>
+                        <td>
+                          <button
+                            className="delete-results-btn"
+                            onClick={() => handleDelete(session.sessionId)}
+                          >
+                            <DeleteForeverIcon />
+                          </button>
                         </td>
                       </tr>
                       {expandedSessions[session.sessionId] && (

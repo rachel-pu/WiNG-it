@@ -76,6 +76,7 @@ export default function SettingsProfile() {
         sectionKey !== 'personalInformation' &&
         sectionKey !== 'subscription' &&
         sectionKey !== 'billingInformation' &&
+        sectionKey !== 'interviewPreferences' &&
         !sectionKey.toLowerCase().includes('stripe')
     )
     .map((sectionKey) => {
