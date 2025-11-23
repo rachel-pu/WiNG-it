@@ -30,4 +30,5 @@ export const createCheckoutSession = httpsCallable(functions, 'createCheckoutSes
 export const stripeWebhook = httpsCallable(functions, 'stripeWebhook');
 export const cancelSubscription = httpsCallable(functions, 'cancelSubscription');
 export const uploadResume = httpsCallable(functions, 'uploadResume');
+export const aggregateUserStats = httpsCallable(functions, 'aggregateUserStats');
 export default app;

@@ -250,10 +250,11 @@ const Statistics = () => {
   try {
     await remove(ref(database, `interviews/${userId}/${sessionId}`));
 
+
     setBehavioralData(prev => ({
-      ...prev,
-      sessionHistory: prev.sessionHistory.filter(s => s.sessionId !== sessionId)
-    }));
+  ...prev,
+  sessionHistory: prev.sessionHistory.filter(s => s.sessionId !== sessionId)
+}));
 
     
     Swal.fire("Deleted!", "The session results were removed.", "success");
@@ -640,8 +641,8 @@ const Statistics = () => {
                             to={`/behavioral/results?userId=${userId}&sessionId=${session.sessionId}&expectedQuestions=${session.responseCount}`}
                             className="view-results-btn"
                           >
-                            <ExternalLink size={16} />
-                            View Results
+                            <ExternalLink size={16} stroke="white" />
+                            <p style={{ color: "white" }}>View Results</p>
                           </Link>
                         </td>
                         <td>

@@ -1290,6 +1290,83 @@ const uploadResume = functions.https.onRequest((req, res) => {
   });
 });
 
+const aggregateUserStats = functions.https.onRequest((req, res) => {
+  return cors(req, res, async () => {
+    try {
+      if (req.method === "OPTIONS") {
+        return res.status(204).send("");
+      }
+
+      if (req.method !== "POST") {
+        return res.status(405).json({ error: "Method Not Allowed" });
+      }
+
+      const { userId, sessionId } = req.body;
+
+      if (!userId || !sessionId) {
+        return res.status(400).json({ error: "Missing userId or sessionId" });
+      }
+
+      const responsesSnapshot = await db.ref(`interviews/${userId}/${sessionId}/responses`).once("value");
+      const responses = responsesSnapshot.val();
+
+      if (!responses) {
+        return res.status(404).json({ error: "No responses found for this session" });
+      }
+
+      let totalScore = 0;
+      let totalWords = 0;
+      let totalFillerWords = 0;
+      let totalActionWords = 0;
+      let totalStatsUsed = 0;
+      let totalQuestions = 0;
+      let questionTypesCount = {};
+
+      Object.values(responses).forEach(response => {
+        const analysis = response.analysis || {};
+        totalScore += analysis.overallScore || 0;
+        totalWords += analysis.totalWords || 0;
+        totalFillerWords += (analysis.fillerWordList?.length || 0);
+        totalActionWords += (analysis.actionWordList?.length || 0);
+        totalStatsUsed += (analysis.statsUsedCount || 0);
+        totalQuestions += 1;
+
+        (analysis.questionTypes || []).forEach(type => {
+          questionTypesCount[type] = (questionTypesCount[type] || 0) + 1;
+        });
+      });
+
+      const averageScore = totalQuestions > 0 ? totalScore / totalQuestions : 0;
+      const averageWords = totalQuestions > 0 ? totalWords / totalQuestions : 0;
+      const averageFillerWords = totalQuestions > 0 ? totalFillerWords / totalQuestions : 0;
+      const averageActionWords = totalQuestions > 0 ? totalActionWords / totalQuestions : 0;
+      const averageStatsUsed = totalQuestions > 0 ? totalStatsUsed / totalQuestions : 0;
+
+      const summaryData = {
+        totalQuestions,
+        averageScore,
+        averageWords,
+        averageFillerWords,
+        averageActionWords,
+        averageStatsUsed,
+        questionTypesCount,
+        timestamp: admin.database.ServerValue.TIMESTAMP,
+      };
+
+      await db.ref(`overallStats/${userId}`).set(summaryData);
+
+      console.log(`✅ Session ${sessionId} for user ${userId} summarized successfully`);
+
+      return res.status(200).json({ success: true, summary: summaryData });
+
+    } catch (error) {
+      console.error("Error finalizing interview session:", error);
+      return res.status(500).json({ error: "Internal server error", details: error.message });
+    }
+  });
+});
+
+
 
 module.exports = {
   generateQuestions,
@@ -1303,4 +1380,5 @@ module.exports = {
   stripeWebhook,
   cancelSubscription,
   uploadResume,
+  aggregateUserStats
 };
