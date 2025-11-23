@@ -98,11 +98,10 @@ const DefaultAppLayout = ({ children }) => {
             <div className="mt-auto px-2 pb-4 relative">
               <div 
                 className="relative w-full flex flex-col items-start"
-                onMouseEnter={() => setIsHovered(true)}
-                onMouseLeave={() => setIsHovered(false)}
               >
                 <div
-                  className="flex items-center rounded-full p-1 cursor-pointer transition-transform duration-300"
+                  onClick={() => setIsHovered(!isHovered)}
+                  className="flex items-center rounded-full p-1 cursor-pointer transition-transform duration-300 hover:bg-gray-100 dark:hover:bg-neutral-700/30"
                   style={{
                     transform: open ? "translateX(0)" : "translateX(-18px)", 
                     transition: "transform 0.2s ease-in-out"
@@ -160,7 +159,10 @@ const DefaultAppLayout = ({ children }) => {
                         {/* Menu Items */}
                         <div className="space-y-0.5">
                           <motion.button
-                            onClick={() => navigate("/settings")}
+                            onClick={() => {
+                              setIsHovered(false);
+                              navigate("/settings");
+                            }}
                             whileHover={{ x: 4 }}
                             whileTap={{ scale: 0.98 }}
                             className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-gray-100 dark:hover:bg-neutral-800 transition-colors group"
@@ -178,7 +180,10 @@ const DefaultAppLayout = ({ children }) => {
                           <div className="my-1 mx-2 border-t border-gray-200 dark:border-neutral-700" />
 
                           <motion.button
-                            onClick={handleSignOut}
+                            onClick={() => {
+                              setIsHovered(false);
+                              handleSignOut();
+                            }}
                             whileHover={{ x: 4 }}
                             whileTap={{ scale: 0.98 }}
                             className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors group"
