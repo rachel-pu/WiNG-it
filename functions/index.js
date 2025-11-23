@@ -796,15 +796,6 @@ const saveResponse = functions.https.onRequest((req, res) => {
 
       // Save to Firebase
       await db.ref(`interviews/${userId}/${sessionId}/responses/${questionNumber}`).set(responseData);
-     
-      const responsesRef = db.ref(`responses`);
-      const newResponseRef = responsesRef.push();
-
-      await newResponseRef.set({
-        userId: userId,
-        sessionId: sessionId,
-        timestamp: Date.now()
-      });
 
       // Update session metadata
       const snapshot = await db.ref(`interviews/${userId}/${sessionId}/responses`).once("value");
