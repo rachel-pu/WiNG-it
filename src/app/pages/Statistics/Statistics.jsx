@@ -103,6 +103,8 @@ const Statistics = () => {
           let sessionFillerWords = 0;
           let sessionActionWords = 0;
           let sessionSpeakingTime = 0;
+          const fillerWordCounts = {};
+          const actionWordCounts = {};
           
           responses.forEach((response, index) => {
             if (!response || index === 0) return;
@@ -146,7 +148,27 @@ const Statistics = () => {
                 }
               });
             }
+
+            // Aggregate filler words
+            response.analysis?.fillerWordList?.forEach(word => {
+              fillerWordCounts[word] = (fillerWordCounts[word] || 0) + 1;
+            });
+
+            // Aggregate action words
+            response.analysis?.actionWordList?.forEach(word => {
+              actionWordCounts[word] = (actionWordCounts[word] || 0) + 1;
+            });
           });
+
+          const topFillerWords = Object.entries(fillerWordCounts)
+            .sort((a, b) => b[1] - a[1])
+            .slice(0, 3)
+            .map(([word, count]) => `${word} (${count})`);
+
+          const topActionWords = Object.entries(actionWordCounts)
+            .sort((a, b) => b[1] - a[1])
+            .slice(0, 3)
+            .map(([word, count]) => `${word} (${count})`);
           
           processedSessions.push({
             sessionId,
@@ -156,7 +178,9 @@ const Statistics = () => {
             averageScore: sessionQuestions > 0 ? (sessionScore / sessionQuestions).toFixed(1) : 0,
             fillerWords: sessionFillerWords,
             actionWords: sessionActionWords,
-            speakingTime: sessionSpeakingTime
+            speakingTime: sessionSpeakingTime,
+            topFillerWords,
+            topActionWords
           });
         });
         
@@ -194,6 +218,35 @@ const Statistics = () => {
           coverageScores[cat] = categoryAverages[cat] || 0;
         });
 
+        // Aggregate all filler and action words across all sessions
+        const allFillerWords = {};
+        const allActionWords = {};
+        
+        sessions.forEach(([sessionId, sessionData]) => {
+          const responses = sessionData.responses || [];
+          responses.forEach((response, index) => {
+            if (!response || index === 0) return;
+            
+            response.analysis?.fillerWordList?.forEach(word => {
+              allFillerWords[word] = (allFillerWords[word] || 0) + 1;
+            });
+            
+            response.analysis?.actionWordList?.forEach(word => {
+              allActionWords[word] = (allActionWords[word] || 0) + 1;
+            });
+          });
+        });
+        
+        const topOverallFillerWords = Object.entries(allFillerWords)
+          .sort((a, b) => b[1] - a[1])
+          .slice(0, 10)
+          .map(([word, count]) => ({ word, count }));
+        
+        const topOverallActionWords = Object.entries(allActionWords)
+          .sort((a, b) => b[1] - a[1])
+          .slice(0, 10)
+          .map(([word, count]) => ({ word, count }));
+
         setBehavioralData({
           totalSessions: processedSessions.length,
           sessionsThisWeek: weeklyCount,
@@ -210,7 +263,9 @@ const Statistics = () => {
           avgSpeakingTime: totalQuestions > 0 ? (totalSpeakingTime / totalQuestions).toFixed(0) : 0,
           coverageScores,
           last5SessionsScores: last5Sessions,
-          sessionHistory: processedSessions.slice(0, 10)
+          sessionHistory: processedSessions.slice(0, 10),
+          topOverallFillerWords,
+          topOverallActionWords
         });
       } catch (error) {
         console.error('Error fetching behavioral data:', error);
@@ -228,7 +283,9 @@ const Statistics = () => {
           avgSpeakingTime: 0,
           coverageScores: {},
           last5SessionsScores: [],
-          sessionHistory: []
+          sessionHistory: [],
+          topOverallFillerWords: [],
+          topOverallActionWords: []
         });
       } finally {
         setLoading(false);
@@ -238,32 +295,29 @@ const Statistics = () => {
   }, [userId]);
 
   const handleDelete = async (sessionId) => {
-  const result = await Swal.fire({
-    title: "Delete this session's results?",
-    showCancelButton: true,
-    confirmButtonText: "Confirm",
-    cancelButtonText: "Cancel"
-  });
+    const result = await Swal.fire({
+      title: "Delete this session's results?",
+      showCancelButton: true,
+      confirmButtonText: "Confirm",
+      cancelButtonText: "Cancel"
+    });
 
-  if (!result.isConfirmed) return;
+    if (!result.isConfirmed) return;
 
-  try {
-    await remove(ref(database, `interviews/${userId}/${sessionId}`));
+    try {
+      await remove(ref(database, `interviews/${userId}/${sessionId}`));
 
-
-    setBehavioralData(prev => ({
-  ...prev,
-  sessionHistory: prev.sessionHistory.filter(s => s.sessionId !== sessionId)
-}));
-
-    
-    Swal.fire("Deleted!", "The session results were removed.", "success");
-  } catch (err) {
-    console.error(err);
-    Swal.fire("Error", "Could not delete results.", "error");
-  }
-};
-
+      setBehavioralData(prev => ({
+        ...prev,
+        sessionHistory: prev.sessionHistory.filter(s => s.sessionId !== sessionId)
+      }));
+      
+      Swal.fire("Deleted!", "The session results were removed.", "success");
+    } catch (err) {
+      console.error(err);
+      Swal.fire("Error", "Could not delete results.", "error");
+    }
+  };
 
   const toggleSession = (sessionId) => {
     setExpandedSessions(prev => ({
@@ -329,7 +383,6 @@ const Statistics = () => {
     actionWords: session.actionWords || 0,
     date: session.date
   })) || [];
-
 
   return (
     <Box>
@@ -432,16 +485,18 @@ const Statistics = () => {
               </div>
             </div>
 
-            <div className="metric-card amber">
-              <div className="metric-card-header">
-                <Zap className="text-amber-600" size={24} />
-                <h4>Top Category</h4>
+            {behavioralData.topCategory && (
+              <div className="metric-card amber">
+                <div className="metric-card-header">
+                  <Zap className="text-amber-600" size={24} />
+                  <h4>Top Category</h4>
+                </div>
+                <div className="metric-single">
+                  <p className="value amber category-name">{behavioralData.topCategory.name}</p>
+                  <p className="label">{behavioralData.topCategory.score}% average score</p>
+                </div>
               </div>
-              <div className="metric-single">
-                <p className="value amber category-name">{behavioralData.topCategory.name}</p>
-                <p className="label">{behavioralData.topCategory.score}% average score</p>
-              </div>
-            </div>
+            )}
           </div>
 
           {/* Charts Section */}
@@ -583,6 +638,132 @@ const Statistics = () => {
             </div>
           </div>
 
+          {/* Overall Top Words Section */}
+          <div className="charts-grid" style={{ marginTop: '2rem' }}>
+            {/* Top Filler Words Overall */}
+            <div className="chart-card">
+              <div className="chart-card-header">
+                <MessageSquare className="text-purple-600" size={24} />
+                <h3>Top 5 Common Filler Words (All Sessions)</h3>
+              </div>
+              <div style={{ padding: '1.5rem' }}>
+                {behavioralData.topOverallFillerWords?.length > 0 ? (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                    {behavioralData.topOverallFillerWords.slice(0, 5).map((item, index) => (
+                      <div 
+                        key={index}
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '1rem',
+                          padding: '0.75rem',
+                          backgroundColor: index < 3 ? '#f3e8ff' : '#f9fafb',
+                          borderRadius: '0.5rem',
+                          border: index < 3 ? '2px solid #a855f7' : '1px solid #e5e7eb'
+                        }}
+                      >
+                        <div style={{
+                          minWidth: '2rem',
+                          height: '2rem',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          backgroundColor: index < 3 ? '#a855f7' : '#6b7280',
+                          color: 'white',
+                          borderRadius: '50%',
+                          fontWeight: 'bold',
+                          fontSize: '0.875rem'
+                        }}>
+                          {index + 1}
+                        </div>
+                        <div style={{ flex: 1 }}>
+                          <p style={{ fontWeight: '600', fontSize: '1rem', color: '#1f2937', margin: 0 }}>
+                            {item.word}
+                          </p>
+                        </div>
+                        <div style={{
+                          padding: '0.25rem 0.75rem',
+                          backgroundColor: index < 3 ? '#a855f7' : '#6b7280',
+                          color: 'white',
+                          borderRadius: '1rem',
+                          fontWeight: '600',
+                          fontSize: '0.875rem'
+                        }}>
+                          {item.count}x
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p style={{ textAlign: 'center', color: '#6b7280', padding: '2rem' }}>
+                    No filler words recorded yet
+                  </p>
+                )}
+              </div>
+            </div>
+
+            {/* Top Action Words Overall */}
+            <div className="chart-card">
+              <div className="chart-card-header">
+                <Zap className="text-amber-600" size={24} />
+                <h3>Top 5 Used Action Words (All Sessions)</h3>
+              </div>
+              <div style={{ padding: '1.5rem' }}>
+                {behavioralData.topOverallActionWords?.length > 0 ? (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                    {behavioralData.topOverallActionWords.slice(0, 5).map((item, index) => (
+                      <div 
+                        key={index}
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '1rem',
+                          padding: '0.75rem',
+                          backgroundColor: index < 3 ? '#fef3c7' : '#f9fafb',
+                          borderRadius: '0.5rem',
+                          border: index < 3 ? '2px solid #f59e0b' : '1px solid #e5e7eb'
+                        }}
+                      >
+                        <div style={{
+                          minWidth: '2rem',
+                          height: '2rem',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          backgroundColor: index < 3 ? '#f59e0b' : '#6b7280',
+                          color: 'white',
+                          borderRadius: '50%',
+                          fontWeight: 'bold',
+                          fontSize: '0.875rem'
+                        }}>
+                          {index + 1}
+                        </div>
+                        <div style={{ flex: 1 }}>
+                          <p style={{ fontWeight: '600', fontSize: '1rem', color: '#1f2937', margin: 0 }}>
+                            {item.word}
+                          </p>
+                        </div>
+                        <div style={{
+                          padding: '0.25rem 0.75rem',
+                          backgroundColor: index < 3 ? '#f59e0b' : '#6b7280',
+                          color: 'white',
+                          borderRadius: '1rem',
+                          fontWeight: '600',
+                          fontSize: '0.875rem'
+                        }}>
+                          {item.count}x
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p style={{ textAlign: 'center', color: '#6b7280', padding: '2rem' }}>
+                    No action words recorded yet
+                  </p>
+                )}
+              </div>
+            </div>
+          </div>
 
           {/* Session History */}
           <div className="session-history">
@@ -596,6 +777,7 @@ const Statistics = () => {
                     <th>Session ID</th>
                     <th>Questions</th>
                     <th>Avg Score</th>
+                    <th>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -637,21 +819,21 @@ const Statistics = () => {
                           </span>
                         </td>
                         <td>
-                          <Link
-                            to={`/behavioral/results?userId=${userId}&sessionId=${session.sessionId}&expectedQuestions=${session.responseCount}`}
-                            className="view-results-btn"
-                          >
-                            <ExternalLink size={16} stroke="white" />
-                            <p style={{ color: "white" }}>View Results</p>
-                          </Link>
-                        </td>
-                        <td>
-                          <button
-                            className="delete-results-btn"
-                            onClick={() => handleDelete(session.sessionId)}
-                          >
-                            <DeleteForeverIcon />
-                          </button>
+                          <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                            <Link
+                              to={`/behavioral/results?userId=${userId}&sessionId=${session.sessionId}&expectedQuestions=${session.questionCount}`}
+                              className="view-results-btn"
+                            >
+                              <ExternalLink size={16} stroke="white" />
+                              <p style={{ color: "white" }}>View Results</p>
+                            </Link>
+                            <button
+                              className="delete-results-btn"
+                              onClick={() => handleDelete(session.sessionId)}
+                            >
+                              <DeleteForeverIcon />
+                            </button>
+                          </div>
                         </td>
                       </tr>
                       {expandedSessions[session.sessionId] && (
@@ -682,6 +864,16 @@ const Statistics = () => {
                                   </p>
                                 </div>
                               </div>
+                              <div className="session-details-grid" style={{ marginTop: '12px' }}>
+                                <div className="session-detail-card">
+                                  <p className="detail-label">Top Filler Words</p>
+                                  <p className="detail-value">{session.topFillerWords?.length > 0 ? session.topFillerWords.join(', ') : 'None'}</p>
+                                </div>
+                                <div className="session-detail-card">
+                                  <p className="detail-label">Top Action Words</p>
+                                  <p className="detail-value">{session.topActionWords?.length > 0 ? session.topActionWords.join(', ') : 'None'}</p>
+                                </div>
+                              </div>
                             </div>
                           </td>
                         </tr>
@@ -692,7 +884,6 @@ const Statistics = () => {
               </table>
             </div>
           </div>
-          
         </div>
       </DefaultAppLayout>
     </Box>
