@@ -30,19 +30,38 @@ export const createCheckoutSession = httpsCallable(functions, 'createCheckoutSes
 export const stripeWebhook = httpsCallable(functions, 'stripeWebhook');
 
 // Custom function for cancelSubscription (HTTP request instead of callable)
-export const cancelSubscription = async ({ userId }) => {
+export const cancelSubscription = async ({ userId, pendingTier }) => {
   const functionsUrl = import.meta.env.VITE_FIREBASE_FUNCTIONS_URL || 'https://us-central1-wing-it-e6a3a.cloudfunctions.net';
   const response = await fetch(`${functionsUrl}/cancelSubscription`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ userId }),
+    body: JSON.stringify({ userId, pendingTier }),
   });
 
   if (!response.ok) {
     const error = await response.json();
     throw new Error(error.error || 'Failed to cancel subscription');
+  }
+
+  return await response.json();
+};
+
+// Custom function for updateSubscription (HTTP request for upgrades with proration)
+export const updateSubscription = async ({ userId, priceId, planName }) => {
+  const functionsUrl = import.meta.env.VITE_FIREBASE_FUNCTIONS_URL || 'https://us-central1-wing-it-e6a3a.cloudfunctions.net';
+  const response = await fetch(`${functionsUrl}/updateSubscription`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ userId, priceId, planName }),
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || 'Failed to update subscription');
   }
 
   return await response.json();
