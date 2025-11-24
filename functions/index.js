@@ -1298,12 +1298,15 @@ async function handleSubscriptionUpdated(subscription) {
 
   const currentPeriodEnd = new Date(subscription.current_period_end * 1000);
 
+  // Check if subscription is set to cancel at period end
+  const status = subscription.cancel_at_period_end ? 'pending_cancellation' : subscription.status;
+
   await db.ref(`userTiers/${userTier}/${userId}`).update({
-    status: subscription.status,
+    status: status,
     renewalDate: currentPeriodEnd.toISOString().split('T')[0],
   });
 
-  console.log(`Subscription updated for user ${userId}`);
+  console.log(`Subscription updated for user ${userId}, status: ${status}`);
 }
 
 // Helper function to handle subscription deletion
