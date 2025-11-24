@@ -67,14 +67,25 @@ export default function SettingsBillings() {
         const fetchBillingHistory = async () => {
             if (!formData.userId) return;
             try {
-                const snapshot = await get(ref(database, `users/${formData.userId}/subscription/billingHistory`));
-                if (snapshot.exists()) {
-                    const historyData = snapshot.val();
-                    // Convert object to array and sort by date (newest first)
-                    const historyArray = Object.values(historyData).sort((a, b) => {
-                        return new Date(b.date) - new Date(a.date);
-                    });
-                    setBillingHistory(historyArray);
+                // Search through all tiers to find the user
+                const tiersSnapshot = await get(ref(database, 'userTiers'));
+                if (tiersSnapshot.exists()) {
+                    const tiers = tiersSnapshot.val();
+
+                    // Find user in any tier
+                    for (const [tierName, users] of Object.entries(tiers || {})) {
+                        if (users && users[formData.userId]) {
+                            const billingHistory = users[formData.userId].billingHistory;
+                            if (billingHistory) {
+                                // Convert object to array and sort by date (newest first)
+                                const historyArray = Object.values(billingHistory).sort((a, b) => {
+                                    return new Date(b.date) - new Date(a.date);
+                                });
+                                setBillingHistory(historyArray);
+                            }
+                            break;
+                        }
+                    }
                 }
             } catch (err) {
                 console.error('Error fetching billing history:', err);
