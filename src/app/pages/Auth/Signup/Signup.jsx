@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import { ArrowLeft } from 'lucide-react';
 import { useNavigate } from "react-router-dom";
 import './Signup.css';
-import { ref, set, get, update } from "firebase/database";
+import { ref, set, get } from "firebase/database";
 import { database } from '../../../../lib/firebase.jsx';
 import bcrypt from 'bcryptjs';
 import { Box, TextField, InputAdornment, IconButton, Button } from '@mui/material';
@@ -155,14 +155,16 @@ const SignUp = () => {
             professionalInformation: {
               currentJob: ""
             },
-            subscription: {
-              tier: "free"
-            },
             notificationPreferences: {}
           });
 
-        await update(ref(database, `userTiers/free`), {
-          [data.user.id]: true
+        // Store subscription information under userTiers
+        await set(ref(database, `userTiers/free/${data.user.id}`), {
+          tier: "free",
+          status: "active",
+          billingCycle: "monthly",
+          startDate: "",
+          renewalDate: ""
         });
 
         // Store email lookup
