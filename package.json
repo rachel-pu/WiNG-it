@@ -48,6 +48,7 @@
     "react-scroll": "^1.9.0",
     "recharts": "^3.3.0",
     "stripe": "^19.3.1",
+    "sweetalert2": "^11.26.3",
     "tailwind-merge": "^2.6.0",
     "tailwindcss-animate": "^1.0.7",
     "typescript": "^5.9.2",
