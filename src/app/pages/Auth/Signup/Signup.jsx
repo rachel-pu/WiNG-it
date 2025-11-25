@@ -8,7 +8,7 @@ import './Signup.css';
 import { ref, set, get } from "firebase/database";
 import { database } from '../../../../lib/firebase.jsx';
 import bcrypt from 'bcryptjs';
-import { Box, TextField, InputAdornment, IconButton, Button } from '@mui/material';
+import { Button } from '@mui/material';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import EmailIcon from '@mui/icons-material/Email';
 import LockIcon from '@mui/icons-material/Lock';
@@ -21,8 +21,13 @@ const SignUp = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const RECAPTCHA_SITE_KEY = import.meta.env.VITE_GOOGLE_RECAPTCHA_SITE_KEY;
 
@@ -53,7 +58,6 @@ const SignUp = () => {
     visible: { opacity: 1, y: 0 }
   };
 
-  // Validation functions
   const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   const isStrongPassword = (password) => /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(password);
   const sanitizeInput = (input) => input.replace(/[\0\x08\x09\x1a\n\r"'\\<>%]/g, "");
@@ -61,6 +65,8 @@ const SignUp = () => {
 
   const handleSignUp = async () => {
     setError("");
+    setSuccess("");
+    setIsLoading(true);
 
     try {
       const token = await new Promise((resolve, reject) => {
@@ -79,7 +85,6 @@ const SignUp = () => {
         check();
       });
 
-      // Verify the token with your backend
       const verificationResponse = await fetch(
         "https://us-central1-wing-it-e6a3a.cloudfunctions.net/verifyRecaptcha",
         {
@@ -92,12 +97,10 @@ const SignUp = () => {
       const result = await verificationResponse.json();
       if (!result.success) throw new Error("Failed reCAPTCHA verification.");
 
-      // Continue with Supabase / Firebase user creation
       const sanitizedName = sanitizeInput(name.trim());
       const sanitizedEmail = sanitizeInput(email.trim());
       const sanitizedPassword = sanitizeInput(password);
 
-      // Input validation
       if (!sanitizedName) return setError('Please enter your name.');
       if (!isValidEmail(sanitizedEmail)) return setError('Please enter a valid email address.');
       if (sanitizedPassword.length < 8)
@@ -108,20 +111,22 @@ const SignUp = () => {
         return setError(
           'Password must include upper/lowercase letters, numbers, and special characters.'
         );
+      if (sanitizedPassword !== confirmPassword)
+        return setError('Passwords do not match.');
+      if (!agreedToTerms)
+        return setError('Please agree to the Terms & Conditions and Privacy Policy.');
 
       try {
-        // Check if email already exists in Firebase
         const emailKey = sanitizedEmail.replace(/\./g, '_');
         const userSnapshot = await get(ref(database, `userEmails/${emailKey}`));
         if (userSnapshot.exists())
           return setError('An account with this email already exists. Please sign in instead.');
 
-        // Create new user in Supabase
         const { data, error } = await supabase.auth.signUp({
           email: sanitizedEmail,
           password: sanitizedPassword,
           options: {
-            data: { 
+            data: {
               name: sanitizedName,
               onboarded: false
             },
@@ -134,9 +139,8 @@ const SignUp = () => {
         const passwordLength = sanitizedPassword.length;
 
         if (data?.user) {
-          setError('A verification email has been sent. Please check your inbox.');
+          setSuccess('A verification email has been sent. Please check your inbox.');
 
-          // Save user info in Firebase
           await set(ref(database, `users/${data.user.id}`), {
             userId: data.user.id,
             passwordLength,
@@ -158,7 +162,6 @@ const SignUp = () => {
             notificationPreferences: {}
           });
 
-        // Store subscription information under userTiers
         await set(ref(database, `userTiers/free/${data.user.id}`), {
           tier: "free",
           status: "active",
@@ -167,7 +170,6 @@ const SignUp = () => {
           renewalDate: ""
         });
 
-        // Store email lookup
         await set(ref(database, `userEmails/${emailKey}`), {
           userId: data.user.id,
         });
@@ -180,241 +182,205 @@ const SignUp = () => {
   } catch (err) {
     console.error("reCAPTCHA execution error:", err);
     setError("Could not verify reCAPTCHA. Please try again.");
+  } finally {
+    setIsLoading(false);
   }
 };
 
   return (
-    <div>
-      <div className="auth-page">
-        <div className="auth-card">
+    <div className="auth-page">
+      <motion.div
+        className="auth-container"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, ease: "easeOut" }}
+      >
+        {/* Left Side - Gradient Section */}
+        <div className="auth-left">
+          <div className="logo-section">
+            <img src="/static/icons/logos/white-wingit.png" alt="WiNG.it Logo" className="logo-image" />
+            <h1 className="logo-text">WiNG.it</h1>
+          </div>
+
+          <div className="auth-left-content">
+            <div className="message-section">
+              <p className="message-intro">Find yourself beginning</p>
+              <h2 className="message-main">Your new professional tool haven</h2>
+            </div>
+          </div>
+        </div>
+
+        {/* Right Side - Form Section */}
+        <div className="auth-right">
           <Button
             onClick={() => navigate('/')}
-            sx={{
-              position: 'absolute',
-              top: '-35px',
-              left: '0',
-              color: '#cacacaff',
-              minWidth: 'auto',
-              padding: '2px 4px',
-              backgroundColor: 'transparent',
-              textTransform: 'none',
-              fontFamily: 'Satoshi Bold, sans-serif',
-              fontSize: '13px',
-              fontWeight: 500,
-              gap: '6px',
-              '&:hover': { color: '#a5b7f9ff' },
-              transition: 'all 0.2s ease',
-              zIndex: 10
-            }}
+            className="back-button-right"
           >
-            <ArrowLeft size={16} strokeWidth={2.5} />
+            <ArrowLeft size={18} strokeWidth={2.5} />
             <span>Back to Home</span>
           </Button>
 
-          <h1 className="auth-title">Create Account</h1>
+          <div className="auth-form-container">
+            <div className="auth-header">
+              <h1 className="auth-title">Create Your Account</h1>
+              <p className="auth-subtitle">Let's first set your account up!</p>
+            </div>
 
-          <p className="auth-subtitle">Start your journey with WiNG.it today</p>
+            {error && <div className="message-box error-box">{error}</div>}
+            {success && <div className="message-box success-box">{success}</div>}
 
-          {error && <div className="message-box error-box">{error}</div>}
+            <div className="auth-form">
+              {/* Name Input */}
+              <motion.div variants={itemVariants} className="form-group">
+                <label className="form-label">Full Name</label>
+                <div className="input-wrapper">
+                  <AccountCircle className="input-icon" />
+                  <input
+                    type="text"
+                    className="form-input"
+                    placeholder="John Doe"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    onKeyDown={(e) => e.key === 'Enter' && handleSignUp()}
+                  />
+                </div>
+              </motion.div>
 
-          {/* Name Input */}
-          <motion.div variants={itemVariants}>
-            <Box sx={{ display: 'flex', alignItems: 'flex-end', mb: 3 }}>
-              <AccountCircle sx={{ color: '#94a3b8', mr: 1.5, my: 0.5, fontSize: 28 }} />
-              <TextField
-                fullWidth
-                label="Full Name"
-                variant="standard"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                sx={{
-                  '& .MuiInputLabel-root': {
-                      fontFamily: 'Satoshi Bold, sans-serif',
-                      color: '#94a3b8',
-                      fontSize: '14px'
-                  },
-                  '& .MuiInputLabel-root.Mui-focused': {
-                      color: '#2850d9'
-                  },
-                  '& .MuiInput-root': {
-                      fontFamily: 'Satoshi, sans-serif',
-                      fontSize: '16px',
-                      color: '#1a202c'
-                  },
-                  '& .MuiInput-underline:before': {
-                      borderBottomColor: '#e2e8f0',
-                      borderBottomWidth: '2px'
-                  },
-                  '& .MuiInput-underline:hover:not(.Mui-disabled):before': {
-                      borderBottomColor: '#cbd5e1',
-                      borderBottomWidth: '2px'
-                  },
-                  '& .MuiInput-underline:after': {
-                      borderBottomColor: '#2850d9',
-                      borderBottomWidth: '2px'
-                  }
-              }}
-              />
-            </Box>
-          </motion.div>
+              {/* Email Input */}
+              <motion.div variants={itemVariants} className="form-group">
+                <label className="form-label">Email Address</label>
+                <div className="input-wrapper">
+                  <EmailIcon className="input-icon" />
+                  <input
+                    type="email"
+                    className="form-input"
+                    placeholder="you@example.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    onKeyDown={(e) => e.key === 'Enter' && handleSignUp()}
+                  />
+                </div>
+              </motion.div>
 
-          {/* Email Input */}
-          <motion.div variants={itemVariants}>
-            <Box sx={{ display: 'flex', alignItems: 'flex-end', mb: 3 }}>
-              <EmailIcon sx={{ color: '#94a3b8', mr: 1.5, my: 0.5, fontSize: 28 }} />
-              <TextField
-                fullWidth
-                label="Email Address"
-                variant="standard"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                sx={{
-                  '& .MuiInputLabel-root': {
-                      fontFamily: 'Satoshi Bold, sans-serif',
-                      color: '#94a3b8',
-                      fontSize: '14px'
-                  },
-                  '& .MuiInputLabel-root.Mui-focused': {
-                      color: '#2850d9'
-                  },
-                  '& .MuiInput-root': {
-                      fontFamily: 'Satoshi , sans-serif',
-                      fontSize: '16px',
-                      color: '#1a202c'
-                  },
-                  '& .MuiInput-underline:before': {
-                      borderBottomColor: '#e2e8f0',
-                      borderBottomWidth: '2px'
-                  },
-                  '& .MuiInput-underline:hover:not(.Mui-disabled):before': {
-                      borderBottomColor: '#cbd5e1',
-                      borderBottomWidth: '2px'
-                  },
-                  '& .MuiInput-underline:after': {
-                      borderBottomColor: '#2850d9',
-                      borderBottomWidth: '2px'
-                  }
-              }}
-              />
-            </Box>
-          </motion.div>
+              {/* Password Inputs - Side by Side */}
+              <div className="password-row">
+                <motion.div variants={itemVariants} className="form-group">
+                  <label className="form-label">Password</label>
+                  <div className="input-wrapper">
+                    <LockIcon className="input-icon" />
+                    <input
+                      type={showPassword ? 'text' : 'password'}
+                      className="form-input"
+                      placeholder="••••••••••••"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      onKeyDown={(e) => e.key === 'Enter' && handleSignUp()}
+                    />
+                    <button
+                      type="button"
+                      className="password-toggle"
+                      onClick={() => setShowPassword(!showPassword)}
+                    >
+                      {showPassword ? <VisibilityOff fontSize="small" /> : <Visibility fontSize="small" />}
+                    </button>
+                  </div>
+                </motion.div>
 
-          {/* Password Input */}
-          <motion.div variants={itemVariants}>
-            <Box sx={{ display: 'flex', alignItems: 'flex-end', mb: 3 }}>
-              <LockIcon sx={{ color: '#94a3b8', mr: 1.5, my: 0.5, fontSize: 28 }} />
-              <TextField
-                fullWidth
-                label="Password"
-                variant="standard"
-                type={showPassword ? 'text' : 'password'}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton
-                        onClick={() => setShowPassword(!showPassword)}
-                        edge="end"
-                        size="small"
-                        sx={{ color: '#64748b' }}
-                      >
-                        {showPassword ? <VisibilityOff fontSize="small" /> : <Visibility fontSize="small" />}
-                      </IconButton>
-                    </InputAdornment>
-                  )
-                }}
-                sx={{
-                  '& .MuiInputLabel-root': {
-                      fontFamily: 'Satoshi Bold, sans-serif',
-                      color: '#94a3b8',
-                      fontSize: '14px'
-                  },
-                  '& .MuiInputLabel-root.Mui-focused': {
-                      color: '#2850d9'
-                  },
-                  '& .MuiInput-root': {
-                      fontFamily: 'Satoshi, sans-serif',
-                      fontSize: '16px',
-                      color: '#1a202c'
-                  },
-                  '& .MuiInput-underline:before': {
-                      borderBottomColor: '#e2e8f0',
-                      borderBottomWidth: '2px'
-                  },
-                  '& .MuiInput-underline:hover:not(.Mui-disabled):before': {
-                      borderBottomColor: '#cbd5e1',
-                      borderBottomWidth: '2px'
-                  },
-                  '& .MuiInput-underline:after': {
-                      borderBottomColor: '#2850d9',
-                      borderBottomWidth: '2px'
-                  }
-              }}
-              />
-            </Box>
-          </motion.div>
+                <motion.div variants={itemVariants} className="form-group">
+                  <label className="form-label">Confirm Password</label>
+                  <div className="input-wrapper">
+                    <LockIcon className="input-icon" />
+                    <input
+                      type={showConfirmPassword ? 'text' : 'password'}
+                      className="form-input"
+                      placeholder="••••••••••••"
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      onKeyDown={(e) => e.key === 'Enter' && handleSignUp()}
+                    />
+                    <button
+                      type="button"
+                      className="password-toggle"
+                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    >
+                      {showConfirmPassword ? <VisibilityOff fontSize="small" /> : <Visibility fontSize="small" />}
+                    </button>
+                  </div>
+                </motion.div>
+              </div>
 
-          <button className="primary-btn" onClick={handleSignUp}>
-            Create Account
-          </button>
+              {/* Terms Checkbox */}
+              <div className="terms-checkbox">
+                <input
+                  type="checkbox"
+                  id="terms"
+                  checked={agreedToTerms}
+                  onChange={(e) => setAgreedToTerms(e.target.checked)}
+                />
+                <label htmlFor="terms">
+                  I agree to{' '}
+                  <button
+                    type="button"
+                    className="terms-link"
+                    onClick={() => navigate("/terms", { state: { previousRoute: window.location.pathname } })}
+                  >
+                    Terms & Conditions
+                  </button>
+                  {' '}and{' '}
+                  <button
+                    type="button"
+                    className="terms-link"
+                    onClick={() => navigate("/privacy", { state: { previousRoute: window.location.pathname } })}
+                  >
+                    Privacy Policy
+                  </button>
+                </label>
+              </div>
 
-          <p className="auth-description cursor-pointer" onClick={() => navigate("/signin")} style={{ marginTop: 15 }}>
-            Have an account? Sign in.
-          </p>
-          <p className="privacy-term-text" style={{marginTop:5, marginBottom: 0}}> By signing up, you are agreeing to our</p>
-            <p className="privacy-term-text" style={{marginTop: 0}}>
-              <span 
-                className="auth-description cursor-pointer" 
-                onClick={() => navigate("/privacy", { state: { previousRoute: window.location.pathname } })}
+              <button className="primary-btn" onClick={handleSignUp} disabled={isLoading}>
+                {isLoading ? 'Signing up...' : 'Sign Up'}
+              </button>
+            </div>
+
+            <div className="auth-footer">
+              <p className="footer-text">
+                Already have an account?{' '}
+                <button
+                  type="button"
+                  className="link-btn"
+                  onClick={() => navigate("/signin")}
+                >
+                  Sign in
+                </button>
+              </p>
+            </div>
+
+            <Typography
+              component="small"
+              className="recaptcha-text"
+            >
+              This site is protected by reCAPTCHA and the Google{' '}
+              <a
+                href="https://policies.google.com/privacy"
+                target="_blank"
+                rel="noopener noreferrer"
               >
                 Privacy Policy
-              </span> 
+              </a>{' '}
               and{' '}
-              <span 
-                className="auth-description cursor-pointer" 
-                onClick={() => navigate("/terms", { state: { previousRoute: window.location.pathname } })}
+              <a
+                href="https://policies.google.com/terms"
+                target="_blank"
+                rel="noopener noreferrer"
               >
                 Terms of Service
-              </span>
-            </p>
+              </a>{' '}
+              apply.
+            </Typography>
+          </div>
         </div>
-        <Typography
-            component="small"
-            sx={{
-                display: 'block',
-                marginTop: '10px',
-                fontSize: '0.75rem',
-                color: '#dddadaff',
-                textAlign: 'center',
-                fontFamily: "Satoshi",
-                animation: 'slideUp 0.6s cubic-bezier(0.4, 0, 0.2, 1)'
-            }}
-        >
-            This site is protected by reCAPTCHA and the Google{' '}
-            <a
-                href="https://policies.google.com/privacy"
-                style={{ color: '#b7c8f9ff' }}
-                target="_blank"
-                rel="noopener noreferrer"
-            >
-            Privacy Policy
-            </a>{' '}
-
-            and{' '}
-            <a
-                href="https://policies.google.com/terms"
-                style={{ color: '#b7c8f9ff' }}
-                target="_blank"
-                rel="noopener noreferrer"
-            >
-            Terms of Service
-            </a>{' '}
-            apply.
-        </Typography>
-        <div id="recaptcha-container" style={{ display: "none" }}></div>
-      </div>
+      </motion.div>
+      <div id="recaptcha-container" style={{ display: "none" }}></div>
     </div>
   );
 };
