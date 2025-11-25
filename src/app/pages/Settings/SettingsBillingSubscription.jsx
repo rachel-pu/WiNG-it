@@ -209,6 +209,13 @@ export default function SettingsBillingSubscription() {
         // Don't allow changing to the same plan
         if (newPlan === formData.subscription.tier) return;
 
+        // SAFETY CHECK: Ensure subscription data is loaded before proceeding
+        // This prevents creating duplicate subscriptions when subscription ID isn't loaded yet
+        if (!formData.subscription || !formData.userId) {
+            showAlert('Please Wait', 'Loading subscription data. Please try again in a moment.', 'warning');
+            return;
+        }
+
         // Define tier hierarchy for comparison
         const tierHierarchy = { free: 0, pro: 1, premium: 2 };
         const currentTier = formData.subscription.tier || 'free';
@@ -616,7 +623,6 @@ export default function SettingsBillingSubscription() {
                         <table className="BillingSubscription-table">
                             <thead>
                                 <tr>
-                                    <th>Plan Name</th>
                                     <th>Amounts</th>
                                     <th>Purchase Date</th>
                                     <th>End Date</th>
@@ -627,7 +633,6 @@ export default function SettingsBillingSubscription() {
                             <tbody>
                                 {filteredHistory.map((transaction, index) => (
                                     <tr key={transaction.id || index}>
-                                        <td>{transaction.planName ? `${transaction.planName.charAt(0).toUpperCase() + transaction.planName.slice(1)} Plan` : 'N/A'}</td>
                                         <td className="amount-cell">{transaction.amount}</td>
                                         <td>{transaction.date}</td>
                                         <td>{formData.subscription.renewalDate || 'N/A'}</td>
