@@ -1185,8 +1185,16 @@ async function handleCheckoutSessionCompleted(session) {
     const startDate = new Date(startTimestamp * 1000);
     const renewalDate = new Date(endTimestamp * 1000);
 
-    const startDateStr = startDate.toISOString().split('T')[0];
-    const renewalDateStr = renewalDate.toISOString().split('T')[0];
+    // Format dates as mm-dd-yyyy using UTC
+    const startMonth = String(startDate.getUTCMonth() + 1).padStart(2, '0');
+    const startDay = String(startDate.getUTCDate()).padStart(2, '0');
+    const startYear = startDate.getUTCFullYear();
+    const startDateStr = `${startMonth}-${startDay}-${startYear}`;
+
+    const renewalMonth = String(renewalDate.getUTCMonth() + 1).padStart(2, '0');
+    const renewalDay = String(renewalDate.getUTCDate()).padStart(2, '0');
+    const renewalYear = renewalDate.getUTCFullYear();
+    const renewalDateStr = `${renewalMonth}-${renewalDay}-${renewalYear}`;
 
     console.log('🔵 V3 Formatted dates - start:', startDateStr, 'renewal:', renewalDateStr);
 
@@ -1275,12 +1283,18 @@ async function handleSubscriptionUpdated(subscription) {
 
   const currentPeriodEnd = new Date(subscription.current_period_end * 1000);
 
+  // Format renewal date as mm-dd-yyyy using UTC
+  const renewalMonth = String(currentPeriodEnd.getUTCMonth() + 1).padStart(2, '0');
+  const renewalDay = String(currentPeriodEnd.getUTCDate()).padStart(2, '0');
+  const renewalYear = currentPeriodEnd.getUTCFullYear();
+  const renewalDateStr = `${renewalMonth}-${renewalDay}-${renewalYear}`;
+
   // Check if subscription is set to cancel at period end
   const status = subscription.cancel_at_period_end ? 'pending_cancellation' : subscription.status;
 
   await db.ref(`userTiers/${userTier}/${userId}`).update({
     status: status,
-    renewalDate: currentPeriodEnd.toISOString().split('T')[0],
+    renewalDate: renewalDateStr,
   });
 
   console.log(`Subscription updated for user ${userId}, status: ${status}`);
@@ -1389,9 +1403,14 @@ async function handleInvoicePaymentSucceeded(invoice) {
   }
 
   // Add to billing history under userTiers
+  const invoiceDate = new Date(invoice.created * 1000);
+  const month = String(invoiceDate.getUTCMonth() + 1).padStart(2, '0');
+  const day = String(invoiceDate.getUTCDate()).padStart(2, '0');
+  const year = invoiceDate.getUTCFullYear();
+
   await billingHistoryRef.push({
     id: invoice.id,
-    date: new Date(invoice.created * 1000).toISOString().split('T')[0],
+    date: `${month}-${day}-${year}`,
     amount: `$${(invoice.amount_paid / 100).toFixed(2)}`,
     status: 'paid',
     invoiceUrl: invoice.hosted_invoice_url
