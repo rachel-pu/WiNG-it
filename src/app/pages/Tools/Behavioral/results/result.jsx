@@ -25,139 +25,6 @@ export default function InterviewResults() {
     const [showDetailedResults, setShowDetailedResults] = useState(false);
     const navigate = useNavigate();
 
-    function calculatePerformanceScoreDiminishing({starAnswerParsed, responseTime, wordCount, fillerWords, actionWords, statsUsed, interviewerDifficulty = 'easy-going-personality'}) {
-        // Input validation
-        if (!starAnswerParsed || !responseTime || !wordCount || fillerWords < 0 || actionWords < 0 || statsUsed < 0){
-            return 0;
-        }
-
-        // Hard penalize little to no response
-        if (wordCount < 10){
-            return Math.round((wordCount * 1.5) * 0.6); // scale proportionally
-        }
-
-        let score = 100; // Keep calculation out of 100 for logic simplicity
-
-        // Difficulty multipliers
-        const getDifficultyMultipliers = (difficulty) => {
-            switch (difficulty) {
-                case 'challenging-personality':
-                    return { penaltyMultiplier: 1.4, bonusMultiplier: 0.8, baseThreshold: 0.9 };
-                case 'moderate-personality':
-                    return { penaltyMultiplier: 1.2, bonusMultiplier: 0.9, baseThreshold: 0.95 };
-                case 'easy-going-personality':
-                default:
-                    return { penaltyMultiplier: 1.0, bonusMultiplier: 1.0, baseThreshold: 1.0 };
-            }
-        };
-
-        const { penaltyMultiplier, bonusMultiplier, baseThreshold } = getDifficultyMultipliers(interviewerDifficulty);
-
-        // Penalize extremely long response
-        if (responseTime > 300) {
-            score -= Math.min((responseTime - 300) * 0.05 * penaltyMultiplier, 10 * penaltyMultiplier);
-        }
-
-        // Response time penalty
-        const minResponseTime = 20 * baseThreshold;
-        if (responseTime < minResponseTime) {
-            const deduction = Math.min((60 - responseTime) * 0.2 * penaltyMultiplier, 12 * penaltyMultiplier);
-            score -= deduction;
-        }
-
-        // Word count penalty
-        const minWordCount = 50 * baseThreshold;
-        if (wordCount < minWordCount) {
-            const deduction = Math.min((100 - wordCount) * 0.07 * penaltyMultiplier, 7 * penaltyMultiplier);
-            score -= deduction;
-        }
-
-        // Filler words penalty
-        if (wordCount > 0) {
-            const ratio = fillerWords / wordCount;
-            const fillerThreshold = 0.05 * baseThreshold;
-            if (ratio > fillerThreshold) {
-                const excess = ratio - fillerThreshold;
-                const deduction = Math.min(Math.pow(excess * 100, 1.2) * penaltyMultiplier, 15 * penaltyMultiplier);
-                score -= deduction;
-            }
-        }
-
-        // Long response penalty
-        if (wordCount > 300) {
-            const deduction = Math.min((wordCount - 300) * 0.05 * penaltyMultiplier, 5 * penaltyMultiplier);
-            score -= deduction;
-        }
-
-        // Action words points
-        score += harmonicPoints(actionWords) * 1.2 * bonusMultiplier;
-
-        // Stats used points
-        score += harmonicPoints(statsUsed) * bonusMultiplier;
-
-        // Time efficiency bonus
-        if (responseTime >= 60 && responseTime <= 180) {
-            const bonus = ((responseTime - 60) / (180 - 60)) * 5 * bonusMultiplier;
-            score += bonus;
-        }
-
-        // Words per second consistency penalty
-        const wordsPerSecond = wordCount / responseTime;
-        if (wordsPerSecond < 1) {
-            score -= Math.min((1 - wordsPerSecond) * 20 * penaltyMultiplier, 10 * penaltyMultiplier);
-        } else if (wordsPerSecond > 4) {
-            score -= Math.min((wordsPerSecond - 4) * 10 * penaltyMultiplier, 10 * penaltyMultiplier);
-        }
-
-        // Cap score between 0 and 100
-        score = Math.max(0, Math.min(100, score));
-
-        // ✅ Scale score to be out of 60
-        score = Math.round(score * 0.6);
-        let situationScore = starAnswerParsed.situation ? 10 : 0;
-        if (starAnswerParsed.situation) {
-            const wordCount = starAnswerParsed.situation.trim().split(/\s+/).length;
-            if (wordCount < 20) {
-                situationScore -= (20 - wordCount);
-                situationScore = Math.max(situationScore, 0);
-            }
-        }
-        let taskScore  = starAnswerParsed.task ? 10 : 0;
-        if (starAnswerParsed.task) {
-            const wordCount = starAnswerParsed.task.trim().split(/\s+/).length;
-            if (wordCount < 20) {
-                taskScore -= (20 - wordCount);
-                taskScore = Math.max(taskScore, 0);
-            }
-        }
-        let actionScore = starAnswerParsed.action ? 10 : 0;
-        if (starAnswerParsed.action) {
-            const wordCount = starAnswerParsed.action.trim().split(/\s+/).length;
-            if (wordCount < 20) {
-                actionScore -= (20 - wordCount);
-                actionScore = Math.max(actionScore, 0);
-            }
-        }
-        let resultScore = starAnswerParsed.result ? 10 : 0;
-        if (starAnswerParsed.result) {
-            const wordCount = starAnswerParsed.result.trim().split(/\s+/).length;
-            if (wordCount < 20) {
-                resultScore -= (20 - wordCount);
-                resultScore = Math.max(resultScore, 0);
-            }
-        }
-
-        return score + situationScore + taskScore + actionScore + resultScore;
-    }
-
-    function harmonicPoints(count) {
-        let points = 0;
-        for (let i = 1; i <= count; i++) {
-            points += 1 / i;
-        }
-        return points;
-    }
-
     const tabStyle = (isActive) => ({
         padding: '12px 16px',
         fontSize: '1.1rem',
@@ -371,17 +238,7 @@ export default function InterviewResults() {
             const fillerWordsList = extractFillerWords(transcript);
             const statsUsedList = extractStats(transcript);
 
-            // Calculate performance score using the existing function with extracted metrics
-            const score = calculatePerformanceScoreDiminishing({
-                starAnswerParsed: analysis?.starAnswerParsed,
-                responseTime: response.recordedTime || 0,
-                wordCount: analysis?.totalWords || 0,
-                fillerWords: fillerWordsList.length,
-                actionWords: actionWordsList.length,
-                statsUsed: statsUsedList.length,
-                interviewerDifficulty: data?.interviewerDifficulty || response?.interviewerDifficulty || 'easy-going-personality'
-            });
-
+        
             processedData[questionNumber] = {
                 question: response?.questionText || `Question ${questionNumber}`,
                 responseTime: analysis?.recordedTime || 0,
@@ -393,7 +250,7 @@ export default function InterviewResults() {
                 questionTypes: analysis?.questionTypes,
                 fillerWordsList: fillerWordsList,
                 actionWordsList: actionWordsList,
-                score: score,
+                score: analysis?.overallScore || 0,
                 strengths: analysis?.strengths || generateStrengths(analysis, actionWordsList.length, statsUsedList.length),
                 improvements:  analysis?.improvements || generateImprovements(analysis),
                 tips: analysis?.tips ||generateTips(analysis),

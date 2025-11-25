@@ -169,13 +169,13 @@ const Statistics = () => {
             .sort((a, b) => b[1] - a[1])
             .slice(0, 3)
             .map(([word, count]) => `${word} (${count})`);
-          
+
           processedSessions.push({
             sessionId,
             date: sessionDate.toISOString().split('T')[0],
             timestamp,
             questionCount: sessionQuestions,
-            averageScore: sessionQuestions > 0 ? (sessionScore / sessionQuestions).toFixed(1) : 0,
+            averageScore: Number((sessionScore / sessionQuestions).toFixed(1)),
             fillerWords: sessionFillerWords,
             actionWords: sessionActionWords,
             speakingTime: sessionSpeakingTime,
