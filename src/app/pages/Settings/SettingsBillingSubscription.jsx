@@ -419,7 +419,9 @@ export default function SettingsBillingSubscription() {
     const filteredHistory = billingHistory.filter(item => {
         if (!startDate && !endDate) return true;
 
-        const itemDate = new Date(item.date);
+        // Parse mm-dd-yyyy format
+        const [month, day, year] = item.date.split('-');
+        const itemDate = new Date(year, month - 1, day);
         const start = startDate ? new Date(startDate) : null;
         const end = endDate ? new Date(endDate) : null;
 
@@ -544,6 +546,7 @@ export default function SettingsBillingSubscription() {
                                     value={startDate}
                                     onChange={(e) => setStartDate(e.target.value)}
                                     className="date-input"
+                                    placeholder="mm/dd/yyyy"
                                 />
                             </div>
                             <div className="date-input-group">
@@ -553,6 +556,7 @@ export default function SettingsBillingSubscription() {
                                     value={endDate}
                                     onChange={(e) => setEndDate(e.target.value)}
                                     className="date-input"
+                                    placeholder="mm/dd/yyyy"
                                 />
                             </div>
                             {(startDate || endDate) && (
@@ -617,7 +621,7 @@ export default function SettingsBillingSubscription() {
                     </div>
                 ) : (
                     <p className="BillingSubscription-no-history">
-                        {searchTerm ? 'No results found.' : 'No billing history available.'}
+                        {(startDate || endDate) ? 'No results found for selected dates.' : 'No billing history available.'}
                     </p>
                 )}
             </div>

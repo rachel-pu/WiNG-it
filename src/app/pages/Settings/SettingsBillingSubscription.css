@@ -305,7 +305,7 @@
 .BillingSubscription-history-actions {
     display: flex;
     gap: 0.75rem;
-    align-items: center;
+    align-items: flex-end;
 }
 
 .BillingSubscription-search-box {
@@ -345,12 +345,13 @@
     border: 1px solid #e5e7eb;
     background: white;
     color: #374151;
-    border-radius: 6px;
+    border-radius: 0.375rem;
     font-size: 0.875rem;
     font-weight: 500;
     cursor: pointer;
     transition: all 0.2s;
     font-family: "DM Sans", sans-serif;
+    height: 38px;
 }
 
 .BillingSubscription-action-btn:hover:not(:disabled) {
@@ -716,10 +717,42 @@
 }
 
 .date-input {
-    padding: 0.5rem;
+    padding: 0.5rem 0.75rem;
     border: 1px solid #e5e7eb;
     border-radius: 0.375rem;
     font-size: 0.875rem;
+    height: 38px;
+    min-width: 150px;
+    font-family: "DM Sans", sans-serif;
+}
+
+.date-input::-webkit-datetime-edit-fields-wrapper {
+    color: #9ca3af;
+}
+
+.date-input::-webkit-datetime-edit-text {
+    color: #9ca3af;
+}
+
+.date-input::-webkit-datetime-edit-month-field,
+.date-input::-webkit-datetime-edit-day-field,
+.date-input::-webkit-datetime-edit-year-field {
+    color: #9ca3af;
+}
+
+.date-input::-webkit-datetime-edit {
+    position: relative;
+}
+
+.date-input::-webkit-datetime-edit::before {
+    content: attr(placeholder);
+    color: #9ca3af;
+    position: absolute;
+}
+
+.date-input:focus::-webkit-datetime-edit::before,
+.date-input:valid::-webkit-datetime-edit::before {
+    content: none;
 }
 
 .BillingSubscription-clear-btn {
@@ -731,6 +764,8 @@
     font-size: 0.875rem;
     cursor: pointer;
     transition: background 0.2s;
+    height: 38px;
+    font-family: "DM Sans", sans-serif;
 }
 
 .BillingSubscription-clear-btn:hover {
