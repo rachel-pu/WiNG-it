@@ -435,6 +435,12 @@ html, body {
   color: #dc2626;
 }
 
+.success-box {
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  color: #16a34a;
+}
+
 /* Responsive */
 @media (max-width: 1024px) {
   .auth-container {

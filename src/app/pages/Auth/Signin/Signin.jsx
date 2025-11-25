@@ -19,6 +19,8 @@ const SignIn = () => {
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState('');
+    const [success, setSuccess] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
     const RECAPTCHA_SITE_KEY = import.meta.env.VITE_GOOGLE_RECAPTCHA_SITE_KEY;
 
@@ -58,6 +60,8 @@ const SignIn = () => {
 
     const handleSignIn = async () => {
         setError('');
+        setSuccess('');
+        setIsLoading(true);
 
         try {
             const token = await new Promise((resolve, reject) => {
@@ -124,11 +128,15 @@ const SignIn = () => {
         } catch (err) {
             console.error("reCAPTCHA execution error:", err);
             setError("Could not verify reCAPTCHA. Please try again.");
+        } finally {
+            setIsLoading(false);
         }
     };
 
 
     const handleForgotPassword = async (email) => {
+        setError('');
+        setSuccess('');
         if (! email){
             setError("Please enter your email address to reset your password");
         }else {
@@ -137,9 +145,10 @@ const SignIn = () => {
                     redirectTo: `${window.location.origin}/update-password`,
                 });
                 if (error) throw error;
-                setError("Sent password reset link");
+                setSuccess("Sent password reset link");
             } catch (err) {
                 console.error('Error sending password reset email:', err.message);
+                setError("Failed to send password reset link");
             }
         }
     };
@@ -147,7 +156,12 @@ const SignIn = () => {
 
     return (
         <div className="auth-page">
-            <div className="auth-container">
+            <motion.div
+                className="auth-container"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, ease: "easeOut" }}
+            >
                 {/* Left Side - Gradient Section */}
                 <div className="auth-left">
                     <div className="logo-section">
@@ -158,7 +172,7 @@ const SignIn = () => {
                     <div className="auth-left-content">
                         <div className="message-section">
                             <p className="message-intro">Jump back into</p>
-                            <h2 className="message-main">Your new professional practice haven</h2>
+                            <h2 className="message-main">Your new professional tool haven</h2>
                         </div>
                     </div>
                 </div>
@@ -180,6 +194,7 @@ const SignIn = () => {
                         </div>
 
                         {error && <div className="message-box error-box">{error}</div>}
+                        {success && <div className="message-box success-box">{success}</div>}
 
                         <div className="auth-form">
                             <motion.div variants={itemVariants} className="form-group">
@@ -228,8 +243,8 @@ const SignIn = () => {
                                 </div>
                             </motion.div>
 
-                            <button className="primary-btn" onClick={handleSignIn}>
-                                Sign In
+                            <button className="primary-btn" onClick={handleSignIn} disabled={isLoading}>
+                                {isLoading ? 'Signing in...' : 'Sign In'}
                             </button>
                         </div>
 
@@ -270,7 +285,7 @@ const SignIn = () => {
                         </Typography>
                     </div>
                 </div>
-            </div>
+            </motion.div>
             <div id="recaptcha-container" style={{display:'none'}}></div>
         </div>
     );

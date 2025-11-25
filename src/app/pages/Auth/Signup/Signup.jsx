@@ -26,6 +26,8 @@ const SignUp = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [agreedToTerms, setAgreedToTerms] = useState(false);
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const RECAPTCHA_SITE_KEY = import.meta.env.VITE_GOOGLE_RECAPTCHA_SITE_KEY;
 
@@ -63,6 +65,8 @@ const SignUp = () => {
 
   const handleSignUp = async () => {
     setError("");
+    setSuccess("");
+    setIsLoading(true);
 
     try {
       const token = await new Promise((resolve, reject) => {
@@ -110,7 +114,7 @@ const SignUp = () => {
       if (sanitizedPassword !== confirmPassword)
         return setError('Passwords do not match.');
       if (!agreedToTerms)
-        return setError('Please agree to the Terms & Conditions.');
+        return setError('Please agree to the Terms & Conditions and Privacy Policy.');
 
       try {
         const emailKey = sanitizedEmail.replace(/\./g, '_');
@@ -135,7 +139,7 @@ const SignUp = () => {
         const passwordLength = sanitizedPassword.length;
 
         if (data?.user) {
-          setError('A verification email has been sent. Please check your inbox.');
+          setSuccess('A verification email has been sent. Please check your inbox.');
 
           await set(ref(database, `users/${data.user.id}`), {
             userId: data.user.id,
@@ -178,12 +182,19 @@ const SignUp = () => {
   } catch (err) {
     console.error("reCAPTCHA execution error:", err);
     setError("Could not verify reCAPTCHA. Please try again.");
+  } finally {
+    setIsLoading(false);
   }
 };
 
   return (
     <div className="auth-page">
-      <div className="auth-container">
+      <motion.div
+        className="auth-container"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, ease: "easeOut" }}
+      >
         {/* Left Side - Gradient Section */}
         <div className="auth-left">
           <div className="logo-section">
@@ -194,7 +205,7 @@ const SignUp = () => {
           <div className="auth-left-content">
             <div className="message-section">
               <p className="message-intro">Find yourself beginning</p>
-              <h2 className="message-main">Your new professional practice haven</h2>
+              <h2 className="message-main">Your new professional tool haven</h2>
             </div>
           </div>
         </div>
@@ -216,6 +227,7 @@ const SignUp = () => {
             </div>
 
             {error && <div className="message-box error-box">{error}</div>}
+            {success && <div className="message-box success-box">{success}</div>}
 
             <div className="auth-form">
               {/* Name Input */}
@@ -325,12 +337,8 @@ const SignUp = () => {
                 </label>
               </div>
 
-              <button
-                className="primary-btn"
-                onClick={handleSignUp}
-                disabled={!agreedToTerms || !password || !confirmPassword || password !== confirmPassword}
-              >
-                Sign Up
+              <button className="primary-btn" onClick={handleSignUp} disabled={isLoading}>
+                {isLoading ? 'Signing up...' : 'Sign Up'}
               </button>
             </div>
 
@@ -371,7 +379,7 @@ const SignUp = () => {
             </Typography>
           </div>
         </div>
-      </div>
+      </motion.div>
       <div id="recaptcha-container" style={{ display: "none" }}></div>
     </div>
   );
