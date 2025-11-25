@@ -57,6 +57,9 @@ html, body {
 
 .logo-section {
   z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 16px;
 }
 
 .logo-text {
@@ -66,6 +69,12 @@ html, body {
   margin: 0;
   font-family: 'Satoshi Black', sans-serif;
   letter-spacing: -0.03em;
+}
+
+.logo-image {
+  height: 48px;
+  width: auto;
+  display: block;
 }
 
 .auth-left-content {
@@ -389,6 +398,10 @@ html, body {
     font-size: 36px;
   }
 
+  .logo-image {
+    height: 36px;
+  }
+
   .message-main {
     font-size: 32px;
   }
@@ -421,6 +434,10 @@ html, body {
 
   .logo-text {
     font-size: 32px;
+  }
+
+  .logo-image {
+    height: 32px;
   }
 
   .message-main {

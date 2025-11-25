@@ -21,7 +21,10 @@ const SignUp = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
   const [error, setError] = useState('');
   const navigate = useNavigate();
   const RECAPTCHA_SITE_KEY = import.meta.env.VITE_GOOGLE_RECAPTCHA_SITE_KEY;
@@ -104,6 +107,10 @@ const SignUp = () => {
         return setError(
           'Password must include upper/lowercase letters, numbers, and special characters.'
         );
+      if (sanitizedPassword !== confirmPassword)
+        return setError('Passwords do not match.');
+      if (!agreedToTerms)
+        return setError('Please agree to the Terms & Conditions.');
 
       try {
         const emailKey = sanitizedEmail.replace(/\./g, '_');
@@ -180,13 +187,14 @@ const SignUp = () => {
         {/* Left Side - Gradient Section */}
         <div className="auth-left">
           <div className="logo-section">
+            <img src="/static/icons/logos/white-wingit.png" alt="WiNG.it Logo" className="logo-image" />
             <h1 className="logo-text">WiNG.it</h1>
           </div>
 
           <div className="auth-left-content">
             <div className="message-section">
-              <p className="message-intro">You can easily</p>
-              <h2 className="message-main">Get access your personal hub for clarity and productivity</h2>
+              <p className="message-intro">Find yourself beginning</p>
+              <h2 className="message-main">Your new professional practice haven</h2>
             </div>
           </div>
         </div>
@@ -203,8 +211,8 @@ const SignUp = () => {
 
           <div className="auth-form-container">
             <div className="auth-header">
-              <h1 className="auth-title">Create Account</h1>
-              <p className="auth-subtitle">Start your journey with WiNG.it today</p>
+              <h1 className="auth-title">Create Your Account</h1>
+              <p className="auth-subtitle">Let's first set your account up!</p>
             </div>
 
             {error && <div className="message-box error-box">{error}</div>}
@@ -242,54 +250,84 @@ const SignUp = () => {
                 </div>
               </motion.div>
 
-              {/* Password Input */}
-              <motion.div variants={itemVariants} className="form-group">
-                <label className="form-label">Password</label>
-                <div className="input-wrapper">
-                  <LockIcon className="input-icon" />
-                  <input
-                    type={showPassword ? 'text' : 'password'}
-                    className="form-input"
-                    placeholder="Create a strong password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    onKeyDown={(e) => e.key === 'Enter' && handleSignUp()}
-                  />
+              {/* Password Inputs - Side by Side */}
+              <div className="password-row">
+                <motion.div variants={itemVariants} className="form-group">
+                  <label className="form-label">Password</label>
+                  <div className="input-wrapper">
+                    <LockIcon className="input-icon" />
+                    <input
+                      type={showPassword ? 'text' : 'password'}
+                      className="form-input"
+                      placeholder="••••••••••••"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      onKeyDown={(e) => e.key === 'Enter' && handleSignUp()}
+                    />
+                    <button
+                      type="button"
+                      className="password-toggle"
+                      onClick={() => setShowPassword(!showPassword)}
+                    >
+                      {showPassword ? <VisibilityOff fontSize="small" /> : <Visibility fontSize="small" />}
+                    </button>
+                  </div>
+                </motion.div>
+
+                <motion.div variants={itemVariants} className="form-group">
+                  <label className="form-label">Confirm Password</label>
+                  <div className="input-wrapper">
+                    <LockIcon className="input-icon" />
+                    <input
+                      type={showConfirmPassword ? 'text' : 'password'}
+                      className="form-input"
+                      placeholder="••••••••••••"
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      onKeyDown={(e) => e.key === 'Enter' && handleSignUp()}
+                    />
+                    <button
+                      type="button"
+                      className="password-toggle"
+                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    >
+                      {showConfirmPassword ? <VisibilityOff fontSize="small" /> : <Visibility fontSize="small" />}
+                    </button>
+                  </div>
+                </motion.div>
+              </div>
+
+              {/* Terms Checkbox */}
+              <div className="terms-checkbox">
+                <input
+                  type="checkbox"
+                  id="terms"
+                  checked={agreedToTerms}
+                  onChange={(e) => setAgreedToTerms(e.target.checked)}
+                />
+                <label htmlFor="terms">
+                  I agree to{' '}
                   <button
                     type="button"
-                    className="password-toggle"
-                    onClick={() => setShowPassword(!showPassword)}
+                    className="terms-link"
+                    onClick={() => navigate("/terms", { state: { previousRoute: window.location.pathname } })}
                   >
-                    {showPassword ? <VisibilityOff fontSize="small" /> : <Visibility fontSize="small" />}
+                    Terms & Conditions
                   </button>
-                </div>
-                <p className="password-hint">
-                  Must include uppercase, lowercase, numbers, and special characters (min 8 characters)
-                </p>
-              </motion.div>
+                  {' '}and{' '}
+                  <button
+                    type="button"
+                    className="terms-link"
+                    onClick={() => navigate("/privacy", { state: { previousRoute: window.location.pathname } })}
+                  >
+                    Privacy Policy
+                  </button>
+                </label>
+              </div>
 
               <button className="primary-btn" onClick={handleSignUp}>
-                Create Account
+                Sign Up
               </button>
-
-              <p className="terms-text">
-                By signing up, you agree to our{' '}
-                <button
-                  type="button"
-                  className="terms-link"
-                  onClick={() => navigate("/privacy", { state: { previousRoute: window.location.pathname } })}
-                >
-                  Privacy Policy
-                </button>{' '}
-                and{' '}
-                <button
-                  type="button"
-                  className="terms-link"
-                  onClick={() => navigate("/terms", { state: { previousRoute: window.location.pathname } })}
-                >
-                  Terms of Service
-                </button>
-              </p>
             </div>
 
             <div className="auth-footer">

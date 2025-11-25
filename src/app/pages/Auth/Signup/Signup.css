@@ -57,6 +57,9 @@ html, body {
 
 .logo-section {
   z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 16px;
 }
 
 .logo-text {
@@ -66,6 +69,12 @@ html, body {
   margin: 0;
   font-family: 'Satoshi Black', sans-serif;
   letter-spacing: -0.03em;
+}
+
+.logo-image {
+  height: 48px;
+  width: auto;
+  display: block;
 }
 
 .auth-left-content {
@@ -99,7 +108,7 @@ html, body {
 /* Right Side - Form Section */
 .auth-right {
   flex: 1;
-  padding: 60px;
+  padding: 0px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -160,13 +169,13 @@ html, body {
 .auth-form {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 4px;
 }
 
 .form-group {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 4px;
 }
 
 .form-label {
@@ -259,6 +268,60 @@ html, body {
 .password-toggle:hover {
   color: #2850d9;
   background: rgba(40, 80, 217, 0.05);
+}
+
+/* Password Row */
+.password-row {
+  display: flex;
+  gap: 12px;
+}
+
+.password-row .form-group {
+  flex: 1;
+}
+
+/* Terms Checkbox */
+.terms-checkbox {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-top: -4px;
+  padding-bottom: 4px;
+}
+
+.terms-checkbox input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  margin-top: 2px;
+  cursor: pointer;
+  accent-color: #2850d9;
+  flex-shrink: 0;
+}
+
+.terms-checkbox label {
+  font-size: 14px;
+  color: #64748b;
+  font-family: 'Satoshi', sans-serif;
+  line-height: 1.5;
+  cursor: pointer;
+}
+
+.terms-checkbox .terms-link {
+  background: none;
+  border: none;
+  padding: 0;
+  color: #2850d9;
+  font-weight: 500;
+  font-family: 'Satoshi', sans-serif;
+  font-size: 14px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.terms-checkbox .terms-link:hover {
+  color: #1e40af;
+  text-decoration: underline;
 }
 
 .primary-btn {
@@ -389,6 +452,10 @@ html, body {
     font-size: 36px;
   }
 
+  .logo-image {
+    height: 36px;
+  }
+
   .message-main {
     font-size: 32px;
   }
@@ -421,6 +488,10 @@ html, body {
 
   .logo-text {
     font-size: 32px;
+  }
+
+  .logo-image {
+    height: 32px;
   }
 
   .message-main {
@@ -458,5 +529,14 @@ html, body {
 
   .form-input {
     font-size: 14px;
+  }
+
+  .password-row {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .oauth-buttons {
+    flex-direction: column;
   }
 }

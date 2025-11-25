@@ -151,13 +151,14 @@ const SignIn = () => {
                 {/* Left Side - Gradient Section */}
                 <div className="auth-left">
                     <div className="logo-section">
+                        <img src="/static/icons/logos/white-wingit.png" alt="WiNG.it Logo" className="logo-image" />
                         <h1 className="logo-text">WiNG.it</h1>
                     </div>
 
                     <div className="auth-left-content">
                         <div className="message-section">
-                            <p className="message-intro">You can easily</p>
-                            <h2 className="message-main">Get access your personal hub for clarity and productivity</h2>
+                            <p className="message-intro">Jump back into</p>
+                            <h2 className="message-main">Your new professional practice haven</h2>
                         </div>
                     </div>
                 </div>
