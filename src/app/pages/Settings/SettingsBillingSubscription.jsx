@@ -11,6 +11,7 @@ export default function SettingsBillingSubscription() {
     const [billingHistory, setBillingHistory] = useState([]);
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
+    const [isLoadingSubscription, setIsLoadingSubscription] = useState(true);
     const [formData, setFormData] = useState({
         userId: '',
         subscription: {
@@ -139,6 +140,7 @@ export default function SettingsBillingSubscription() {
     useEffect(() => {
         const fetchSubscription = async () => {
             if (!formData.userId) return;
+            setIsLoadingSubscription(true);
             try {
                 // Search through all tiers to find the user
                 const tiersSnapshot = await get(ref(database, 'userTiers'));
@@ -164,6 +166,8 @@ export default function SettingsBillingSubscription() {
             } catch (err) {
                 console.error('Error fetching subscription:', err);
                 setError('Failed to fetch subscription data.');
+            } finally {
+                setIsLoadingSubscription(false);
             }
         };
         fetchSubscription();
@@ -198,6 +202,30 @@ export default function SettingsBillingSubscription() {
         };
         fetchBillingHistory();
     }, [formData.userId]);
+
+    // Helper function to parse date in either format (yyyy-mm-dd or mm-dd-yyyy)
+    const parseDate = (dateStr) => {
+        const parts = dateStr.split('-');
+        // Check if first part is a 4-digit year (yyyy-mm-dd) or 2-digit month (mm-dd-yyyy)
+        if (parts[0].length === 4) {
+            // yyyy-mm-dd format
+            return new Date(parts[0], parts[1] - 1, parts[2]);
+        } else {
+            // mm-dd-yyyy format
+            return new Date(parts[2], parts[0] - 1, parts[1]);
+        }
+    };
+
+    // Helper function to format date consistently as mm-dd-yyyy
+    const formatDate = (dateStr) => {
+        const parts = dateStr.split('-');
+        if (parts[0].length === 4) {
+            // Convert yyyy-mm-dd to mm-dd-yyyy
+            return `${parts[1]}-${parts[2]}-${parts[0]}`;
+        }
+        // Already in mm-dd-yyyy format
+        return dateStr;
+    };
 
     const handleChangePlan = async (newPlan) => {
         // Don't allow changing to the same plan
@@ -385,7 +413,7 @@ export default function SettingsBillingSubscription() {
         const csvContent = [
             headers.join(','),
             ...filteredHistory.map(item =>
-                [item.amount, item.date, item.status].join(',')
+                [item.amount, formatDate(item.date), item.status].join(',')
             )
         ].join('\n');
 
@@ -410,18 +438,31 @@ export default function SettingsBillingSubscription() {
 
     if (error) return <p style={{ color: 'red' }}>{error}</p>;
 
+    // Show loading state while subscription data is being fetched
+    if (isLoadingSubscription) {
+        return (
+            <div className="BillingSubscription-container">
+                <div className="BillingSubscription-header">
+                    <div className="BillingSubscription-header-text">
+                        <h2 className="BillingSubscription-title">Billing & Subscription</h2>
+                        <p className="BillingSubscription-subtitle">
+                            Loading your subscription...
+                        </p>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
     const currentPlan = plans[formData.subscription.tier] ? formData.subscription.tier : 'free';
     const remainingDays = calculateRemainingDays();
     const isPendingCancellation = formData.subscription.status === 'pending_cancellation';
-
 
     // Filter billing history based on date range
     const filteredHistory = billingHistory.filter(item => {
         if (!startDate && !endDate) return true;
 
-        // Parse mm-dd-yyyy format
-        const [month, day, year] = item.date.split('-');
-        const itemDate = new Date(year, month - 1, day);
+        const itemDate = parseDate(item.date);
         const start = startDate ? new Date(startDate) : null;
         const end = endDate ? new Date(endDate) : null;
 
@@ -594,8 +635,8 @@ export default function SettingsBillingSubscription() {
                                 {filteredHistory.map((transaction, index) => (
                                     <tr key={transaction.id || index}>
                                         <td className="amount-cell">{transaction.amount}</td>
-                                        <td>{transaction.date}</td>
-                                        <td>{formData.subscription.renewalDate || 'N/A'}</td>
+                                        <td>{formatDate(transaction.date)}</td>
+                                        <td>{formData.subscription.renewalDate ? formatDate(formData.subscription.renewalDate) : 'N/A'}</td>
                                         <td>
                                             <span className={`status-badge status-${transaction.status.toLowerCase()}`}>
                                                 {transaction.status === 'success' ? '● Success' : transaction.status === 'paid' ? '● Paid' : '● Pending'}
