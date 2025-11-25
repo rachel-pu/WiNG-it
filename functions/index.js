@@ -1250,16 +1250,26 @@ async function handleCheckoutSessionCompleted(session) {
       const initialInvoice = invoices.data[0];
       const billingHistoryRef = db.ref(`userTiers/${newTier}/${userId}/billingHistory`);
 
-      await billingHistoryRef.push({
-        id: initialInvoice.id,
-        date: new Date(initialInvoice.created * 1000).toISOString().split('T')[0],
-        amount: `$${(initialInvoice.amount_paid / 100).toFixed(2)}`,
-        status: 'paid',
-        planName: planName,
-        invoiceUrl: initialInvoice.hosted_invoice_url,
-        type: 'initial_payment'
-      });
-      console.log('🔵 V3 Added initial billing history entry');
+      // Check for duplicates before adding
+      const existingHistorySnapshot = await billingHistoryRef.once('value');
+      const existingHistory = existingHistorySnapshot.val();
+
+      const isDuplicate = existingHistory && Object.values(existingHistory).some(entry => entry.id === initialInvoice.id);
+
+      if (!isDuplicate) {
+        await billingHistoryRef.push({
+          id: initialInvoice.id,
+          date: new Date(initialInvoice.created * 1000).toISOString().split('T')[0],
+          amount: `$${(initialInvoice.amount_paid / 100).toFixed(2)}`,
+          status: 'paid',
+          planName: planName,
+          invoiceUrl: initialInvoice.hosted_invoice_url,
+          type: 'initial_payment'
+        });
+        console.log('🔵 V3 Added initial billing history entry');
+      } else {
+        console.log(`🔵 V3 Invoice ${initialInvoice.id} already exists, skipping duplicate`);
+      }
     }
 
     console.log(`✅ V3 Subscription activated for user ${userId}, tier: ${planName}, billingCycle: ${billingCycle}, renewalDate: ${renewalDateStr}`);
@@ -1671,16 +1681,26 @@ const updateSubscription = functions.https.onRequest(
         const latestInvoice = invoices.data[0];
         const billingHistoryRef = db.ref(`userTiers/${newTier}/${userId}/billingHistory`);
 
-        await billingHistoryRef.push({
-          id: latestInvoice.id,
-          date: new Date(latestInvoice.created * 1000).toISOString().split('T')[0],
-          amount: `$${(latestInvoice.amount_paid / 100).toFixed(2)}`,
-          status: latestInvoice.status === 'paid' ? 'paid' : latestInvoice.status,
-          planName: planName,
-          invoiceUrl: latestInvoice.hosted_invoice_url,
-          type: 'upgrade/downgrade'
-        });
-        console.log('Added billing history entry for upgrade/downgrade');
+        // Check for duplicates before adding
+        const existingHistorySnapshot = await billingHistoryRef.once('value');
+        const existingHistory = existingHistorySnapshot.val();
+
+        const isDuplicate = existingHistory && Object.values(existingHistory).some(entry => entry.id === latestInvoice.id);
+
+        if (!isDuplicate) {
+          await billingHistoryRef.push({
+            id: latestInvoice.id,
+            date: new Date(latestInvoice.created * 1000).toISOString().split('T')[0],
+            amount: `$${(latestInvoice.amount_paid / 100).toFixed(2)}`,
+            status: latestInvoice.status === 'paid' ? 'paid' : latestInvoice.status,
+            planName: planName,
+            invoiceUrl: latestInvoice.hosted_invoice_url,
+            type: 'upgrade/downgrade'
+          });
+          console.log('Added billing history entry for upgrade/downgrade');
+        } else {
+          console.log(`Invoice ${latestInvoice.id} already exists, skipping duplicate`);
+        }
       }
 
       console.log(`Successfully upgraded subscription for user ${userId} to ${planName}`);
