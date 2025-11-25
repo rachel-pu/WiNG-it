@@ -1,0 +1,773 @@
+/* Container */
+.BillingSubscription-container {
+    max-width: 100%;
+    padding: 0;
+}
+
+/* Header */
+.BillingSubscription-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 2rem;
+    gap: 2rem;
+}
+
+.BillingSubscription-header-text {
+    flex: 1;
+}
+
+.BillingSubscription-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #111827;
+    margin: 0 0 0.5rem 0;
+    font-family: "DM Sans", sans-serif;
+}
+
+.BillingSubscription-subtitle {
+    font-size: 0.875rem;
+    color: #6b7280;
+    margin: 0;
+    line-height: 1.5;
+    font-family: "DM Sans", sans-serif;
+}
+
+/* Billing Cycle Toggle */
+.BillingSubscription-billing-toggle {
+    display: flex;
+    background: #f3f4f6;
+    border-radius: 8px;
+    padding: 4px;
+    gap: 4px;
+}
+
+.BillingSubscription-toggle-btn {
+    padding: 0.5rem 1.5rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    border: none;
+    background: transparent;
+    color: #6b7280;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: "DM Sans", sans-serif;
+}
+
+.BillingSubscription-toggle-btn.active {
+    background: white;
+    color: #111827;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.BillingSubscription-toggle-btn:hover:not(.active) {
+    color: #374151;
+}
+
+/* Plans Grid */
+.BillingSubscription-plans-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+}
+
+/* Plan Card */
+.BillingSubscription-plan-card {
+    background: white;
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 1.5rem;
+    transition: all 0.3s;
+    position: relative;
+}
+
+.BillingSubscription-plan-card:hover {
+    border-color: #d1d5db;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+}
+
+.BillingSubscription-plan-card.current {
+    border-color: #3b82f6;
+    border-width: 3px;
+    background: #eff6ff;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1), 0 8px 16px -2px rgba(59, 130, 246, 0.2);
+    transform: scale(1.02);
+}
+
+.BillingSubscription-plan-card.dark {
+    background: #1f2937;
+    border-color: #374151;
+    color: white;
+}
+
+.BillingSubscription-plan-card.dark:hover {
+    border-color: #4b5563;
+}
+
+/* Plan Header */
+.BillingSubscription-plan-header {
+    margin-bottom: 1.5rem;
+}
+
+.BillingSubscription-plan-name-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.BillingSubscription-plan-name {
+    font-size: 1rem;
+    font-weight: 600;
+    color: inherit;
+    font-family: "DM Sans", sans-serif;
+}
+
+.BillingSubscription-plan-card.dark .BillingSubscription-plan-name {
+    color: white;
+}
+
+.BillingSubscription-plan-badge {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-family: "DM Sans", sans-serif;
+}
+
+.BillingSubscription-plan-price {
+    display: flex;
+    align-items: baseline;
+    gap: 0.25rem;
+    margin-bottom: 0.5rem;
+}
+
+.price-strikethrough {
+    font-size: 1.5rem;
+    font-weight: 500;
+    color: #9ca3af;
+    text-decoration: line-through;
+    margin-right: 0.5rem;
+}
+
+.BillingSubscription-plan-card.dark .price-strikethrough {
+    color: #6b7280;
+}
+
+.price-currency {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: inherit;
+}
+
+.price-amount {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: inherit;
+    line-height: 1;
+}
+
+.price-amount-highlighted {
+    color: #f59e0b;
+}
+
+.BillingSubscription-plan-card.dark .price-amount-highlighted {
+    color: #fbbf24;
+}
+
+.price-period {
+    font-size: 1rem;
+    color: #6b7280;
+}
+
+.BillingSubscription-plan-card.dark .price-period {
+    color: #9ca3af;
+}
+
+.BillingSubscription-plan-billed-yearly {
+    font-size: 0.875rem;
+    color: #9ca3af;
+    font-weight: 400;
+    margin-bottom: 1.5rem;
+    font-family: "DM Sans", sans-serif;
+}
+
+.BillingSubscription-plan-card.dark .BillingSubscription-plan-billed-yearly {
+    color: #6b7280;
+}
+
+.savings-percentage {
+    color: #10b981;
+    font-weight: 500;
+    margin-left: 0.5rem;
+}
+
+.BillingSubscription-plan-card.dark .savings-percentage {
+    color: #34d399;
+}
+
+/* Plan Button */
+.BillingSubscription-plan-button {
+    width: 100%;
+    padding: 0.75rem 1.5rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    border: 1px solid #e5e7eb;
+    background: white;
+    color: #374151;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: "DM Sans", sans-serif;
+    margin-bottom: 1.5rem;
+}
+
+.BillingSubscription-plan-button:hover:not(:disabled) {
+    background: #f9fafb;
+    border-color: #d1d5db;
+}
+
+.BillingSubscription-plan-button:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.BillingSubscription-plan-button.current {
+    background: #f3f4f6;
+    color: #6b7280;
+    border-color: #e5e7eb;
+}
+
+.BillingSubscription-plan-card.dark .BillingSubscription-plan-button {
+    background: white;
+    color: #1f2937;
+    border-color: white;
+}
+
+.BillingSubscription-plan-card.dark .BillingSubscription-plan-button:hover:not(:disabled) {
+    background: #f3f4f6;
+}
+
+/* Plan Features */
+.BillingSubscription-plan-features {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.BillingSubscription-feature-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    font-size: 0.875rem;
+    color: inherit;
+    font-family: "DM Sans", sans-serif;
+}
+
+.BillingSubscription-plan-card.dark .BillingSubscription-feature-item {
+    color: #e5e7eb;
+}
+
+.feature-check {
+    flex-shrink: 0;
+    margin-top: 0.125rem;
+    color: #10b981;
+}
+
+.BillingSubscription-plan-card.dark .feature-check {
+    color: #34d399;
+}
+
+/* Billing History */
+.BillingSubscription-history-section {
+    margin-top: 3rem;
+}
+
+.BillingSubscription-history-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.BillingSubscription-history-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #111827;
+    margin: 0;
+    font-family: "DM Sans", sans-serif;
+}
+
+.BillingSubscription-history-actions {
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-end;
+}
+
+.BillingSubscription-search-box {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.search-icon {
+    position: absolute;
+    left: 0.75rem;
+    color: #9ca3af;
+    pointer-events: none;
+}
+
+.BillingSubscription-search-input {
+    padding: 0.5rem 0.75rem 0.5rem 2.5rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    color: #374151;
+    outline: none;
+    font-family: "DM Sans", sans-serif;
+    width: 250px;
+}
+
+.BillingSubscription-search-input:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.BillingSubscription-action-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border: 1px solid #e5e7eb;
+    background: white;
+    color: #374151;
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: "DM Sans", sans-serif;
+    height: 38px;
+}
+
+.BillingSubscription-action-btn:hover:not(:disabled) {
+    background: #f9fafb;
+    border-color: #d1d5db;
+}
+
+.BillingSubscription-action-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Filter Dropdown */
+.filter-dropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    margin-top: 0.5rem;
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 0.75rem;
+    min-width: 180px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    z-index: 10;
+}
+
+.filter-dropdown-header {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.5rem;
+    font-family: "DM Sans", sans-serif;
+}
+
+.filter-option {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background 0.15s;
+    font-size: 0.875rem;
+    font-family: "DM Sans", sans-serif;
+}
+
+.filter-option:hover {
+    background: #f9fafb;
+}
+
+.filter-option input[type="checkbox"] {
+    cursor: pointer;
+    width: 16px;
+    height: 16px;
+}
+
+.filter-option span {
+    color: #374151;
+}
+
+/* Table */
+.BillingSubscription-table-container {
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.BillingSubscription-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: "DM Sans", sans-serif;
+}
+
+.BillingSubscription-table thead {
+    background: #f9fafb;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.BillingSubscription-table th {
+    padding: 0.75rem 1rem;
+    text-align: left;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.BillingSubscription-table tbody tr {
+    border-bottom: 1px solid #f3f4f6;
+    transition: background 0.15s;
+}
+
+.BillingSubscription-table tbody tr:hover {
+    background: #f9fafb;
+}
+
+.BillingSubscription-table tbody tr:last-child {
+    border-bottom: none;
+}
+
+.BillingSubscription-table td {
+    padding: 1rem;
+    font-size: 0.875rem;
+    color: #374151;
+}
+
+.amount-cell {
+    font-weight: 500;
+    color: #111827;
+}
+
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.status-paid {
+    background: #d1fae5;
+    color: #059669;
+}
+
+.status-processing {
+    background: #fef3c7;
+    color: #d97706;
+}
+
+.status-success {
+    background: #d1fae5;
+    color: #059669;
+}
+
+.action-cell {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.action-icon-btn {
+    padding: 0.375rem;
+    border: none;
+    background: transparent;
+    color: #6b7280;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.action-icon-btn:hover {
+    background: #f3f4f6;
+    color: #374151;
+}
+
+.BillingSubscription-no-history {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: #9ca3af;
+    font-size: 0.875rem;
+    font-family: "DM Sans", sans-serif;
+}
+
+/* Modal */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideUpFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.BillingSubscription-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    animation: fadeIn 0.2s ease-out;
+}
+
+.BillingSubscription-modal {
+    background: white;
+    border-radius: 12px;
+    padding: 2rem;
+    max-width: 400px;
+    width: 90%;
+    position: relative;
+    animation: slideUpFadeIn 0.3s ease-out;
+}
+
+.BillingSubscription-modal-close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: none;
+    border: none;
+    color: #9ca3af;
+    cursor: pointer;
+    padding: 0.25rem;
+    border-radius: 4px;
+    transition: all 0.2s;
+}
+
+.BillingSubscription-modal-close:hover {
+    background: #f3f4f6;
+    color: #374151;
+}
+
+.BillingSubscription-modal-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1rem;
+}
+
+.icon-success {
+    color: #10b981;
+}
+
+.icon-error {
+    color: #ef4444;
+}
+
+.icon-alert {
+    color: #f59e0b;
+}
+
+.BillingSubscription-modal-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #111827;
+    text-align: center;
+    margin: 0 0 0.5rem 0;
+    font-family: "DM Sans", sans-serif;
+}
+
+.BillingSubscription-modal-message {
+    font-size: 0.875rem;
+    color: #6b7280;
+    text-align: center;
+    margin: 0 0 1.5rem 0;
+    line-height: 1.5;
+    font-family: "DM Sans", sans-serif;
+}
+
+.BillingSubscription-modal-buttons {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: center;
+}
+
+.BillingSubscription-modal-btn-primary,
+.BillingSubscription-modal-btn-secondary {
+    padding: 0.625rem 1.5rem;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: "DM Sans", sans-serif;
+}
+
+.BillingSubscription-modal-btn-primary {
+    background: #3b82f6;
+    color: white;
+    border: none;
+}
+
+.BillingSubscription-modal-btn-primary:hover {
+    background: #2563eb;
+}
+
+.BillingSubscription-modal-btn-secondary {
+    background: white;
+    color: #374151;
+    border: 1px solid #e5e7eb;
+}
+
+.BillingSubscription-modal-btn-secondary:hover {
+    background: #f9fafb;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .BillingSubscription-plans-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .BillingSubscription-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .BillingSubscription-billing-toggle {
+        align-self: flex-end;
+    }
+}
+
+@media (max-width: 768px) {
+    .BillingSubscription-history-header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 1rem;
+    }
+
+    .BillingSubscription-history-actions {
+        flex-wrap: wrap;
+    }
+
+    .BillingSubscription-search-input {
+        width: 100%;
+    }
+
+    .BillingSubscription-table-container {
+        overflow-x: auto;
+    }
+}
+
+/* Date Filter Styles */
+.BillingSubscription-date-filter {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-end;
+}
+
+.date-input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.date-input-group label {
+    font-size: 0.75rem;
+    color: #6b7280;
+    font-weight: 500;
+}
+
+.date-input {
+    padding: 0.5rem 0.75rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+    height: 38px;
+    min-width: 150px;
+    font-family: "DM Sans", sans-serif;
+}
+
+.date-input::-webkit-datetime-edit-fields-wrapper {
+    color: #9ca3af;
+}
+
+.date-input::-webkit-datetime-edit-text {
+    color: #9ca3af;
+}
+
+.date-input::-webkit-datetime-edit-month-field,
+.date-input::-webkit-datetime-edit-day-field,
+.date-input::-webkit-datetime-edit-year-field {
+    color: #9ca3af;
+}
+
+.date-input::-webkit-datetime-edit {
+    position: relative;
+}
+
+.date-input::-webkit-datetime-edit::before {
+    content: attr(placeholder);
+    color: #9ca3af;
+    position: absolute;
+}
+
+.date-input:focus::-webkit-datetime-edit::before,
+.date-input:valid::-webkit-datetime-edit::before {
+    content: none;
+}
+
+.BillingSubscription-clear-btn {
+    padding: 0.5rem 1rem;
+    background: #ef4444;
+    color: white;
+    border: none;
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: background 0.2s;
+    height: 38px;
+    font-family: "DM Sans", sans-serif;
+}
+
+.BillingSubscription-clear-btn:hover {
+    background: #dc2626;
+}

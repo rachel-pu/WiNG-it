@@ -7,7 +7,24 @@ require('dotenv').config();
 const { createClient } = require('@deepgram/sdk');
 const {onSchedule} = require("firebase-functions/scheduler");
 const { Readable } = require('stream');
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+const {defineSecret} = require('firebase-functions/params');
+
+// Define secrets for Stripe
+const stripeSecretKey = defineSecret('STRIPE_SECRET_KEY');
+const stripeWebhookSecret = defineSecret('STRIPE_WEBHOOK_SECRET');
+
+// Lazy initialization of Stripe - secrets are only available inside functions
+let stripe;
+function getStripe() {
+  if (!stripe) {
+    const apiKey = process.env.STRIPE_SECRET_KEY;
+    if (!apiKey) {
+      throw new Error('STRIPE_SECRET_KEY not configured');
+    }
+    stripe = require('stripe')(apiKey);
+  }
+  return stripe;
+}
 
 // Initialize Firebase Admin
 admin.initializeApp();
@@ -796,6 +813,15 @@ const saveResponse = functions.https.onRequest((req, res) => {
 
       // Save to Firebase
       await db.ref(`interviews/${userId}/${sessionId}/responses/${questionNumber}`).set(responseData);
+     
+      const responsesRef = db.ref(`responses`);
+      const newResponseRef = responsesRef.push();
+
+      await newResponseRef.set({
+        userId: userId,
+        sessionId: sessionId,
+        timestamp: Date.now()
+      });
 
       // Update session metadata
       const snapshot = await db.ref(`interviews/${userId}/${sessionId}/responses`).once("value");
@@ -929,19 +955,37 @@ const cleanupOldTier1Interviews = onSchedule("every day 00:00", async (event) =>
 
 
 // Create Stripe Checkout Session
-const createCheckoutSession = functions.https.onCall(async (data, context) => {
+const createCheckoutSession = functions.https.onCall(
+  { secrets: [stripeSecretKey] },
+  async (data, context) => {
     try {
-      console.log('createCheckoutSession called with data:', JSON.stringify(data));
+      console.log('createCheckoutSession called');
       console.log('context.auth:', context?.auth);
 
-      const { userId, priceId, planName } = data;
+      // Extract from data.data (Firebase callable functions wrap the payload)
+      const { userId, priceId, planName } = data.data || data;
 
       if (!userId || !priceId) {
         console.error('Missing required fields. userId:', userId, 'priceId:', priceId);
         throw new functions.https.HttpsError('invalid-argument', 'Missing userId or priceId');
       }
 
-      // Get or create Stripe customer
+      // Find user's current tier and subscription data
+      const tiersSnapshot = await db.ref('userTiers').once('value');
+      const tiers = tiersSnapshot.val();
+      let currentTier = 'free';
+      let subscriptionData = null;
+
+      // Search through all tiers to find the user
+      for (const [tierName, users] of Object.entries(tiers || {})) {
+        if (users && users[userId]) {
+          currentTier = tierName;
+          subscriptionData = users[userId];
+          break;
+        }
+      }
+
+      // Get user's email for Stripe customer creation
       const userRef = db.ref(`users/${userId}`);
       const userSnapshot = await userRef.once('value');
       const userData = userSnapshot.val();
@@ -950,12 +994,12 @@ const createCheckoutSession = functions.https.onCall(async (data, context) => {
       const isTestMode = process.env.STRIPE_SECRET_KEY.startsWith('sk_test_');
       const customerIdField = isTestMode ? 'stripeCustomerIdTest' : 'stripeCustomerId';
 
-      let customerId = userData?.subscription?.[customerIdField];
+      let customerId = subscriptionData?.[customerIdField];
 
       // Verify customer exists in Stripe, create new one if not
       if (customerId) {
         try {
-          await stripe.customers.retrieve(customerId);
+          await getStripe().customers.retrieve(customerId);
         } catch (error) {
           // Customer doesn't exist in this mode, create a new one
           console.log(`Customer ${customerId} not found in ${isTestMode ? 'test' : 'live'} mode, creating new customer`);
@@ -965,7 +1009,7 @@ const createCheckoutSession = functions.https.onCall(async (data, context) => {
 
       if (!customerId) {
         // Create new Stripe customer
-        const customer = await stripe.customers.create({
+        const customer = await getStripe().customers.create({
           email: userData?.personalInformation?.email,
           metadata: {
             firebaseUserId: userId,
@@ -974,15 +1018,15 @@ const createCheckoutSession = functions.https.onCall(async (data, context) => {
         });
         customerId = customer.id;
 
-        // Save customer ID to Firebase under subscription object
-        await db.ref(`users/${userId}/subscription`).update({
+        // Save customer ID to Firebase under userTiers
+        await db.ref(`userTiers/${currentTier}/${userId}`).update({
           [customerIdField]: customerId
         });
         console.log(`Created new ${isTestMode ? 'test' : 'live'} mode customer: ${customerId}`);
       }
 
       // Create checkout session
-      const session = await stripe.checkout.sessions.create({
+      const session = await getStripe().checkout.sessions.create({
         customer: customerId,
         payment_method_types: ['card'],
         line_items: [
@@ -1010,22 +1054,42 @@ const createCheckoutSession = functions.https.onCall(async (data, context) => {
 });
 
 // Stripe Webhook Handler
-const stripeWebhook = functions.https.onRequest(async (req, res) => {
+const stripeWebhook = functions.https.onRequest(
+  { secrets: [stripeSecretKey, stripeWebhookSecret] },
+  async (req, res) => {
   const sig = req.headers['stripe-signature'];
   const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+
+  // Get the raw body - Firebase Cloud Functions provides it as req.rawBody
+  let rawBody;
+  if (req.rawBody) {
+    // rawBody is already available (Firebase Cloud Functions)
+    rawBody = req.rawBody;
+  } else if (Buffer.isBuffer(req.body)) {
+    // Body is already a Buffer
+    rawBody = req.body;
+  } else if (typeof req.body === 'string') {
+    // Body is a string, convert to Buffer
+    rawBody = Buffer.from(req.body);
+  } else {
+    // Body was parsed as JSON, this won't work for webhook verification
+    console.error('Request body was parsed as JSON. Stripe webhooks require raw body.');
+    return res.status(400).send('Webhook Error: Invalid body format');
+  }
 
   console.log('Webhook received:', {
     hasSignature: !!sig,
     hasSecret: !!webhookSecret,
     secretPrefix: webhookSecret?.substring(0, 10),
-    hasRawBody: !!req.rawBody,
-    rawBodyType: typeof req.rawBody
+    rawBodyLength: rawBody?.length,
+    rawBodyType: typeof rawBody,
+    isBuffer: Buffer.isBuffer(rawBody)
   });
 
   let event;
 
   try {
-    event = stripe.webhooks.constructEvent(req.rawBody, sig, webhookSecret);
+    event = getStripe().webhooks.constructEvent(rawBody, sig, webhookSecret);
   } catch (err) {
     console.error('Webhook signature verification failed:', err.message);
     return res.status(400).send(`Webhook Error: ${err.message}`);
@@ -1034,7 +1098,7 @@ const stripeWebhook = functions.https.onRequest(async (req, res) => {
   try {
     switch (event.type) {
       case 'checkout.session.completed':
-        const session = await stripe.checkout.sessions.retrieve(
+        const session = await getStripe().checkout.sessions.retrieve(
           event.data.object.id,
           { expand: ['subscription'] }
         );
@@ -1074,83 +1138,227 @@ const stripeWebhook = functions.https.onRequest(async (req, res) => {
 
 // Helper function to handle successful checkout
 async function handleCheckoutSessionCompleted(session) {
-  const userId = session.metadata.userId;
-  const planName = session.metadata.planName;
-  const subscriptionId = typeof session.subscription === 'object' ? session.subscription.id : session.subscription;
+  console.log('🔵 handleCheckoutSessionCompleted V3 - START');
+  try {
+    const userId = session.metadata.userId;
+    const planName = session.metadata.planName;
+    const subscriptionId = typeof session.subscription === 'object' ? session.subscription.id : session.subscription;
 
-  console.log('Processing checkout for userId:', userId, 'planName:', planName, 'subscriptionId:', subscriptionId);
+    console.log('🔵 V3 Processing checkout for userId:', userId, 'planName:', planName, 'subscriptionId:', subscriptionId);
 
-  // Calculate renewal date (1 month from now for monthly, 1 year for annual)
-  const today = new Date();
-  const renewalDate = new Date(today);
-  renewalDate.setMonth(renewalDate.getMonth() + 1); // Assume monthly for now
+    // Fetch the full subscription object
+    console.log('🔵 V3 Fetching subscription from Stripe...');
+    const subscription = await getStripe().subscriptions.retrieve(subscriptionId, {
+      expand: ['items.data.price']
+    });
+    console.log('🔵 V3 Subscription fetched');
 
-  await db.ref(`users/${userId}/subscription`).update({
-    tier: planName.toLowerCase(), // User's subscription tier (free, pro, premium)
-    stripeSubscriptionId: subscriptionId,
-    status: 'active',
-    billingCycle: 'monthly',
-    startDate: today.toISOString().split('T')[0],
-    renewalDate: renewalDate.toISOString().split('T')[0],
-  });
+    // Determine billing cycle from the subscription interval
+    const interval = subscription.items.data[0].price.recurring.interval;
+    const billingCycle = interval === 'year' ? 'annual' : 'monthly';
 
-  console.log(`✅ Subscription activated for user ${userId}, tier: ${planName}`);
+    // Use subscription dates if available, otherwise calculate from session
+    let startTimestamp, endTimestamp;
+
+    if (subscription.current_period_start && subscription.current_period_end) {
+      console.log('🔵 V3 Using subscription period dates');
+      startTimestamp = subscription.current_period_start;
+      endTimestamp = subscription.current_period_end;
+    } else {
+      console.log('🔵 V3 Subscription dates not available, calculating from session created time');
+      // Use session created time as start, calculate end based on interval
+      startTimestamp = session.created;
+      const startDate = new Date(startTimestamp * 1000);
+
+      // Calculate renewal date based on billing cycle
+      if (interval === 'year') {
+        startDate.setFullYear(startDate.getFullYear() + 1);
+      } else {
+        startDate.setMonth(startDate.getMonth() + 1);
+      }
+
+      endTimestamp = Math.floor(startDate.getTime() / 1000);
+    }
+
+    console.log('🔵 V3 Dates - start:', startTimestamp, 'end:', endTimestamp);
+
+    const startDate = new Date(startTimestamp * 1000);
+    const renewalDate = new Date(endTimestamp * 1000);
+
+    // Format dates as mm-dd-yyyy using UTC
+    const startMonth = String(startDate.getUTCMonth() + 1).padStart(2, '0');
+    const startDay = String(startDate.getUTCDate()).padStart(2, '0');
+    const startYear = startDate.getUTCFullYear();
+    const startDateStr = `${startMonth}-${startDay}-${startYear}`;
+
+    const renewalMonth = String(renewalDate.getUTCMonth() + 1).padStart(2, '0');
+    const renewalDay = String(renewalDate.getUTCDate()).padStart(2, '0');
+    const renewalYear = renewalDate.getUTCFullYear();
+    const renewalDateStr = `${renewalMonth}-${renewalDay}-${renewalYear}`;
+
+    console.log('🔵 V3 Formatted dates - start:', startDateStr, 'renewal:', renewalDateStr);
+
+    // Update subscription metadata with plan name for future invoice tracking
+    await getStripe().subscriptions.update(subscriptionId, {
+      metadata: {
+        planName: planName,
+        userId: userId
+      }
+    });
+
+    const newTier = planName.toLowerCase();
+
+    // Find user's current data to preserve billing history
+    const tiersSnapshot = await db.ref('userTiers').once('value');
+    const tiers = tiersSnapshot.val();
+    let oldTierData = null;
+
+    for (const [tierName, users] of Object.entries(tiers || {})) {
+      if (users && users[userId]) {
+        oldTierData = users[userId];
+        await db.ref(`userTiers/${tierName}/${userId}`).remove();
+        console.log(`🔵 V3 Removed user from ${tierName} tier`);
+        break;
+      }
+    }
+
+    // Prepare new tier data
+    const newTierData = {
+      tier: newTier,
+      stripeSubscriptionId: subscriptionId,
+      stripeSubscriptionItemId: subscription.items.data[0].id, // Store item ID for upgrades
+      stripeCustomerId: subscription.customer,
+      status: 'active',
+      billingCycle: billingCycle,
+      startDate: startDateStr,
+      renewalDate: renewalDateStr,
+    };
+
+    // Preserve billing history from old tier if it exists
+    if (oldTierData && oldTierData.billingHistory) {
+      newTierData.billingHistory = oldTierData.billingHistory;
+    }
+
+    // Preserve customer ID test if it exists
+    if (oldTierData && oldTierData.stripeCustomerIdTest) {
+      newTierData.stripeCustomerIdTest = oldTierData.stripeCustomerIdTest;
+    }
+
+    // Add user to new tier with subscription data
+    await db.ref(`userTiers/${newTier}/${userId}`).set(newTierData);
+
+    console.log(`✅ V3 Subscription activated for user ${userId}, tier: ${planName}, billingCycle: ${billingCycle}, renewalDate: ${renewalDateStr}`);
+  } catch (error) {
+    console.error('🔴 V3 Error in handleCheckoutSessionCompleted:', error);
+    throw error;
+  }
 }
 
 // Helper function to handle subscription updates
 async function handleSubscriptionUpdated(subscription) {
   const customerId = subscription.customer;
 
-  // Find user by Stripe customer ID (check both test and live)
-  const usersRef = db.ref('users');
-  let snapshot = await usersRef.orderByChild('subscription/stripeCustomerId').equalTo(customerId).once('value');
+  // Find user by Stripe customer ID in userTiers
+  const tiersSnapshot = await db.ref('userTiers').once('value');
+  const tiers = tiersSnapshot.val();
+  let userId = null;
+  let userTier = null;
 
-  if (!snapshot.exists()) {
-    // Try test mode customer ID
-    snapshot = await usersRef.orderByChild('subscription/stripeCustomerIdTest').equalTo(customerId).once('value');
+  // Search through all tiers to find the user by customer ID
+  for (const [tierName, users] of Object.entries(tiers || {})) {
+    for (const [uid, userData] of Object.entries(users || {})) {
+      if (userData.stripeCustomerId === customerId || userData.stripeCustomerIdTest === customerId) {
+        userId = uid;
+        userTier = tierName;
+        break;
+      }
+    }
+    if (userId) break;
   }
 
-  if (!snapshot.exists()) {
+  if (!userId) {
     console.log('No user found for customer:', customerId);
     return;
   }
 
-  const userId = Object.keys(snapshot.val())[0];
   const currentPeriodEnd = new Date(subscription.current_period_end * 1000);
 
-  await db.ref(`users/${userId}/subscription`).update({
-    status: subscription.status,
-    renewalDate: currentPeriodEnd.toISOString().split('T')[0],
+  // Format renewal date as mm-dd-yyyy using UTC
+  const renewalMonth = String(currentPeriodEnd.getUTCMonth() + 1).padStart(2, '0');
+  const renewalDay = String(currentPeriodEnd.getUTCDate()).padStart(2, '0');
+  const renewalYear = currentPeriodEnd.getUTCFullYear();
+  const renewalDateStr = `${renewalMonth}-${renewalDay}-${renewalYear}`;
+
+  // Check if subscription is set to cancel at period end
+  const status = subscription.cancel_at_period_end ? 'pending_cancellation' : subscription.status;
+
+  await db.ref(`userTiers/${userTier}/${userId}`).update({
+    status: status,
+    renewalDate: renewalDateStr,
   });
 
-  console.log(`Subscription updated for user ${userId}`);
+  console.log(`Subscription updated for user ${userId}, status: ${status}`);
 }
 
 // Helper function to handle subscription deletion
 async function handleSubscriptionDeleted(subscription) {
   const customerId = subscription.customer;
 
-  // Find user by Stripe customer ID (check both test and live)
-  const usersRef = db.ref('users');
-  let snapshot = await usersRef.orderByChild('subscription/stripeCustomerId').equalTo(customerId).once('value');
+  // Find user by Stripe customer ID in userTiers
+  const tiersSnapshot = await db.ref('userTiers').once('value');
+  const tiers = tiersSnapshot.val();
+  let userId = null;
+  let userTier = null;
 
-  if (!snapshot.exists()) {
-    // Try test mode customer ID
-    snapshot = await usersRef.orderByChild('subscription/stripeCustomerIdTest').equalTo(customerId).once('value');
+  // Search through all tiers to find the user by customer ID
+  for (const [tierName, users] of Object.entries(tiers || {})) {
+    for (const [uid, userData] of Object.entries(users || {})) {
+      if (userData.stripeCustomerId === customerId || userData.stripeCustomerIdTest === customerId) {
+        userId = uid;
+        userTier = tierName;
+        break;
+      }
+    }
+    if (userId) break;
   }
 
-  if (!snapshot.exists()) {
+  if (!userId) {
     console.log('No user found for customer:', customerId);
     return;
   }
 
-  const userId = Object.keys(snapshot.val())[0];
+  // Get the current subscription data to preserve billing history
+  const currentData = await db.ref(`userTiers/${userTier}/${userId}`).once('value');
+  const userData = currentData.val();
 
-  await db.ref(`users/${userId}/subscription`).update({
-    tier: 'free', // Reset to free tier
+  // Preserve important data when moving to free
+  const preservedData = {
+    tier: 'free',
     status: 'cancelled',
     stripeSubscriptionId: null,
-  });
+    billingCycle: 'monthly',
+    startDate: '',
+    renewalDate: ''
+  };
+
+  // Preserve billing history if it exists
+  if (userData && userData.billingHistory) {
+    preservedData.billingHistory = userData.billingHistory;
+  }
+
+  // Preserve customer IDs if they exist
+  if (userData && userData.stripeCustomerId) {
+    preservedData.stripeCustomerId = userData.stripeCustomerId;
+  }
+  if (userData && userData.stripeCustomerIdTest) {
+    preservedData.stripeCustomerIdTest = userData.stripeCustomerIdTest;
+  }
+
+  // Remove user from current tier
+  await db.ref(`userTiers/${userTier}/${userId}`).remove();
+
+  // Add user to free tier with preserved data
+  await db.ref(`userTiers/free/${userId}`).set(preservedData);
 
   console.log(`Subscription cancelled for user ${userId}, reset to free tier`);
 }
@@ -1159,50 +1367,83 @@ async function handleSubscriptionDeleted(subscription) {
 async function handleInvoicePaymentSucceeded(invoice) {
   const customerId = invoice.customer;
 
-  // Find user by Stripe customer ID (check both test and live)
-  const usersRef = db.ref('users');
-  let snapshot = await usersRef.orderByChild('subscription/stripeCustomerId').equalTo(customerId).once('value');
+  // Find user by Stripe customer ID in userTiers
+  const tiersSnapshot = await db.ref('userTiers').once('value');
+  const tiers = tiersSnapshot.val();
+  let userId = null;
+  let userTier = null;
 
-  if (!snapshot.exists()) {
-    // Try test mode customer ID
-    snapshot = await usersRef.orderByChild('subscription/stripeCustomerIdTest').equalTo(customerId).once('value');
+  // Search through all tiers to find the user by customer ID
+  for (const [tierName, users] of Object.entries(tiers || {})) {
+    for (const [uid, userData] of Object.entries(users || {})) {
+      if (userData.stripeCustomerId === customerId || userData.stripeCustomerIdTest === customerId) {
+        userId = uid;
+        userTier = tierName;
+        break;
+      }
+    }
+    if (userId) break;
   }
 
-  if (!snapshot.exists()) return;
+  if (!userId) return;
 
-  const userId = Object.keys(snapshot.val())[0];
-  const billingHistoryRef = db.ref(`users/${userId}/subscription/billingHistory`);
+  const billingHistoryRef = db.ref(`userTiers/${userTier}/${userId}/billingHistory`);
 
-  // Add to billing history under subscription
+  // Check if this invoice already exists in billing history
+  const existingHistorySnapshot = await billingHistoryRef.once('value');
+  const existingHistory = existingHistorySnapshot.val();
+
+  if (existingHistory) {
+    // Check if any entry has this invoice ID
+    const isDuplicate = Object.values(existingHistory).some(entry => entry.id === invoice.id);
+    if (isDuplicate) {
+      console.log(`Invoice ${invoice.id} already exists in billing history for user ${userId}, skipping duplicate`);
+      return;
+    }
+  }
+
+  // Add to billing history under userTiers
+  const invoiceDate = new Date(invoice.created * 1000);
+  const month = String(invoiceDate.getUTCMonth() + 1).padStart(2, '0');
+  const day = String(invoiceDate.getUTCDate()).padStart(2, '0');
+  const year = invoiceDate.getUTCFullYear();
+
   await billingHistoryRef.push({
     id: invoice.id,
-    date: new Date(invoice.created * 1000).toISOString().split('T')[0],
+    date: `${month}-${day}-${year}`,
     amount: `$${(invoice.amount_paid / 100).toFixed(2)}`,
     status: 'paid',
     invoiceUrl: invoice.hosted_invoice_url
   });
 
-  console.log(`Payment succeeded for user ${userId}`);
+  console.log(`Payment succeeded for user ${userId}, invoice: ${invoice.id}`);
 }
 
 // Helper function to handle failed payment
 async function handleInvoicePaymentFailed(invoice) {
   const customerId = invoice.customer;
 
-  // Find user by Stripe customer ID (check both test and live)
-  const usersRef = db.ref('users');
-  let snapshot = await usersRef.orderByChild('subscription/stripeCustomerId').equalTo(customerId).once('value');
+  // Find user by Stripe customer ID in userTiers
+  const tiersSnapshot = await db.ref('userTiers').once('value');
+  const tiers = tiersSnapshot.val();
+  let userId = null;
+  let userTier = null;
 
-  if (!snapshot.exists()) {
-    // Try test mode customer ID
-    snapshot = await usersRef.orderByChild('subscription/stripeCustomerIdTest').equalTo(customerId).once('value');
+  // Search through all tiers to find the user by customer ID
+  for (const [tierName, users] of Object.entries(tiers || {})) {
+    for (const [uid, userData] of Object.entries(users || {})) {
+      if (userData.stripeCustomerId === customerId || userData.stripeCustomerIdTest === customerId) {
+        userId = uid;
+        userTier = tierName;
+        break;
+      }
+    }
+    if (userId) break;
   }
 
-  if (!snapshot.exists()) return;
+  if (!userId) return;
 
-  const userId = Object.keys(snapshot.val())[0];
-
-  await db.ref(`users/${userId}/subscription`).update({
+  await db.ref(`userTiers/${userTier}/${userId}`).update({
     status: 'past_due',
   });
 
@@ -1210,38 +1451,312 @@ async function handleInvoicePaymentFailed(invoice) {
 }
 
 // Cancel Subscription
-const cancelSubscription = functions.https.onCall(async (data, context) => {
+const cancelSubscription = functions.https.onRequest(
+  { secrets: [stripeSecretKey] },
+  (req, res) => {
+  console.log("Cancelling subscription...");
+  return cors(req, res, async () => {
     try {
-      const { userId } = data;
-
-      if (!userId) {
-        throw new functions.https.HttpsError('invalid-argument', 'Missing userId');
+      if (req.method === "OPTIONS") {
+        return res.status(204).send("");
       }
 
-      const userRef = db.ref(`users/${userId}/subscription`);
-      const snapshot = await userRef.once('value');
-      const subscriptionData = snapshot.val();
+      if (req.method !== 'POST') {
+        return res.status(405).json({ error: 'Method Not Allowed' });
+      }
 
-      if (!subscriptionData?.stripeSubscriptionId) {
-        throw new functions.https.HttpsError('not-found', 'No active subscription found');
+      const { userId, pendingTier } = req.body;
+
+      if (!userId) {
+        return res.status(400).json({ error: 'Missing userId' });
+      }
+
+      // Find user's current tier and subscription data
+      const tiersSnapshot = await db.ref('userTiers').once('value');
+      const tiers = tiersSnapshot.val();
+      let currentTier = null;
+      let subscriptionData = null;
+
+      // Search through all tiers to find the user
+      for (const [tierName, users] of Object.entries(tiers || {})) {
+        if (users && users[userId]) {
+          currentTier = tierName;
+          subscriptionData = users[userId];
+          break;
+        }
+      }
+
+      if (!subscriptionData) {
+        return res.status(404).json({ error: 'User not found in any tier' });
+      }
+
+      // If user has no Stripe subscription (free tier or manually set), move to free immediately
+      if (!subscriptionData.stripeSubscriptionId) {
+        if (currentTier !== 'free') {
+          // Preserve important data when moving
+          const preservedData = {
+            tier: 'free',
+            status: 'active',
+            billingCycle: 'monthly',
+            startDate: '',
+            renewalDate: ''
+          };
+
+          // Preserve billing history if it exists
+          if (subscriptionData.billingHistory) {
+            preservedData.billingHistory = subscriptionData.billingHistory;
+          }
+
+          // Preserve customer IDs if they exist
+          if (subscriptionData.stripeCustomerId) {
+            preservedData.stripeCustomerId = subscriptionData.stripeCustomerId;
+          }
+          if (subscriptionData.stripeCustomerIdTest) {
+            preservedData.stripeCustomerIdTest = subscriptionData.stripeCustomerIdTest;
+          }
+
+          // Remove from current tier
+          await db.ref(`userTiers/${currentTier}/${userId}`).remove();
+
+          // Add to free tier with preserved data
+          await db.ref(`userTiers/free/${userId}`).set(preservedData);
+
+          console.log(`Moved user ${userId} from ${currentTier} to free (no Stripe subscription)`);
+          return res.json({ success: true, message: 'Moved to free tier' });
+        } else {
+          return res.json({ success: true, message: 'Already on free tier' });
+        }
       }
 
       // Cancel at period end (user keeps access until end of billing period)
-      await stripe.subscriptions.update(subscriptionData.stripeSubscriptionId, {
+      await getStripe().subscriptions.update(subscriptionData.stripeSubscriptionId, {
         cancel_at_period_end: true
       });
 
-      await userRef.update({
-        tier: 'free',
-        status: 'cancelled'
-      });
+      // Don't immediately set tier to 'free' - keep current tier until subscription actually ends
+      // Store pendingTier if provided (for downgrades between paid tiers)
+      const updateData = {
+        status: 'pending_cancellation'
+      };
 
-      return { success: true, message: 'Subscription will be cancelled at period end' };
+      if (pendingTier) {
+        updateData.pendingTier = pendingTier;
+        console.log(`Setting pending tier to ${pendingTier} for user ${userId}`);
+      }
+
+      await db.ref(`userTiers/${currentTier}/${userId}`).update(updateData);
+
+      console.log(`Successfully cancelled subscription for user ${userId}`);
+      return res.json({ success: true, message: 'Subscription will be cancelled at period end' });
 
     } catch (error) {
       console.error('Error cancelling subscription:', error);
-      throw new functions.https.HttpsError('internal', error.message);
+      return res.status(500).json({ error: error.message });
     }
+  });
+});
+
+// Update Subscription (for upgrades with proration)
+const updateSubscription = functions.https.onRequest(
+  { secrets: [stripeSecretKey] },
+  (req, res) => {
+  console.log("Updating subscription...");
+  return cors(req, res, async () => {
+    try {
+      if (req.method === "OPTIONS") {
+        return res.status(204).send("");
+      }
+
+      if (req.method !== 'POST') {
+        return res.status(405).json({ error: 'Method Not Allowed' });
+      }
+
+      const { userId, priceId, planName } = req.body;
+
+      if (!userId || !priceId || !planName) {
+        return res.status(400).json({ error: 'Missing required fields' });
+      }
+
+      // Find user's current tier and subscription data
+      const tiersSnapshot = await db.ref('userTiers').once('value');
+      const tiers = tiersSnapshot.val();
+      let currentTier = null;
+      let subscriptionData = null;
+
+      // Search through all tiers to find the user
+      for (const [tierName, users] of Object.entries(tiers || {})) {
+        if (users && users[userId]) {
+          currentTier = tierName;
+          subscriptionData = users[userId];
+          break;
+        }
+      }
+
+      if (!subscriptionData?.stripeSubscriptionId) {
+        return res.status(404).json({ error: 'No active subscription found' });
+      }
+
+      // Fetch subscription item ID from Stripe if not in database
+      let subscriptionItemId = subscriptionData.stripeSubscriptionItemId;
+      if (!subscriptionItemId) {
+        console.log('Subscription item ID not found in database, fetching from Stripe...');
+        const currentSubscription = await getStripe().subscriptions.retrieve(
+          subscriptionData.stripeSubscriptionId
+        );
+        subscriptionItemId = currentSubscription.items.data[0].id;
+        console.log('Fetched subscription item ID:', subscriptionItemId);
+      }
+
+      // Update the subscription with new price (Stripe handles proration automatically)
+      console.log('Updating subscription:', subscriptionData.stripeSubscriptionId, 'with price:', priceId);
+      const updatedSubscription = await getStripe().subscriptions.update(
+        subscriptionData.stripeSubscriptionId,
+        {
+          items: [{
+            id: subscriptionItemId,
+            price: priceId,
+          }],
+          proration_behavior: 'always_invoice', // Create invoice for prorated amount
+          metadata: {
+            planName: planName,
+            userId: userId
+          }
+        }
+      );
+
+      console.log('Subscription updated successfully, updating database...');
+
+      const newTier = planName.toLowerCase();
+
+      // Preserve the existing subscription data including billing history
+      const preservedData = {
+        ...subscriptionData,
+        tier: newTier,
+        stripeSubscriptionItemId: updatedSubscription.items.data[0].id
+      };
+
+      // Remove user from old tier
+      await db.ref(`userTiers/${currentTier}/${userId}`).remove();
+      console.log(`Removed user from ${currentTier} tier`);
+
+      // Add user to new tier with all preserved data (including billing history)
+      await db.ref(`userTiers/${newTier}/${userId}`).set(preservedData);
+      console.log('Database updated successfully');
+
+      console.log(`Successfully upgraded subscription for user ${userId} to ${planName}`);
+      return res.json({
+        success: true,
+        message: 'Subscription upgraded successfully',
+        subscription: updatedSubscription
+      });
+
+    } catch (error) {
+      console.error('Error updating subscription:', error);
+      return res.status(500).json({ error: error.message });
+    }
+  });
+});
+
+
+// Migration function - call once to migrate existing users
+const migrateSubscriptionsToUserTiers = functions.https.onRequest((req, res) => {
+  console.log("Starting subscription migration...");
+  return cors(req, res, async () => {
+    try {
+      if (req.method === "OPTIONS") {
+        return res.status(204).send("");
+      }
+
+      // Get all users
+      const usersSnapshot = await db.ref('users').once('value');
+      const users = usersSnapshot.val();
+
+      if (!users) {
+        return res.json({ success: true, message: 'No users found', migrated: 0, skipped: 0, errors: 0 });
+      }
+
+      let migratedCount = 0;
+      let skippedCount = 0;
+      let errorCount = 0;
+      const errors = [];
+
+      for (const [userId, userData] of Object.entries(users)) {
+        try {
+          // Check if user has subscription data
+          if (!userData.subscription) {
+            console.log(`User ${userId} has no subscription, skipping...`);
+            skippedCount++;
+            continue;
+          }
+
+          const subscription = userData.subscription;
+          const tier = subscription.tier || 'free';
+
+          // Check if user already exists in userTiers as an object
+          const existingTierData = await db.ref(`userTiers/${tier}/${userId}`).once('value');
+          if (existingTierData.exists() && typeof existingTierData.val() === 'object') {
+            console.log(`User ${userId} already migrated to ${tier}, skipping...`);
+            skippedCount++;
+            continue;
+          }
+
+          // Prepare the subscription data for userTiers
+          const tierData = {
+            tier: tier,
+            status: subscription.status || 'active',
+            billingCycle: subscription.billingCycle || 'monthly',
+            startDate: subscription.startDate || '',
+            renewalDate: subscription.renewalDate || '',
+          };
+
+          // Add optional fields if they exist
+          if (subscription.stripeCustomerId) tierData.stripeCustomerId = subscription.stripeCustomerId;
+          if (subscription.stripeCustomerIdTest) tierData.stripeCustomerIdTest = subscription.stripeCustomerIdTest;
+          if (subscription.stripeSubscriptionId) tierData.stripeSubscriptionId = subscription.stripeSubscriptionId;
+          if (subscription.stripeSubscriptionItemId) tierData.stripeSubscriptionItemId = subscription.stripeSubscriptionItemId;
+          if (subscription.billingHistory) tierData.billingHistory = subscription.billingHistory;
+          if (subscription.pendingTier) tierData.pendingTier = subscription.pendingTier;
+
+          // Remove user from all old tier locations if they exist as boolean
+          const oldTierSnapshot = await db.ref('userTiers').once('value');
+          const oldTiers = oldTierSnapshot.val();
+          if (oldTiers) {
+            for (const [oldTierName, oldUsers] of Object.entries(oldTiers)) {
+              if (oldUsers && oldUsers[userId] === true) {
+                await db.ref(`userTiers/${oldTierName}/${userId}`).remove();
+                console.log(`Removed user ${userId} from old ${oldTierName} tier`);
+              }
+            }
+          }
+
+          // Write to new location
+          await db.ref(`userTiers/${tier}/${userId}`).set(tierData);
+          console.log(`Migrated user ${userId} to ${tier} tier`);
+
+          migratedCount++;
+        } catch (error) {
+          console.error(`Error migrating user ${userId}:`, error);
+          errors.push({ userId, error: error.message });
+          errorCount++;
+        }
+      }
+
+      console.log(`Migration complete: ${migratedCount} migrated, ${skippedCount} skipped, ${errorCount} errors`);
+
+      return res.json({
+        success: true,
+        message: 'Migration completed',
+        migrated: migratedCount,
+        skipped: skippedCount,
+        errors: errorCount,
+        errorDetails: errors
+      });
+
+    } catch (error) {
+      console.error('Migration failed:', error);
+      return res.status(500).json({ success: false, error: error.message });
+    }
+  });
 });
 
 const uploadResume = functions.https.onRequest((req, res) => {
@@ -1366,8 +1881,6 @@ const aggregateUserStats = functions.https.onRequest((req, res) => {
   });
 });
 
-
-
 module.exports = {
   generateQuestions,
   generateResumeQuestions,
@@ -1379,6 +1892,8 @@ module.exports = {
   createCheckoutSession,
   stripeWebhook,
   cancelSubscription,
+  updateSubscription,
+  migrateSubscriptionsToUserTiers,
   uploadResume,
   aggregateUserStats
 };

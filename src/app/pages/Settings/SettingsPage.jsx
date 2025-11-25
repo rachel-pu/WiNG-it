@@ -4,8 +4,7 @@ import Box from '@mui/material/Box';
 import DefaultAppLayout from "../../DefaultAppLayout.jsx";
 import SettingsNav from '../../../components/SettingsNav.jsx';
 import SettingsProfile from './SettingsProfile.jsx';
-import SettingsBillings from './SettingsBillings.jsx';
-import SettingsPlan from './SettingsPlan.jsx';
+import SettingsBillingSubscription from './SettingsBillingSubscription.jsx';
 import SettingsNotifications from './SettingsNotifications.jsx';
 import SettingsPersonalization from './SettingsPersonalization.jsx';
 import "./SettingsProfile.css";
@@ -22,10 +21,10 @@ export default function SettingsPage() {
         switch (currentTab) {
             case 'profile':
                 return <SettingsProfile />;
-            case 'billings':
-                return <SettingsBillings />;
-            case 'plan':
-                return <SettingsPlan />;
+            case 'billing-subscription':
+            case 'plan': // backwards compatibility
+            case 'billings': // backwards compatibility
+                return <SettingsBillingSubscription />;
             case 'notifications':
                 return <SettingsNotifications />;
             case 'personalization':

@@ -10,6 +10,9 @@ export default function SettingsBillings() {
     const [isAddingCard, setIsAddingCard] = useState(false);
     const [tempCardData, setTempCardData] = useState({});
     const [billingHistory, setBillingHistory] = useState([]);
+    const [filteredHistory, setFilteredHistory] = useState([]);
+    const [startDate, setStartDate] = useState('');
+    const [endDate, setEndDate] = useState('');
     const [formData, setFormData] = useState({
         userId: '',
         billingInformation: {
@@ -67,14 +70,25 @@ export default function SettingsBillings() {
         const fetchBillingHistory = async () => {
             if (!formData.userId) return;
             try {
-                const snapshot = await get(ref(database, `users/${formData.userId}/subscription/billingHistory`));
-                if (snapshot.exists()) {
-                    const historyData = snapshot.val();
-                    // Convert object to array and sort by date (newest first)
-                    const historyArray = Object.values(historyData).sort((a, b) => {
-                        return new Date(b.date) - new Date(a.date);
-                    });
-                    setBillingHistory(historyArray);
+                // Search through all tiers to find the user
+                const tiersSnapshot = await get(ref(database, 'userTiers'));
+                if (tiersSnapshot.exists()) {
+                    const tiers = tiersSnapshot.val();
+
+                    // Find user in any tier
+                    for (const [tierName, users] of Object.entries(tiers || {})) {
+                        if (users && users[formData.userId]) {
+                            const billingHistory = users[formData.userId].billingHistory;
+                            if (billingHistory) {
+                                // Convert object to array and sort by date (newest first)
+                                const historyArray = Object.values(billingHistory).sort((a, b) => {
+                                    return new Date(b.date) - new Date(a.date);
+                                });
+                                setBillingHistory(historyArray);
+                            }
+                            break;
+                        }
+                    }
                 }
             } catch (err) {
                 console.error('Error fetching billing history:', err);
@@ -82,6 +96,31 @@ export default function SettingsBillings() {
         };
         fetchBillingHistory();
     }, [formData.userId]);
+
+    // Filter billing history based on date range
+    useEffect(() => {
+        if (!startDate && !endDate) {
+            setFilteredHistory(billingHistory);
+            return;
+        }
+
+        const filtered = billingHistory.filter(transaction => {
+            const transactionDate = new Date(transaction.date);
+            const start = startDate ? new Date(startDate) : null;
+            const end = endDate ? new Date(endDate) : null;
+
+            if (start && end) {
+                return transactionDate >= start && transactionDate <= end;
+            } else if (start) {
+                return transactionDate >= start;
+            } else if (end) {
+                return transactionDate <= end;
+            }
+            return true;
+        });
+
+        setFilteredHistory(filtered);
+    }, [billingHistory, startDate, endDate]);
 
     const handleToggleAutoPay = async () => {
         const newValue = !formData.billingInformation.autoPay;
@@ -349,9 +388,40 @@ export default function SettingsBillings() {
             {/* Billing History Section */}
             <div className="SettingsBillings-section">
                 <h3 className="SettingsBillings-section-title">Billing History</h3>
-                {billingHistory.length > 0 ? (
+
+                {/* Date Range Filter */}
+                <div className="SettingsBillings-date-filter">
+                    <div className="SettingsBillings-date-input-group">
+                        <label className="SettingsBillings-form-label">From</label>
+                        <input
+                            type="date"
+                            value={startDate}
+                            onChange={(e) => setStartDate(e.target.value)}
+                            className="SettingsBillings-form-input"
+                        />
+                    </div>
+                    <div className="SettingsBillings-date-input-group">
+                        <label className="SettingsBillings-form-label">To</label>
+                        <input
+                            type="date"
+                            value={endDate}
+                            onChange={(e) => setEndDate(e.target.value)}
+                            className="SettingsBillings-form-input"
+                        />
+                    </div>
+                    {(startDate || endDate) && (
+                        <button
+                            onClick={() => { setStartDate(''); setEndDate(''); }}
+                            className="SettingsBillings-btn-clear-filter"
+                        >
+                            Clear
+                        </button>
+                    )}
+                </div>
+
+                {filteredHistory.length > 0 ? (
                     <div className="SettingsBillings-history-container">
-                        {billingHistory.map((transaction, index) => (
+                        {filteredHistory.map((transaction, index) => (
                             <div
                                 className={`SettingsBillings-history-row ${index === billingHistory.length - 1 ? 'last' : ''}`}
                                 key={transaction.id || index}
