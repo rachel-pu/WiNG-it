@@ -1,7 +1,7 @@
 import { useState, useEffect} from 'react';
 import { ref, get, update } from "firebase/database";
 import {database} from '../../../lib/firebase.jsx'
-import { Check, X, Mail, Upload } from 'lucide-react';
+import { Check, X, Upload } from 'lucide-react';
 import { uploadProfileImage } from '../../../../supabase.js';
 import Swal from 'sweetalert2';
 
@@ -270,7 +270,6 @@ export default function SettingsProfile() {
                 <label className="SettingsProfile-field-label">Email address</label>
                 <div className="SettingsProfile-field-input-wrapper">
                     <div className="SettingsProfile-field-input with-icon">
-                        <Mail size={20} className="input-icon" />
                         <span>{formData.personalInformation?.email || 'Not set'}</span>
                     </div>
                 </div>
