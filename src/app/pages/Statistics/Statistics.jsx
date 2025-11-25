@@ -774,7 +774,6 @@ const Statistics = () => {
                   <tr>
                     <th></th>
                     <th>Date</th>
-                    <th>Session ID</th>
                     <th>Questions</th>
                     <th>Avg Score</th>
                     <th>Actions</th>
@@ -797,11 +796,6 @@ const Statistics = () => {
                           </button>
                         </td>
                         <td>{session.date}</td>
-                        <td>
-                          <code className="session-id-code">
-                            {session.sessionId.substring(0, 15)}...
-                          </code>
-                        </td>
                         <td>
                           <span className="question-badge">
                             {session.questionCount} questions
@@ -855,7 +849,7 @@ const Statistics = () => {
                                 </div>
                                 <div className="session-detail-card">
                                   <p className="detail-label">DATE</p>
-                                  <p className="detail-value small">
+                                  <p className="detail-value">
                                     {new Date(session.date).toLocaleDateString('en-US', {
                                       month: 'short',
                                       day: 'numeric',
