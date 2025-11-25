@@ -7,7 +7,7 @@ import { ArrowLeft} from 'lucide-react';
 import { useNavigate } from "react-router-dom";
 import {database} from '../../../../lib/firebase.jsx'
 import { ref, get} from "firebase/database";
-import { Box, TextField, InputAdornment, IconButton, Button } from '@mui/material';
+import { Button } from '@mui/material';
 import EmailIcon from '@mui/icons-material/Email';
 import LockIcon from '@mui/icons-material/Lock';
 import Visibility from '@mui/icons-material/Visibility';
@@ -25,13 +25,13 @@ const SignIn = () => {
     useEffect(() => {
         const scriptId = "recaptcha-script";
         if (document.getElementById(scriptId)) return;
-    
+
         const script = document.createElement("script");
         script.id = scriptId;
         script.src = "https://www.google.com/recaptcha/api.js?render=explicit";
         script.async = true;
         script.defer = true;
-    
+
         script.onload = () => {
           window.grecaptcha.ready(() => {
             window.grecaptcha.render("recaptcha-container", {
@@ -39,7 +39,7 @@ const SignIn = () => {
             });
           });
         };
-    
+
         document.body.appendChild(script);
     }, []);
 
@@ -52,7 +52,6 @@ const SignIn = () => {
 
     const sanitizeInput = (input) => input.replace(/[\0\x08\x09\x1a\n\r"'\\\%]/g, "");
     const isValidPassword = (password) => {
-        // Must be at least 8 characters, alphanumeric + special characters
         const regex = /^[\w!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]*$/;
         return password.length >= 8 && regex.test(password);
     };
@@ -77,7 +76,6 @@ const SignIn = () => {
                 check();
             });
 
-            // Verify the token with your backend
             const verificationResponse = await fetch(
                 "https://us-central1-wing-it-e6a3a.cloudfunctions.net/verifyRecaptcha",
                 {
@@ -148,189 +146,131 @@ const SignIn = () => {
 
 
     return (
-        <div>
-            <div className="auth-page">
-                <div className="auth-card">
+        <div className="auth-page">
+            <div className="auth-container">
+                {/* Left Side - Gradient Section */}
+                <div className="auth-left">
+                    <div className="logo-section">
+                        <h1 className="logo-text">WiNG.it</h1>
+                    </div>
+
+                    <div className="auth-left-content">
+                        <div className="message-section">
+                            <p className="message-intro">You can easily</p>
+                            <h2 className="message-main">Get access your personal hub for clarity and productivity</h2>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Right Side - Form Section */}
+                <div className="auth-right">
                     <Button
                         onClick={() => navigate('/')}
-                        sx={{
-                        position: 'absolute',
-                        top: '-35px',
-                        left: '0',
-                        color: '#cacacaff',
-                        minWidth: 'auto',
-                        padding: '2px 4px',
-                        backgroundColor: 'transparent',
-                        textTransform: 'none',
-                        fontFamily: 'Satoshi Bold, sans-serif',
-                        fontSize: '13px',
-                        fontWeight: 500,
-                        gap: '6px',
-                        '&:hover': {
-                            color: '#a5b7f9ff'
-                        },
-                        transition: 'all 0.2s ease',
-                        zIndex: 10
-                    }}
-                        >
-                        <ArrowLeft size={16} strokeWidth={2.5} />
+                        className="back-button-right"
+                    >
+                        <ArrowLeft size={18} strokeWidth={2.5} />
                         <span>Back to Home</span>
                     </Button>
-                    <h1 className="auth-title">Welcome Back</h1>
-                    <p className="auth-subtitle">Sign in to continue to WiNG.it</p>
 
-                    {error && <div className="message-box error-box">{error}</div>}
+                    <div className="auth-form-container">
+                        <div className="auth-header">
+                            <h1 className="auth-title">Welcome Back</h1>
+                            <p className="auth-subtitle">Sign in to continue your interview prep</p>
+                        </div>
 
-                    <motion.div variants={itemVariants}>
-                        <Box sx={{ display: 'flex', alignItems: 'flex-end', mb: 3 }}>
-                            <EmailIcon sx={{ color: '#94a3b8', mr: 1.5, my: 0.5, fontSize: 28 }} />
-                            <TextField
-                                fullWidth
-                                label="Email Address"
-                                variant="standard"
-                                type="email"
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                                sx={{
-                                    '& .MuiInputLabel-root': {
-                                        fontFamily: 'Satoshi Bold, sans-serif',
-                                        color: '#94a3b8',
-                                        fontSize: '14px'
-                                    },
-                                    '& .MuiInputLabel-root.Mui-focused': {
-                                        color: '#2850d9'
-                                    },
-                                    '& .MuiInput-root': {
-                                        fontFamily: 'Satoshi, sans-serif',
-                                        fontSize: '16px',
-                                        color: '#1a202c'
-                                    },
-                                    '& .MuiInput-underline:before': {
-                                        borderBottomColor: '#e2e8f0',
-                                        borderBottomWidth: '2px'
-                                    },
-                                    '& .MuiInput-underline:hover:not(.Mui-disabled):before': {
-                                        borderBottomColor: '#cbd5e1',
-                                        borderBottomWidth: '2px'
-                                    },
-                                    '& .MuiInput-underline:after': {
-                                        borderBottomColor: '#2850d9',
-                                        borderBottomWidth: '2px'
-                                    }
-                                }}
-                            />
-                        </Box>
-                    </motion.div>
+                        {error && <div className="message-box error-box">{error}</div>}
 
-                    <motion.div variants={itemVariants}>
-                        <Box sx={{ display: 'flex', alignItems: 'flex-end', mb: 3 }}>
-                            <LockIcon sx={{ color: '#94a3b8', mr: 1.5, my: 0.5, fontSize: 28 }} />
-                            <TextField
-                                fullWidth
-                                label="Password"
-                                variant="standard"
-                                type={showPassword ? 'text' : 'password'}
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                                InputProps={{
-                                    endAdornment: (
-                                        <InputAdornment position="end">
-                                            <IconButton
-                                                onClick={() => setShowPassword(!showPassword)}
-                                                edge="end"
-                                                size="small"
-                                                sx={{ color: '#64748b' }}
-                                            >
-                                                {showPassword ? <VisibilityOff fontSize="small" /> : <Visibility fontSize="small" />}
-                                            </IconButton>
-                                        </InputAdornment>
-                                    )
-                                }}
-                                sx={{
-                                    '& .MuiInputLabel-root': {
-                                        fontFamily: 'Satoshi Bold, sans-serif',
-                                        color: '#94a3b8',
-                                        fontSize: '14px'
-                                    },
-                                    '& .MuiInputLabel-root.Mui-focused': {
-                                        color: '#2850d9'
-                                    },
-                                    '& .MuiInput-root': {
-                                        fontFamily: 'Satoshi, sans-serif',
-                                        fontSize: '16px',
-                                        color: '#1a202c'
-                                    },
-                                    '& .MuiInput-underline:before': {
-                                        borderBottomColor: '#e2e8f0',
-                                        borderBottomWidth: '2px'
-                                    },
-                                    '& .MuiInput-underline:hover:not(.Mui-disabled):before': {
-                                        borderBottomColor: '#cbd5e1',
-                                        borderBottomWidth: '2px'
-                                    },
-                                    '& .MuiInput-underline:after': {
-                                        borderBottomColor: '#2850d9',
-                                        borderBottomWidth: '2px'
-                                    }
-                                }}
-                            />
-                        </Box>
-                    </motion.div>
+                        <div className="auth-form">
+                            <motion.div variants={itemVariants} className="form-group">
+                                <label className="form-label">Email Address</label>
+                                <div className="input-wrapper">
+                                    <EmailIcon className="input-icon" />
+                                    <input
+                                        type="email"
+                                        className="form-input"
+                                        placeholder="you@example.com"
+                                        value={email}
+                                        onChange={(e) => setEmail(e.target.value)}
+                                        onKeyDown={(e) => e.key === 'Enter' && handleSignIn()}
+                                    />
+                                </div>
+                            </motion.div>
 
+                            <motion.div variants={itemVariants} className="form-group">
+                                <div className="label-row">
+                                    <label className="form-label">Password</label>
+                                    <button
+                                        type="button"
+                                        className="forgot-link"
+                                        onClick={() => handleForgotPassword(email)}
+                                    >
+                                        Forgot password?
+                                    </button>
+                                </div>
+                                <div className="input-wrapper">
+                                    <LockIcon className="input-icon" />
+                                    <input
+                                        type={showPassword ? 'text' : 'password'}
+                                        className="form-input"
+                                        placeholder="Enter your password"
+                                        value={password}
+                                        onChange={(e) => setPassword(e.target.value)}
+                                        onKeyDown={(e) => e.key === 'Enter' && handleSignIn()}
+                                    />
+                                    <button
+                                        type="button"
+                                        className="password-toggle"
+                                        onClick={() => setShowPassword(!showPassword)}
+                                    >
+                                        {showPassword ? <VisibilityOff fontSize="small" /> : <Visibility fontSize="small" />}
+                                    </button>
+                                </div>
+                            </motion.div>
 
-                    <button className="primary-btn" onClick={handleSignIn}>
-                        Log In
-                    </button>
-                    <p
-                    className="auth-description cursor-pointer"
-                    style={{ marginTop: 10, fontFamily: "Satoshi"}}
-                    onClick={() => handleForgotPassword(email)}
-                    >
-                    Forgot Password
-                    </p>
-                    <p
-                    className="auth-description cursor-pointer"
-                    style={{ marginTop: 10, fontFamily: "Satoshi" }}
-                    onClick={() => navigate("/signup")}
-                    >
-                    Don't have an account? Sign up instead.
-                    </p>
+                            <button className="primary-btn" onClick={handleSignIn}>
+                                Sign In
+                            </button>
+                        </div>
+
+                        <div className="auth-footer">
+                            <p className="footer-text">
+                                Don't have an account?{' '}
+                                <button
+                                    type="button"
+                                    className="link-btn"
+                                    onClick={() => navigate("/signup")}
+                                >
+                                    Sign up
+                                </button>
+                            </p>
+                        </div>
+
+                        <Typography
+                            component="small"
+                            className="recaptcha-text"
+                        >
+                            This site is protected by reCAPTCHA and the Google{' '}
+                            <a
+                                href="https://policies.google.com/privacy"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                Privacy Policy
+                            </a>{' '}
+                            and{' '}
+                            <a
+                                href="https://policies.google.com/terms"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                Terms of Service
+                            </a>{' '}
+                            apply.
+                        </Typography>
+                    </div>
                 </div>
-                <Typography
-                    component="small"
-                    sx={{
-                        display: 'block',
-                        marginTop: '10px',
-                        fontSize: '0.75rem',
-                        color: '#dddadaff',
-                        textAlign: 'center',
-                        fontFamily: "Satoshi",
-                        animation: 'slideUp 0.6s cubic-bezier(0.4, 0, 0.2, 1)'
-                    }}
-                >
-                    This site is protected by reCAPTCHA and the Google{' '}
-                    <a
-                        href="https://policies.google.com/privacy"
-                        style={{ color: '#b7c8f9ff' }}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                    >
-                    Privacy Policy
-                    </a>{' '}
-
-                    and{' '}
-                    <a
-                        href="https://policies.google.com/terms"
-                        style={{ color: '#b7c8f9ff' }}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                    >
-                    Terms of Service
-                    </a>{' '}
-                    apply.
-                </Typography>
-                <div id="recaptcha-container" style={{display:'none'}}></div>
             </div>
+            <div id="recaptcha-container" style={{display:'none'}}></div>
         </div>
     );
 };
