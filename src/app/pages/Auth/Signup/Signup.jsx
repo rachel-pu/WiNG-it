@@ -325,7 +325,11 @@ const SignUp = () => {
                 </label>
               </div>
 
-              <button className="primary-btn" onClick={handleSignUp}>
+              <button
+                className="primary-btn"
+                onClick={handleSignUp}
+                disabled={!agreedToTerms || !password || !confirmPassword || password !== confirmPassword}
+              >
                 Sign Up
               </button>
             </div>
