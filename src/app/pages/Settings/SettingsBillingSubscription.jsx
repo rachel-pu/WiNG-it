@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { ref, get, update } from "firebase/database";
 import { database, createCheckoutSession, cancelSubscription, updateSubscription } from '../../../lib/firebase.jsx';
-import { Check, Zap, Crown, Sparkles, AlertCircle, CheckCircle, X, Search, Filter } from 'lucide-react';
+import { Check, Zap, Crown, Sparkles, AlertCircle, CheckCircle, X } from 'lucide-react';
 import { STRIPE_CONFIG } from '../../../config/stripe';
 import "./SettingsBillingSubscription.css";
 
@@ -9,14 +9,8 @@ export default function SettingsBillingSubscription() {
     const [error, setError] = useState('');
     const [isChangingPlan, setIsChangingPlan] = useState(false);
     const [billingHistory, setBillingHistory] = useState([]);
-    const [searchTerm, setSearchTerm] = useState('');
-    const [showFilters, setShowFilters] = useState(false);
-    const [statusFilters, setStatusFilters] = useState({
-        paid: true,
-        success: true,
-        processing: true,
-        cancelled: true
-    });
+    const [startDate, setStartDate] = useState('');
+    const [endDate, setEndDate] = useState('');
     const [formData, setFormData] = useState({
         userId: '',
         subscription: {
@@ -387,11 +381,11 @@ export default function SettingsBillingSubscription() {
 
     const handleExportHistory = () => {
         // Convert billing history to CSV
-        const headers = ['Plan Name', 'Amount', 'Purchase Date', 'End Date', 'Status'];
+        const headers = ['Amount', 'Purchase Date', 'Status'];
         const csvContent = [
             headers.join(','),
-            ...billingHistory.map(item =>
-                [item.planName || 'N/A', item.amount, item.date, item.endDate || 'N/A', item.status].join(',')
+            ...filteredHistory.map(item =>
+                [item.amount, item.date, item.status].join(',')
             )
         ].join('\n');
 
@@ -402,13 +396,6 @@ export default function SettingsBillingSubscription() {
         a.download = 'billing-history.csv';
         a.click();
         window.URL.revokeObjectURL(url);
-    };
-
-    const toggleStatusFilter = (status) => {
-        setStatusFilters(prev => ({
-            ...prev,
-            [status]: !prev[status]
-        }));
     };
 
     // Calculate remaining days if subscription is pending cancellation
@@ -428,17 +415,22 @@ export default function SettingsBillingSubscription() {
     const isPendingCancellation = formData.subscription.status === 'pending_cancellation';
 
 
+    // Filter billing history based on date range
     const filteredHistory = billingHistory.filter(item => {
-        // Apply search filter
-        const matchesSearch = item.amount?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            item.date?.includes(searchTerm) ||
-            item.status?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            item.planName?.toLowerCase().includes(searchTerm.toLowerCase());
+        if (!startDate && !endDate) return true;
 
-        // Apply status filter
-        const matchesStatus = statusFilters[item.status?.toLowerCase()];
+        const itemDate = new Date(item.date);
+        const start = startDate ? new Date(startDate) : null;
+        const end = endDate ? new Date(endDate) : null;
 
-        return matchesSearch && matchesStatus;
+        if (start && end) {
+            return itemDate >= start && itemDate <= end;
+        } else if (start) {
+            return itemDate >= start;
+        } else if (end) {
+            return itemDate <= end;
+        }
+        return true;
     });
 
     return (
@@ -544,60 +536,32 @@ export default function SettingsBillingSubscription() {
                 <div className="BillingSubscription-history-header">
                     <h3 className="BillingSubscription-history-title">Billing History</h3>
                     <div className="BillingSubscription-history-actions">
-                        <div className="BillingSubscription-search-box">
-                            <Search size={18} className="search-icon" />
-                            <input
-                                type="text"
-                                placeholder="Search..."
-                                value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
-                                className="BillingSubscription-search-input"
-                            />
-                        </div>
-                        <div style={{ position: 'relative' }}>
-                            <button
-                                className="BillingSubscription-action-btn"
-                                onClick={() => setShowFilters(!showFilters)}
-                            >
-                                <Filter size={18} />
-                                Filter
-                            </button>
-                            {showFilters && (
-                                <div className="filter-dropdown">
-                                    <div className="filter-dropdown-header">Filter by Status</div>
-                                    <label className="filter-option">
-                                        <input
-                                            type="checkbox"
-                                            checked={statusFilters.paid}
-                                            onChange={() => toggleStatusFilter('paid')}
-                                        />
-                                        <span>Paid</span>
-                                    </label>
-                                    <label className="filter-option">
-                                        <input
-                                            type="checkbox"
-                                            checked={statusFilters.success}
-                                            onChange={() => toggleStatusFilter('success')}
-                                        />
-                                        <span>Success</span>
-                                    </label>
-                                    <label className="filter-option">
-                                        <input
-                                            type="checkbox"
-                                            checked={statusFilters.processing}
-                                            onChange={() => toggleStatusFilter('processing')}
-                                        />
-                                        <span>Processing</span>
-                                    </label>
-                                    <label className="filter-option">
-                                        <input
-                                            type="checkbox"
-                                            checked={statusFilters.cancelled}
-                                            onChange={() => toggleStatusFilter('cancelled')}
-                                        />
-                                        <span>Cancelled</span>
-                                    </label>
-                                </div>
+                        <div className="BillingSubscription-date-filter">
+                            <div className="date-input-group">
+                                <label>From</label>
+                                <input
+                                    type="date"
+                                    value={startDate}
+                                    onChange={(e) => setStartDate(e.target.value)}
+                                    className="date-input"
+                                />
+                            </div>
+                            <div className="date-input-group">
+                                <label>To</label>
+                                <input
+                                    type="date"
+                                    value={endDate}
+                                    onChange={(e) => setEndDate(e.target.value)}
+                                    className="date-input"
+                                />
+                            </div>
+                            {(startDate || endDate) && (
+                                <button
+                                    className="BillingSubscription-clear-btn"
+                                    onClick={() => { setStartDate(''); setEndDate(''); }}
+                                >
+                                    Clear
+                                </button>
                             )}
                         </div>
                         <button
