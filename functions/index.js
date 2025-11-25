@@ -1398,6 +1398,19 @@ async function handleInvoicePaymentSucceeded(invoice) {
 
   const billingHistoryRef = db.ref(`userTiers/${userTier}/${userId}/billingHistory`);
 
+  // Check if this invoice already exists in billing history
+  const existingHistorySnapshot = await billingHistoryRef.once('value');
+  const existingHistory = existingHistorySnapshot.val();
+
+  if (existingHistory) {
+    // Check if any entry has this invoice ID
+    const isDuplicate = Object.values(existingHistory).some(entry => entry.id === invoice.id);
+    if (isDuplicate) {
+      console.log(`Invoice ${invoice.id} already exists in billing history for user ${userId}, skipping duplicate`);
+      return;
+    }
+  }
+
   // Get the subscription to retrieve plan name from metadata
   let planName = 'Unknown';
   if (invoice.subscription) {
