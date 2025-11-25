@@ -417,6 +417,25 @@
   transform: scale(1.05);
 }
 
+.delete-results-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.9rem;
+  background: linear-gradient(135deg, #eb2525 0%, #d31e1e 100%);
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.delete-results-btn:hover {
+  box-shadow: 0 10px 15px -3px rgba(235, 37, 37, 0.3);
+  transform: scale(1.05);
+}
+
 /* Session Details */
 .session-details {
   padding: 1.5rem;
