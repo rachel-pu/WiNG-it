@@ -427,14 +427,6 @@ export default function SettingsBillingSubscription() {
     const remainingDays = calculateRemainingDays();
     const isPendingCancellation = formData.subscription.status === 'pending_cancellation';
 
-    // Debug logging
-    console.log('DEBUG - Subscription Data:', {
-        status: formData.subscription.status,
-        renewalDate: formData.subscription.renewalDate,
-        remainingDays,
-        isPendingCancellation,
-        tier: formData.subscription.tier
-    });
 
     const filteredHistory = billingHistory.filter(item => {
         // Apply search filter
