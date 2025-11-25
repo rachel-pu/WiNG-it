@@ -1,8 +1,9 @@
 import { useState, useEffect} from 'react';
 import { ref, get, update } from "firebase/database";
-import {database, uploadResume} from '../../../lib/firebase.jsx'
+import {database} from '../../../lib/firebase.jsx'
 import { Check, X, Mail, Upload } from 'lucide-react';
 import { uploadProfileImage } from '../../../../supabase.js';
+import Swal from 'sweetalert2';
 
 export default function SettingsProfile() {
     const [editingSection, setEditingSection] = useState(null);
@@ -75,6 +76,7 @@ export default function SettingsProfile() {
         sectionKey !== 'personalInformation' &&
         sectionKey !== 'subscription' &&
         sectionKey !== 'billingInformation' &&
+        sectionKey !== 'interviewPreferences' &&
         !sectionKey.toLowerCase().includes('stripe')
     )
     .map((sectionKey) => {
@@ -422,10 +424,41 @@ export default function SettingsProfile() {
                         onChange={async (e) => {
                             const file = e.target.files?.[0];
                             if (!file || !formData.userId) return;
+                            const userId = formData.userId;
+
+                            const toBase64 = file =>
+                                new Promise((resolve, reject) => {
+                                    const reader = new FileReader();
+                                    reader.readAsDataURL(file);
+                                    reader.onload = () => resolve(reader.result);
+                                    reader.onerror = reject;
+                                });
+
+                            const base64File = await toBase64(file);
+                            
                             try {
-                                const resumeUrl = await uploadResume(formData.userId, file);
-                                await update(ref(database, `users/${formData.userId}`), { resume: resumeUrl });
-                                setFormData((prev) => ({ ...prev, resume: resumeUrl }));
+                                 const payload = {
+                                    userId,
+                                    file: base64File
+                                };
+                                const res = await fetch(
+                                    "https://us-central1-wing-it-e6a3a.cloudfunctions.net/uploadResume",
+                                    {
+                                        method: "POST",
+                                        headers: {
+                                            "Content-Type": "application/json"
+                                        },
+                                        body: JSON.stringify(payload)
+                                    }
+                                );
+                                const { downloadURL } = await res.json();
+                                await update(ref(database, `users/${userId}`), { resume: downloadURL });
+                                setFormData((prev) => ({ ...prev, resume: downloadURL }));
+
+                                Swal.fire({
+                                    title: "Resume successfully uploaded!",
+                                    icon: "success"
+                                });
                             } catch (err) {
                                 console.error("Error uploading resume:", err);
                                 setError("Failed to upload resume.");

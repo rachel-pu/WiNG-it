@@ -12,12 +12,6 @@ export default function Pricing() {
       icon: Sparkles,
       price: { monthly: 0 },
       description: 'Perfect for getting started',
-      features: [
-        'Ads supported',
-        '20 interviews per day (w/ ads)',
-        'Sessions deleted after 30 days',
-        'Manual session deletion available'
-      ],
       gradientColors: { from: '#9ca3af', to: '#6b7280' }
     },
     pro: {
@@ -25,11 +19,6 @@ export default function Pricing() {
       icon: Zap,
       price: { monthly: 1.99 },
       description: 'For serious preparation',
-      features: [
-        'No ads',
-        '20 interviews per day',
-        'Keeps all interviews unless deleted'
-      ],
       popular: true,
       gradientColors: { from: '#3b82f6', to: '#9333ea' }
     },
@@ -38,12 +27,6 @@ export default function Pricing() {
       icon: Crown,
       price: { monthly: 9.99 },
       description: 'Comprehensive preparation',
-      features: [
-        'No ads',
-        'Extra tools and deeper analysis',
-        'Unlimited interviews',
-        'Keeps all interviews unless deleted',
-      ],
       gradientColors: { from: '#9333ea', to: '#ec4899' }
     }
   };
@@ -102,15 +85,6 @@ export default function Pricing() {
                         <span className="PricingPlan-period">/month</span>
                         </div>
                     </div>
-
-                    <ul className="PricingPlan-featuresList">
-                        {plan.features.map((feature, i) => (
-                        <li key={i} className="PricingPlan-featureItem">
-                            <Check size={18} className="PricingPlan-checkIcon" />
-                            <span>{feature}</span>
-                        </li>
-                        ))}
-                    </ul>
                     </div>
                 );
                 })}

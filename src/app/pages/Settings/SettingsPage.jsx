@@ -6,6 +6,7 @@ import SettingsNav from '../../../components/SettingsNav.jsx';
 import SettingsProfile from './SettingsProfile.jsx';
 import SettingsBillingSubscription from './SettingsBillingSubscription.jsx';
 import SettingsNotifications from './SettingsNotifications.jsx';
+import SettingsPersonalization from './SettingsPersonalization.jsx';
 import "./SettingsProfile.css";
 
 export default function SettingsPage() {
@@ -26,6 +27,8 @@ export default function SettingsPage() {
                 return <SettingsBillingSubscription />;
             case 'notifications':
                 return <SettingsNotifications />;
+            case 'personalization':
+                return <SettingsPersonalization />;
             default:
                 return <SettingsProfile />;
         }
