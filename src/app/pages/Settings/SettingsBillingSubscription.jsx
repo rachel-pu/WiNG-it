@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { ref, get, update } from "firebase/database";
-import { database, createCheckoutSession, cancelSubscription } from '../../../lib/firebase.jsx';
+import { database, createCheckoutSession, cancelSubscription, updateSubscription } from '../../../lib/firebase.jsx';
 import { Check, Zap, Crown, Sparkles, AlertCircle, CheckCircle, X, Search, Filter } from 'lucide-react';
 import { STRIPE_CONFIG } from '../../../config/stripe';
 import "./SettingsBillingSubscription.css";
@@ -146,12 +146,26 @@ export default function SettingsBillingSubscription() {
         const fetchSubscription = async () => {
             if (!formData.userId) return;
             try {
-                const snapshot = await get(ref(database, `users/${formData.userId}/subscription`));
-                if (snapshot.exists()) {
-                    setFormData(prev => ({
-                        ...prev,
-                        subscription: snapshot.val()
-                    }));
+                // Search through all tiers to find the user
+                const tiersSnapshot = await get(ref(database, 'userTiers'));
+                if (tiersSnapshot.exists()) {
+                    const tiers = tiersSnapshot.val();
+                    let subscriptionData = null;
+
+                    // Find user in any tier
+                    for (const [tierName, users] of Object.entries(tiers || {})) {
+                        if (users && users[formData.userId]) {
+                            subscriptionData = users[formData.userId];
+                            break;
+                        }
+                    }
+
+                    if (subscriptionData) {
+                        setFormData(prev => ({
+                            ...prev,
+                            subscription: subscriptionData
+                        }));
+                    }
                 }
             } catch (err) {
                 console.error('Error fetching subscription:', err);
@@ -165,13 +179,24 @@ export default function SettingsBillingSubscription() {
         const fetchBillingHistory = async () => {
             if (!formData.userId) return;
             try {
-                const snapshot = await get(ref(database, `users/${formData.userId}/subscription/billingHistory`));
-                if (snapshot.exists()) {
-                    const historyData = snapshot.val();
-                    const historyArray = Object.values(historyData).sort((a, b) => {
-                        return new Date(b.date) - new Date(a.date);
-                    });
-                    setBillingHistory(historyArray);
+                // Search through all tiers to find the user
+                const tiersSnapshot = await get(ref(database, 'userTiers'));
+                if (tiersSnapshot.exists()) {
+                    const tiers = tiersSnapshot.val();
+
+                    // Find user in any tier
+                    for (const [tierName, users] of Object.entries(tiers || {})) {
+                        if (users && users[formData.userId]) {
+                            const billingHistory = users[formData.userId].billingHistory;
+                            if (billingHistory) {
+                                const historyArray = Object.values(billingHistory).sort((a, b) => {
+                                    return new Date(b.date) - new Date(a.date);
+                                });
+                                setBillingHistory(historyArray);
+                            }
+                            break;
+                        }
+                    }
                 }
             } catch (err) {
                 console.error('Error fetching billing history:', err);
@@ -184,24 +209,37 @@ export default function SettingsBillingSubscription() {
         // Don't allow changing to the same plan
         if (newPlan === formData.subscription.tier) return;
 
+        // Define tier hierarchy for comparison
+        const tierHierarchy = { free: 0, pro: 1, premium: 2 };
+        const currentTier = formData.subscription.tier || 'free';
+        const isUpgrade = tierHierarchy[newPlan] > tierHierarchy[currentTier];
+        const isDowngrade = tierHierarchy[newPlan] < tierHierarchy[currentTier];
+
+        // Handle downgrade to free
         if (newPlan === 'free') {
             showConfirm(
                 'Downgrade to Free Plan',
-                'Are you sure you want to downgrade to the Free plan? You will lose access to premium features.',
+                `Your ${plans[currentTier].name} plan will remain active until ${formData.subscription.renewalDate || 'the end of your billing period'}. After that, you'll be downgraded to Free.`,
                 async () => {
                     setModal(prev => ({ ...prev, isOpen: false }));
                     setIsChangingPlan(true);
                     try {
                         await cancelSubscription({ userId: formData.userId });
+
+                        // Update local state to reflect pending cancellation
                         setFormData(prev => ({
                             ...prev,
                             subscription: {
                                 ...prev.subscription,
-                                tier: 'free',
-                                status: 'cancelled'
+                                status: 'pending_cancellation'
                             }
                         }));
-                        showAlert('Subscription Downgraded', 'Your subscription will be downgraded to Free at the end of your billing period.', 'success');
+
+                        showAlert(
+                            'Downgrade Scheduled',
+                            `Your subscription will end on ${formData.subscription.renewalDate || 'the renewal date'}. You'll keep access to ${plans[currentTier].name} features until then.`,
+                            'success'
+                        );
                     } catch (err) {
                         console.error('Error downgrading plan:', err);
                         showAlert('Downgrade Failed', 'Failed to downgrade plan. Please try again.', 'error');
@@ -216,35 +254,128 @@ export default function SettingsBillingSubscription() {
             return;
         }
 
-        // Plan upgrade - always use monthly pricing
-        showConfirm(
-            `Upgrade to ${plans[newPlan].name}`,
-            `Upgrade to ${plans[newPlan].name} for $${plans[newPlan].price}/month?`,
-            async () => {
-                setModal(prev => ({ ...prev, isOpen: false }));
-                setIsChangingPlan(true);
-                try {
-                    const priceId = STRIPE_CONFIG.prices[newPlan].monthly;
-                    if (!priceId) {
-                        throw new Error('Price ID not configured for this plan');
+        // Handle downgrade between paid tiers (Premium → Pro)
+        if (isDowngrade) {
+            showConfirm(
+                `Downgrade to ${plans[newPlan].name}`,
+                `Your ${plans[currentTier].name} plan will remain active until ${formData.subscription.renewalDate || 'the end of your billing period'}. After that, your subscription will end and you can subscribe to ${plans[newPlan].name}.`,
+                async () => {
+                    setModal(prev => ({ ...prev, isOpen: false }));
+                    setIsChangingPlan(true);
+                    try {
+                        await cancelSubscription({
+                            userId: formData.userId,
+                            pendingTier: newPlan  // Store what they plan to downgrade to
+                        });
+
+                        // Update local state to reflect pending cancellation
+                        setFormData(prev => ({
+                            ...prev,
+                            subscription: {
+                                ...prev.subscription,
+                                status: 'pending_cancellation',
+                                pendingTier: newPlan
+                            }
+                        }));
+
+                        showAlert(
+                            'Downgrade Scheduled',
+                            `Your ${plans[currentTier].name} plan will end on ${formData.subscription.renewalDate || 'the renewal date'}. You'll keep access to ${plans[currentTier].name} features until then.`,
+                            'success'
+                        );
+                    } catch (err) {
+                        console.error('Error downgrading plan:', err);
+                        showAlert('Downgrade Failed', 'Failed to downgrade plan. Please try again.', 'error');
+                    } finally {
+                        setIsChangingPlan(false);
                     }
-                    const result = await createCheckoutSession({
-                        userId: formData.userId,
-                        priceId: priceId,
-                        planName: newPlan
-                    });
-                    const { url } = result.data;
-                    window.location.href = url;
-                } catch (err) {
-                    console.error('Error upgrading plan:', err);
-                    showAlert('Upgrade Failed', 'Failed to start checkout. Please try again.', 'error');
-                    setIsChangingPlan(false);
-                }
-            },
-            'Upgrade',
-            'Cancel',
-            'alert'
-        );
+                },
+                'Downgrade',
+                'Cancel',
+                'alert'
+            );
+            return;
+        }
+
+        // Handle upgrade (Free → Pro, Free → Premium, or Pro → Premium)
+        if (isUpgrade) {
+            // If user has no active subscription, create new one via checkout
+            if (!formData.subscription.stripeSubscriptionId || currentTier === 'free') {
+                showConfirm(
+                    `Upgrade to ${plans[newPlan].name}`,
+                    `Upgrade to ${plans[newPlan].name} for $${plans[newPlan].price}/month?`,
+                    async () => {
+                        setModal(prev => ({ ...prev, isOpen: false }));
+                        setIsChangingPlan(true);
+                        try {
+                            const priceId = STRIPE_CONFIG.prices[newPlan].monthly;
+                            if (!priceId) {
+                                throw new Error('Price ID not configured for this plan');
+                            }
+                            const result = await createCheckoutSession({
+                                userId: formData.userId,
+                                priceId: priceId,
+                                planName: newPlan
+                            });
+                            const { url } = result.data;
+                            window.location.href = url;
+                        } catch (err) {
+                            console.error('Error upgrading plan:', err);
+                            showAlert('Upgrade Failed', 'Failed to start checkout. Please try again.', 'error');
+                            setIsChangingPlan(false);
+                        }
+                    },
+                    'Upgrade',
+                    'Cancel',
+                    'alert'
+                );
+            } else {
+                // User has active subscription - upgrade immediately with proration
+                const priceDifference = (plans[newPlan].price - plans[currentTier].price).toFixed(2);
+                showConfirm(
+                    `Upgrade to ${plans[newPlan].name}`,
+                    `You'll be upgraded to ${plans[newPlan].name} immediately. You'll be charged a prorated amount of approximately $${priceDifference} for the remaining time in your current billing cycle. Your next bill will be $${plans[newPlan].price}/month.`,
+                    async () => {
+                        setModal(prev => ({ ...prev, isOpen: false }));
+                        setIsChangingPlan(true);
+                        try {
+                            const priceId = STRIPE_CONFIG.prices[newPlan].monthly;
+                            if (!priceId) {
+                                throw new Error('Price ID not configured for this plan');
+                            }
+                            await updateSubscription({
+                                userId: formData.userId,
+                                priceId: priceId,
+                                planName: newPlan
+                            });
+
+                            // Update local state to reflect the upgrade
+                            setFormData(prev => ({
+                                ...prev,
+                                subscription: {
+                                    ...prev.subscription,
+                                    tier: newPlan,
+                                    status: 'active'
+                                }
+                            }));
+
+                            showAlert(
+                                'Upgrade Successful!',
+                                `You've been upgraded to ${plans[newPlan].name}. You now have access to all ${newPlan} features!`,
+                                'success'
+                            );
+                        } catch (err) {
+                            console.error('Error upgrading plan:', err);
+                            showAlert('Upgrade Failed', 'Failed to upgrade plan. Please try again.', 'error');
+                            setIsChangingPlan(false);
+                        }
+                    },
+                    'Upgrade Now',
+                    'Cancel',
+                    'alert'
+                );
+            }
+        }
     };
 
     const handleExportHistory = () => {
@@ -273,9 +404,30 @@ export default function SettingsBillingSubscription() {
         }));
     };
 
+    // Calculate remaining days if subscription is pending cancellation
+    const calculateRemainingDays = () => {
+        if (!formData.subscription.renewalDate) return null;
+        const renewalDate = new Date(formData.subscription.renewalDate);
+        const today = new Date();
+        const diffTime = renewalDate - today;
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        return diffDays > 0 ? diffDays : 0;
+    };
+
     if (error) return <p style={{ color: 'red' }}>{error}</p>;
 
     const currentPlan = plans[formData.subscription.tier] ? formData.subscription.tier : 'free';
+    const remainingDays = calculateRemainingDays();
+    const isPendingCancellation = formData.subscription.status === 'pending_cancellation';
+
+    // Debug logging
+    console.log('DEBUG - Subscription Data:', {
+        status: formData.subscription.status,
+        renewalDate: formData.subscription.renewalDate,
+        remainingDays,
+        isPendingCancellation,
+        tier: formData.subscription.tier
+    });
 
     const filteredHistory = billingHistory.filter(item => {
         // Apply search filter
@@ -301,6 +453,35 @@ export default function SettingsBillingSubscription() {
                     </p>
                 </div>
             </div>
+
+            {/* Pending Cancellation Notice */}
+            {isPendingCancellation && remainingDays !== null && (
+                <div style={{
+                    padding: '16px',
+                    marginBottom: '24px',
+                    backgroundColor: '#FFF4E6',
+                    border: '1px solid #FFB020',
+                    borderRadius: '8px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '12px'
+                }}>
+                    <AlertCircle size={24} style={{ color: '#FFB020', flexShrink: 0 }} />
+                    <div>
+                        <div style={{ fontWeight: 600, color: '#1a1a1a', marginBottom: '4px' }}>
+                            Subscription Ending Soon
+                        </div>
+                        <div style={{ color: '#4a4a4a', fontSize: '14px' }}>
+                            You have <strong>{remainingDays} day{remainingDays !== 1 ? 's' : ''}</strong> remaining with your {plans[currentPlan].name} plan.
+                            Your subscription will end on <strong>{formData.subscription.renewalDate}</strong>
+                            {formData.subscription.pendingTier && formData.subscription.pendingTier !== 'free'
+                                ? ` and you can then subscribe to the ${plans[formData.subscription.pendingTier]?.name || formData.subscription.pendingTier} plan.`
+                                : ` and you'll be moved to the Free tier.`
+                            }
+                        </div>
+                    </div>
+                </div>
+            )}
 
             {/* Pricing Cards */}
             <div className="BillingSubscription-plans-grid">
