@@ -1,12 +1,13 @@
 "use client";
-
 import { useState, useEffect } from "react";
-import { Box, Typography, Grid as Grid, Card, CssBaseline, Toolbar } from "@mui/material";
+import { Box, Typography, Grid as Card } from "@mui/material";
 import { motion } from "framer-motion";
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import Confetti from 'react-confetti';
 import DefaultAppLayout from "../../../../DefaultAppLayout.jsx";
 import "./InterviewCompleteScreen.css";
+import { useLocation } from "react-router-dom";
+import BadgeNotification from "../../../../../components/BadgesNotif.jsx";
 
 const InterviewCompleteScreen = ({
     overallScore,
@@ -22,6 +23,16 @@ const InterviewCompleteScreen = ({
         height: typeof window !== 'undefined' ? window.innerHeight : 800
     });
     const [showConfetti, setShowConfetti] = useState(true);
+    const location = useLocation();
+    const newBadges = location.state?.newBadges || [];
+    const [showBadgeNotification, setShowBadgeNotification] = useState(true);
+
+    useEffect(() => {
+        if (newBadges.length > 0) {
+            setShowBadgeNotification(true);
+        }
+    }, [newBadges]); 
+
 
     // Get window dimensions for confetti
     useEffect(() => {
@@ -250,6 +261,14 @@ const InterviewCompleteScreen = ({
             </motion.div>
                 </Box>
             </DefaultAppLayout>
+
+            {showBadgeNotification && newBadges.length > 0 && (
+                <BadgeNotification
+                    badges={newBadges}
+                    onClose={() => setShowBadgeNotification(false)}
+                />
+            )}
+
             </Box>
         </>
     );

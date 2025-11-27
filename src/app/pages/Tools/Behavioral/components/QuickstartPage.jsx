@@ -35,6 +35,7 @@ const QuickstartPage = ({
     numQuestions,
     questionTypes,
     interviewerDifficulty,
+    interviewType,
     customQuestions,
     setError,
     setResume,

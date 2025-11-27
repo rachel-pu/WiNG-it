@@ -16,7 +16,7 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { useNavigate } from "react-router-dom";
 
 
-const InterviewQuestions = ({questions, interviewerDifficulty}) => {
+const InterviewQuestions = ({questions, interviewerDifficulty, interviewType}) => {
     const containerRef = useRef(null);
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
     const [isRecording, setIsRecording] = useState(false);
@@ -367,8 +367,9 @@ const InterviewQuestions = ({questions, interviewerDifficulty}) => {
             questionText: questions[questionIndexAtRecordingStart],
             recordedTime: recordTime,
             audioData: base64Audio,
-            mimetype: audioBlob.type || "audio/webm", // Use actual blob type
-            interviewerDifficulty: interviewerDifficulty || 'easy-going-personality'
+            mimetype: audioBlob.type || "audio/webm",
+            interviewerDifficulty: interviewerDifficulty || 'easy-going-personality',
+            interviewType: interviewType || 'regular'
         };
 
         console.log('Payload size:', JSON.stringify(payload).length);
@@ -466,15 +467,10 @@ const InterviewQuestions = ({questions, interviewerDifficulty}) => {
             const data = await response.json();
             console.log("Badge check response:", data);
             const newBadges = data.newBadges || [];
-            if (newBadges.length > 0) {
-                setAlertMessage(`Congrats! You've earned new badges: ${newBadges.join(", ")}`);
-                setAlertSeverity("success");
-                setShowAlert(true);
-            }
             const url = `/behavioral/results?userId=${encodeURIComponent(userId)}&sessionId=${encodeURIComponent(sessionId)}&expectedQuestions=${questions.length}`;
             sessionStorage.setItem("userId", userId);
             sessionStorage.setItem("interviewSessionId", sessionId);
-            navigate(url);
+            navigate(url, { state: { newBadges } });
         }
     };
 

@@ -10,6 +10,7 @@ import "./components/BehavioralSimulationPage.css";
 
 export default function BehavioralInterviewSimulation() {
     const [questions, setQuestions] = useState([]);
+    const [interviewType, setInterviewType] = useState([]);
     const [error, setError] = useState("");
     const [resume, setResume] = useState("");
     const [jobRole, setJobRole] = useState("");
@@ -22,7 +23,7 @@ export default function BehavioralInterviewSimulation() {
     const [showSimulation, setShowSimulation] = useState(false);
 
 
-    const fetchQuestions = async (isCustom = false, customQuestionsArray = []) => {
+    const fetchQuestions = async (isCustom = false, customQuestionsArray = [], interviewType = "regular") => {
         try {
             const response = await fetch('https://us-central1-wing-it-e6a3a.cloudfunctions.net/generateQuestions', {
             method: 'POST',
@@ -45,6 +46,7 @@ export default function BehavioralInterviewSimulation() {
 
             const data = await response.json();
             setQuestions(data.questions);
+            setInterviewType(interviewType);
             setShowSimulation(true);
 
         } catch (error) {
@@ -52,7 +54,7 @@ export default function BehavioralInterviewSimulation() {
         }
     };
 
-    const generateResumeQuestions = async (resume) => {
+    const generateResumeQuestions = async (resume, interviewType = "resume") => {
         try {
             const response = await fetch('https://us-central1-wing-it-e6a3a.cloudfunctions.net/generateResumeQuestions', {
             method: 'POST',
@@ -74,6 +76,7 @@ export default function BehavioralInterviewSimulation() {
 
             const data = await response.json();
             setQuestions(data.questions);
+            setInterviewType(interviewType);
             setShowSimulation(true);
 
         } catch (error) {
@@ -130,7 +133,7 @@ export default function BehavioralInterviewSimulation() {
             if (!error) {
                 setShowQuickstart(false);
                 // getting backend questions
-                fetchQuestions();
+                fetchQuestions(false, [], "regular");
             }
         }
         // Tab 2: Custom Questions
@@ -153,7 +156,7 @@ export default function BehavioralInterviewSimulation() {
             if (!error) {
                 setShowQuickstart(false);
                 // Send custom questions to backend
-                fetchQuestions(true, customQuestionsArray);
+                fetchQuestions(true, customQuestionsArray, "custom");
             }
         }
         // Tab 1: Resume Questions
@@ -161,7 +164,7 @@ export default function BehavioralInterviewSimulation() {
              if (!error) {
                 setShowQuickstart(false);
                 // Send resume to backend
-                generateResumeQuestions(resume);
+                generateResumeQuestions(resume, "resume");
             }
         }
     }
@@ -183,6 +186,7 @@ export default function BehavioralInterviewSimulation() {
                         company={company}
                         numQuestions={numQuestions}
                         questionTypes={questionTypes}
+                        interviewType={interviewType}
                         interviewerDifficulty={interviewerDifficulty}
                         customQuestions={customQuestions}
                         setError={setError}
@@ -203,7 +207,7 @@ export default function BehavioralInterviewSimulation() {
                         {/* question box component */}
                         <Box component="main" className="behavioral-question-box">
                             {questions && questions.length > 0 && showSimulation ? (
-                                <BehavioralSimulationPage questions={questions}/>
+                                <BehavioralSimulationPage questions={questions} interviewerDifficulty={interviewerDifficulty} interviewType={interviewType}/>
                             ) : (
                                 <Box className="behavioral-loading-container" style={{ textAlign: 'center' }}>
                                     <CircularProgress

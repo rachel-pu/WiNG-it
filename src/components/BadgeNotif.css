@@ -1,0 +1,110 @@
+.badge-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 9999;
+  transition: all 0.35s ease;
+  transform: translateX(120%);
+  opacity: 0;
+}
+
+.badge-container.show {
+  transform: translateX(0);
+  opacity: 1;
+}
+
+.badge-container.hide {
+  transform: translateX(120%);
+  opacity: 0;
+}
+
+/* Liquid Glass Card */
+.badge-card {
+  width: 340px;
+  padding: 18px 22px;
+  border-radius: 18px;
+
+  /* Liquid glass effects */
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(18px) saturate(180%);
+  -webkit-backdrop-filter: blur(18px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+}
+
+/* Header */
+.badge-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.badge-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.badge-icon {
+  font-size: 48px;
+}
+
+.badge-text-group {}
+
+.badge-label {
+  font-size: 13px;
+  color: #fff;
+  opacity: 0.85;
+  letter-spacing: 0.5px;
+}
+
+.badge-title {
+  margin: 0;
+  font-size: 20px;
+  font-weight: bold;
+  color: white;
+}
+
+/* Close Button */
+.badge-close-btn {
+  cursor: pointer;
+  background: none;
+  border: none;
+  color: white;
+  font-size: 18px;
+  padding: 4px 6px;
+  transition: opacity 0.2s ease;
+}
+
+.badge-close-btn:hover {
+  opacity: 0.7;
+}
+
+/* Description */
+.badge-description {
+  font-size: 14px;
+  color: #ffffff;
+  opacity: 0.9;
+  margin-top: 10px;
+}
+
+/* Dots for multiple badges */
+.badge-dots {
+  margin-top: 14px;
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  background: rgba(255, 255, 255, 0.4);
+  border-radius: 50%;
+  transition: all 0.25s ease;
+}
+
+.dot.active {
+  background: white;
+  width: 22px;
+  border-radius: 6px;
+}
