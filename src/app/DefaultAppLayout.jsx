@@ -158,9 +158,6 @@ const DefaultAppLayout = ({ children }) => {
                               <p className="font-semibold text-sm text-gray-900 dark:text-white truncate">
                                 {profile.fullName || "Not set"}
                               </p>
-                              <p className="text-xs text-gray-500 dark:text-gray-400">
-                                View profile
-                              </p>
                             </div>
                           </div>
                         </div>
