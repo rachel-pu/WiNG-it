@@ -594,7 +594,7 @@ const saveResponse = functions.https.onRequest((req, res) => {
         return res.status(405).json({ error: "Method not allowed" });
       }
 
-      const { userId, sessionId, questionNumber, questionText, recordedTime, audioData, mimetype, interviewerDifficulty } = req.body;
+      const { userId, sessionId, questionNumber, questionText, recordedTime, audioData, mimetype, interviewerDifficulty, interviewType} = req.body;
       
       if (!userId || !sessionId || questionNumber === undefined || !audioData) {
         return res.status(400).json({ 
@@ -803,11 +803,11 @@ const saveResponse = functions.https.onRequest((req, res) => {
           overallScore: overallScore,
           fillerWordList: fillerWordsList,
           actionWordList: actionWordsList,
-          statsUsedCount: statsUsedList,
-
+          statsUsedCount: statsUsedList
         },
         recordedTime: recordedTime || 0,
         timestamp: admin.database.ServerValue.TIMESTAMP,
+        
       };
 
 
@@ -830,6 +830,7 @@ const saveResponse = functions.https.onRequest((req, res) => {
       await db.ref(`interviews/${userId}/${sessionId}/metadata`).update({
         lastUpdated: admin.database.ServerValue.TIMESTAMP,
         questionsCompleted,
+        interviewType: interviewType || 'regular'
       });
 
       console.log(`Successfully processed response for user ${userId} and session ${sessionId}, question ${questionNumber}`);
@@ -1991,10 +1992,11 @@ const checkAndAwardBadges = functions.https.onRequest((req, res) => {
 
       // 2. First Session
       if (!earnedBadgeIds.includes('first_session')) {
-        const completedSessions = Object.values(allInterviews).filter(
-          session => (session.metadata?.questionsCompleted || 0) >= 5
+        const sessions = Object.values(allInterviews).filter(
+          session => 
+            session.metadata.interviewType === 'regular'
         );
-        if (completedSessions.length >= 1) {
+        if (sessions.length == 1) {
           newBadges.push(BADGES.FIRST_SESSION);
         }
       }
@@ -2003,10 +2005,9 @@ const checkAndAwardBadges = functions.https.onRequest((req, res) => {
       if (!earnedBadgeIds.includes('first_resume')) {
         const resumeSessions = Object.values(allInterviews).filter(
           session => 
-            session.metadata?.questionType === 'resume' && 
-            (session.metadata?.questionsCompleted || 0) >= 5
+            session.metadata.interviewType === 'resume'
         );
-        if (resumeSessions.length >= 1) {
+        if (resumeSessions.length == 1) {
           newBadges.push(BADGES.FIRST_RESUME);
         }
       }
@@ -2015,41 +2016,31 @@ const checkAndAwardBadges = functions.https.onRequest((req, res) => {
       if (!earnedBadgeIds.includes('first_custom')) {
         const customSessions = Object.values(allInterviews).filter(
           session => 
-            session.metadata?.questionType === 'custom' && 
-            (session.metadata?.questionsCompleted || 0) >= 5
+            session.metadata.interviewType === 'custom'
         );
-        if (customSessions.length >= 1) {
+        if (customSessions.length == 1) {
           newBadges.push(BADGES.FIRST_CUSTOM);
         }
       }
 
       // 5. 10 Sessions
       if (!earnedBadgeIds.includes('ten_sessions')) {
-        const completedSessions = Object.values(allInterviews).filter(
-          session => (session.metadata?.questionsCompleted || 0) >= 5
-        );
-        if (completedSessions.length >= 10) {
-          newBadges.push(BADGES.TEN_SESSIONS);
+         if (Object.keys(allInterviews).length === 10) {
+          newBadges.push(BADGES.FIRST_SESSION);
         }
       }
 
       // 6. 50 Sessions
       if (!earnedBadgeIds.includes('fifty_sessions')) {
-        const completedSessions = Object.values(allInterviews).filter(
-          session => (session.metadata?.questionsCompleted || 0) >= 5
-        );
-        if (completedSessions.length >= 50) {
-          newBadges.push(BADGES.FIFTY_SESSIONS);
+         if (Object.keys(allInterviews).length === 50) {
+          newBadges.push(BADGES.FIRST_SESSION);
         }
       }
 
       // 7. 100 Sessions
       if (!earnedBadgeIds.includes('hundred_sessions')) {
-        const completedSessions = Object.values(allInterviews).filter(
-          session => (session.metadata?.questionsCompleted || 0) >= 5
-        );
-        if (completedSessions.length >= 100) {
-          newBadges.push(BADGES.HUNDRED_SESSIONS);
+         if (Object.keys(allInterviews).length === 100) {
+          newBadges.push(BADGES.FIRST_SESSION);
         }
       }
 
@@ -2060,8 +2051,7 @@ const checkAndAwardBadges = functions.https.onRequest((req, res) => {
           (sum, response) => sum + (response.analysis?.fillerWordList?.length || 0),
           0
         );
-        const isSessionComplete = (currentSession.metadata?.questionsCompleted || 0) >= 5;
-        if (isSessionComplete && sessionFillerCount === 0) {
+        if (sessionFillerCount === 0) {
           newBadges.push(BADGES.NO_FILLERS);
         }
       }
@@ -2108,8 +2098,6 @@ const checkAndAwardBadges = functions.https.onRequest((req, res) => {
     }
   });
 });
-
-module.exports = { checkAndAwardBadges };
 
 module.exports = {
   generateQuestions,
