@@ -158,9 +158,10 @@ export default function Dashboard() {
                             color: "#cdced8ff"
                             },
                         }}
+                        style={{fontFamily: "Satoshi Bold"}}
                         href="/onboarding"
                         >
-                        <NavigationIcon sx={{ mr: 1 }} />
+                        <NavigationIcon sx={{ mr: 1 }}  />
                         Onboarding
                         </Fab>
                     </div>
