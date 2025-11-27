@@ -15,7 +15,6 @@ export default function Footer({ position = 'absolute' , textColor= 'rgba(255, 2
                 width: '100%',
                 textAlign: 'center',
                 color: textColor,
-                fontFamily: 'Satoshi, sans-serif',
                 fontSize: '0.9rem',
                 display: 'flex',
                 flexDirection: 'column',
@@ -24,7 +23,7 @@ export default function Footer({ position = 'absolute' , textColor= 'rgba(255, 2
             }}
         >
             <Box sx={{ display: 'flex', gap: '24px', alignItems: 'center' }}>
-                <Typography component="span">
+                <Typography component="span" style={{fontFamily: "Satoshi"}}>
                     Copyright © 2025 WiNG.it
                 </Typography>
 
@@ -32,7 +31,8 @@ export default function Footer({ position = 'absolute' , textColor= 'rgba(255, 2
                     component="span"
                     onClick={() => navigate('/terms', { state: { previousRoute: window.location.pathname }})}
                     sx={{ '&:hover': { color: 'white' }, cursor: 'pointer' }}
-                >
+                    style={{fontFamily: "Satoshi"}}
+                >   
                     Terms
                 </Typography>
 
@@ -40,6 +40,7 @@ export default function Footer({ position = 'absolute' , textColor= 'rgba(255, 2
                     component="span"
                     onClick={() => navigate('/privacy', { state: { previousRoute: window.location.pathname }})}
                     sx={{ '&:hover': { color: 'white' }, cursor: 'pointer' }}
+                    style={{fontFamily: "Satoshi"}}
                 >
                     Privacy Policy
                 </Typography>
@@ -48,6 +49,7 @@ export default function Footer({ position = 'absolute' , textColor= 'rgba(255, 2
                     component="span"
                     onClick={() => navigate('/pricing', { state: { previousRoute: window.location.pathname }})}
                     sx={{ '&:hover': { color: 'white' }, cursor: 'pointer' }}
+                    style={{fontFamily: "Satoshi"}}
                 >
                     Pricing
                 </Typography>
@@ -56,6 +58,7 @@ export default function Footer({ position = 'absolute' , textColor= 'rgba(255, 2
                     component="span"
                     onClick={() => window.location.href = "mailto:wingit.space@gmail.com"}
                     sx={{ '&:hover': { color: 'white' }, cursor: 'pointer' }}
+                    style={{fontFamily: "Satoshi"}}
                 >
                     Contact Us
                 </Typography>
@@ -69,9 +72,9 @@ export default function Footer({ position = 'absolute' , textColor= 'rgba(255, 2
                     marginTop: '8px',
                     fontSize: '0.75rem',
                     color: textColor,
-                    textAlign: 'center',
-                    fontFamily: 'Satoshi'
+                    textAlign: 'center', 
                 }}
+                style={{fontFamily: "Satoshi"}}
             >
                 This site is protected by reCAPTCHA and the Google{' '}
                 <a
