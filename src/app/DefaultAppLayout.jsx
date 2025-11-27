@@ -15,7 +15,7 @@ const DefaultAppLayout = ({ children }) => {
   const [open, setOpen] = useState(false);
   const [profile, setProfile] = useState({ fullName: "", profilePhoto: "" });
   const [userId, setUserId] = useState(null);
-  const [isHovered, setIsHovered] = useState(false);
+  const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
   const navigate = useNavigate();
 
    const handleSignOut = async () => {
@@ -26,6 +26,12 @@ const DefaultAppLayout = ({ children }) => {
       navigate("/signin");
     }
   };
+
+  useEffect(() => {
+    if (!open) {
+      setIsProfileMenuOpen(false);
+    }
+  }, [open]);
 
    useEffect(() => {
       const setUserCookie = async () => {
@@ -100,7 +106,10 @@ const DefaultAppLayout = ({ children }) => {
                 className="relative w-full flex flex-col items-start"
               >
                 <div
-                  onClick={() => setIsHovered(!isHovered)}
+                  onClick={() => {
+                    if (open) setIsProfileMenuOpen(prev => !prev);
+                  }}
+
                   className="flex items-center rounded-full p-1 cursor-pointer transition-transform duration-300 hover:bg-gray-100 dark:hover:bg-neutral-700/30"
                   style={{
                     transform: open ? "translateX(0)" : "translateX(-18px)", 
@@ -125,7 +134,7 @@ const DefaultAppLayout = ({ children }) => {
                 </div>
 
                 <AnimatePresence>
-                  {isHovered && (
+                  {isProfileMenuOpen && open && (
                     <motion.div
                       initial={{ opacity: 0, y: 10, scale: 0.95 }}
                       animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -160,7 +169,7 @@ const DefaultAppLayout = ({ children }) => {
                         <div className="space-y-0.5">
                           <motion.button
                             onClick={() => {
-                              setIsHovered(false);
+                              setIsProfileMenuOpen(false);
                               navigate("/settings");
                             }}
                             whileHover={{ x: 4 }}
@@ -181,7 +190,7 @@ const DefaultAppLayout = ({ children }) => {
 
                           <motion.button
                             onClick={() => {
-                              setIsHovered(false);
+                              setIsProfileMenuOpen(false);
                               handleSignOut();
                             }}
                             whileHover={{ x: 4 }}
@@ -206,7 +215,7 @@ const DefaultAppLayout = ({ children }) => {
 
                 {/* Small arrow indicator */}
                 <AnimatePresence>
-                  {isHovered && (
+                  {isProfileMenuOpen && open && (
                     <motion.div
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}

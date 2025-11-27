@@ -422,7 +422,7 @@ const InterviewQuestions = ({questions, interviewerDifficulty}) => {
 };
 
 
-    const handleNextQuestion = () => {
+    const handleNextQuestion = async () => {
         setShowWinnieCaption(true)
 
         // Clean up audio state
@@ -447,8 +447,32 @@ const InterviewQuestions = ({questions, interviewerDifficulty}) => {
         if (currentQuestionIndex < questions.length - 1) {
             setCurrentQuestionIndex(currentQuestionIndex + 1);
         } else {
+            //checking if new badges have been earned
+             const response = await fetch(
+                "https://us-central1-wing-it-e6a3a.cloudfunctions.net/checkAndAwardBadges",
+                {
+                    method: 'POST',
+                    headers: {
+                        "Content-Type": "application/json"
+                        },
+                    body: JSON.stringify({ userId, sessionId })
+                }
+            );
+
+            if (!response.ok) {
+                throw new Error(`Server responded with ${response.status}`);
+            }
+
+            const data = await response.json();
+            console.log("Badge check response:", data);
+            const newBadges = data.newBadges || [];
+            if (newBadges.length > 0) {
+                setAlertMessage(`Congrats! You've earned new badges: ${newBadges.join(", ")}`);
+                setAlertSeverity("success");
+                setShowAlert(true);
+            }
             const url = `/behavioral/results?userId=${encodeURIComponent(userId)}&sessionId=${encodeURIComponent(sessionId)}&expectedQuestions=${questions.length}`;
-            sessionStorage.setItem("uesrId", userId);
+            sessionStorage.setItem("userId", userId);
             sessionStorage.setItem("interviewSessionId", sessionId);
             navigate(url);
         }

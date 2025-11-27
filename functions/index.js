@@ -1881,6 +1881,236 @@ const aggregateUserStats = functions.https.onRequest((req, res) => {
   });
 });
 
+// Badge definitions
+const BADGES = {
+  PERFECT_SCORE: {
+    id: 'perfect_score',
+    name: 'Flawless',
+    description: 'Achieved a perfect 100% score',
+    icon: '🏆'
+  },
+  FIRST_RESUME: {
+    id: 'first_resume',
+    name: 'Resume Ready',
+    description: 'Completed first session with resume-focused questions',
+    icon: '📄'
+  },
+  FIRST_CUSTOM: {
+    id: 'first_custom',
+    name: 'Customizer',
+    description: 'Completed first session with custom questions',
+    icon: '✏️'
+  },
+  FIRST_SESSION: {
+    id: 'first_session',
+    name: 'Getting Started',
+    description: 'Completed your first interview session',
+    icon: '🎯'
+  },
+  TEN_SESSIONS: {
+    id: 'ten_sessions',
+    name: 'Dedicated',
+    description: 'Completed 10 interview sessions',
+    icon: '🔥'
+  },
+  FIFTY_SESSIONS: {
+    id: 'fifty_sessions',
+    name: 'Professional',
+    description: 'Completed 50 interview sessions',
+    icon: '⭐'
+  },
+  HUNDRED_SESSIONS: {
+    id: 'hundred_sessions',
+    name: 'Master',
+    description: 'Completed 100 interview sessions',
+    icon: '👑'
+  },
+  NO_FILLERS: {
+    id: 'no_fillers',
+    name: 'Articulate',
+    description: 'Completed a session with no filler words',
+    icon: '💎'
+  },
+  YAPPER: {
+    id: 'yapper',
+    name: 'Yapper',
+    description: 'Response time exceeded 3 minutes',
+    icon: '🗣️'
+  }
+};
+
+const checkAndAwardBadges = functions.https.onRequest((req, res) => {
+  return cors(req, res, async () => {
+    try {
+      if (req.method === "OPTIONS") {
+        return res.status(204).send("");
+      }
+
+      if (req.method !== "POST") {
+        return res.status(405).json({ error: "Method not allowed" });
+      }
+
+      const { userId, sessionId } = req.body;
+      
+      if (!userId || !sessionId) {
+        return res.status(400).json({ 
+          error: "Missing required fields",
+          required: ["userId", "sessionId"]
+        });
+      }
+
+      // Get user's existing badges
+      const existingBadgesSnapshot = await db.ref(`badges/${userId}`).once('value');
+      const existingBadges = existingBadgesSnapshot.val() || {};
+      const earnedBadgeIds = Object.keys(existingBadges);
+
+      // Get all user's interviews
+      const interviewsSnapshot = await db.ref(`interviews/${userId}`).once('value');
+      const allInterviews = interviewsSnapshot.val() || {};
+
+      // Get current session data
+      const currentSession = allInterviews[sessionId];
+      if (!currentSession) {
+        return res.status(404).json({ error: 'Session not found' });
+      }
+
+      const newBadges = [];
+
+      // Check each badge condition
+      
+      // 1. Perfect Score (100%)
+      if (!earnedBadgeIds.includes('perfect_score')) {
+        const responses = currentSession.responses || {};
+        const hasPerfectScore = Object.values(responses).some(
+          response => response.analysis?.overallScore === 100
+        );
+        if (hasPerfectScore) {
+          newBadges.push(BADGES.PERFECT_SCORE);
+        }
+      }
+
+      // 2. First Session
+      if (!earnedBadgeIds.includes('first_session')) {
+        const completedSessions = Object.values(allInterviews).filter(
+          session => (session.metadata?.questionsCompleted || 0) >= 5
+        );
+        if (completedSessions.length >= 1) {
+          newBadges.push(BADGES.FIRST_SESSION);
+        }
+      }
+
+      // 3. First Resume-focused session
+      if (!earnedBadgeIds.includes('first_resume')) {
+        const resumeSessions = Object.values(allInterviews).filter(
+          session => 
+            session.metadata?.questionType === 'resume' && 
+            (session.metadata?.questionsCompleted || 0) >= 5
+        );
+        if (resumeSessions.length >= 1) {
+          newBadges.push(BADGES.FIRST_RESUME);
+        }
+      }
+
+      // 4. First Custom questions session
+      if (!earnedBadgeIds.includes('first_custom')) {
+        const customSessions = Object.values(allInterviews).filter(
+          session => 
+            session.metadata?.questionType === 'custom' && 
+            (session.metadata?.questionsCompleted || 0) >= 5
+        );
+        if (customSessions.length >= 1) {
+          newBadges.push(BADGES.FIRST_CUSTOM);
+        }
+      }
+
+      // 5. 10 Sessions
+      if (!earnedBadgeIds.includes('ten_sessions')) {
+        const completedSessions = Object.values(allInterviews).filter(
+          session => (session.metadata?.questionsCompleted || 0) >= 5
+        );
+        if (completedSessions.length >= 10) {
+          newBadges.push(BADGES.TEN_SESSIONS);
+        }
+      }
+
+      // 6. 50 Sessions
+      if (!earnedBadgeIds.includes('fifty_sessions')) {
+        const completedSessions = Object.values(allInterviews).filter(
+          session => (session.metadata?.questionsCompleted || 0) >= 5
+        );
+        if (completedSessions.length >= 50) {
+          newBadges.push(BADGES.FIFTY_SESSIONS);
+        }
+      }
+
+      // 7. 100 Sessions
+      if (!earnedBadgeIds.includes('hundred_sessions')) {
+        const completedSessions = Object.values(allInterviews).filter(
+          session => (session.metadata?.questionsCompleted || 0) >= 5
+        );
+        if (completedSessions.length >= 100) {
+          newBadges.push(BADGES.HUNDRED_SESSIONS);
+        }
+      }
+
+      // 8. No Filler Words
+      if (!earnedBadgeIds.includes('no_fillers')) {
+        const responses = currentSession.responses || {};
+        const sessionFillerCount = Object.values(responses).reduce(
+          (sum, response) => sum + (response.analysis?.fillerWordList?.length || 0),
+          0
+        );
+        const isSessionComplete = (currentSession.metadata?.questionsCompleted || 0) >= 5;
+        if (isSessionComplete && sessionFillerCount === 0) {
+          newBadges.push(BADGES.NO_FILLERS);
+        }
+      }
+
+      // 9. Yapper (Response over 3 minutes)
+      if (!earnedBadgeIds.includes('yapper')) {
+        const responses = currentSession.responses || {};
+        const hasLongResponse = Object.values(responses).some(
+          response => (response.recordedTime || 0) > 180000 // 3 minutes in ms
+        );
+        if (hasLongResponse) {
+          newBadges.push(BADGES.YAPPER);
+        }
+      }
+
+      // Save new badges to Firebase
+      if (newBadges.length > 0) {
+        const updates = {};
+        newBadges.forEach(badge => {
+          updates[`badges/${userId}/${badge.id}`] = {
+            ...badge,
+            earnedAt: admin.database.ServerValue.TIMESTAMP,
+            sessionId: sessionId
+          };
+        });
+        await db.ref().update(updates);
+        
+        console.log(`✨ User ${userId} earned ${newBadges.length} new badge(s):`, 
+          newBadges.map(b => b.name).join(', '));
+      }
+
+      return res.status(200).json({
+        success: true,
+        newBadges: newBadges,
+        totalBadges: earnedBadgeIds.length + newBadges.length
+      });
+
+    } catch (error) {
+      console.error("Error checking badges:", error);
+      return res.status(500).json({ 
+        error: "Internal server error", 
+        details: error.message
+      });
+    }
+  });
+});
+
+module.exports = { checkAndAwardBadges };
+
 module.exports = {
   generateQuestions,
   generateResumeQuestions,
@@ -1895,5 +2125,6 @@ module.exports = {
   updateSubscription,
   migrateSubscriptionsToUserTiers,
   uploadResume,
-  aggregateUserStats
+  aggregateUserStats,
+  checkAndAwardBadges
 };
