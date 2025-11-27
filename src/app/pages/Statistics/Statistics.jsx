@@ -552,7 +552,7 @@ const Statistics = () => {
                 <RadarChart data={radarData}>
                   <PolarGrid stroke="#e2e8f0" />
                   <PolarAngleAxis dataKey="category" stroke="#64748b" />
-                  <PolarRadiusAxis angle={90} domain={[0, 100]} stroke="#64748b" />
+                  <PolarRadiusAxis angle={90} domain={[0, 100]} stroke="#64748b" tick={{ dx: 7, dy: 10 }} />
                   <Radar name="Score" dataKey="score" stroke="#2850d9" fill="#2850d9" fillOpacity={0.6} />
                   <Tooltip />
                 </RadarChart>

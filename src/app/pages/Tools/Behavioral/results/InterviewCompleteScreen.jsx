@@ -172,7 +172,7 @@ const InterviewCompleteScreen = ({
                                     <Typography className="stat-value">
                                         {totalAverageRecordedTime}
                                     </Typography>
-                                    <Typography className="stat-label">
+                                    <Typography className="stat-label-results">
                                         Avg Time
                                     </Typography>
                                 </Card>
@@ -183,7 +183,7 @@ const InterviewCompleteScreen = ({
                                             Object.values(questionData).reduce((sum, q) => sum + q.wordCount, 0) / totalQuestions
                                         )}
                                     </Typography>
-                                    <Typography className="stat-label">
+                                    <Typography className="stat-label-results">
                                         Avg Words
                                     </Typography>
                                 </Card>
@@ -192,7 +192,7 @@ const InterviewCompleteScreen = ({
                                     <Typography className="stat-value">
                                         {avgFillerWords}
                                     </Typography>
-                                    <Typography className="stat-label">
+                                    <Typography className="stat-label-results">
                                         Avg Fillers
                                     </Typography>
                                 </Card>
@@ -201,7 +201,7 @@ const InterviewCompleteScreen = ({
                                     <Typography className="stat-value">
                                         {avgActionWords}
                                     </Typography>
-                                    <Typography className="stat-label">
+                                    <Typography className="stat-label-results">
                                         Avg Actions
                                     </Typography>
                                 </Card>
