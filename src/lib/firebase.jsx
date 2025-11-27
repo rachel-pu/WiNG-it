@@ -29,6 +29,7 @@ export const cleanupOldTier1Interviews = httpsCallable(functions, 'cleanupOldTie
 export const createCheckoutSession = httpsCallable(functions, 'createCheckoutSession');
 export const stripeWebhook = httpsCallable(functions, 'stripeWebhook');
 export const aggregateUserStats = httpsCallable(functions, 'aggregateUserStats');
+export const checkAndAwardBadges = httpsCallable(functions, 'checkAndAwardBadges');
 
 // Custom function for cancelSubscription (HTTP request instead of callable)
 export const cancelSubscription = async ({ userId, pendingTier }) => {
