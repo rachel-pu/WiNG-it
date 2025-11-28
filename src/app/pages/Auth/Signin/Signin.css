@@ -32,7 +32,7 @@ html, body {
 
 /* Left Side - Gradient Brand Section */
 .auth-left {
-  flex: 1;
+  flex: 0.8;
   background: linear-gradient(135deg, #2850d9 0%, #667eea 50%, #764ba2 100%);
   padding: 60px;
   display: flex;
@@ -107,10 +107,10 @@ html, body {
 
 /* Right Side - Form Section */
 .auth-right {
-  flex: 1;
-  padding: 60px;
+  flex: 1.2;
+  padding: 80px 60px 60px 60px;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
   background: white;
   overflow-y: auto;
@@ -141,7 +141,7 @@ html, body {
 .auth-form-container {
   width: 100%;
   max-width: 400px;
-  margin-top: 40px;
+  margin-top: 20px;
 }
 
 .auth-header {
@@ -382,9 +382,9 @@ html, body {
 }
 
 .success-box {
-  background: #f0fdf4;
-  border: 1px solid #bbf7d0;
-  color: #16a34a;
+  background: #d1fad3;
+  border: 1px solid #6ee784;
+  color: #047829;
 }
 
 /* Responsive */
