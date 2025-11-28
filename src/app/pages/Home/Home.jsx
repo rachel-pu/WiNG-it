@@ -87,7 +87,7 @@ export default function HomePage() {
         <Box sx={{ minHeight: '100dvh' }}>
 
             {/* ---------- home page ----------  */}
-            <Box id="home-page" className="main-home-page-container">
+            <Box id="home-page" className="HomePage-main-home-page-container">
 
                 {/*  main content box  */}
                 <Grid container
@@ -100,30 +100,30 @@ export default function HomePage() {
                     <Grid item xs>
                         <Stack direction={"column"} spacing={3}>
                             <motion.div
-                                className="main-home-page-title-container"
+                                className="HomePage-main-home-page-title-container"
                                 initial="hidden"
                                 whileInView="visible"
                                 viewport={{ once: true, margin: "-10%" }}
                                 variants={staggerContainer}
                             >
-                                <motion.h1 variants={itemVariants} className="main-home-page-title-text">
+                                <motion.h1 variants={itemVariants} className="HomePage-main-home-page-title-text">
                                     Master your interviews with
-                                    <span className="gradient-text"> AI-powered</span> practice
+                                    <span className="HomePage-gradient-text"> AI-powered</span> practice
                                 </motion.h1>
                                 
                                 <motion.div 
                                     variants={itemVariants}
-                                    className="floating-elements"
+                                    className="HomePage-floating-elements"
                                 >
-                                    <div className="floating-element element-1">💼</div>
-                                    <div className="floating-element element-2">🎯</div>
-                                    <div className="floating-element element-3">⭐</div>
+                                    <div className="HomePage-floating-element HomePage-element-1">💼</div>
+                                    <div className="HomePage-floating-element HomePage-element-2">🎯</div>
+                                    <div className="HomePage-floating-element HomePage-element-3">⭐</div>
                                 </motion.div>
                             </motion.div>
 
                             {/* description */}
                             <motion.div
-                                className="main-home-page-description-container"
+                                className="HomePage-main-home-page-description-container"
                                 initial="hidden"
                                 whileInView="visible"
                                 viewport={{ once: true, margin: "-5%" }}
@@ -131,7 +131,7 @@ export default function HomePage() {
                                 <motion.p
                                     variants={itemVariants}
                                     transition={{ delay: 0.2 }}
-                                    className="description-text"
+                                    className="HomePage-description-text"
                                 >
                                     Transform your career preparation with realistic interview simulations, 
                                     personalized feedback, and AI-driven insights. Practice makes perfect – and it &apos;s completely free.
@@ -144,23 +144,23 @@ export default function HomePage() {
                                 whileInView="visible"
                                 viewport={{ once: true, margin: "-5%" }}
                                 variants={staggerContainer}
-                                className="cta-buttons-container"
+                                className="HomePage-cta-buttons-container"
                             >
                                 <motion.div variants={itemVariants}>
                                     <Button
                                         onClick={() => navigate('/signin')}
-                                        className="primary-cta-button"
+                                        className="HomePage-primary-cta-button"
                                         size="large"
                                     >
                                         Start Practicing
-                                        <svg className="button-arrow" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                                        <svg className="HomePage-button-arrow" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                                             <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14M12 5l7 7-7 7"/>
                                         </svg>
                                     </Button>
                                 </motion.div>
                                 <motion.div variants={itemVariants}>
                                     <Button
-                                        className="secondary-cta-button"
+                                        className="HomePage-secondary-cta-button"
                                         size="large"
                                         onClick={() => {
                                             const element = document.getElementById('why-wing-it');
@@ -199,17 +199,17 @@ export default function HomePage() {
                                         style={{ width: '100%', display: 'flex' }}
                                         whileHover={!isScrolling ? { y: -8, transition: { duration: 0.3 } } : {}}
                                     >
-                                        <Card className="main-home-page-card modern-card">
-                                            <div className="card-icon-container orange-gradient">
+                                        <Card className="HomePage-main-home-page-card HomePage-modern-card">
+                                            <div className="HomePage-card-icon-container HomePage-orange-gradient">
                                                 <FaPencilRuler color={'#E3632E'} size={24} />
                                             </div>
-                                            <Typography variant="h5" className="main-home-page-card-feature-title">
+                                            <Typography variant="h5" className="HomePage-main-home-page-card-feature-title">
                                                 Interactive Simulations
                                             </Typography>
-                                            <Typography className="main-home-page-card-feature-description">
+                                            <Typography className="HomePage-main-home-page-card-feature-description">
                                                 Practice with AI-powered interview scenarios that adapt to your responses and provide real-time feedback.
                                             </Typography>
-                                            <div className="card-hover-effect"></div>
+                                            <div className="HomePage-card-hover-effect"></div>
                                         </Card>
                                     </motion.div>
                                 </Grid>
@@ -221,17 +221,17 @@ export default function HomePage() {
                                         style={{ width: '100%', display: 'flex' }}
                                         whileHover={!isScrolling ? { y: -8, transition: { duration: 0.3 } } : {}}
                                     >
-                                        <Card className="main-home-page-card modern-card">
-                                            <div className="card-icon-container blue-gradient">
+                                        <Card className="HomePage-main-home-page-card HomePage-modern-card">
+                                            <div className="HomePage-card-icon-container HomePage-blue-gradient">
                                                 <IoDocumentText color={'#2a6ed5'} size={28} />
                                             </div>
-                                            <Typography variant="h5" className="main-home-page-card-feature-title">
+                                            <Typography variant="h5" className="HomePage-main-home-page-card-feature-title">
                                                 Smart Analytics
                                             </Typography>
-                                            <Typography className="main-home-page-card-feature-description">
+                                            <Typography className="HomePage-main-home-page-card-feature-description">
                                                 Track your progress with detailed transcripts, performance metrics, and personalized improvement suggestions.
                                             </Typography>
-                                            <div className="card-hover-effect"></div>
+                                            <div className="HomePage-card-hover-effect"></div>
                                         </Card>
                                     </motion.div>
                                 </Grid>
@@ -243,17 +243,17 @@ export default function HomePage() {
                                         style={{ width: '100%', display: 'flex' }}
                                         whileHover={!isScrolling ? { y: -8, transition: { duration: 0.3 } } : {}}
                                     >
-                                        <Card className="main-home-page-card modern-card">
-                                            <div className="card-icon-container green-gradient">
+                                        <Card className="HomePage-main-home-page-card HomePage-modern-card">
+                                            <div className="HomePage-card-icon-container HomePage-green-gradient">
                                                 <BiSolidMessageCheck color={'#559437'} size={28} />
                                             </div>
-                                            <Typography variant="h5" className="main-home-page-card-feature-title">
+                                            <Typography variant="h5" className="HomePage-main-home-page-card-feature-title">
                                                 AI-Powered Feedback
                                             </Typography>
-                                            <Typography className="main-home-page-card-feature-description">
+                                            <Typography className="HomePage-main-home-page-card-feature-description">
                                                 Receive instant, actionable feedback on your communication style, content quality, and interview performance.
                                             </Typography>
-                                            <div className="card-hover-effect"></div>
+                                            <div className="HomePage-card-hover-effect"></div>
                                         </Card>
                                     </motion.div>
                                 </Grid>
@@ -267,7 +267,7 @@ export default function HomePage() {
     {/* ---------- why wing it ----------*/}
     <Box
         id="why-wing-it"
-        className="student-section-container"
+        className="HomePage-student-section-container"
         sx={{
             minHeight: '100vh',
             display: 'flex',
@@ -688,7 +688,7 @@ export default function HomePage() {
                                                 }
                                             }}
                                         >
-                                            Our journey began at the <span className="highlight">University of Florida&apos;s inaugural WiNGHacks Hackathon</span> – celebrating innovation by women, non-binary, and gender minorities in tech.
+                                            Our journey began at the <span className="HomePage-highlight">University of Florida&apos;s inaugural WiNGHacks Hackathon</span> – celebrating innovation by women, non-binary, and gender minorities in tech.
                                         </Typography>
                                     </Box>
                                 </Box>
@@ -740,7 +740,7 @@ export default function HomePage() {
                                                 }
                                             }}
                                         >
-                                            We won <span className="highlight">first place</span> for best project by first-time hackathoners and caught the attention of <span className="highlight">UF Professor Amanpreet Kapoor</span>, who supported our continued development.
+                                            We won <span className="HomePage-highlight">first place</span> for best project by first-time hackathoners and caught the attention of <span className="HomePage-highlight">UF Professor Amanpreet Kapoor</span>, who supported our continued development.
                                         </Typography>
                                     </Box>
                                 </Box>
@@ -792,7 +792,7 @@ export default function HomePage() {
                                                 }
                                             }}
                                         >
-                                            Today, it continues to evolve as a <span className="highlight">comprehensive career preparation platform</span>, helping students to build confidence and land opportunities.
+                                            Today, it continues to evolve as a <span className="HomePage-highlight">comprehensive career preparation platform</span>, helping students to build confidence and land opportunities.
                                         </Typography>
                                     </Box>
                                 </Box>
