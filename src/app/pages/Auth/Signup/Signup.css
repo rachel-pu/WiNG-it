@@ -4,7 +4,7 @@ html, body {
   padding: 0;
 }
 
-.auth-page {
+.Signup-auth-page {
   min-height: 100vh;
   display: flex;
   justify-content: center;
@@ -14,7 +14,7 @@ html, body {
   padding: 0;
 }
 
-.auth-container {
+.Signup-auth-container {
   display: flex;
   width: 100%;
   max-width: 1200px;
@@ -31,7 +31,7 @@ html, body {
 }
 
 /* Left Side - Gradient Brand Section */
-.auth-left {
+.Signup-auth-left {
   flex: 0.8;
   background: linear-gradient(135deg, #2850d9 0%, #667eea 50%, #764ba2 100%);
   padding: 60px;
@@ -42,7 +42,7 @@ html, body {
   overflow: hidden;
 }
 
-.auth-left::before {
+.Signup-auth-left::before {
   content: '';
   position: absolute;
   top: 0;
@@ -55,14 +55,14 @@ html, body {
   pointer-events: none;
 }
 
-.logo-section {
+.Signup-logo-section {
   z-index: 2;
   display: flex;
   align-items: center;
   gap: 16px;
 }
 
-.logo-text {
+.Signup-logo-text {
   font-size: 48px;
   font-weight: 900;
   color: white;
@@ -71,23 +71,23 @@ html, body {
   letter-spacing: -0.03em;
 }
 
-.logo-image {
+.Signup-logo-image {
   height: 48px;
   width: auto;
   display: block;
 }
 
-.auth-left-content {
+.Signup-auth-left-content {
   z-index: 2;
   display: flex;
   align-items: flex-start;
 }
 
-.message-section {
+.Signup-message-section {
   max-width: 450px;
 }
 
-.message-intro {
+.Signup-message-intro {
   font-size: 18px;
   color: rgba(255, 255, 255, 0.9);
   margin: 0 0 12px 0;
@@ -95,7 +95,7 @@ html, body {
   font-weight: 400;
 }
 
-.message-main {
+.Signup-message-main {
   font-size: 42px;
   font-weight: 700;
   color: white;
@@ -106,7 +106,7 @@ html, body {
 }
 
 /* Right Side - Form Section */
-.auth-right {
+.Signup-auth-right {
   flex: 1.2;
   padding: 80px 40px 40px 40px;
   display: flex;
@@ -117,7 +117,7 @@ html, body {
   position: relative;
 }
 
-.back-button-right {
+.Signup-back-button-right {
   position: absolute !important;
   top: 24px !important;
   left: 24px !important;
@@ -133,22 +133,22 @@ html, body {
   z-index: 10;
 }
 
-.back-button-right:hover {
+.Signup-back-button-right:hover {
   background: #f1f5f9 !important;
   color: #2850d9 !important;
 }
 
-.auth-form-container {
+.Signup-auth-form-container {
   width: 100%;
   max-width: 400px;
   margin-top: 20px;
 }
 
-.auth-header {
+.Signup-auth-header {
   margin-bottom: 24px;
 }
 
-.auth-title {
+.Signup-auth-title {
   font-size: 32px;
   font-weight: 700;
   color: #0f172a;
@@ -157,7 +157,7 @@ html, body {
   font-family: 'Satoshi Bold', sans-serif;
 }
 
-.auth-subtitle {
+.Signup-auth-subtitle {
   color: #64748b;
   font-size: 15px;
   margin: 0;
@@ -166,19 +166,19 @@ html, body {
 }
 
 /* Form */
-.auth-form {
+.Signup-auth-form {
   display: flex;
   flex-direction: column;
   gap: 4px;
 }
 
-.form-group {
+.Signup-form-group {
   display: flex;
   flex-direction: column;
   gap: 4px;
 }
 
-.form-label {
+.Signup-form-label {
   font-size: 14px;
   font-weight: 500;
   color: #0f172a;
@@ -186,13 +186,13 @@ html, body {
   margin: 0;
 }
 
-.label-row {
+.Signup-label-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
-.forgot-link {
+.Signup-forgot-link {
   font-size: 14px;
   font-weight: 500;
   color: #2850d9;
@@ -204,18 +204,18 @@ html, body {
   transition: color 0.2s ease;
 }
 
-.forgot-link:hover {
+.Signup-forgot-link:hover {
   color: #1e40af;
   text-decoration: underline;
 }
 
-.input-wrapper {
+.Signup-input-wrapper {
   position: relative;
   display: flex;
   align-items: center;
 }
 
-.input-icon {
+.Signup-input-icon {
   position: absolute;
   left: 14px;
   color: #94a3b8;
@@ -223,7 +223,7 @@ html, body {
   pointer-events: none;
 }
 
-.form-input {
+.Signup-form-input {
   width: 100%;
   padding: 13px 14px 13px 46px;
   font-size: 15px;
@@ -237,20 +237,20 @@ html, body {
   box-sizing: border-box;
 }
 
-.form-input::placeholder {
+.Signup-form-input::placeholder {
   color: #94a3b8;
 }
 
-.form-input:focus {
+.Signup-form-input:focus {
   border-color: #2850d9;
   box-shadow: 0 0 0 3px rgba(40, 80, 217, 0.1);
 }
 
-.form-input:hover:not(:focus) {
+.Signup-form-input:hover:not(:focus) {
   border-color: #cbd5e1;
 }
 
-.password-toggle {
+.Signup-password-toggle {
   position: absolute;
   right: 12px;
   background: none;
@@ -265,23 +265,23 @@ html, body {
   border-radius: 4px;
 }
 
-.password-toggle:hover {
+.Signup-password-toggle:hover {
   color: #2850d9;
   background: rgba(40, 80, 217, 0.05);
 }
 
 /* Password Row */
-.password-row {
+.Signup-password-row {
   display: flex;
   gap: 12px;
 }
 
-.password-row .form-group {
+.Signup-password-row .Signup-form-group {
   flex: 1;
 }
 
 /* Terms Checkbox */
-.terms-checkbox {
+.Signup-terms-checkbox {
   display: flex;
   align-items: flex-start;
   gap: 8px;
@@ -289,7 +289,7 @@ html, body {
   padding-bottom: 4px;
 }
 
-.terms-checkbox input[type="checkbox"] {
+.Signup-terms-checkbox input[type="checkbox"] {
   width: 18px;
   height: 18px;
   margin-top: 2px;
@@ -298,7 +298,7 @@ html, body {
   flex-shrink: 0;
 }
 
-.terms-checkbox label {
+.Signup-terms-checkbox label {
   font-size: 14px;
   color: #64748b;
   font-family: 'Satoshi', sans-serif;
@@ -306,7 +306,7 @@ html, body {
   cursor: pointer;
 }
 
-.terms-checkbox .terms-link {
+.Signup-terms-checkbox .Signup-terms-link {
   background: none;
   border: none;
   padding: 0;
@@ -319,12 +319,12 @@ html, body {
   transition: color 0.2s ease;
 }
 
-.terms-checkbox .terms-link:hover {
+.Signup-terms-checkbox .Signup-terms-link:hover {
   color: #1e40af;
   text-decoration: underline;
 }
 
-.primary-btn {
+.Signup-primary-btn {
   width: 100%;
   padding: 13px 0;
   background: #2850d9;
@@ -340,30 +340,30 @@ html, body {
   margin-top: 4px;
 }
 
-.primary-btn:hover {
+.Signup-primary-btn:hover {
   background: #1e40af;
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(40, 80, 217, 0.3);
 }
 
-.primary-btn:active {
+.Signup-primary-btn:active {
   transform: translateY(0);
 }
 
-.primary-btn:disabled {
+.Signup-primary-btn:disabled {
   opacity: 0.6;
   cursor: not-allowed;
   transform: none;
 }
 
 /* Footer */
-.auth-footer {
+.Signup-auth-footer {
   margin-top: 20px;
   padding-top: 20px;
   border-top: 1px solid #e2e8f0;
 }
 
-.footer-text {
+.Signup-footer-text {
   text-align: center;
   font-size: 14px;
   color: #64748b;
@@ -371,7 +371,7 @@ html, body {
   font-family: 'Satoshi', sans-serif;
 }
 
-.link-btn {
+.Signup-link-btn {
   background: none;
   border: none;
   padding: 0;
@@ -383,12 +383,12 @@ html, body {
   transition: color 0.2s ease;
 }
 
-.link-btn:hover {
+.Signup-link-btn:hover {
   color: #1e40af;
   text-decoration: underline;
 }
 
-.recaptcha-text {
+.Signup-recaptcha-text {
   display: block;
   margin-top: 12px;
   font-size: 11px !important;
@@ -398,17 +398,17 @@ html, body {
   line-height: 1.4;
 }
 
-.recaptcha-text a {
+.Signup-recaptcha-text a {
   color: #2850d9;
   text-decoration: none;
 }
 
-.recaptcha-text a:hover {
+.Signup-recaptcha-text a:hover {
   text-decoration: underline;
 }
 
 /* Messages */
-.message-box {
+.Signup-message-box {
   padding: 12px 16px;
   border-radius: 8px;
   margin-bottom: 20px;
@@ -429,13 +429,13 @@ html, body {
   }
 }
 
-.error-box {
+.Signup-error-box {
   background: #fef2f2;
   border: 1px solid #fecaca;
   color: #dc2626;
 }
 
-.success-box {
+.Signup-success-box {
   background: #d1fad3;
   border: 1px solid #6ee784;
   color: #047829;
@@ -443,106 +443,106 @@ html, body {
 
 /* Responsive */
 @media (max-width: 1024px) {
-  .auth-container {
+  .Signup-auth-container {
     flex-direction: column;
     max-height: none;
     height: auto;
   }
 
-  .auth-left {
+  .Signup-auth-left {
     padding: 40px;
     min-height: 300px;
   }
 
-  .logo-text {
+  .Signup-logo-text {
     font-size: 36px;
   }
 
-  .logo-image {
+  .Signup-logo-image {
     height: 36px;
   }
 
-  .message-main {
+  .Signup-message-main {
     font-size: 32px;
   }
 
-  .message-intro {
+  .Signup-message-intro {
     font-size: 16px;
   }
 
-  .auth-right {
+  .Signup-auth-right {
     padding: 40px;
   }
 
-  .back-button-right {
+  .Signup-back-button-right {
     top: 20px !important;
     left: 20px !important;
   }
 }
 
 @media (max-width: 640px) {
-  .auth-container {
+  .Signup-auth-container {
     margin: 0;
     border-radius: 0;
     max-height: none;
   }
 
-  .auth-left {
+  .Signup-auth-left {
     padding: 32px 24px;
     min-height: 250px;
   }
 
-  .logo-text {
+  .Signup-logo-text {
     font-size: 32px;
   }
 
-  .logo-image {
+  .Signup-logo-image {
     height: 32px;
   }
 
-  .message-main {
+  .Signup-message-main {
     font-size: 28px;
   }
 
-  .message-intro {
+  .Signup-message-intro {
     font-size: 14px;
   }
 
-  .auth-right {
+  .Signup-auth-right {
     padding: 32px 24px;
   }
 
-  .back-button-right {
+  .Signup-back-button-right {
     top: 16px !important;
     left: 16px !important;
   }
 
-  .auth-form-container {
+  .Signup-auth-form-container {
     margin-top: 32px;
   }
 
-  .auth-title {
+  .Signup-auth-title {
     font-size: 26px;
   }
 
-  .auth-subtitle {
+  .Signup-auth-subtitle {
     font-size: 14px;
   }
 
-  .primary-btn {
+  .Signup-primary-btn {
     font-size: 14px;
   }
 
-  .form-input {
+  .Signup-form-input {
     font-size: 14px;
   }
 
-  .password-row {
+  .Signup-password-row {
     flex-direction: column;
     gap: 16px;
   }
 
-  .oauth-buttons {
+  .Signup-oauth-buttons {
     flex-direction: column;
   }
 }

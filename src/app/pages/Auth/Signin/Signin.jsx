@@ -171,55 +171,55 @@ const SignIn = () => {
 
 
     return (
-        <div className="auth-page">
+        <div className="Signin-auth-page">
             <motion.div
-                className="auth-container"
+                className="Signin-auth-container"
                 initial={shouldAnimate ? { opacity: 0, y: 20 } : { opacity: 1, y: 0 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={shouldAnimate ? { duration: 0.5, ease: "easeOut" } : { duration: 0 }}
             >
                 {/* Left Side - Gradient Section */}
-                <div className="auth-left">
-                    <div className="logo-section">
-                        <img src="/static/icons/logos/white-wingit.png" alt="WiNG.it Logo" className="logo-image" />
-                        <h1 className="logo-text">WiNG.it</h1>
+                <div className="Signin-auth-left">
+                    <div className="Signin-logo-section">
+                        <img src="/static/icons/logos/white-wingit.png" alt="WiNG.it Logo" className="Signin-logo-image" />
+                        <h1 className="Signin-logo-text">WiNG.it</h1>
                     </div>
 
-                    <div className="auth-left-content">
-                        <div className="message-section">
-                            <p className="message-intro">Jump back into</p>
-                            <h2 className="message-main">Your new professional tool haven</h2>
+                    <div className="Signin-auth-left-content">
+                        <div className="Signin-message-section">
+                            <p className="Signin-message-intro">Jump back into</p>
+                            <h2 className="Signin-message-main">Your new professional tool haven</h2>
                         </div>
                     </div>
                 </div>
 
                 {/* Right Side - Form Section */}
-                <div className="auth-right">
+                <div className="Signin-auth-right">
                     <Button
                         onClick={() => navigate('/')}
-                        className="back-button-right"
+                        className="Signin-back-button-right"
                     >
                         <ArrowLeft size={18} strokeWidth={2.5} />
                         <span>Back to Home</span>
                     </Button>
 
-                    <div className="auth-form-container">
-                        <div className="auth-header">
-                            <h1 className="auth-title">Welcome Back</h1>
-                            <p className="auth-subtitle">Sign in to continue your interview prep</p>
+                    <div className="Signin-auth-form-container">
+                        <div className="Signin-auth-header">
+                            <h1 className="Signin-auth-title">Welcome Back</h1>
+                            <p className="Signin-auth-subtitle">Sign in to continue your interview prep</p>
                         </div>
 
                         {error && <div className="message-box error-box">{error}</div>}
                         {success && <div className="message-box success-box">{success}</div>}
 
-                        <div className="auth-form">
-                            <motion.div variants={itemVariants} className="form-group">
-                                <label className="form-label">Email Address</label>
-                                <div className="input-wrapper">
-                                    <EmailIcon className="input-icon" />
+                        <div className="Signin-auth-form">
+                            <motion.div variants={itemVariants} className="Signin-form-group">
+                                <label className="Signin-form-label">Email Address</label>
+                                <div className="Signin-input-wrapper">
+                                    <EmailIcon className="Signin-input-icon" />
                                     <input
                                         type="email"
-                                        className="form-input"
+                                        className="Signin-form-input"
                                         placeholder="you@example.com"
                                         value={email}
                                         onChange={(e) => setEmail(e.target.value)}
@@ -228,22 +228,22 @@ const SignIn = () => {
                                 </div>
                             </motion.div>
 
-                            <motion.div variants={itemVariants} className="form-group">
-                                <div className="label-row">
-                                    <label className="form-label">Password</label>
+                            <motion.div variants={itemVariants} className="Signin-form-group">
+                                <div className="Signin-label-row">
+                                    <label className="Signin-form-label">Password</label>
                                     <button
                                         type="button"
-                                        className="forgot-link"
+                                        className="Signin-forgot-link"
                                         onClick={() => handleForgotPassword(email)}
                                     >
                                         Forgot password?
                                     </button>
                                 </div>
-                                <div className="input-wrapper">
-                                    <LockIcon className="input-icon" />
+                                <div className="Signin-input-wrapper">
+                                    <LockIcon className="Signin-input-icon" />
                                     <input
                                         type={showPassword ? 'text' : 'password'}
-                                        className="form-input"
+                                        className="Signin-form-input"
                                         placeholder="Enter your password"
                                         value={password}
                                         onChange={(e) => setPassword(e.target.value)}
@@ -251,7 +251,7 @@ const SignIn = () => {
                                     />
                                     <button
                                         type="button"
-                                        className="password-toggle"
+                                        className="Signin-password-toggle"
                                         onClick={() => setShowPassword(!showPassword)}
                                     >
                                         {showPassword ? <VisibilityOff fontSize="small" /> : <Visibility fontSize="small" />}
@@ -259,17 +259,17 @@ const SignIn = () => {
                                 </div>
                             </motion.div>
 
-                            <button className="primary-btn" onClick={handleSignIn} disabled={isLoading}>
+                            <button className="Signin-primary-btn" onClick={handleSignIn} disabled={isLoading}>
                                 {isLoading ? 'Signing in...' : 'Sign In'}
                             </button>
                         </div>
 
-                        <div className="auth-footer">
-                            <p className="footer-text">
+                        <div className="Signin-auth-footer">
+                            <p className="Signin-footer-text">
                                 Don't have an account?{' '}
                                 <button
                                     type="button"
-                                    className="link-btn"
+                                    className="Signin-link-btn"
                                     onClick={() => navigate("/signup")}
                                 >
                                     Sign up
@@ -279,7 +279,7 @@ const SignIn = () => {
 
                         <Typography
                             component="small"
-                            className="recaptcha-text"
+                            className="Signin-recaptcha-text"
                         >
                             This site is protected by reCAPTCHA and the Google{' '}
                             <a
