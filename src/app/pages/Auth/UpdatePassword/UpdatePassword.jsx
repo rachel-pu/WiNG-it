@@ -128,8 +128,8 @@ const UpdatePassword = () => {
 
     if (isLoading) {
         return (
-            <div className="auth-page">
-                <div className="auth-card">
+            <div className="UpdatePassword-auth-page">
+                <div className="UpdatePassword-auth-card">
                     <div style={{ textAlign: 'center', padding: '40px 0' }}>
                         <p style={{ color: '#64748b' }}>Verifying reset link...</p>
                     </div>
@@ -140,8 +140,8 @@ const UpdatePassword = () => {
 
     if (!isValidToken) {
         return (
-            <div className="auth-page">
-                <div className="auth-card">
+            <div className="UpdatePassword-auth-page">
+                <div className="UpdatePassword-auth-card">
                     <div style={{ textAlign: 'center', padding: '40px 0' }}>
                         <p style={{ color: '#ef4444', marginBottom: '16px' }}>{error}</p>
                         <Button>Sign In</Button>
@@ -153,8 +153,8 @@ const UpdatePassword = () => {
 
     if (success) {
         return (
-            <div className="auth-page">
-                <div className="auth-card">
+            <div className="UpdatePassword-auth-page">
+                <div className="UpdatePassword-auth-card">
                     <motion.div 
                         initial={{ scale: 0 }}
                         animate={{ scale: 1 }}
@@ -170,29 +170,29 @@ const UpdatePassword = () => {
     }
 
     return (
-        <div className="auth-page">
-            <div className="auth-card">
-                <h1 className="auth-title">Update Password</h1>
-                <p className="description" style={{ marginBottom: '32px' }}>
+        <div className="UpdatePassword-auth-page">
+            <div className="UpdatePassword-auth-card">
+                <h1 className="UpdatePassword-auth-title">Update Password</h1>
+                <p className="UpdatePassword-description" style={{ marginBottom: '32px' }}>
                     Enter your new password below
                 </p>
 
-                {error && <div className="message-box error-box">{error}</div>}
+                {error && <div className="UpdatePassword-message-box UpdatePassword-error-box">{error}</div>}
                 
-                <motion.div className="update-input-group" variants={itemVariants}>
-                    <label className="update-input-label">New Password</label>
-                    <div className="update-input-wrapper">
-                        <Lock className="update-input-icon" />
+                <motion.div className="UpdatePassword-update-input-group" variants={itemVariants}>
+                    <label className="UpdatePassword-update-input-label">New Password</label>
+                    <div className="UpdatePassword-update-input-wrapper">
+                        <Lock className="UpdatePassword-update-input-icon" />
                         <input 
                             type={showNewPassword ? "text" : "password"}
-                            className="modern-update-input password-input-field" 
+                            className="UpdatePassword-modern-update-input UpdatePassword-password-input-field" 
                             placeholder="Enter new password"
                             value={newPassword}
                             onChange={(e) => setNewPassword(e.target.value)}
                         />
                         <button 
                             type="button"
-                            className="password-toggle"
+                            className="UpdatePassword-password-toggle"
                             onClick={() => setShowNewPassword(!showNewPassword)}
                         >
                             {showNewPassword ? <EyeOff style={{marginLeft:'10px'}} size={18} /> : <Eye style={{marginLeft:'10px'}} size={18} />}
@@ -200,20 +200,20 @@ const UpdatePassword = () => {
                     </div>
                 </motion.div>
 
-                <motion.div className="update-input-group" variants={itemVariants}>
-                    <label className="update-input-label">Confirm Password</label>
-                    <div className="update-input-wrapper">
-                        <Lock className="update-input-icon" />
+                <motion.div className="UpdatePassword-update-input-group" variants={itemVariants}>
+                    <label className="UpdatePassword-update-input-label">Confirm Password</label>
+                    <div className="UpdatePassword-update-input-wrapper">
+                        <Lock className="UpdatePassword-update-input-icon" />
                         <input 
                             type={showConfirmPassword ? "text" : "password"}
-                            className="modern-update-input password-input-field" 
+                            className="UpdatePassword-modern-update-input UpdatePassword-password-input-field" 
                             placeholder="Confirm new password"
                             value={confirmPassword}
                             onChange={(e) => setConfirmPassword(e.target.value)}
                         />
                         <button 
                             type="button"
-                            className="password-toggle"
+                            className="UpdatePassword-password-toggle"
                             onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                         >
                             {showConfirmPassword ? <EyeOff style={{marginLeft:'10px'}} size={18} /> : <Eye style={{marginLeft:'10px'}} size={18} />}
@@ -240,11 +240,11 @@ const UpdatePassword = () => {
                     </ul>
                 </div>
 
-                <button className="primary-btn" onClick={handleUpdatePassword}>
+                <button className="UpdatePassword-primary-btn" onClick={handleUpdatePassword}>
                     Update Password
                 </button>
 
-                <p className="auth-description cursor-pointer" onClick={handleBackToSignIn} style={{ marginTop: 15 }}>
+                <p className="UpdatePassword-auth-description cursor-pointer" onClick={handleBackToSignIn} style={{ marginTop: 15 }}>
                     Back to Sign In
                 </p>
             </div>
