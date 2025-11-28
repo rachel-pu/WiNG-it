@@ -209,8 +209,8 @@ const SignIn = () => {
                             <p className="Signin-auth-subtitle">Sign in to continue your interview prep</p>
                         </div>
 
-                        {error && <div className="message-box error-box">{error}</div>}
-                        {success && <div className="message-box success-box">{success}</div>}
+                        {error && <div className="Signin-message-box Signin-error-box">{error}</div>}
+                        {success && <div className="Signin-message-box Signin-success-box">{success}</div>}
 
                         <div className="Signin-auth-form">
                             <motion.div variants={itemVariants} className="Signin-form-group">

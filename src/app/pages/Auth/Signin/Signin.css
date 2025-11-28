@@ -16,10 +16,10 @@ html, body {
 
 .Signin-auth-container {
   display: flex;
-  width: 100%;
-  max-width: 1200px;
-  height: 100vh;
-  max-height: 800px;
+  width: 1200px;
+  max-width: calc(100vw - 40px);
+  height: 800px;
+  max-height: calc(100vh - 40px);
   background: white;
   border-radius: 24px;
   overflow: hidden;
@@ -110,7 +110,7 @@ html, body {
   flex: 1.2;
   padding: 80px 60px 60px 60px;
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: center;
   background: white;
   overflow-y: auto;
@@ -140,8 +140,7 @@ html, body {
 
 .Signin-auth-form-container {
   width: 100%;
-  max-width: 400px;
-  margin-top: 20px;
+  max-width: 430px;
 }
 
 .Signin-auth-header {
@@ -400,6 +399,10 @@ html, body {
     min-height: 300px;
   }
 
+  .Signin-auth-form-container {
+    margin-top: 50px;
+  }
+
   .Signin-logo-text {
     font-size: 36px;
   }
@@ -483,3 +486,11 @@ html, body {
     font-size: 14px;
   }
 }
+
+/* Around 1100px screens - add top margin to prevent overlap */
+@media (min-width: 1025px) and (max-width: 1150px) {
+  .Signin-auth-form-container {
+    margin-top: 70px;
+  }
+}
+

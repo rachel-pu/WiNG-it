@@ -242,8 +242,8 @@ const SignUp = () => {
               <p className="Signup-auth-subtitle">Let's first set your account up!</p>
             </div>
 
-            {error && <div className="message-box error-box">{error}</div>}
-            {success && <div className="message-box success-box">{success}</div>}
+            {error && <div className="Signup-message-box Signup-error-box">{error}</div>}
+            {success && <div className="Signup-message-box Signup-success-box">{success}</div>}
 
             <div className="Signup-auth-form">
               {/* Name Input */}
