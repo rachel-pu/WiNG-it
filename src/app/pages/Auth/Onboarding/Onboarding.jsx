@@ -147,21 +147,21 @@ export default function Onboarding() {
         switch (currentStep) {
             case 1:
                 return (
-                    <div className="step-content">
-                        <div className="step-icon">
+                    <div className="Onboarding-step-content">
+                        <div className="Onboarding-step-icon">
                             <User size={48} />
                         </div>
-                        <h2 className="step-title">Tell us about yourself</h2>
+                        <h2 className="Onboarding-step-title">Tell us about yourself</h2>
 
-                        <div className="form-group">
+                        <div className="Onboarding-form-group">
                             <textarea
                                 value={formData.academicInformation.bio}
                                 onChange={(e) => handleChange('academicInformation', 'bio', e.target.value)}
                                 placeholder="Tell us about your interests, goals, and what brings you here..."
-                                className="form-textarea-large"
+                                className="Onboarding-form-textarea-large"
                                 rows={6}
                             />
-                            <div className="character-count">
+                            <div className="Onboarding-character-count">
                                 {formData.academicInformation.bio.length} / 500
                             </div>
                         </div>
@@ -170,34 +170,34 @@ export default function Onboarding() {
 
             case 2:
                 return (
-                    <div className="step-content">
-                        <div className="step-icon">
+                    <div className="Onboarding-step-content">
+                        <div className="Onboarding-step-icon">
                             <GraduationCap size={48} />
                         </div>
-                        <h2 className="step-title">Academic Information</h2>
-                        <p className="step-description">
+                        <h2 className="Onboarding-step-title">Academic Information</h2>
+                        <p className="Onboarding-step-description">
                             Tell us about your educational background.
                         </p>
 
-                        <div className="form-group">
-                            <label className="form-label">School / University</label>
+                        <div className="Onboarding-form-group">
+                            <label className="Onboarding-form-label">School / University</label>
                             <input
                                 type="text"
                                 value={formData.academicInformation.school}
                                 onChange={(e) => handleChange('academicInformation', 'school', e.target.value)}
                                 placeholder="e.g., University of Florida"
-                                className="form-input-large"
+                                className="Onboarding-form-input-large"
                             />
                         </div>
 
-                        <div className="form-group">
-                            <label className="form-label">School Year</label>
-                            <div className="school-year-grid">
+                        <div className="Onboarding-form-group">
+                            <label className="Onboarding-form-label">School Year</label>
+                            <div className="Onboarding-school-year-grid">
                                 {schoolYears.map((year) => (
                                     <button
                                         key={year}
                                         onClick={() => handleChange('academicInformation', 'schoolYear', year)}
-                                        className={`year-option ${formData.academicInformation.schoolYear === year ? 'selected' : ''}`}
+                                        className={`Onboarding-year-option ${formData.academicInformation.schoolYear === year ? 'Onboarding-selected' : ''}`}
                                     >
                                         {year}
                                     </button>
@@ -209,45 +209,45 @@ export default function Onboarding() {
 
             case 3:
                 return (
-                    <div className="step-content">
-                        <div className="step-icon">
+                    <div className="Onboarding-step-content">
+                        <div className="Onboarding-step-icon">
                             <BookOpen size={48} />
                         </div>
-                        <h2 className="step-title">Field of Study</h2>
-                        <p className="step-description">
+                        <h2 className="Onboarding-step-title">Field of Study</h2>
+                        <p className="Onboarding-step-description">
                             Please indicate your current or most recent field of study.
                         </p>
 
-                        <div className="form-group">
-                            <label className="form-label">Major</label>
+                        <div className="Onboarding-form-group">
+                            <label className="Onboarding-form-label">Major</label>
                             <input
                                 type="text"
                                 value={formData.academicInformation.major}
                                 onChange={(e) => handleChange('academicInformation', 'major', e.target.value)}
                                 placeholder="e.g., Computer Science"
-                                className="form-input-large"
+                                className="Onboarding-form-input-large"
                             />
                         </div>
 
-                        <div className="form-group">
-                            <label className="form-label">Minor (Optional)</label>
+                        <div className="Onboarding-form-group">
+                            <label className="Onboarding-form-label">Minor (Optional)</label>
                             <input
                                 type="text"
                                 value={formData.academicInformation.minor}
                                 onChange={(e) => handleChange('academicInformation', 'minor', e.target.value)}
                                 placeholder="e.g., Mathematics"
-                                className="form-input-large"
+                                className="Onboarding-form-input-large"
                             />
                         </div>
 
-                        <div className="form-group">
-                            <label className="form-label">Current Job</label>
+                        <div className="Onboarding-form-group">
+                            <label className="Onboarding-form-label">Current Job</label>
                             <input
                                 type="text"
                                 value={formData.professionalInformation.currentJob}
                                 onChange={(e) => handleChange('professionalInformation', 'currentJob', e.target.value)}
                                 placeholder="e.g., Student, Software Engineer"
-                                className="form-input-large"
+                                className="Onboarding-form-input-large"
                             />
                         </div>
                     </div>
@@ -260,15 +260,15 @@ export default function Onboarding() {
 
     return (
         <Box>
-            <div className="onboarding-page">
-                <div className="onboarding-container">
+            <div className="Onboarding-onboarding-page">
+                <div className="Onboarding-onboarding-container">
                     {/* Progress Bar */}
-                    <div className="progress-section">
-                        <div className="progress-bar">
+                    <div className="Onboarding-progress-section">
+                        <div className="Onboarding-progress-bar">
                             {[...Array(totalSteps)].map((_, index) => (
                                 <div
                                     key={index}
-                                    className={`progress-step ${index + 1 <= currentStep ? 'active' : ''} ${index + 1 < currentStep ? 'completed' : ''}`}
+                                    className={`Onboarding-progress-step ${index + 1 <= currentStep ? 'Onboarding-active' : ''} ${index + 1 < currentStep ? 'Onboarding-completed' : ''}`}
                                 >
                                     {index + 1 < currentStep ? (
                                         <Check size={16} />
@@ -278,28 +278,28 @@ export default function Onboarding() {
                                 </div>
                             ))}
                         </div>
-                        <div className="progress-text">
+                        <div className="Onboarding-progress-text">
                             Step {currentStep} of {totalSteps}
                         </div>
                     </div>
 
                     {/* Main Content Card */}
-                    <div className="onboarding-card">
+                    <div className="Onboarding-onboarding-card">
                         {renderStep()}
 
                         {/* Error Message */}
                         {error && (
-                            <div className="error-message">
+                            <div className="Onboarding-error-message">
                                 {error}
                             </div>
                         )}
 
                         {/* Navigation Buttons */}
-                        <div className="button-group">
+                        <div className="Onboarding-button-group">
                             {currentStep > 1 && (
                                 <button
                                     onClick={handleBack}
-                                    className="button-secondary"
+                                    className="Onboarding-button-secondary"
                                 >
                                     <ChevronLeft size={20} />
                                     Back
@@ -309,7 +309,7 @@ export default function Onboarding() {
                             {currentStep < totalSteps ? (
                                 <button
                                     onClick={handleNext}
-                                    className="button-primary"
+                                    className="Onboarding-button-primary"
                                 >
                                     Next
                                     <ChevronRight size={20} />
@@ -317,7 +317,7 @@ export default function Onboarding() {
                             ) : (
                                 <button
                                     onClick={handleSubmit}
-                                    className="button-primary"
+                                    className="Onboarding-button-primary"
                                 >
                                     Complete Setup
                                     <Check size={20} />
@@ -326,10 +326,10 @@ export default function Onboarding() {
                         </div>
                     </div>
 
-                    <div className="skip-section">
+                    <div className="Onboarding-skip-section">
                         <button
                             onClick={() => navigate('/dashboard')}
-                            className="skip-button"
+                            className="Onboarding-skip-button"
                         >
                             Skip for now
                         </button>
