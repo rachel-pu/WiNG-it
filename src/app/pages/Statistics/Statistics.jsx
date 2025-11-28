@@ -331,9 +331,9 @@ const Statistics = () => {
   const CustomTooltip = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
       return (
-        <div className="custom-tooltip">
-          <p className="tooltip-label">{label}</p>
-          <p className="tooltip-value">{`Score: ${payload[0].value}%`}</p>
+        <div className="Statistics-custom-tooltip">
+          <p className="Statistics-tooltip-label">{label}</p>
+          <p className="Statistics-tooltip-value">{`Score: ${payload[0].value}%`}</p>
         </div>
       );
     }
@@ -344,7 +344,7 @@ const Statistics = () => {
     return (
       <Box>
         <DefaultAppLayout>
-          <div className="statistics-page" />
+          <div className="Statistics-statistics-page" />
         </DefaultAppLayout>
       </Box>
     );
@@ -387,9 +387,9 @@ const Statistics = () => {
   return (
     <Box>
       <DefaultAppLayout>
-        <div className="statistics-page">
+        <div className="Statistics-statistics-page">
           {/* Header */}
-          <div className="statistics-header">
+          <div className="Statistics-statistics-header">
             <h1>Your Statistics</h1>
             <p>
               {notification || "Track your progress and performance in behavioral interview simulations"}
@@ -397,49 +397,49 @@ const Statistics = () => {
           </div>
 
           {/* Overview Cards */}
-          <div className="stats-overview-grid">
-            <div className="stat-overview-card hover-blue">
-              <div className="stat-card-content">
-                <div className="stat-icon blue-gradient">
+          <div className="Statistics-stats-overview-grid">
+            <div className="Statistics-stat-overview-card Statistics-hover-blue">
+              <div className="Statistics-stat-card-content">
+                <div className="Statistics-stat-icon Statistics-blue-gradient">
                   <Activity size={28} />
                 </div>
-                <div className="stat-info">
+                <div className="Statistics-stat-info">
                   <h3>{behavioralData.totalSessions}</h3>
                   <p>Total Sessions</p>
                 </div>
               </div>
             </div>
 
-            <div className="stat-overview-card hover-green">
-              <div className="stat-card-content">
-                <div className="stat-icon green-gradient">
+            <div className="Statistics-stat-overview-card Statistics-hover-green">
+              <div className="Statistics-stat-card-content">
+                <div className="Statistics-stat-icon Statistics-green-gradient">
                   <Target size={28} />
                 </div>
-                <div className="stat-info">
+                <div className="Statistics-stat-info">
                   <h3>{behavioralData.totalQuestions}</h3>
                   <p>Questions Answered</p>
                 </div>
               </div>
             </div>
 
-            <div className="stat-overview-card hover-yellow">
-              <div className="stat-card-content">
-                <div className="stat-icon yellow-gradient">
+            <div className="Statistics-stat-overview-card Statistics-hover-yellow">
+              <div className="Statistics-stat-card-content">
+                <div className="Statistics-stat-icon Statistics-yellow-gradient">
                   <Award size={28} />
                 </div>
-                <div className="stat-info">
+                <div className="Statistics-stat-info">
                   <h3>{behavioralData.averageScore}%</h3>
                   <p>Average Score</p>
                 </div>
               </div>
             </div>
 
-            <div className="stat-overview-card hover-red">
-              <div className="stat-card-content">
-                <div className={`stat-icon ${
-                  behavioralData.scoreImprovement.startsWith('-') 
-                    ? 'red-gradient' 
-                    : 'green-alt-gradient'
+            <div className="Statistics-stat-overview-card Statistics-hover-red">
+              <div className="Statistics-stat-card-content">
+                <div className={`Statistics-stat-icon ${
+                  behavioralData.scoreImprovement.startsWith('-')
+                    ? 'Statistics-red-gradient'
+                    : 'Statistics-green-alt-gradient'
                 }`}>
                   {behavioralData.scoreImprovement.startsWith('-') ? (
                     <TrendingDown size={28} />
@@ -447,7 +447,7 @@ const Statistics = () => {
                     <TrendingUp size={28} />
                   )}
                 </div>
-                <div className="stat-info">
+                <div className="Statistics-stat-info">
                   <h3>{behavioralData.scoreImprovement}</h3>
                   <p>Score Change</p>
                 </div>
@@ -456,54 +456,54 @@ const Statistics = () => {
           </div>
 
           {/* Additional Metrics Row */}
-          <div className="metrics-row">
-            <div className="metric-card purple">
-              <div className="metric-card-header">
+          <div className="Statistics-metrics-row">
+            <div className="Statistics-metric-card Statistics-purple">
+              <div className="Statistics-metric-card-header">
                 <MessageSquare className="text-purple-600" size={24} />
                 <h4>Communication Quality</h4>
               </div>
-              <div className="metric-card-grid">
-                <div className="metric-item">
-                  <p className="value purple">{behavioralData.avgFillerWords}</p>
-                  <p className="label">Avg Filler Words</p>
+              <div className="Statistics-metric-card-grid">
+                <div className="Statistics-metric-item">
+                  <p className="Statistics-value Statistics-purple">{behavioralData.avgFillerWords}</p>
+                  <p className="Statistics-label">Avg Filler Words</p>
                 </div>
-                <div className="metric-item">
-                  <p className="value purple">{behavioralData.avgActionWords}</p>
-                  <p className="label">Avg Action Words</p>
+                <div className="Statistics-metric-item">
+                  <p className="Statistics-value Statistics-purple">{behavioralData.avgActionWords}</p>
+                  <p className="Statistics-label">Avg Action Words</p>
                 </div>
               </div>
             </div>
 
-            <div className="metric-card blue">
-              <div className="metric-card-header">
+            <div className="Statistics-metric-card Statistics-blue">
+              <div className="Statistics-metric-card-header">
                 <Clock className="text-blue-600" size={24} />
                 <h4>Speaking Time</h4>
               </div>
-              <div className="metric-single">
-                <p className="value blue">{behavioralData.avgSpeakingTime}s</p>
-                <p className="label">Average per question</p>
+              <div className="Statistics-metric-single">
+                <p className="Statistics-value Statistics-blue">{behavioralData.avgSpeakingTime}s</p>
+                <p className="Statistics-label">Average per question</p>
               </div>
             </div>
 
             {behavioralData.topCategory && (
-              <div className="metric-card amber">
-                <div className="metric-card-header">
+              <div className="Statistics-metric-card Statistics-amber">
+                <div className="Statistics-metric-card-header">
                   <Zap className="text-amber-600" size={24} />
                   <h4>Top Category</h4>
                 </div>
-                <div className="metric-single">
-                  <p className="value amber category-name">{behavioralData.topCategory.name}</p>
-                  <p className="label">{behavioralData.topCategory.score}% average score</p>
+                <div className="Statistics-metric-single">
+                  <p className="Statistics-value Statistics-amber Statistics-category-name">{behavioralData.topCategory.name}</p>
+                  <p className="Statistics-label">{behavioralData.topCategory.score}% average score</p>
                 </div>
               </div>
             )}
           </div>
 
           {/* Charts Section */}
-          <div className="charts-grid">
+          <div className="Statistics-charts-grid">
             {/* Score Trend Chart */}
-            <div className="chart-card">
-              <div className="chart-card-header">
+            <div className="Statistics-chart-card">
+              <div className="Statistics-chart-card-header">
                 <BarChart3 className="text-blue-600" size={24} />
                 <h3>Score Progression</h3>
               </div>
@@ -526,8 +526,8 @@ const Statistics = () => {
             </div>
 
             {/* Category Performance */}
-            <div className="chart-card">
-              <div className="chart-card-header">
+            <div className="Statistics-chart-card">
+              <div className="Statistics-chart-card-header">
                 <BarChart3 className="text-green-600" size={24} />
                 <h3>Category Performance</h3>
               </div>
@@ -543,8 +543,8 @@ const Statistics = () => {
             </div>
 
             {/* Radar Chart - Skills Coverage */}
-            <div className="chart-card">
-              <div className="chart-card-header">
+            <div className="Statistics-chart-card">
+              <div className="Statistics-chart-card-header">
                 <Target className="text-purple-600" size={24} />
                 <h3>Skills Coverage</h3>
               </div>
@@ -560,8 +560,8 @@ const Statistics = () => {
             </div>
 
             {/* Question Distribution Pie Chart */}
-            <div className="chart-card">
-              <div className="chart-card-header">
+            <div className="Statistics-chart-card">
+              <div className="Statistics-chart-card-header">
                 <PieChart className="text-amber-600" size={24} />
                 <h3>Question Distribution</h3>
               </div>
@@ -588,10 +588,10 @@ const Statistics = () => {
           </div>
 
           {/* Communication Trends */}
-          <div className="charts-grid">
+          <div className="Statistics-charts-grid">
             {/* Filler Word Trend */}
-            <div className="chart-card">
-              <div className="chart-card-header">
+            <div className="Statistics-chart-card">
+              <div className="Statistics-chart-card-header">
                 <MessageSquare className="text-purple-600" size={24} />
                 <h3>Filler Word Trend</h3>
               </div>
@@ -614,8 +614,8 @@ const Statistics = () => {
             </div>
 
             {/* Action Word Trend */}
-            <div className="chart-card">
-              <div className="chart-card-header">
+            <div className="Statistics-chart-card">
+              <div className="Statistics-chart-card-header">
                 <Zap className="text-amber-600" size={24} />
                 <h3>Action Word Trend</h3>
               </div>
@@ -639,10 +639,10 @@ const Statistics = () => {
           </div>
 
           {/* Overall Top Words Section */}
-          <div className="charts-grid" style={{ marginTop: '2rem' }}>
+          <div className="Statistics-charts-grid" style={{ marginTop: '2rem' }}>
             {/* Top Filler Words Overall */}
-            <div className="chart-card">
-              <div className="chart-card-header">
+            <div className="Statistics-chart-card">
+              <div className="Statistics-chart-card-header">
                 <MessageSquare className="text-purple-600" size={24} />
                 <h3>Top 5 Common Filler Words (All Sessions)</h3>
               </div>
@@ -703,8 +703,8 @@ const Statistics = () => {
             </div>
 
             {/* Top Action Words Overall */}
-            <div className="chart-card">
-              <div className="chart-card-header">
+            <div className="Statistics-chart-card">
+              <div className="Statistics-chart-card-header">
                 <Zap className="text-amber-600" size={24} />
                 <h3>Top 5 Used Action Words (All Sessions)</h3>
               </div>
@@ -766,10 +766,10 @@ const Statistics = () => {
           </div>
 
           {/* Session History */}
-          <div className="session-history">
+          <div className="Statistics-session-history">
             <h3>Recent Sessions</h3>
-            <div className="session-table-wrapper">
-              <table className="session-table">
+            <div className="Statistics-session-table-wrapper">
+              <table className="Statistics-session-table">
                 <thead>
                   <tr>
                     <th></th>
@@ -786,7 +786,7 @@ const Statistics = () => {
                         <td>
                           <button
                             onClick={() => toggleSession(session.sessionId)}
-                            className="expand-btn"
+                            className="Statistics-expand-btn"
                           >
                             {expandedSessions[session.sessionId] ? (
                               <ChevronUp size={18} />
@@ -797,17 +797,17 @@ const Statistics = () => {
                         </td>
                         <td>{session.date}</td>
                         <td>
-                          <span className="question-badge">
+                          <span className="Statistics-question-badge">
                             {session.questionCount} questions
                           </span>
                         </td>
                         <td>
-                          <span className={`score-badge ${
-                            parseFloat(session.averageScore) >= 70 
-                              ? 'high'
+                          <span className={`Statistics-score-badge ${
+                            parseFloat(session.averageScore) >= 70
+                              ? 'Statistics-high'
                               : parseFloat(session.averageScore) >= 60
-                              ? 'medium'
-                              : 'low'
+                              ? 'Statistics-medium'
+                              : 'Statistics-low'
                           }`}>
                             {session.averageScore}%
                           </span>
@@ -816,13 +816,13 @@ const Statistics = () => {
                           <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
                             <Link
                               to={`/behavioral/results?userId=${userId}&sessionId=${session.sessionId}&expectedQuestions=${session.questionCount}`}
-                              className="view-results-btn"
+                              className="Statistics-view-results-btn"
                             >
                               <ExternalLink size={16} stroke="white" />
                               <p style={{ color: "white" }}>View Results</p>
                             </Link>
                             <button
-                              className="delete-results-btn"
+                              className="Statistics-delete-results-btn"
                               onClick={() => handleDelete(session.sessionId)}
                             >
                               <DeleteForeverIcon />
@@ -831,25 +831,25 @@ const Statistics = () => {
                         </td>
                       </tr>
                       {expandedSessions[session.sessionId] && (
-                        <tr className="expanded-row">
+                        <tr className="Statistics-expanded-row">
                           <td colSpan="6">
-                            <div className="session-details">
-                              <div className="session-details-grid">
-                                <div className="session-detail-card">
-                                  <p className="detail-label">FILLER WORDS</p>
-                                  <p className="detail-value">{session.fillerWords}</p>
+                            <div className="Statistics-session-details">
+                              <div className="Statistics-session-details-grid">
+                                <div className="Statistics-session-detail-card">
+                                  <p className="Statistics-detail-label">FILLER WORDS</p>
+                                  <p className="Statistics-detail-value">{session.fillerWords}</p>
                                 </div>
-                                <div className="session-detail-card">
-                                  <p className="detail-label">ACTION WORDS</p>
-                                  <p className="detail-value">{session.actionWords}</p>
+                                <div className="Statistics-session-detail-card">
+                                  <p className="Statistics-detail-label">ACTION WORDS</p>
+                                  <p className="Statistics-detail-value">{session.actionWords}</p>
                                 </div>
-                                <div className="session-detail-card">
-                                  <p className="detail-label">SPEAKING TIME</p>
-                                  <p className="detail-value">{session.speakingTime}s</p>
+                                <div className="Statistics-session-detail-card">
+                                  <p className="Statistics-detail-label">SPEAKING TIME</p>
+                                  <p className="Statistics-detail-value">{session.speakingTime}s</p>
                                 </div>
-                                <div className="session-detail-card">
-                                  <p className="detail-label">DATE</p>
-                                  <p className="detail-value">
+                                <div className="Statistics-session-detail-card">
+                                  <p className="Statistics-detail-label">DATE</p>
+                                  <p className="Statistics-detail-value">
                                     {new Date(session.date).toLocaleDateString('en-US', {
                                       month: 'short',
                                       day: 'numeric',
@@ -858,14 +858,14 @@ const Statistics = () => {
                                   </p>
                                 </div>
                               </div>
-                              <div className="session-details-grid" style={{ marginTop: '12px' }}>
-                                <div className="session-detail-card">
-                                  <p className="detail-label">Top Filler Words</p>
-                                  <p className="detail-value">{session.topFillerWords?.length > 0 ? session.topFillerWords.join(', ') : 'None'}</p>
+                              <div className="Statistics-session-details-grid" style={{ marginTop: '12px' }}>
+                                <div className="Statistics-session-detail-card">
+                                  <p className="Statistics-detail-label">Top Filler Words</p>
+                                  <p className="Statistics-detail-value">{session.topFillerWords?.length > 0 ? session.topFillerWords.join(', ') : 'None'}</p>
                                 </div>
-                                <div className="session-detail-card">
-                                  <p className="detail-label">Top Action Words</p>
-                                  <p className="detail-value">{session.topActionWords?.length > 0 ? session.topActionWords.join(', ') : 'None'}</p>
+                                <div className="Statistics-session-detail-card">
+                                  <p className="Statistics-detail-label">Top Action Words</p>
+                                  <p className="Statistics-detail-value">{session.topActionWords?.length > 0 ? session.topActionWords.join(', ') : 'None'}</p>
                                 </div>
                               </div>
                             </div>
