@@ -24,6 +24,22 @@ const SignIn = () => {
     const navigate = useNavigate();
     const RECAPTCHA_SITE_KEY = import.meta.env.VITE_GOOGLE_RECAPTCHA_SITE_KEY;
 
+    // Check if user is already in auth flow (to skip animation)
+    const shouldAnimate = !sessionStorage.getItem('inAuthFlow');
+
+    // Set auth flow flag when component mounts
+    useEffect(() => {
+        sessionStorage.setItem('inAuthFlow', 'true');
+
+        // Clear flag when navigating away from auth pages
+        return () => {
+            const currentPath = window.location.pathname;
+            if (currentPath !== '/signin' && currentPath !== '/signup') {
+                sessionStorage.removeItem('inAuthFlow');
+            }
+        };
+    }, []);
+
     useEffect(() => {
         const scriptId = "recaptcha-script";
         if (document.getElementById(scriptId)) return;
@@ -158,9 +174,9 @@ const SignIn = () => {
         <div className="auth-page">
             <motion.div
                 className="auth-container"
-                initial={{ opacity: 0, y: 20 }}
+                initial={shouldAnimate ? { opacity: 0, y: 20 } : { opacity: 1, y: 0 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, ease: "easeOut" }}
+                transition={shouldAnimate ? { duration: 0.5, ease: "easeOut" } : { duration: 0 }}
             >
                 {/* Left Side - Gradient Section */}
                 <div className="auth-left">
