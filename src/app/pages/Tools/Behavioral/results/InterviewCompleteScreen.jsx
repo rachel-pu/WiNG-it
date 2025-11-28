@@ -105,24 +105,24 @@ const InterviewCompleteScreen = ({
             )}
             <Box>
                 <DefaultAppLayout>
-                <Box className="interview-complete-container">
+                <Box className="InterviewCompleteScreen-interview-complete-container">
             {/* Decorative Background Elements */}
-            <Box className="decorative-circle-top" />
-            <Box className="decorative-circle-bottom" />
+            <Box className="InterviewCompleteScreen-decorative-circle-top" />
+            <Box className="InterviewCompleteScreen-decorative-circle-bottom" />
 
             <motion.div
                 initial="hidden"
                 animate="visible"
                 variants={containerVariants}
-                className="interview-complete-content"
+                className="InterviewCompleteScreen-interview-complete-content"
             >
                 {/* Main Celebration Section */}
                 <motion.div variants={itemVariants}>
-                    <Box className="celebration-section">
-                        <Typography className="celebration-title">
+                    <Box className="InterviewCompleteScreen-celebration-section">
+                        <Typography className="InterviewCompleteScreen-celebration-title">
                             Interview Complete! 🎉
                         </Typography>
-                        <Typography className="celebration-subtitle">
+                        <Typography className="InterviewCompleteScreen-celebration-subtitle">
                             You answered {totalQuestions} behavioral interview questions
                         </Typography>
                     </Box>
@@ -130,33 +130,33 @@ const InterviewCompleteScreen = ({
 
                 {/* Two Column Layout */}
                 <motion.div variants={itemVariants}>
-                    <div className="two-column-layout">
+                    <div className="InterviewCompleteScreen-two-column-layout">
                         {/* Left Column - Performance and Stats */}
-                        <div className="left-column">
+                        <div className="InterviewCompleteScreen-left-column">
                             {/* Score Display */}
-                            <Card className="score-card">
-                                <Typography className="score-label">
+                            <Card className="InterviewCompleteScreen-score-card">
+                                <Typography className="InterviewCompleteScreen-score-label">
                                     Your Overall Performance
                                 </Typography>
 
-                                <Box className="score-display">
-                                    <Box className="circular-progress-container">
-                                        <svg className="circular-progress" viewBox="0 0 120 120">
+                                <Box className="InterviewCompleteScreen-score-display">
+                                    <Box className="InterviewCompleteScreen-circular-progress-container">
+                                        <svg className="InterviewCompleteScreen-circular-progress" viewBox="0 0 120 120">
                                             {/* Background circle */}
                                             <circle
                                                 cx="60"
                                                 cy="60"
                                                 r="50"
-                                                className="progress-bg"
+                                                className="InterviewCompleteScreen-progress-bg"
                                             />
                                             {/* Progress circle */}
                                             <circle
                                                 cx="60"
                                                 cy="60"
                                                 r="50"
-                                                className={`progress-fill ${
-                                                    overallScore >= 85 ? 'excellent' :
-                                                    overallScore >= 70 ? 'good' : 'poor'
+                                                className={`InterviewCompleteScreen-progress-fill ${
+                                                    overallScore >= 85 ? 'InterviewCompleteScreen-excellent' :
+                                                    overallScore >= 70 ? 'InterviewCompleteScreen-good' : 'InterviewCompleteScreen-poor'
                                                 }`}
                                                 style={{
                                                     '--progress': overallScore,
@@ -164,11 +164,11 @@ const InterviewCompleteScreen = ({
                                                 }}
                                             />
                                         </svg>
-                                        <Typography className="score-percentage-circular">
+                                        <Typography className="InterviewCompleteScreen-score-percentage-circular">
                                             {overallScore}%
                                         </Typography>
                                     </Box>
-                                    <Typography className="score-status">
+                                    <Typography className="InterviewCompleteScreen-score-status">
                                         {overallScore >= 85 ? 'Excellent Performance!' :
                                          overallScore >= 70 ? 'Good Performance!' :
                                          'Room for Improvement'}
@@ -177,42 +177,42 @@ const InterviewCompleteScreen = ({
                             </Card>
 
                             {/* Quick Stats */}
-                            <div className="stats-grid">
-                                <Card className="stat-card">
-                                    <Box className="stat-emoji">⏱️</Box>
-                                    <Typography className="stat-value">
+                            <div className="InterviewCompleteScreen-stats-grid">
+                                <Card className="InterviewCompleteScreen-stat-card">
+                                    <Box className="InterviewCompleteScreen-stat-emoji">⏱️</Box>
+                                    <Typography className="InterviewCompleteScreen-stat-value">
                                         {totalAverageRecordedTime}
                                     </Typography>
-                                    <Typography className="stat-label-results">
+                                    <Typography className="InterviewCompleteScreen-stat-label-results">
                                         Avg Time
                                     </Typography>
                                 </Card>
-                                <Card className="stat-card">
-                                    <Box className="stat-emoji">📝</Box>
-                                    <Typography className="stat-value">
+                                <Card className="InterviewCompleteScreen-stat-card">
+                                    <Box className="InterviewCompleteScreen-stat-emoji">📝</Box>
+                                    <Typography className="InterviewCompleteScreen-stat-value">
                                         {Math.round(
                                             Object.values(questionData).reduce((sum, q) => sum + q.wordCount, 0) / totalQuestions
                                         )}
                                     </Typography>
-                                    <Typography className="stat-label-results">
+                                    <Typography className="InterviewCompleteScreen-stat-label-results">
                                         Avg Words
                                     </Typography>
                                 </Card>
-                                <Card className="stat-card">
-                                    <Box className="stat-emoji">🚫</Box>
-                                    <Typography className="stat-value">
+                                <Card className="InterviewCompleteScreen-stat-card">
+                                    <Box className="InterviewCompleteScreen-stat-emoji">🚫</Box>
+                                    <Typography className="InterviewCompleteScreen-stat-value">
                                         {avgFillerWords}
                                     </Typography>
-                                    <Typography className="stat-label-results">
+                                    <Typography className="InterviewCompleteScreen-stat-label-results">
                                         Avg Fillers
                                     </Typography>
                                 </Card>
-                                <Card className="stat-card">
-                                    <Box className="stat-emoji">💪</Box>
-                                    <Typography className="stat-value">
+                                <Card className="InterviewCompleteScreen-stat-card">
+                                    <Box className="InterviewCompleteScreen-stat-emoji">💪</Box>
+                                    <Typography className="InterviewCompleteScreen-stat-value">
                                         {avgActionWords}
                                     </Typography>
-                                    <Typography className="stat-label-results">
+                                    <Typography className="InterviewCompleteScreen-stat-label-results">
                                         Avg Actions
                                     </Typography>
                                 </Card>
@@ -220,19 +220,19 @@ const InterviewCompleteScreen = ({
                         </div>
 
                         {/* Right Column - Key Takeaways */}
-                        <div className="right-column">
-                            <Card className="takeaways-card">
-                                <Box className="takeaways-header">
-                                    <Box className="takeaways-emoji">💡</Box>
-                                    <Typography className="takeaways-title">
+                        <div className="InterviewCompleteScreen-right-column">
+                            <Card className="InterviewCompleteScreen-takeaways-card">
+                                <Box className="InterviewCompleteScreen-takeaways-header">
+                                    <Box className="InterviewCompleteScreen-takeaways-emoji">💡</Box>
+                                    <Typography className="InterviewCompleteScreen-takeaways-title">
                                         Key Takeaways
                                     </Typography>
                                 </Box>
-                                <div className="takeaways-grid">
+                                <div className="InterviewCompleteScreen-takeaways-grid">
                                     {overallTips.map((tip, index) => (
-                                        <Box className="takeaway-item" key={index}>
-                                            <Box className="takeaway-dot" />
-                                            <Typography className="takeaway-text">
+                                        <Box className="InterviewCompleteScreen-takeaway-item" key={index}>
+                                            <Box className="InterviewCompleteScreen-takeaway-dot" />
+                                            <Typography className="InterviewCompleteScreen-takeaway-text">
                                                 {tip}
                                             </Typography>
                                         </Box>
@@ -246,16 +246,16 @@ const InterviewCompleteScreen = ({
                 {/* Continue Button */}
                 <motion.div
                     variants={itemVariants}
-                    className="continue-button-container"
+                    className="InterviewCompleteScreen-continue-button-container"
                 >
                     <motion.button
                         whileHover={{ scale: 1.05, y: -2 }}
                         whileTap={{ scale: 0.98 }}
                         onClick={onViewDetails}
-                        className="continue-button"
+                        className="InterviewCompleteScreen-continue-button"
                     >
                         View Detailed Results
-                        <ArrowForwardIcon className="continue-button-icon" />
+                        <ArrowForwardIcon className="InterviewCompleteScreen-continue-button-icon" />
                     </motion.button>
                 </motion.div>
             </motion.div>

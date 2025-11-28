@@ -4,7 +4,7 @@ html, body {
   padding: 0;
 }
 
-.auth-page {
+.Signin-auth-page {
   min-height: 100vh;
   display: flex;
   justify-content: center;
@@ -14,12 +14,12 @@ html, body {
   padding: 0;
 }
 
-.auth-container {
+.Signin-auth-container {
   display: flex;
-  width: 100%;
-  max-width: 1200px;
-  height: 100vh;
-  max-height: 800px;
+  width: 1200px;
+  max-width: calc(100vw - 40px);
+  height: 800px;
+  max-height: calc(100vh - 40px);
   background: white;
   border-radius: 24px;
   overflow: hidden;
@@ -31,7 +31,7 @@ html, body {
 }
 
 /* Left Side - Gradient Brand Section */
-.auth-left {
+.Signin-auth-left {
   flex: 0.8;
   background: linear-gradient(135deg, #2850d9 0%, #667eea 50%, #764ba2 100%);
   padding: 60px;
@@ -42,7 +42,7 @@ html, body {
   overflow: hidden;
 }
 
-.auth-left::before {
+.Signin-auth-left::before {
   content: '';
   position: absolute;
   top: 0;
@@ -55,14 +55,14 @@ html, body {
   pointer-events: none;
 }
 
-.logo-section {
+.Signin-logo-section {
   z-index: 2;
   display: flex;
   align-items: center;
   gap: 16px;
 }
 
-.logo-text {
+.Signin-logo-text {
   font-size: 48px;
   font-weight: 900;
   color: white;
@@ -71,23 +71,23 @@ html, body {
   letter-spacing: -0.03em;
 }
 
-.logo-image {
+.Signin-logo-image {
   height: 48px;
   width: auto;
   display: block;
 }
 
-.auth-left-content {
+.Signin-auth-left-content {
   z-index: 2;
   display: flex;
   align-items: flex-start;
 }
 
-.message-section {
+.Signin-message-section {
   max-width: 450px;
 }
 
-.message-intro {
+.Signin-message-intro {
   font-size: 18px;
   color: rgba(255, 255, 255, 0.9);
   margin: 0 0 12px 0;
@@ -95,7 +95,7 @@ html, body {
   font-weight: 400;
 }
 
-.message-main {
+.Signin-message-main {
   font-size: 42px;
   font-weight: 700;
   color: white;
@@ -106,18 +106,18 @@ html, body {
 }
 
 /* Right Side - Form Section */
-.auth-right {
+.Signin-auth-right {
   flex: 1.2;
   padding: 80px 60px 60px 60px;
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: center;
   background: white;
   overflow-y: auto;
   position: relative;
 }
 
-.back-button-right {
+.Signin-back-button-right {
   position: absolute !important;
   top: 24px !important;
   left: 24px !important;
@@ -133,22 +133,21 @@ html, body {
   z-index: 10;
 }
 
-.back-button-right:hover {
+.Signin-back-button-right:hover {
   background: #f1f5f9 !important;
   color: #2850d9 !important;
 }
 
-.auth-form-container {
+.Signin-auth-form-container {
   width: 100%;
-  max-width: 400px;
-  margin-top: 20px;
+  max-width: 430px;
 }
 
-.auth-header {
+.Signin-auth-header {
   margin-bottom: 36px;
 }
 
-.auth-title {
+.Signin-auth-title {
   font-size: 32px;
   font-weight: 700;
   color: #0f172a;
@@ -157,7 +156,7 @@ html, body {
   font-family: 'Satoshi Bold', sans-serif;
 }
 
-.auth-subtitle {
+.Signin-auth-subtitle {
   color: #64748b;
   font-size: 15px;
   margin: 0;
@@ -166,19 +165,19 @@ html, body {
 }
 
 /* Form */
-.auth-form {
+.Signin-auth-form {
   display: flex;
   flex-direction: column;
   gap: 24px;
 }
 
-.form-group {
+.Signin-form-group {
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
 
-.form-label {
+.Signin-form-label {
   font-size: 14px;
   font-weight: 500;
   color: #0f172a;
@@ -186,13 +185,13 @@ html, body {
   margin: 0;
 }
 
-.label-row {
+.Signin-label-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
-.forgot-link {
+.Signin-forgot-link {
   font-size: 14px;
   font-weight: 500;
   color: #2850d9;
@@ -204,18 +203,18 @@ html, body {
   transition: color 0.2s ease;
 }
 
-.forgot-link:hover {
+.Signin-forgot-link:hover {
   color: #1e40af;
   text-decoration: underline;
 }
 
-.input-wrapper {
+.Signin-input-wrapper {
   position: relative;
   display: flex;
   align-items: center;
 }
 
-.input-icon {
+.Signin-input-icon {
   position: absolute;
   left: 14px;
   color: #94a3b8;
@@ -223,7 +222,7 @@ html, body {
   pointer-events: none;
 }
 
-.form-input {
+.Signin-form-input {
   width: 100%;
   padding: 13px 14px 13px 46px;
   font-size: 15px;
@@ -237,20 +236,20 @@ html, body {
   box-sizing: border-box;
 }
 
-.form-input::placeholder {
+.Signin-form-input::placeholder {
   color: #94a3b8;
 }
 
-.form-input:focus {
+.Signin-form-input:focus {
   border-color: #2850d9;
   box-shadow: 0 0 0 3px rgba(40, 80, 217, 0.1);
 }
 
-.form-input:hover:not(:focus) {
+.Signin-form-input:hover:not(:focus) {
   border-color: #cbd5e1;
 }
 
-.password-toggle {
+.Signin-password-toggle {
   position: absolute;
   right: 12px;
   background: none;
@@ -265,12 +264,12 @@ html, body {
   border-radius: 4px;
 }
 
-.password-toggle:hover {
+.Signin-password-toggle:hover {
   color: #2850d9;
   background: rgba(40, 80, 217, 0.05);
 }
 
-.primary-btn {
+.Signin-primary-btn {
   width: 100%;
   padding: 13px 0;
   background: #2850d9;
@@ -286,30 +285,30 @@ html, body {
   margin-top: 4px;
 }
 
-.primary-btn:hover {
+.Signin-primary-btn:hover {
   background: #1e40af;
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(40, 80, 217, 0.3);
 }
 
-.primary-btn:active {
+.Signin-primary-btn:active {
   transform: translateY(0);
 }
 
-.primary-btn:disabled {
+.Signin-primary-btn:disabled {
   opacity: 0.6;
   cursor: not-allowed;
   transform: none;
 }
 
 /* Footer */
-.auth-footer {
+.Signin-auth-footer {
   margin-top: 32px;
   padding-top: 24px;
   border-top: 1px solid #e2e8f0;
 }
 
-.footer-text {
+.Signin-footer-text {
   text-align: center;
   font-size: 14px;
   color: #64748b;
@@ -317,7 +316,7 @@ html, body {
   font-family: 'Satoshi', sans-serif;
 }
 
-.link-btn {
+.Signin-link-btn {
   background: none;
   border: none;
   padding: 0;
@@ -329,12 +328,12 @@ html, body {
   transition: color 0.2s ease;
 }
 
-.link-btn:hover {
+.Signin-link-btn:hover {
   color: #1e40af;
   text-decoration: underline;
 }
 
-.recaptcha-text {
+.Signin-recaptcha-text {
   display: block;
   margin-top: 16px;
   font-size: 11px !important;
@@ -344,17 +343,17 @@ html, body {
   line-height: 1.5;
 }
 
-.recaptcha-text a {
+.Signin-recaptcha-text a {
   color: #2850d9;
   text-decoration: none;
 }
 
-.recaptcha-text a:hover {
+.Signin-recaptcha-text a:hover {
   text-decoration: underline;
 }
 
 /* Messages */
-.message-box {
+.Signin-message-box {
   padding: 12px 16px;
   border-radius: 8px;
   margin-bottom: 20px;
@@ -375,13 +374,13 @@ html, body {
   }
 }
 
-.error-box {
+.Signin-error-box {
   background: #fef2f2;
   border: 1px solid #fecaca;
   color: #dc2626;
 }
 
-.success-box {
+.Signin-success-box {
   background: #d1fad3;
   border: 1px solid #6ee784;
   color: #047829;
@@ -389,97 +388,109 @@ html, body {
 
 /* Responsive */
 @media (max-width: 1024px) {
-  .auth-container {
+  .Signin-auth-container {
     flex-direction: column;
     max-height: none;
     height: auto;
   }
 
-  .auth-left {
+  .Signin-auth-left {
     padding: 40px;
     min-height: 300px;
   }
 
-  .logo-text {
+  .Signin-auth-form-container {
+    margin-top: 50px;
+  }
+
+  .Signin-logo-text {
     font-size: 36px;
   }
 
-  .logo-image {
+  .Signin-logo-image {
     height: 36px;
   }
 
-  .message-main {
+  .Signin-message-main {
     font-size: 32px;
   }
 
-  .message-intro {
+  .Signin-message-intro {
     font-size: 16px;
   }
 
-  .auth-right {
+  .Signin-auth-right {
     padding: 40px;
   }
 
-  .back-button-right {
+  .Signin-back-button-right {
     top: 20px !important;
     left: 20px !important;
   }
 }
 
 @media (max-width: 640px) {
-  .auth-container {
+  .Signin-auth-container {
     margin: 0;
     border-radius: 0;
     max-height: none;
   }
 
-  .auth-left {
+  .Signin-auth-left {
     padding: 32px 24px;
     min-height: 250px;
   }
 
-  .logo-text {
+  .Signin-logo-text {
     font-size: 32px;
   }
 
-  .logo-image {
+  .Signin-logo-image {
     height: 32px;
   }
 
-  .message-main {
+  .Signin-message-main {
     font-size: 28px;
   }
 
-  .message-intro {
+  .Signin-message-intro {
     font-size: 14px;
   }
 
-  .auth-right {
+  .Signin-auth-right {
     padding: 32px 24px;
   }
 
-  .back-button-right {
+  .Signin-back-button-right {
     top: 16px !important;
     left: 16px !important;
   }
 
-  .auth-form-container {
+  .Signin-auth-form-container {
     margin-top: 32px;
   }
 
-  .auth-title {
+  .Signin-auth-title {
     font-size: 26px;
   }
 
-  .auth-subtitle {
+  .Signin-auth-subtitle {
     font-size: 14px;
   }
 
-  .primary-btn {
+  .Signin-primary-btn {
     font-size: 14px;
   }
 
-  .form-input {
+  .Signin-form-input {
     font-size: 14px;
   }
 }
+
+/* Around 1100px screens - add top margin to prevent overlap */
+@media (min-width: 1025px) and (max-width: 1150px) {
+  .Signin-auth-form-container {
+    margin-top: 70px;
+  }
+}
+

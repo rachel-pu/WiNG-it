@@ -16,7 +16,7 @@ export default function HomePagenNavbar() {
     };
     
     return (
-        <AppBar position="static" className="navigation-bar">
+        <AppBar position="static" className="HomePage-navigation-bar">
             <Container maxWidth="xl">
                 <Toolbar disableGutters>
                     {/* desktop logo / big viewport */}

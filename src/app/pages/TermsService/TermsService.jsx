@@ -24,7 +24,7 @@ export default function TermsService() {
     };
 
     return (
-    <div className="page-wrapper">
+    <div className="TermsService-page-wrapper">
         <Button
             onClick={handleBackClick}
             sx={{
@@ -49,14 +49,14 @@ export default function TermsService() {
             >
             <ArrowLeft size={28}/>
         </Button>
-        <Box className="term-container">
-        <div className="header">
+        <Box className="TermsService-term-container">
+        <div className="TermsService-header">
             <h1>WiNG.it Terms of Service</h1>
-            <p className="last-updated">Last updated: October 16, 2025</p>
+            <p className="TermsService-last-updated">Last updated: October 16, 2025</p>
         </div>
 
         <div className="content">
-            <section className="intro-section">
+            <section className="TermsService-intro-section">
             <p>
                 These terms of service are entered into between you and WiNG.it, LLC (“us” “we” or “our”) for the use of our application in relation to our training tools. By accessing our websites (the "Services"), you acknowledge that you have read, understood, and agree to the most recent version of these Terms of Service ("Terms").
             </p>
@@ -66,7 +66,7 @@ export default function TermsService() {
             </p>
             </section>
 
-            <section className="term-section">
+            <section className="TermsService-term-section">
             {/* Use of Services */}
             <h2>Use of Services</h2>
             <p>

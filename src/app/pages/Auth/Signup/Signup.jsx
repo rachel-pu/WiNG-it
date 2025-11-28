@@ -204,56 +204,56 @@ const SignUp = () => {
 };
 
   return (
-    <div className="auth-page">
+    <div className="Signup-auth-page">
       <motion.div
-        className="auth-container"
+        className="Signup-auth-container"
         initial={shouldAnimate ? { opacity: 0, y: 20 } : { opacity: 1, y: 0 }}
         animate={{ opacity: 1, y: 0 }}
         transition={shouldAnimate ? { duration: 0.5, ease: "easeOut" } : { duration: 0 }}
       >
         {/* Left Side - Gradient Section */}
-        <div className="auth-left">
-          <div className="logo-section">
-            <img src="/static/icons/logos/white-wingit.png" alt="WiNG.it Logo" className="logo-image" />
-            <h1 className="logo-text">WiNG.it</h1>
+        <div className="Signup-auth-left">
+          <div className="Signup-logo-section">
+            <img src="/static/icons/logos/white-wingit.png" alt="WiNG.it Logo" className="Signup-logo-image" />
+            <h1 className="Signup-logo-text">WiNG.it</h1>
           </div>
 
-          <div className="auth-left-content">
-            <div className="message-section">
-              <p className="message-intro">Find yourself beginning</p>
-              <h2 className="message-main">Your new professional tool haven</h2>
+          <div className="Signup-auth-left-content">
+            <div className="Signup-message-section">
+              <p className="Signup-message-intro">Find yourself beginning</p>
+              <h2 className="Signup-message-main">Your new professional tool haven</h2>
             </div>
           </div>
         </div>
 
         {/* Right Side - Form Section */}
-        <div className="auth-right">
+        <div className="Signup-auth-right">
           <Button
             onClick={() => navigate('/')}
-            className="back-button-right"
+            className="Signup-back-button-right"
           >
             <ArrowLeft size={18} strokeWidth={2.5} />
             <span>Back to Home</span>
           </Button>
 
-          <div className="auth-form-container">
-            <div className="auth-header">
-              <h1 className="auth-title">Create Your Account</h1>
-              <p className="auth-subtitle">Let's first set your account up!</p>
+          <div className="Signup-auth-form-container">
+            <div className="Signup-auth-header">
+              <h1 className="Signup-auth-title">Create Your Account</h1>
+              <p className="Signup-auth-subtitle">Let's first set your account up!</p>
             </div>
 
-            {error && <div className="message-box error-box">{error}</div>}
-            {success && <div className="message-box success-box">{success}</div>}
+            {error && <div className="Signup-message-box Signup-error-box">{error}</div>}
+            {success && <div className="Signup-message-box Signup-success-box">{success}</div>}
 
-            <div className="auth-form">
+            <div className="Signup-auth-form">
               {/* Name Input */}
-              <motion.div variants={itemVariants} className="form-group">
-                <label className="form-label">Full Name</label>
-                <div className="input-wrapper">
-                  <AccountCircle className="input-icon" />
+              <motion.div variants={itemVariants} className="Signup-form-group">
+                <label className="Signup-form-label">Full Name</label>
+                <div className="Signup-input-wrapper">
+                  <AccountCircle className="Signup-input-icon" />
                   <input
                     type="text"
-                    className="form-input"
+                    className="Signup-form-input"
                     placeholder="John Doe"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
@@ -263,13 +263,13 @@ const SignUp = () => {
               </motion.div>
 
               {/* Email Input */}
-              <motion.div variants={itemVariants} className="form-group">
-                <label className="form-label">Email Address</label>
-                <div className="input-wrapper">
-                  <EmailIcon className="input-icon" />
+              <motion.div variants={itemVariants} className="Signup-form-group">
+                <label className="Signup-form-label">Email Address</label>
+                <div className="Signup-input-wrapper">
+                  <EmailIcon className="Signup-input-icon" />
                   <input
                     type="email"
-                    className="form-input"
+                    className="Signup-form-input"
                     placeholder="you@example.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
@@ -279,14 +279,14 @@ const SignUp = () => {
               </motion.div>
 
               {/* Password Inputs - Side by Side */}
-              <div className="password-row">
-                <motion.div variants={itemVariants} className="form-group">
-                  <label className="form-label">Password</label>
-                  <div className="input-wrapper">
-                    <LockIcon className="input-icon" />
+              <div className="Signup-password-row">
+                <motion.div variants={itemVariants} className="Signup-form-group">
+                  <label className="Signup-form-label">Password</label>
+                  <div className="Signup-input-wrapper">
+                    <LockIcon className="Signup-input-icon" />
                     <input
                       type={showPassword ? 'text' : 'password'}
-                      className="form-input"
+                      className="Signup-form-input"
                       placeholder="••••••••••••"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
@@ -294,7 +294,7 @@ const SignUp = () => {
                     />
                     <button
                       type="button"
-                      className="password-toggle"
+                      className="Signup-password-toggle"
                       onClick={() => setShowPassword(!showPassword)}
                     >
                       {showPassword ? <VisibilityOff fontSize="small" /> : <Visibility fontSize="small" />}
@@ -302,13 +302,13 @@ const SignUp = () => {
                   </div>
                 </motion.div>
 
-                <motion.div variants={itemVariants} className="form-group">
-                  <label className="form-label">Confirm Password</label>
-                  <div className="input-wrapper">
-                    <LockIcon className="input-icon" />
+                <motion.div variants={itemVariants} className="Signup-form-group">
+                  <label className="Signup-form-label">Confirm Password</label>
+                  <div className="Signup-input-wrapper">
+                    <LockIcon className="Signup-input-icon" />
                     <input
                       type={showConfirmPassword ? 'text' : 'password'}
-                      className="form-input"
+                      className="Signup-form-input"
                       placeholder="••••••••••••"
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
@@ -316,7 +316,7 @@ const SignUp = () => {
                     />
                     <button
                       type="button"
-                      className="password-toggle"
+                      className="Signup-password-toggle"
                       onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                     >
                       {showConfirmPassword ? <VisibilityOff fontSize="small" /> : <Visibility fontSize="small" />}
@@ -326,7 +326,7 @@ const SignUp = () => {
               </div>
 
               {/* Terms Checkbox */}
-              <div className="terms-checkbox">
+              <div className="Signup-terms-checkbox">
                 <input
                   type="checkbox"
                   id="terms"
@@ -337,7 +337,7 @@ const SignUp = () => {
                   I agree to{' '}
                   <button
                     type="button"
-                    className="terms-link"
+                    className="Signup-terms-link"
                     onClick={() => navigate("/terms", { state: { previousRoute: window.location.pathname } })}
                   >
                     Terms & Conditions
@@ -345,7 +345,7 @@ const SignUp = () => {
                   {' '}and{' '}
                   <button
                     type="button"
-                    className="terms-link"
+                    className="Signup-terms-link"
                     onClick={() => navigate("/privacy", { state: { previousRoute: window.location.pathname } })}
                   >
                     Privacy Policy
@@ -353,17 +353,17 @@ const SignUp = () => {
                 </label>
               </div>
 
-              <button className="primary-btn" onClick={handleSignUp} disabled={isLoading}>
+              <button className="Signup-primary-btn" onClick={handleSignUp} disabled={isLoading}>
                 {isLoading ? 'Signing up...' : 'Sign Up'}
               </button>
             </div>
 
-            <div className="auth-footer">
-              <p className="footer-text">
+            <div className="Signup-auth-footer">
+              <p className="Signup-footer-text">
                 Already have an account?{' '}
                 <button
                   type="button"
-                  className="link-btn"
+                  className="Signup-link-btn"
                   onClick={() => navigate("/signin")}
                 >
                   Sign in
@@ -373,7 +373,7 @@ const SignUp = () => {
 
             <Typography
               component="small"
-              className="recaptcha-text"
+              className="Signup-recaptcha-text"
             >
               This site is protected by reCAPTCHA and the Google{' '}
               <a

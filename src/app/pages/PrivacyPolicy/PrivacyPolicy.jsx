@@ -25,7 +25,7 @@ export default function PrivacyPolicy() {
 
 
     return (
-    <div className="page-wrapper">
+    <div className="PrivacyPolicy-page-wrapper">
         <Button
             onClick={handleBackClick}
             sx={{
@@ -50,14 +50,14 @@ export default function PrivacyPolicy() {
             >
             <ArrowLeft size={28}/>
         </Button>
-        <Box className="privacy-policy-container">
-        <div className="privacy-header">
+        <Box className="PrivacyPolicy-privacy-policy-container">
+        <div className="PrivacyPolicy-privacy-header">
             <h1>Privacy Policy</h1>
-            <p className="last-updated">Last updated: October 16, 2025</p>
+            <p className="PrivacyPolicy-last-updated">Last updated: October 16, 2025</p>
         </div>
 
         <div className="privacy-content">
-            <section className="intro-section">
+            <section className="PrivacyPolicy-intro-section">
             <p>
                 WiNG.it, LLC ("we", "us", or "our") provides this Privacy Policy to inform you of our policies and procedures regarding the collection, use and disclosure of personal information we may receive from users of our website ("Site") and any other services offered by us in connection with our site (any and all of the foregoing the "Services").
             </p>
@@ -67,7 +67,7 @@ export default function PrivacyPolicy() {
             </p>
             </section>
 
-            <section className="policy-section">
+            <section className="PrivacyPolicy-policy-section">
             {/* Interpretation and Definitions */}
             <h2>Interpretation and Definitions</h2>
             
@@ -78,7 +78,7 @@ export default function PrivacyPolicy() {
 
             <h3>Definitions</h3>
             <p>For the purposes of this Privacy Policy:</p>
-            <ul className="definitions-list">
+            <ul className="PrivacyPolicy-definitions-list">
                 <li>
                 <strong>Account</strong> means a unique account created for You to access our Service or parts of our Service.
                 </li>
@@ -143,24 +143,24 @@ export default function PrivacyPolicy() {
             <p>Cookies can be "Persistent" or "Session" Cookies. Persistent Cookies remain on Your personal computer or mobile device when You go offline, while Session Cookies are deleted as soon as You close Your web browser. Learn more about cookies on the <a href="https://www.freeprivacypolicy.com/blog/sample-privacy-policy-template/#Use_Of_Cookies_And_Tracking" target="_blank">Free Privacy Policy website</a> article.</p>
             
             <p>We use both Session and Persistent Cookies for the purposes set out below:</p>
-            <div className="cookie-types-list">
-                <div className="cookie-item">
+            <div className="PrivacyPolicy-cookie-types-list">
+                <div className="PrivacyPolicy-cookie-item">
                 <strong>Necessary / Essential Cookies</strong>
-                <div className="cookie-detail">Type: Session Cookies</div>
-                <div className="cookie-detail">Administered by: Us</div>
-                <div className="cookie-detail">Purpose: These Cookies are essential to provide You with services available through the Website and to enable You to use some of its features. They help to authenticate users and prevent fraudulent use of user accounts. Without these Cookies, the services that You have asked for cannot be provided, and We only use these Cookies to provide You with those services.</div>
+                <div className="PrivacyPolicy-cookie-detail">Type: Session Cookies</div>
+                <div className="PrivacyPolicy-cookie-detail">Administered by: Us</div>
+                <div className="PrivacyPolicy-cookie-detail">Purpose: These Cookies are essential to provide You with services available through the Website and to enable You to use some of its features. They help to authenticate users and prevent fraudulent use of user accounts. Without these Cookies, the services that You have asked for cannot be provided, and We only use these Cookies to provide You with those services.</div>
                 </div>
-                <div className="cookie-item">
+                <div className="PrivacyPolicy-cookie-item">
                 <strong>Cookies Policy / Notice Acceptance Cookies</strong>
-                <div className="cookie-detail">Type: Persistent Cookies</div>
-                <div className="cookie-detail">Administered by: Us</div>
-                <div className="cookie-detail">Purpose: These Cookies identify if users have accepted the use of cookies on the Website.</div>
+                <div className="PrivacyPolicy-cookie-detail">Type: Persistent Cookies</div>
+                <div className="PrivacyPolicy-cookie-detail">Administered by: Us</div>
+                <div className="PrivacyPolicy-cookie-detail">Purpose: These Cookies identify if users have accepted the use of cookies on the Website.</div>
                 </div>
-                <div className="cookie-item">
+                <div className="PrivacyPolicy-cookie-item">
                 <strong>Functionality Cookies</strong>
-                <div className="cookie-detail">Type: Persistent Cookies</div>
-                <div className="cookie-detail">Administered by: Us</div>
-                <div className="cookie-detail">Purpose: These Cookies allow us to remember choices You make when You use the Website, such as remembering your login details or language preference. The purpose of these Cookies is to provide You with a more personal experience and to avoid You having to re-enter your preferences every time You use the Website.</div>
+                <div className="PrivacyPolicy-cookie-detail">Type: Persistent Cookies</div>
+                <div className="PrivacyPolicy-cookie-detail">Administered by: Us</div>
+                <div className="PrivacyPolicy-cookie-detail">Purpose: These Cookies allow us to remember choices You make when You use the Website, such as remembering your login details or language preference. The purpose of these Cookies is to provide You with a more personal experience and to avoid You having to re-enter your preferences every time You use the Website.</div>
                 </div>
             </div>
 
@@ -303,7 +303,7 @@ export default function PrivacyPolicy() {
             <p>You are advised to review this Privacy Policy periodically for any changes. Changes to this Privacy Policy are effective when they are posted on this page.</p>
 
             {/* Contact Us */}
-            <h2 className="contact-section">Contact Us</h2>
+            <h2>Contact Us</h2>
             <p>If you have any questions about this Privacy Policy, You can contact us:</p>
             <ul>
                 <li>By email: <a href="mailto:wingit.space@gmail.com">wingit.space@gmail.com</a></li>
